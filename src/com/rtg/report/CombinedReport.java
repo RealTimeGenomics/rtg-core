@@ -243,7 +243,7 @@ public class CombinedReport {
       copyDirRecursive(helper.getResourcesDir(), destinationReport.getResourcesDir());
     } else {
       final MapReport mapReport = new MapReport();
-      mapReport.generateReport(ReportType.HTML, new File[] {map}, mapReport1);
+      mapReport.generateReport(ReportType.HTML, mapReport1, map);
     }
     return mapReport1;
   }

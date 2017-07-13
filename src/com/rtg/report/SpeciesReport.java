@@ -98,13 +98,7 @@ public final class SpeciesReport implements Report {
   }
 
   @Override
-  public void generateReport(ReportType type, File inputDir, File outputDir) throws IOException {
-    generateReport(type, new File[]{inputDir}, outputDir);
-  }
-
-
-  @Override
-   public void generateReport(ReportType type, File[] inputDirs, File outputDir) throws IOException {
+   public void generateReport(ReportType type, File outputDir, File... inputDirs) throws IOException {
     if (type != ReportType.HTML) {
       throw new UnsupportedOperationException("Only " + ReportType.HTML + " reports implemented so far");
     }

@@ -48,13 +48,13 @@ public abstract class AbstractReportTest extends TestCase {
   public void testBadParams() throws Exception {
     final Report report = getReport();
     try {
-      report.generateReport(ReportType.PDF, (File) null, null);
+      report.generateReport(ReportType.PDF, null, (File) null);
       fail("Accepted PDF report type.");
     } catch (UnsupportedOperationException uoe) {
       assertEquals("Only " + ReportType.HTML + " reports implemented so far", uoe.getMessage());
     }
     try {
-      report.generateReport(ReportType.HTML, (File) null, null);
+      report.generateReport(ReportType.HTML, null, (File) null);
       fail("Accepted null directory.");
     } catch (NullPointerException npe) {
       assertNull(npe.getMessage());

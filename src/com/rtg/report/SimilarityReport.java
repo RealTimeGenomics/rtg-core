@@ -56,7 +56,7 @@ public class SimilarityReport implements Report {
 
 
   @Override
-  public void generateReport(ReportType type, File[] inputDirs, File outputDir) throws IOException {
+  public void generateReport(ReportType type, File outputDir, File... inputDirs) throws IOException {
     if (type != ReportType.HTML) {
       throw new UnsupportedOperationException("Only " + ReportType.HTML + " reports implemented so far");
     }
@@ -92,11 +92,6 @@ public class SimilarityReport implements Report {
     replacements.put("__BODY_TEXT__", menu.toString());
     replacements.put("__RESOURCE_DIR__", hrh.getResourcesDirName() + "/");
     ReportUtils.writeHtml(ReportUtils.TEMPLATE_DIR + "/default.html", hrh.getReportFile(), replacements);
-  }
-
-  @Override
-  public void generateReport(ReportType type, File inputDir, File outputDir) throws IOException {
-    generateReport(type, new File[] {inputDir}, outputDir);
   }
 
   private boolean generateTree(File inputDir, File outputDir) throws IOException {

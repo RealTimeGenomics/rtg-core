@@ -22,20 +22,10 @@ public interface Report {
    * Creates a report for the specified type, reading from <code>inputDirs</code> and writing to <code>outputDir</code>.
    *
    * @param type type of report to generate
+   * @param outputDir directory to write report to
    * @param inputDirs directories to read data from
-   * @param outputDir directory to write report to
    * @throws IOException if an I/O error occurs
    */
-  void generateReport(ReportType type, File[] inputDirs, File outputDir) throws IOException;
-
-  /**
-   * Creates a report for the specified type, reading from <code>inputDir</code> and writing to <code>outputDir</code>.
-   *
-   * @param type type of report to generate
-   * @param inputDir directory to read data from
-   * @param outputDir directory to write report to
-   * @throws IOException if an I/O error occurs
-   */
-  void generateReport(ReportType type, File inputDir, File outputDir) throws IOException;
+  void generateReport(ReportType type, File outputDir, File... inputDirs) throws IOException;
 
 }

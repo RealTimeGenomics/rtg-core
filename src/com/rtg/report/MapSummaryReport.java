@@ -73,7 +73,7 @@ public class MapSummaryReport implements Report {
   }
 
   @Override
-  public void generateReport(ReportType type, File[] inputDirs, File outputDir) throws IOException {
+  public void generateReport(ReportType type, File outputDir, File... inputDirs) throws IOException {
     if (type != ReportType.HTML) {
       throw new UnsupportedOperationException("Only " + ReportType.HTML + " reports implemented so far");
     }
@@ -224,11 +224,6 @@ public class MapSummaryReport implements Report {
       }
     }
     body.append(".</p>");
-  }
-
-  @Override
-  public void generateReport(ReportType type, File inputDir, File outputDir) throws IOException {
-    generateReport(type, new File[] {inputDir}, outputDir);
   }
 
 }
