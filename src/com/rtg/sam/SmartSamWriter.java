@@ -58,7 +58,7 @@ public class SmartSamWriter extends ReorderingQueue<SAMRecord> {
   public boolean addRecord(SAMRecord r) throws IOException {
     // Don't attempt to reorder all the fully-unmapped (i.e. no reference sequence) records
     if (r.getReferenceIndex() == SAMRecord.NO_ALIGNMENT_REFERENCE_INDEX) {
-      if (mLastWrittenRecord != null) {
+      if (!mRecordSet.isEmpty()) {
         flush();
       }
       flushRecord(r);

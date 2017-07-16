@@ -28,15 +28,26 @@ import junit.framework.TestCase;
 public class SmartSamWriterTest extends TestCase {
 
   static SAMRecord createRecord(int position) {
+    final String ref = "A";
+    final SAMRecord rec = createRecord(position, ref);
+    return rec;
+  }
+
+  private static SAMRecord createRecord(int position, String ref) {
     final SAMFileHeader header = new SAMFileHeader();
     header.getSequenceDictionary().addSequence(new SAMSequenceRecord("A", 100000));
+    header.getSequenceDictionary().addSequence(new SAMSequenceRecord("B", 100000));
     final SAMRecord rec = new SAMRecord(header);
-    rec.setReferenceName("A");
+    rec.setReferenceName(ref);
     rec.setReadName("read");
     rec.setReadString("ACGT");
     rec.setBaseQualityString("####");
-    rec.setCigarString("4=");
-    rec.setAlignmentStart(position);
+    if (ref.equals(SAMRecord.NO_ALIGNMENT_REFERENCE_NAME)) {
+      rec.setReadUnmappedFlag(true);
+    } else {
+      rec.setCigarString("4=");
+      rec.setAlignmentStart(position);
+    }
     return rec;
   }
 
@@ -47,6 +58,11 @@ public class SmartSamWriterTest extends TestCase {
       createRecord(1500),
       createRecord(1600),
       createRecord(2000),
+      createRecord(70, "B"),
+      createRecord(71, "B"),
+      createRecord(0, SAMRecord.NO_ALIGNMENT_REFERENCE_NAME),
+      createRecord(0, SAMRecord.NO_ALIGNMENT_REFERENCE_NAME),
+      createRecord(0, SAMRecord.NO_ALIGNMENT_REFERENCE_NAME)
     };
     final MemoryPrintStream mps = new MemoryPrintStream();
     final SmartSamWriter smartSamWriter = new SmartSamWriter(new SAMFileWriterFactory().makeSAMWriter(records[0].getHeader(), true, mps.outputStream()));
@@ -56,6 +72,11 @@ public class SmartSamWriterTest extends TestCase {
     smartSamWriter.addRecord(records[4]);
     smartSamWriter.addRecord(records[3]);
     smartSamWriter.addRecord(records[1]);
+    smartSamWriter.addRecord(records[5]);
+    smartSamWriter.addRecord(records[6]);
+    smartSamWriter.addRecord(records[7]);
+    smartSamWriter.addRecord(records[8]);
+    smartSamWriter.addRecord(records[9]);
     smartSamWriter.close();
     final StringBuilder sb = new StringBuilder();
     sb.append(SamUtils.getHeaderAsString(records[0].getHeader()));
