@@ -64,6 +64,7 @@ public class PairedEndTrimCli extends AbstractCli {
   private static final String LEFT = "left";
 
   private static final String MIDPOINT_TRIM = "midpoint-trim";
+  private static final String MIDPOINT_MERGE = "midpoint-merge";
 
   private static final String MIN_IDENTITY = "min-identity";
   private static final String MIN_OVERLAP = "min-overlap-length";
@@ -98,7 +99,8 @@ public class PairedEndTrimCli extends AbstractCli {
     flags.registerOptional('P', MIN_IDENTITY, Integer.class, CommonFlags.INT, "minimum percent identity in overlap to trigger overlap trimming", 90).setCategory(SENSITIVITY_TUNING);
 
     flags.registerOptional(MISMATCH_HANDLING, PairAligner.MismatchType.class, CommonFlags.STRING, "method used to alter bases/qualities at mismatches within overlap region", PairAligner.MismatchType.NONE).setCategory(FILTERING);
-    flags.registerOptional('m', MIDPOINT_TRIM, "if set, trim both reads to midpoint of overlap region").setCategory(FILTERING);
+    flags.registerOptional('m', MIDPOINT_TRIM, "if set, trim overlapping reads to midpoint of overlap region").setCategory(FILTERING);
+    flags.registerOptional('M', MIDPOINT_MERGE, "if set, merge overlapping reads at midpoint of overlap region. Result is in R1 (R2 will be empty)").setCategory(FILTERING);
     flags.registerOptional(LEFT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R1 starts with probes this long, and trim R2 bases that overlap into this", 0).setCategory(FILTERING);
     flags.registerOptional(RIGHT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R2 starts with probes this long, and trim R1 bases that overlap into this", 0).setCategory(FILTERING);
     flags.registerOptional(DISCARD_EMPTY_PAIRS, "if set, discard pairs where both reads have zero length (after any trimming)").setCategory(FILTERING);
@@ -143,6 +145,7 @@ public class PairedEndTrimCli extends AbstractCli {
         && flags.checkInRange(MIN_READ_LENGTH, 0, Integer.MAX_VALUE)
         && flags.checkInRange(LEFT_PROBE_LENGTH, 0, Integer.MAX_VALUE)
         && flags.checkInRange(RIGHT_PROBE_LENGTH, 0, Integer.MAX_VALUE)
+        && flags.checkNand(MIDPOINT_TRIM, MIDPOINT_MERGE)
         && flags.checkNand(DISCARD_EMPTY_PAIRS, DISCARD_EMPTY_READS);
     }
   }
@@ -220,6 +223,7 @@ public class PairedEndTrimCli extends AbstractCli {
       (Integer) mFlags.getValue(LEFT_PROBE_LENGTH), (Integer) mFlags.getValue(RIGHT_PROBE_LENGTH),
       (Integer) mFlags.getValue(MIN_READ_LENGTH),
       mFlags.isSet(MIDPOINT_TRIM),
+      mFlags.isSet(MIDPOINT_MERGE),
       (PairAligner.MismatchType) mFlags.getValue(MISMATCH_HANDLING),
       mFlags.isSet(VERBOSE));
   }

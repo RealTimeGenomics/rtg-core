@@ -182,7 +182,7 @@ public class PairAlignerTest extends AbstractNanoTest {
       .create();
     return new PairAligner(
       new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 80, 80, maxReadLength)),
-      25, 90, probeLength, 0, 0, false, t, false);
+      25, 90, probeLength, 0, 0, false, false, t, false);
   }
 
 

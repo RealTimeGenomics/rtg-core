@@ -120,17 +120,19 @@ public class PairAligner {
   private final int mR2ProbeLength;
   private final boolean mVerbose;
   private final boolean mTrimMid;
+  private final boolean mMergeMid;
   private final MismatchType mMismatch;
 
-  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength, int minLength, boolean trimMid, MismatchType mismatch, boolean verbose) {
+  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength, int minLength, boolean trimMid, boolean mergeMid, MismatchType mismatch, boolean verbose) {
     mEd = ed;
     mMinOverlap = minOverlap;
     mMinIdentity = minIdentity;
     mR1ProbeLength = r1ProbeLength;
     mR2ProbeLength = r2ProbeLength;
-    mLengthTrimmer = minLength > 0 ? new MinLengthReadTrimmer(minLength) : new NullReadTrimmer();
+    mLengthTrimmer = minLength > 0 ? new MinLengthReadTrimmer(minLength) : NullReadTrimmer.SINGLETON;
     mMismatch = mismatch;
     mTrimMid = trimMid;
+    mMergeMid = mergeMid;
     mVerbose = verbose;
   }
 
@@ -254,7 +256,7 @@ public class PairAligner {
       mStats.mR1ReadIntoR2Probe++;
     }
 
-    if (mTrimMid) {
+    if (mTrimMid || mMergeMid) {
       if (mVerbose) {
         dumpAlignment("INT-", r1, r2, actions, 0, r2Length - r2.length());
       }
@@ -262,15 +264,19 @@ public class PairAligner {
       final int overlapR1Len = overlapEndWithinR1 - overlapStartWithinR1 + 1;
       final int newOverlapR2Len = overlapEndWithinR2 - Math.max(overlapStartWithinR2, r2Length - r2.length()) + 1;
       final int newOverlapR1Len = Math.min(overlapEndWithinR1, r1.length() - 1) - overlapStartWithinR1 + 1;
-      //System.err.println("Overlap initial: R1=" + overlapR1Len + " R2=" + overlapR2Len + " remaining: R1=" + newOverlapR1Len + " R2=" + newOverlapR2Len);
       final int totalOverlap = (newOverlapR1Len + newOverlapR2Len) - overlapR1Len;
       int midTrim = totalOverlap / 2;
+      //System.err.println("Overlap initial: R1=" + overlapR1Len + " remaining: R1=" + newOverlapR1Len + " R2=" + newOverlapR2Len + " totalOverlap=" + totalOverlap + " midTrim=" + midTrim);
       if (midTrim > 0) {
         r1.trim(new LastBasesReadTrimmer(midTrim));
         if (midTrim * 2 < totalOverlap) {
           midTrim++;
         }
         r2.trim(new FirstBasesReadTrimmer(midTrim));
+        if (mMergeMid) {
+          r1.append(r2, " merged");
+          r2.trim(FullReadTrimmer.SINGLETON);
+        }
       }
     }
     if (mVerbose) {
