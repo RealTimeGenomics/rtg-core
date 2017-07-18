@@ -54,6 +54,7 @@ public final class InsertHelper {
 
   private static int calculateCorrectFragmentLength(int leftStart, int leftLength, int rightStart, int rightLength) {
     //This takes into account a situation where the leftmost alignment fully envelops the rightmost alignment
+    assert leftStart <= rightStart && leftLength >= 0 && rightLength >= 0;
     return Math.max(leftLength, (rightStart + rightLength) - leftStart);
   }
 }
