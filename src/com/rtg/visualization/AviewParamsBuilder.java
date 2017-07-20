@@ -38,7 +38,9 @@ class AviewParamsBuilder {
   protected boolean mPrintMapQ = false;
   protected boolean mSortReads = false;
   protected boolean mSortReadGroup = false;
+  protected boolean mSortSample = false;
   protected boolean mPrintReadGroup = false;
+  protected boolean mPrintSample = false;
   protected boolean mPrintMatePosition = false;
   protected boolean mUnflattenCgi = false;
   protected boolean mShowSoftClippedBases = false;
@@ -179,8 +181,18 @@ class AviewParamsBuilder {
     return this;
   }
 
+  AviewParamsBuilder sortSample(boolean sortSample) {
+    mSortSample = sortSample;
+    return this;
+  }
+
   AviewParamsBuilder printReadGroup(boolean printReadGroup) {
     mPrintReadGroup = printReadGroup;
+    return this;
+  }
+
+  AviewParamsBuilder printSample(boolean print) {
+    mPrintSample = print;
     return this;
   }
 

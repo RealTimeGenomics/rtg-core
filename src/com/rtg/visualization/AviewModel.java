@@ -141,10 +141,11 @@ final class AviewModel {
       }
       mRecords = SamHelper.loadAlignments(p, reader);
       if (p.sortReads()) {
-        SamHelper.sortAlignments(mRecords);
-      }
-      if (p.sortReadGroup()) {
-        SamHelper.sortAlignmentsWithReadGroups(mRecords);
+        mRecords.sort(SamHelper.POSITION_COMP);
+      } else if (p.sortReadGroup()) {
+        mRecords.sort(SamHelper.RG_COMP);
+      } else if (p.sortSample()) {
+        mRecords.sort(SamHelper.SAMPLE_COMP);
       }
 
       // Scan alignments to auto-expand the range if needed

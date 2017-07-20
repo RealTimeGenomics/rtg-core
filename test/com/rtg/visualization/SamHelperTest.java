@@ -93,7 +93,7 @@ public class SamHelperTest extends TestCase {
     rec.add(r2);
     rec.add(r3);
 
-    SamHelper.sortAlignments(rec);
+    rec.sort(SamHelper.POSITION_COMP);
 
     assertEquals(r2, rec.get(0));
     assertEquals(r3, rec.get(1));

@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +46,64 @@ import htsjdk.samtools.SAMRecord;
 public final class SamHelper {
 
   private SamHelper() { }
+
+  static final Comparator<SAMRecord> POSITION_COMP = new PositionComparator();
+  static final Comparator<SAMRecord> RG_COMP = new ReadGroupsComparator();
+  static final Comparator<SAMRecord> SAMPLE_COMP = new SamplesComparator();
+
+  @TestClass("com.rtg.visualization.AviewModelTest")
+  private static class PositionComparator implements Comparator<SAMRecord>, Serializable {
+    @Override
+    public int compare(SAMRecord s1, SAMRecord s2) {
+      int res = s1.getAlignmentStart() - s2.getAlignmentStart();
+      if (res == 0) {
+        res = s1.getAlignmentEnd() - s2.getAlignmentEnd();
+      }
+      return res;
+    }
+  }
+
+  @TestClass("com.rtg.visualization.AviewModelTest")
+  private static class TwoStringComparator extends PositionComparator {
+
+    protected int compare(SAMRecord s1, String str1, SAMRecord s2, String str2) {
+      final int compare;
+      if (str1 != null && str2 != null) {
+        compare = str1.compareTo(str2);
+      } else {
+        if (str1 == null) {
+          if (str2 == null) {
+            compare = 0; //rg1 == null rg2 == null
+          } else {
+            compare = 1; //rg1 == null rg2 != null
+          }
+        } else {
+          compare = -1; //rg1 != null rg2 == null;
+        }
+      }
+      if (compare == 0) {
+        return super.compare(s1, s2);
+      }
+      return compare;
+    }
+  }
+
+  @TestClass("com.rtg.visualization.AviewModelTest")
+  private static class ReadGroupsComparator extends TwoStringComparator {
+    @Override
+    public int compare(SAMRecord s1, SAMRecord s2) {
+      return super.compare(s1, s1.getStringAttribute(ReadGroupUtils.RG_ATTRIBUTE),
+        s2, s2.getStringAttribute(ReadGroupUtils.RG_ATTRIBUTE));
+    }
+  }
+  @TestClass("com.rtg.visualization.AviewModelTest")
+  private static class SamplesComparator extends TwoStringComparator {
+    @Override
+    public int compare(SAMRecord s1, SAMRecord s2) {
+      return super.compare(s1, s1.getReadGroup() != null ? s1.getReadGroup().getSample() : null,
+        s2, s2.getReadGroup() != null ? s2.getReadGroup().getSample() : null);
+    }
+  }
 
   static String getCorrectComplement(boolean forward, final String readString) {
     if (forward) {
@@ -102,54 +159,6 @@ public final class SamHelper {
 
   static boolean validReadGroup(Set<String> validRGs, String rg) {
     return validRGs == null || rg == null || validRGs.contains(rg);
-  }
-
-  static void sortAlignments(ArrayList<SAMRecord> records) {
-    Collections.sort(records, new Comparator<SAMRecord>() {
-        @Override
-        public int compare(SAMRecord s1, SAMRecord s2) {
-          int res = s1.getAlignmentStart() - s2.getAlignmentStart();
-          if (res == 0) {
-            res = s1.getAlignmentEnd() - s2.getAlignmentEnd();
-          }
-          return res;
-        }
-      });
-  }
-
-  @TestClass("com.rtg.visualization.AviewModelTest")
-  private static class AlignmentsWithReadGroupsComparator implements Comparator<SAMRecord>, Serializable {
-    @Override
-    public int compare(SAMRecord s1, SAMRecord s2) {
-      final String readGroup1 = s1.getStringAttribute(ReadGroupUtils.RG_ATTRIBUTE);
-      final String readGroup2 = s2.getStringAttribute(ReadGroupUtils.RG_ATTRIBUTE);
-      final int compare;
-      if (readGroup1 != null && readGroup2 != null) {
-        compare = readGroup1.compareTo(readGroup2);
-      } else {
-        if (readGroup1 == null) {
-          if (readGroup2 == null) {
-            compare = 0; //rg1 == null rg2 == null
-          } else {
-            compare = 1; //rg1 == null rg2 != null
-          }
-        } else {
-          compare = -1; //rg1 != null rg2 == null;
-        }
-      }
-      if (compare == 0) {
-        int res = s1.getAlignmentStart() - s2.getAlignmentStart();
-        if (res == 0) {
-          res = s1.getAlignmentEnd() - s2.getAlignmentEnd();
-        }
-        return res;
-      }
-      return compare;
-    }
-  }
-
-  static void sortAlignmentsWithReadGroups(ArrayList<SAMRecord> records) {
-    Collections.sort(records, new AlignmentsWithReadGroupsComparator());
   }
 
   static boolean validIhScore(SAMRecord r, int maxScore) {

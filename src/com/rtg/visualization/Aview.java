@@ -199,56 +199,15 @@ public final class Aview extends AbstractCli {
 
         boolean first = true;
         for (final String str : rawRead) {
-          final String nh = SamUtils.getNHOrIH(r) != null ? " NH:" + SamUtils.getNHOrIH(r) : "";
-          final String as = r.hasAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE) ? " AS:" + r.getIntegerAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE) : "";
-          final String mated;
-          final char direction = r.getReadNegativeStrandFlag() ? '<' : '>';
-          char armCh = ' ';
-          if (r.getReadPairedFlag()) {
-            mated = r.getReadUnmappedFlag() ? " UM" : r.getProperPairFlag() ? " MA" : " UN";
-            armCh = r.getFirstOfPairFlag() ? '1' : '2';  // Avoid 'F', confusable with Forward
-          } else {
-            mated = r.getReadUnmappedFlag() ? " UM" : " SE";
-          }
-          final StringBuilder extraSb = new StringBuilder();
-          if (evaluated) {
-            if (correct) {
-              extraSb.append(mDisplayHelper.decorateForeground("  =", DisplayHelper.GREEN));
-            } else {
-              final String diffStr = (diff < 100) ? (diff < 10 ? " " : "") + diff : ">>";
-              extraSb.append(mDisplayHelper.decorateForeground(mDisplayHelper.escape(diffStr) + "X", DisplayHelper.RED));
-            }
-          }
-          extraSb.append(" ").append(mDisplayHelper.escape(Character.toString(direction) + Character.toString(armCh) + mated + nh + as));
-          if (mParams.printCigars()) {
-            final String superCigar = r.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
-            extraSb.append(" ").append(superCigar == null ? r.getCigarString() : superCigar);
-          }
-          if (mParams.printReadName()) {
-            extraSb.append(" ").append(readName != null ? readName : r.getReadName());
-          }
-          if (mParams.printReadGroup()) {
-            final String rg = r.getStringAttribute(ReadGroupUtils.RG_ATTRIBUTE);
-            if (rg != null) {
-              extraSb.append(" ").append(rg);
-            }
-          }
-          if (mParams.printMapQ()) {
-            extraSb.append(" ").append(r.getMappingQuality());
-          }
-          if (mParams.printMatePosition()) {
-            extraSb.append(" ").append(r.getMateAlignmentStart());
-          }
-
           final String readLabel = first ? mDisplayHelper.decorateLabel(r.getReadUnmappedFlag() ? UNMAPPED_LABEL : READ_LABEL) : mDisplayHelper.getSpaces(DisplayHelper.LABEL_LENGTH + 1);
-          final String extra = first ? extraSb.toString() : "";
+          final String descr = first ? getReadDesc(r, readName, evaluated, correct, diff) : "";
           String readStr = str + mDisplayHelper.getSpaces(ref.length() - str.length());
           if ((r.getReadPairedFlag() && r.getProperPairFlag())
               || (!r.getReadPairedFlag() && !r.getReadUnmappedFlag())) {
             readStr = mDisplayHelper.decorateBold(readStr);
           }
           readStr = mDisplayHelper.decorateWithHighlight(readStr, highlightMask, highlightBg, mParams.colorBases());
-          printOnScreen(readLabel, readStr, extra);
+          printOnScreen(readLabel, readStr, descr);
           first = false;
         }
       }
@@ -259,6 +218,56 @@ public final class Aview extends AbstractCli {
     } finally {
       closeSdfs();
     }
+  }
+
+  private String getReadDesc(SAMRecord r, String readName, boolean evaluated, boolean correct, long diff) {
+    final String nh = SamUtils.getNHOrIH(r) != null ? " NH:" + SamUtils.getNHOrIH(r) : "";
+    final String as = r.hasAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE) ? " AS:" + r.getIntegerAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE) : "";
+    final String mated;
+    final char direction = r.getReadNegativeStrandFlag() ? '<' : '>';
+    char armCh = ' ';
+    if (r.getReadPairedFlag()) {
+      mated = r.getReadUnmappedFlag() ? " UM" : r.getProperPairFlag() ? " MA" : " UN";
+      armCh = r.getFirstOfPairFlag() ? '1' : '2';  // Avoid 'F', confusable with Forward
+    } else {
+      mated = r.getReadUnmappedFlag() ? " UM" : " SE";
+    }
+    final StringBuilder extraSb = new StringBuilder();
+    if (evaluated) {
+      if (correct) {
+        extraSb.append(mDisplayHelper.decorateForeground("  =", DisplayHelper.GREEN));
+      } else {
+        final String diffStr = (diff < 100) ? (diff < 10 ? " " : "") + diff : ">>";
+        extraSb.append(mDisplayHelper.decorateForeground(mDisplayHelper.escape(diffStr) + "X", DisplayHelper.RED));
+      }
+    }
+    extraSb.append(" ").append(mDisplayHelper.escape(Character.toString(direction) + Character.toString(armCh) + mated + nh + as));
+    if (mParams.printCigars()) {
+      final String superCigar = r.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
+      extraSb.append(" ").append(superCigar == null ? r.getCigarString() : superCigar);
+    }
+    if (mParams.printReadName()) {
+      extraSb.append(" ").append(readName != null ? readName : r.getReadName());
+    }
+    if (mParams.printReadGroup()) {
+      final String rg = r.getStringAttribute(ReadGroupUtils.RG_ATTRIBUTE);
+      if (rg != null) {
+        extraSb.append(" ").append(rg);
+      }
+    }
+    if (mParams.printSample()) {
+      final String sample = r.getReadGroup() == null ? null : r.getReadGroup().getSample();
+      if (sample != null) {
+        extraSb.append(" ").append(sample);
+      }
+    }
+    if (mParams.printMapQ()) {
+      extraSb.append(" ").append(r.getMappingQuality());
+    }
+    if (mParams.printMatePosition()) {
+      extraSb.append(" ").append(r.getMateAlignmentStart());
+    }
+    return extraSb.toString();
   }
 
   private SimulatedReadNameParser getParser(final SAMRecord r) {

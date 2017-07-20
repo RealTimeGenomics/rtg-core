@@ -51,6 +51,7 @@ class AviewParams {
 
   static final String PRINT_CIGARS = "print-cigars";
   static final String PRINT_READGROUP = "print-readgroup";
+  static final String PRINT_SAMPLE = "print-sample";
   static final String PRINT_MAPQ = "print-mapq";
   static final String PRINT_NAMES = "print-names";
   static final String PRINT_MATE_POSITION = "print-mate-position";
@@ -63,6 +64,7 @@ class AviewParams {
   static final String HTML = "html";
   static final String PADDING = "padding";
   static final String SORT_READGROUP = "sort-readgroup";
+  static final String SORT_SAMPLE = "sort-sample";
   static final String SORT_READS = "sort-reads";
   static final String PROJECT_TRACK = "project-track";
   static final String UNFLATTEN = "unflatten";
@@ -100,6 +102,7 @@ class AviewParams {
     // What to display and how
     flags.registerOptional(PRINT_CIGARS, "print alignment cigars").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(PRINT_READGROUP, "print read group id for each alignment").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(PRINT_SAMPLE, "print sample id for each alignment").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(PRINT_MATE_POSITION, "print mate position").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(PRINT_MAPQ, "print alignment MAPQ values").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(PRINT_NAMES, "print read names").setCategory(CommonFlagCategories.REPORTING);
@@ -114,6 +117,7 @@ class AviewParams {
     flags.registerOptional(PROJECT_TRACK, Integer.class, CommonFlags.INT, "if set, project highlighting for the specified track down through reads (Default projects the union of tracks)").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(SORT_READS, "sort reads on start position").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(SORT_READGROUP, "sort reads first on read group and then on start position").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(SORT_SAMPLE, "sort reads first on sample id and then on start position").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(UNFLATTEN, "display unflattened CGI reads when present").setCategory(CommonFlagCategories.REPORTING);
 
     // Random extras
@@ -173,10 +177,12 @@ class AviewParams {
   private final int mMappingTolerance;
   private final boolean mPrintCigars;
   private final boolean mPrintReadGroup;
+  private final boolean mPrintSample;
   private final boolean mPrintMatePosition;
   private final boolean mPrintReadName;
   private final boolean mSortReads;
   private final boolean mSortReadGroup;
+  private final boolean mSortSample;
   private final boolean mPrintMapQ;
   private final boolean mUnflattenCgi;
   private final boolean mColorBases;
@@ -209,7 +215,9 @@ class AviewParams {
     mUnmapped = aviewParamsBuilder.mUnmapped;
     mSortReads = aviewParamsBuilder.mSortReads;
     mSortReadGroup = aviewParamsBuilder.mSortReadGroup;
+    mSortSample = aviewParamsBuilder.mSortSample;
     mPrintReadGroup = aviewParamsBuilder.mPrintReadGroup;
+    mPrintSample = aviewParamsBuilder.mPrintSample;
     mPrintMatePosition = aviewParamsBuilder.mPrintMatePosition;
     mSamples = aviewParamsBuilder.mSamples;
     mPrintMapQ = aviewParamsBuilder.mPrintMapQ;
@@ -252,6 +260,7 @@ class AviewParams {
      .sortReads(flags.isSet(SORT_READS))
      .sortReadGroup(flags.isSet(SORT_READGROUP))
      .printReadGroup(flags.isSet(PRINT_READGROUP))
+     .printSample(flags.isSet(PRINT_SAMPLE))
      .printMatePosition(flags.isSet(PRINT_MATE_POSITION))
      .showSoftClippedBases(flags.isSet(PRINT_SOFT_CLIPPED_BASES))
      ;
@@ -420,6 +429,14 @@ class AviewParams {
 
   final boolean printReadGroup() {
     return mPrintReadGroup;
+  }
+
+  final boolean sortSample() {
+    return mSortSample;
+  }
+
+  final boolean printSample() {
+    return mPrintSample;
   }
 
   final boolean printMapQ() {
