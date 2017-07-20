@@ -252,13 +252,13 @@ public final class Aview extends AbstractCli {
     if (mParams.printReadGroup()) {
       final String rg = r.getStringAttribute(ReadGroupUtils.RG_ATTRIBUTE);
       if (rg != null) {
-        extraSb.append(" ").append(rg);
+        extraSb.append(" RG:").append(rg);
       }
     }
     if (mParams.printSample()) {
       final String sample = r.getReadGroup() == null ? null : r.getReadGroup().getSample();
       if (sample != null) {
-        extraSb.append(" ").append(sample);
+        extraSb.append(" SM:").append(sample);
       }
     }
     if (mParams.printMapQ()) {

@@ -135,8 +135,7 @@ class AviewParams {
         if (!(CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE) || flags.isSet(BASELINE_VCF) || flags.isSet(CALLS_VCF) || flags.isSet(BEDS))) {
           return false;
         }
-        if (flags.isSet(SORT_READS) && flags.isSet(SORT_READGROUP)) {
-          flags.setParseMessage("Only one of --" + SORT_READS + ", or --" + SORT_READGROUP + " must be set.");
+        if (!flags.checkAtMostOne(SORT_READS, SORT_READGROUP, SORT_SAMPLE)) {
           return false;
         }
         final String region = (String) flags.getValue(REGION);
@@ -259,6 +258,7 @@ class AviewParams {
      .unflattenCgi(flags.isSet(UNFLATTEN))
      .sortReads(flags.isSet(SORT_READS))
      .sortReadGroup(flags.isSet(SORT_READGROUP))
+     .sortSample(flags.isSet(SORT_SAMPLE))
      .printReadGroup(flags.isSet(PRINT_READGROUP))
      .printSample(flags.isSet(PRINT_SAMPLE))
      .printMatePosition(flags.isSet(PRINT_MATE_POSITION))

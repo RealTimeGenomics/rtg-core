@@ -262,7 +262,7 @@ public class AviewTest extends AbstractCliTest {
   ;
 
   public void testRG() throws IOException, InterruptedException {
-    run("aview-rg.txt", SAM_RG, "--region", "g1:1+11", "--no-dots", "--sort-readgroup", "--no-color", "--print-readgroup", "--print-mapq");
+    run("aview-rg.txt", SAM_RG, "--region", "g1:1+11", "--no-dots", "--sort-readgroup", "--no-color", "--print-readgroup", "--print-mapq", "--print-sample");
   }
 
   public void testTooMuchTemplate() throws Exception {
