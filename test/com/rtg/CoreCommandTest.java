@@ -138,6 +138,7 @@ public class CoreCommandTest extends TestCase {
 
   public void testReleaseLevel() {
     for (Command cmd : CoreCommand.INFO.commands()) {
+      assertTrue(cmd.getCommandDescription() != null || cmd.isHidden());
       switch (cmd.getReleaseLevel()) {
         case ALPHA:
           assertTrue(cmd.getCommandName(), cmd.isHidden());
