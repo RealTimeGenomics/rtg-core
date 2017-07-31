@@ -28,12 +28,12 @@ import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.ReferenceSequence;
 import com.rtg.reference.Sex;
 import com.rtg.util.Pair;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.StringUtils;
 import com.rtg.util.array.ArrayUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.SlimException;
+import com.rtg.util.intervals.RegionRestriction;
 
 /**
  * Encapsulates a hashing region with clipping and padding with respect to a set of sequences.
@@ -385,7 +385,10 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
         sequences.add(id);
       }
     }
-
+    if (sequences.isEmpty()) {
+      Diagnostic.warning("The reference SDF does not contain any sequences to be used for the specified sex.");
+      return new HashingRegion[0];
+    }
     final List<HashingRegion> regions = new ArrayList<>();
     long lastId = -1L;
     long splitStart = -1L;

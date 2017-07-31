@@ -132,13 +132,8 @@ public class ReadGroupStatsCalculatorTest extends AbstractTest {
       final ReadGroupStatsCalculator calculator = new ReadGroupStatsCalculator();
       final MemoryPrintStream err = new MemoryPrintStream();
       Diagnostic.setLogStream(err.printStream());
-      try {
-        calculator.calculate(files, NullStreamUtils.getNullOutputStream());
-        fail();
-      } catch (NoTalkbackSlimException e) {
-        e.logException();
-        assertTrue(err.toString().contains(e.getMessage()));
-      }
+      calculator.calculate(files, NullStreamUtils.getNullOutputStream());
+      TestUtils.containsAll(err.toString(), "No properly mated alignments were available");
     }
   }
 

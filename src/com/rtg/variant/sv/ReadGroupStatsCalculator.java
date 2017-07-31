@@ -33,7 +33,6 @@ import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -176,9 +175,9 @@ public final class ReadGroupStatsCalculator {
     }
     if (invalidCount == mStats.size()) {
       if (matedCount == 0) {
-        throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "Read group statistics calculation requires properly mated data");
+        Diagnostic.warning("No properly mated alignments were available for read group statistics calculation");
       } else {
-        throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "No valid read group statistics could be calculated");
+        Diagnostic.warning("No valid read group statistics could be calculated");
       }
     }
     out.write(VERSION_HEADER.getBytes());
