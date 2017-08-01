@@ -84,12 +84,12 @@ public class SingleMaskTest extends TestCase {
 
     ex.mask(Utils.fromBits("1100001100"), Utils.fromBits("1100001100"));
     assertEquals(1, res[1]);
-    assertEquals("", Utils.toBits(res[0]));
+    assertEquals("0", Utils.toBits(res[0]));
     res[1] = 0;
 
     ex.maskIndel(Utils.fromBits("1100001100"), Utils.fromBits("1100001100"));
     assertEquals(1, res[1]);
-    assertEquals("", Utils.toBits(res[0]));
+    assertEquals("0", Utils.toBits(res[0]));
     res[1] = 0;
 
     ex.mask(Utils.fromBits("110110110110"), Utils.fromBits("001001001001"));

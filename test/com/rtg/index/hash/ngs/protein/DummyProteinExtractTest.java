@@ -73,12 +73,12 @@ public class DummyProteinExtractTest extends TestCase {
 
     ex.mask(new long[] {Utils.fromBits("1100001100"), Utils.fromBits("1100001100")});
     assertEquals(1, ex.mResults.size());
-    assertEquals("", Utils.toBits(ex.mResults.get(0)));
+    assertEquals("0", Utils.toBits(ex.mResults.get(0)));
     ex.mResults.clear();
 
     ex.maskIndel(new long[] {Utils.fromBits("1100001100"), Utils.fromBits("1100001100"), Utils.fromBits("1100001100"), Utils.fromBits("1100001100"), Utils.fromBits("1100001100")});
     assertEquals(1, ex.mResults.size());
-    assertEquals("", Utils.toBits(ex.mResults.get(0)));
+    assertEquals("0", Utils.toBits(ex.mResults.get(0)));
     ex.mResults.clear();
 
     ex.mask(new long[] {Utils.fromBits("110110110110"), Utils.fromBits("001001001001")});
