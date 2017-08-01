@@ -431,16 +431,12 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   }
 
   /**
-   * Sharpen creating a two dimensional array.
+   * Create array.
    * @param rows length of first index.
    * @return the new array.
    */
   protected final double[][] makeDouble(final int rows) {
-    final double[][] res = new double[rows][];
-    for (int i = 0; i < rows; ++i) {
-      res[i] = new double[mWidth];
-    }
-    return res;
+    return new double[rows][mWidth];
   }
 
   /**
