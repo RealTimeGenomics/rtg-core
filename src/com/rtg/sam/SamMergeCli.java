@@ -42,6 +42,7 @@ public class SamMergeCli extends AbstractCli {
   private static final String MODULE_NAME = "sammerge";
 
   private static final String LEGACY_CIGARS = "legacy-cigars";
+  private static final String NO_HEADER = "no-header";
   private static final String X_ALTERNATE_SAM_HEADER = "Xalternate-sam-header";
 
   private static class SamFileMergeValidator implements Validator {
@@ -86,6 +87,7 @@ public class SamMergeCli extends AbstractCli {
     final Flag<File> listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "name for output SAM/BAM file. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(LEGACY_CIGARS, "if set, produce legacy cigars (using M rather than X or =) in output").setCategory(UTILITY);
+    mFlags.registerOptional(NO_HEADER, "prevent SAM/BAM header from being written").setCategory(UTILITY);
     mFlags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, CommonFlags.FILE, "treat all SAM records as having the supplied header").setCategory(UTILITY);
     SamFilterOptions.registerSubsampleFlags(mFlags);
     SamFilterOptions.registerMaskFlags(mFlags);
@@ -130,7 +132,7 @@ public class SamMergeCli extends AbstractCli {
     } else {
       uberHeader = SamUtils.getUberHeader(template, inputs.getSamFiles());
     }
-    merger.mergeSamFiles(inputs.getSamFiles(), inputs.getCalibrationFiles(), output, out, template, uberHeader, true, true);
+    merger.mergeSamFiles(inputs.getSamFiles(), inputs.getCalibrationFiles(), output, out, template, uberHeader, !mFlags.isSet(NO_HEADER), true);
     return 0;
   }
 
