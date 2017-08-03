@@ -97,8 +97,8 @@ public class DistributionStep extends Distribution {
   @Override
   public boolean integrity() {
     super.integrity();
-    Exam.assertTrue(" " + mRate1, mRate1 >= 0.0 && !Double.isInfinite(mRate1) && !Double.isNaN(mRate1));
-    Exam.assertTrue(" " + mRate2, mRate2 >= 0.0 && !Double.isInfinite(mRate2) && !Double.isNaN(mRate2));
+    Exam.assertTrue(" " + mRate1, mRate1 >= 0.0 && Double.isFinite(mRate1));
+    Exam.assertTrue(" " + mRate2, mRate2 >= 0.0 && Double.isFinite(mRate2));
     Exam.assertTrue(" offset=" + mOffset + " length=" + mHi, -mHi <= mOffset && mOffset < mHi);
     return true;
   }

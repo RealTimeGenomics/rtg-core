@@ -65,7 +65,7 @@ public final class RealignParamsImplementation extends IntegralAbstract implemen
     }
     assert sum > 0.0;
     final double res = wtdSum / sum;
-    assert !Double.isInfinite(res) && !Double.isNaN(res);
+    assert Double.isFinite(res);
     return res;
   }
 

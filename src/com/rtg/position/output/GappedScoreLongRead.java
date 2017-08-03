@@ -157,7 +157,7 @@ public class GappedScoreLongRead extends AbstractGappedRegion<GappedScoreLongRea
   public boolean integrity() {
     super.integrity();
     if (isInitialized()) {
-      Exam.assertTrue(!Double.isNaN(mScore) && mScore <= 0.0 && !Double.isInfinite(mScore));
+      Exam.assertTrue(mScore <= 0.0 && Double.isFinite(mScore));
     } else {
       Exam.assertTrue(Double.isNaN(mScore));
     }

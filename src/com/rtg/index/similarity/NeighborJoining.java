@@ -92,9 +92,9 @@ public class NeighborJoining {
       final ArrayList<Double> row = new ArrayList<>();
       for (int j = 0; j < i; ++j) {
         final double v = matrix.get(i, j) / (norm[i] * norm[j]);
-        assert v >= 0.0 && !Double.isInfinite(v) && !Double.isNaN(v) : v;
+        assert v >= 0.0 && Double.isFinite(v) : v;
         final double w = 1.0 / (1.0 + v);
-        assert w >= 0.0 && !Double.isInfinite(w) && !Double.isNaN(w) : w;
+        assert w >= 0.0 && Double.isFinite(w) : w;
         row.add(w);
       }
       d.add(row);

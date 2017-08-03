@@ -189,7 +189,7 @@ public class SomaticPriorsTest extends TestCase {
     for (int i = 0; i < len; ++i) {
       final double no = norm[i];
       assertEquals(exp[i], no, 1e-7);
-      assertTrue(!Double.isNaN(no) && !Double.isInfinite(no));
+      assertTrue(Double.isFinite(no));
       sum += no;
     }
     assertEquals(1.0, sum, 1e-7);

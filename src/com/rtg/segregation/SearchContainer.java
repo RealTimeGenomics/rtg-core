@@ -154,7 +154,7 @@ class SearchContainer extends IntegralAbstract implements Comparable<SearchConta
 
   @Override
   public boolean integrity() {
-    Exam.assertTrue(!Double.isInfinite(mScore) && !Double.isNaN(mScore));
+    Exam.assertTrue(Double.isFinite(mScore));
     Exam.assertNotNull(mBlock);
     Exam.assertNotNull(mPattern);
     Exam.assertNotNull(mType);

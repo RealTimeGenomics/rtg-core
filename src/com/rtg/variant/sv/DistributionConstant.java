@@ -59,7 +59,7 @@ public class DistributionConstant extends Distribution {
   @Override
   public boolean integrity() {
     super.integrity();
-    Exam.assertTrue("" + mConstant, mConstant > 0.0 && !Double.isInfinite(mConstant) && !Double.isNaN(mConstant));
+    Exam.assertTrue("" + mConstant, mConstant > 0.0 && Double.isFinite(mConstant));
     return true;
   }
 

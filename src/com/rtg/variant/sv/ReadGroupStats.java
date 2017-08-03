@@ -485,7 +485,7 @@ public class ReadGroupStats {
   }
 
   private boolean checkDoubleNatural(double value) {
-    return !Double.isInfinite(value) && !Double.isNaN(value);
+    return Double.isFinite(value);
   }
 
   /**

@@ -223,21 +223,21 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   private BreakpointConstraint makeDistribution(BreakpointConstraint that, final AbstractBreakpointGeometry geometry) {
     //see discordTheory documentation
     final double w1 = 0.5 / (rStdDev() * rStdDev());
-    assert w1 > 0.0 && !Double.isInfinite(w1) && !Double.isNaN(w1);
+    assert w1 > 0.0 && Double.isFinite(w1);
     final double w2 = 0.5 / (that.rStdDev() * that.rStdDev());
-    assert w2 > 0.0 && !Double.isInfinite(w2) && !Double.isNaN(w2);
+    assert w2 > 0.0 && Double.isFinite(w2);
     final double w = w1 + w2;
-    assert w > 0.0 && !Double.isInfinite(w) && !Double.isNaN(w);
+    assert w > 0.0 && Double.isFinite(w);
     final double stdDev = Math.sqrt(0.5 / w);
-    assert stdDev > 0.0 && !Double.isInfinite(stdDev) && !Double.isNaN(stdDev);
+    assert stdDev > 0.0 && Double.isFinite(stdDev);
     final double v1 = rMean() * w1;
-    assert !Double.isInfinite(v1) && !Double.isNaN(v1) : v1;
+    assert Double.isFinite(v1) : v1;
     final double v2 = that.rMean() * w2;
-    assert !Double.isInfinite(v2) && !Double.isNaN(v2);
+    assert Double.isFinite(v2);
     final double v = v1 + v2;
-    assert !Double.isInfinite(v) && !Double.isNaN(v);
+    assert Double.isFinite(v);
     final double mean = v / w;
-    assert !Double.isInfinite(mean) && !Double.isNaN(mean) : mean;
+    assert Double.isFinite(mean) : mean;
     //System.err.println("sigma1=" + gapStdDev() + " sigma2=" + bc.gapStdDev());
     //System.err.println("mu1=" + gapMean() + " mu2=" + bc.gapMean());
     //System.err.println("v1=" + v1 + " v2=" + v2);
@@ -362,8 +362,8 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   @Override
   public boolean integrity() {
     super.integrity();
-    Exam.assertTrue(!Double.isInfinite(mMeanR) && !Double.isNaN(mMeanR));
-    Exam.assertTrue(0.0 < mStdDeviation && !Double.isInfinite(mStdDeviation) && !Double.isNaN(mStdDeviation));
+    Exam.assertTrue(Double.isFinite(mMeanR));
+    Exam.assertTrue(0.0 < mStdDeviation && Double.isFinite(mStdDeviation));
     return true;
   }
 }

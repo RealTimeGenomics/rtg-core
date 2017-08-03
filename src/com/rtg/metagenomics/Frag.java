@@ -123,7 +123,7 @@ public class Frag extends IntegralAbstract {
       //m is limited by number of fragments (i.e. number of objects in RAM)
       //c is limited by the number of reads
       //therefore incr should be positive and not too large
-      assert incr >= 0.0 && !Double.isInfinite(incr) && !Double.isNaN(incr) : incr;
+      assert incr >= 0.0 && Double.isFinite(incr) : incr;
       //the total in mv should also be ok as total of increments is limited by number of reads
       mv.incr(g, incr);
     }

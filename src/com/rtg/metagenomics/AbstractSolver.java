@@ -118,7 +118,7 @@ public abstract class AbstractSolver implements LineSolver {
    * @return true if finite
    */
   static boolean isFinite(final double d) {
-    return !Double.isInfinite(d) && !Double.isNaN(d);
+    return Double.isFinite(d);
   }
 
   protected static boolean checkLineValueLo(final Line line, final double lo) {

@@ -66,10 +66,10 @@ public class SignalDistributionLn extends IntegralAbstract implements Signal {
         s = 0.0; //allow for rounding errors
       }
       //System.err.println("i=" + i + " rho=" + mDistribution.get(i) + " n=" + count + " s=" + s);
-      assert s >= 0.0 && !Double.isNaN(s) && !Double.isInfinite(s) : s + ":" + count + ":" + mDistributionLn.get(i) + ":" + mDistribution.get(i);
+      assert s >= 0.0 && Double.isFinite(s) : s + ":" + count + ":" + mDistributionLn.get(i) + ":" + mDistribution.get(i);
       sum += s;
     }
-    assert sum >= 0.0 && !Double.isNaN(sum) && !Double.isInfinite(sum);
+    assert sum >= 0.0 && Double.isFinite(sum);
     return sum;
   }
 

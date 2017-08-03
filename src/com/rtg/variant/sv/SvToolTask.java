@@ -368,7 +368,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
     int mini = -1;
     for (int i = 0; i < length; ++i) {
       final double lv = logValues[i];
-      assert !Double.isInfinite(lv) && !Double.isNaN(lv);
+      assert Double.isFinite(lv);
       if (lv < min) {
         min = lv;
         mini = i;
@@ -389,13 +389,13 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
     final double log10 = Math.log(10);
     for (int i = 0; i < length; ++i) {
       final double lv = -logValues[i];
-      assert !Double.isInfinite(lv) && !Double.isNaN(lv);
+      assert Double.isFinite(lv);
       if (i == mini) {
         norm[i] = (lv - othersum) / log10;
       } else {
         norm[i] = (lv - VariantUtils.logSubtract(allsum, lv)) / log10;
       }
-      assert !Double.isInfinite(norm[i]) && !Double.isNaN(norm[i]);
+      assert Double.isFinite(norm[i]);
     }
     return norm;
   }

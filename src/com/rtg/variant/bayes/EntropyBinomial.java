@@ -31,7 +31,7 @@ public final class EntropyBinomial {
     for (final int c : counts) {
       sum += MathUtils.logFactorial(c);
     }
-    assert !Double.isInfinite(sum) && !Double.isNaN(sum);
+    assert Double.isFinite(sum);
     return sum + prior;
   }
 

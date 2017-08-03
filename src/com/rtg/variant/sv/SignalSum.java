@@ -69,7 +69,7 @@ public class SignalSum extends IntegralAbstract implements Signal {
     if (mOut != null) {
       mOut.println(Utils.realFormat(sum, 2));
     }
-    assert !Double.isNaN(sum) && !Double.isInfinite(sum);
+    assert Double.isFinite(sum);
     return sum;
   }
 

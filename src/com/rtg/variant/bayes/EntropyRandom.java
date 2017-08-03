@@ -83,7 +83,7 @@ public final class EntropyRandom {
     for (final int c : counts) {
       sum += entropy(c, counts.length);
     }
-    assert !Double.isInfinite(sum) && !Double.isNaN(sum);
+    assert Double.isFinite(sum);
     return sum + prior;
   }
 

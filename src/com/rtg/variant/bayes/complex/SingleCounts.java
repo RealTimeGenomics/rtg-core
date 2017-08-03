@@ -27,7 +27,7 @@ public class SingleCounts extends IntegralAbstract {
    * @param corr correction
    */
   public void increment(final double corr) {
-    assert corr >= 0.0 && !Double.isInfinite(corr) && !Double.isNaN(corr);
+    assert corr >= 0.0 && Double.isFinite(corr);
     ++mCount;
     mCorrection += corr;
   }
@@ -54,7 +54,7 @@ public class SingleCounts extends IntegralAbstract {
   @Override
   public boolean integrity() {
     Exam.assertTrue(mCount >= 0);
-    Exam.assertTrue(mCorrection >= 0.0 && !Double.isInfinite(mCorrection) && !Double.isNaN(mCorrection));
+    Exam.assertTrue(mCorrection >= 0.0 && Double.isFinite(mCorrection));
     return true;
   }
 

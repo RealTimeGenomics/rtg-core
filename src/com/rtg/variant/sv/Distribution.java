@@ -105,7 +105,7 @@ public abstract class Distribution extends IntegralAbstract {
     integrity();
     for (int i = lo(); i < hi(); ++i) {
       final double v = getValue(i);
-      Exam.assertTrue("" + v, !Double.isNaN(v) && !Double.isInfinite(v));
+      Exam.assertTrue("" + v, Double.isFinite(v));
     }
     return true;
   }
