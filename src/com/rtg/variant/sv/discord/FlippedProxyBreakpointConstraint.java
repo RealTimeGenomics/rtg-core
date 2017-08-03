@@ -43,8 +43,8 @@ public final class FlippedProxyBreakpointConstraint extends AbstractBreakpointGe
   }
 
   @Override
-  protected int getX() {
-    return mProxy.getY();
+  protected int getXLo() {
+    return mProxy.getYLo();
   }
 
   @Override
@@ -53,8 +53,8 @@ public final class FlippedProxyBreakpointConstraint extends AbstractBreakpointGe
   }
 
   @Override
-  protected int getY() {
-    return mProxy.getX();
+  protected int getYLo() {
+    return mProxy.getXLo();
   }
 
   @Override
@@ -63,23 +63,23 @@ public final class FlippedProxyBreakpointConstraint extends AbstractBreakpointGe
   }
 
   @Override
-  protected int getR() {
-    return mProxy.getR();
+  protected int getRLo() {
+    return mProxy.getRLo();
   }
 
   @Override
-  protected int getS() {
-    return mProxy.getS();
+  protected int getRHi() {
+    return mProxy.getRHi();
   }
 
   @Override
-  protected int getW() {
-    return mProxy.getZ();
+  protected int getYHi() {
+    return mProxy.getXHi();
   }
 
   @Override
-  protected int getZ() {
-    return mProxy.getW();
+  protected int getXHi() {
+    return mProxy.getYHi();
   }
 
   @Override

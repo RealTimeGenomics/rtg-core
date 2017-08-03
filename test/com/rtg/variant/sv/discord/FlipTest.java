@@ -82,12 +82,12 @@ public class FlipTest extends TestCase {
       @Override
       void checkFirst() {
         assertEquals(Orientation.UU, mBcFirst.getOrientation());
-        assertEquals(END_FIRST_EXCL, mBcFirst.getX());
-        assertEquals(END_SECOND_EXCL, mBcFirst.getY());
-        assertEquals(END_FIRST_EXCL + MAX_GAP, mBcFirst.getZ());
-        assertEquals(END_SECOND_EXCL + MAX_GAP, mBcFirst.getW());
-        assertEquals(END_FIRST_EXCL + END_SECOND_EXCL + MIN_GAP, mBcFirst.getR());
-        assertEquals(END_FIRST_EXCL + END_SECOND_EXCL + MAX_GAP, mBcFirst.getS());
+        assertEquals(END_FIRST_EXCL, mBcFirst.getXLo());
+        assertEquals(END_SECOND_EXCL, mBcFirst.getYLo());
+        assertEquals(END_FIRST_EXCL + MAX_GAP, mBcFirst.getXHi());
+        assertEquals(END_SECOND_EXCL + MAX_GAP, mBcFirst.getYHi());
+        assertEquals(END_FIRST_EXCL + END_SECOND_EXCL + MIN_GAP, mBcFirst.getRLo());
+        assertEquals(END_FIRST_EXCL + END_SECOND_EXCL + MAX_GAP, mBcFirst.getRHi());
       }
     };
   }
@@ -98,12 +98,12 @@ public class FlipTest extends TestCase {
       @Override
       void checkFirst() {
         assertEquals(Orientation.UD, mBcFirst.getOrientation());
-        assertEquals(END_FIRST_EXCL, mBcFirst.getX());
-        assertEquals(START_SECOND, mBcFirst.getY());
-        assertEquals(END_FIRST_EXCL + MAX_GAP, mBcFirst.getZ());
-        assertEquals(START_SECOND - MAX_GAP, mBcFirst.getW());
-        assertEquals(END_FIRST_EXCL - START_SECOND + MIN_GAP, mBcFirst.getR());
-        assertEquals(END_FIRST_EXCL - START_SECOND + MAX_GAP, mBcFirst.getS());
+        assertEquals(END_FIRST_EXCL, mBcFirst.getXLo());
+        assertEquals(START_SECOND, mBcFirst.getYLo());
+        assertEquals(END_FIRST_EXCL + MAX_GAP, mBcFirst.getXHi());
+        assertEquals(START_SECOND - MAX_GAP, mBcFirst.getYHi());
+        assertEquals(END_FIRST_EXCL - START_SECOND + MIN_GAP, mBcFirst.getRLo());
+        assertEquals(END_FIRST_EXCL - START_SECOND + MAX_GAP, mBcFirst.getRHi());
       }
     };
   }
@@ -114,12 +114,12 @@ public class FlipTest extends TestCase {
       @Override
       void checkFirst() {
         assertEquals(Orientation.DD, mBcFirst.getOrientation());
-        assertEquals(START_FIRST, mBcFirst.getX());
-        assertEquals(START_SECOND, mBcFirst.getY());
-        assertEquals(START_FIRST - MAX_GAP, mBcFirst.getZ());
-        assertEquals(START_SECOND - MAX_GAP, mBcFirst.getW());
-        assertEquals(-START_FIRST - START_SECOND + MIN_GAP, mBcFirst.getR());
-        assertEquals(-START_FIRST - START_SECOND + MAX_GAP, mBcFirst.getS());
+        assertEquals(START_FIRST, mBcFirst.getXLo());
+        assertEquals(START_SECOND, mBcFirst.getYLo());
+        assertEquals(START_FIRST - MAX_GAP, mBcFirst.getXHi());
+        assertEquals(START_SECOND - MAX_GAP, mBcFirst.getYHi());
+        assertEquals(-START_FIRST - START_SECOND + MIN_GAP, mBcFirst.getRLo());
+        assertEquals(-START_FIRST - START_SECOND + MAX_GAP, mBcFirst.getRHi());
       }
     };
   }
@@ -130,12 +130,12 @@ public class FlipTest extends TestCase {
       @Override
       void checkFirst() {
         assertEquals(Orientation.DU, mBcFirst.getOrientation());
-        assertEquals(START_FIRST, mBcFirst.getX());
-        assertEquals(END_SECOND_EXCL, mBcFirst.getY());
-        assertEquals(START_FIRST - MAX_GAP, mBcFirst.getZ());
-        assertEquals(END_SECOND_EXCL + MAX_GAP, mBcFirst.getW());
-        assertEquals(-START_FIRST + END_SECOND_EXCL + MIN_GAP, mBcFirst.getR());
-        assertEquals(-START_FIRST + END_SECOND_EXCL + MAX_GAP, mBcFirst.getS());
+        assertEquals(START_FIRST, mBcFirst.getXLo());
+        assertEquals(END_SECOND_EXCL, mBcFirst.getYLo());
+        assertEquals(START_FIRST - MAX_GAP, mBcFirst.getXHi());
+        assertEquals(END_SECOND_EXCL + MAX_GAP, mBcFirst.getYHi());
+        assertEquals(-START_FIRST + END_SECOND_EXCL + MIN_GAP, mBcFirst.getRLo());
+        assertEquals(-START_FIRST + END_SECOND_EXCL + MAX_GAP, mBcFirst.getRHi());
       }
     };
   }
@@ -145,12 +145,12 @@ public class FlipTest extends TestCase {
 
       @Override
       void checkFirst() {
-        assertEquals(mBcFirst.getX(), mBcFirst.flip().getY());
-        assertEquals(mBcFirst.getY(), mBcFirst.flip().getX());
-        assertEquals(mBcFirst.getZ(), mBcFirst.flip().getW());
-        assertEquals(mBcFirst.getW(), mBcFirst.flip().getZ());
-        assertEquals(mBcFirst.getR(), mBcFirst.flip().getR());
-        assertEquals(mBcFirst.getS(), mBcFirst.flip().getS());
+        assertEquals(mBcFirst.getXLo(), mBcFirst.flip().getYLo());
+        assertEquals(mBcFirst.getYLo(), mBcFirst.flip().getXLo());
+        assertEquals(mBcFirst.getXHi(), mBcFirst.flip().getYHi());
+        assertEquals(mBcFirst.getYHi(), mBcFirst.flip().getXHi());
+        assertEquals(mBcFirst.getRLo(), mBcFirst.flip().getRLo());
+        assertEquals(mBcFirst.getRHi(), mBcFirst.flip().getRHi());
         assertEquals(Orientation.DU, mBcFirst.flip().getOrientation());
         assertEquals(mBcFirst, mBcFirst.flip().flip());
       }

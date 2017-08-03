@@ -54,16 +54,16 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   }
 
   /**
-   * Get the minimum gap between first and second read.
+   * Get the minimum gap permitted between a concordant properly paired first and second read.
    * @param rgs read group statistics.
    * @return the minimum gap.
    */
   static int gapMin(ReadGroupStats rgs) {
-    return Math.max(0, (int) (rgs.gapMean() - concordantDeviation(rgs) + .5));
+    return (int) (rgs.gapMean() - concordantDeviation(rgs) + .5);
   }
 
   /**
-   * Get the maximum gap between first and second read.
+   * Get the maximum gap permitted between a concordant properly paired first and second read.
    * @param rgs read group statistics.
    * @return the maximum gap.
    */
@@ -96,9 +96,10 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   BreakpointConstraint(SAMRecord rec, MachineOrientation mo, ReadGroupStats rgs, double overlapFraction) {
     //this(makeGeometry(rec, mo, rgs), rgs.gapMean(), rgs.gapStdDev());
     mProxy = makeGeometry(rec, mo, rgs, overlapFraction);
-    mMeanR = r(mProxy.getX(), mProxy.getY()) + rgs.gapMean();
+    mMeanR = r(mProxy.getXLo(), mProxy.getYLo()) + rgs.gapMean();
     mStdDeviation = rgs.fragmentStdDev();
-    assert getR() < mMeanR && mMeanR < getS() : this.toString();
+
+    assert getRLo() < mMeanR && mMeanR < getRHi() : this.toString(); // XXX if read overlaps are very common this may not be true, since RLo is clipped
     assert globalIntegrity();
   }
 
@@ -109,21 +110,6 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
     mStdDeviation = rStdDev;
     //System.err.println(this);
     assert globalIntegrity();
-  }
-
-  double x(double r, int y) {
-    final Orientation or = getOrientation();
-    return or.x(r - or.y(y));
-  }
-
-  double y(double r, int x) {
-    final Orientation or = getOrientation();
-    return or.y(r - or.x(x));
-  }
-
-  String gnuPlotMean() {
-    final double r = mMeanR;
-    return gnu(getX(), y(r, getX())) + gnu(x(r, getY()), getY());
   }
 
   // Get probable mate alignment end (0-based exclusive)
@@ -153,56 +139,66 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
 
   static BreakpointGeometry makeGeometry(SAMRecord rec, MachineOrientation mo, ReadGroupStats rgs, double overlapFraction) {
     final Orientation orientation = Orientation.orientation(rec, mo);
+    final String xName = rec.getReferenceName();
+    final String yName = rec.getMateReferenceName();
     final int start = rec.getAlignmentStart() - 1; // To 0-based
     final int end = rec.getAlignmentEnd(); // 1-based inclusive == 0-based exclusive
     final int mateStart = rec.getMateAlignmentStart() - 1;
     final int mateEnd = mateEnd(rec);
     final int breakpointOverlap = overlap(rec, end - start, overlapFraction);
     final int mateBreakpointOverlap = fixedOverlap(mateEnd - mateStart, overlapFraction);
-    final int x = orientation.getX() == +1 ?  end - breakpointOverlap : start + breakpointOverlap;
-    final String xName = rec.getReferenceName();
-    final String yName = rec.getMateReferenceName();
-    final int y = orientation.getY() == +1 ?  mateEnd - mateBreakpointOverlap : mateStart + mateBreakpointOverlap;
-    final int max = gapMax(rgs);
+    final int x = orientation.xDir() == +1 ?  end - breakpointOverlap : start + breakpointOverlap;
+    final int y = orientation.yDir() == +1 ?  mateEnd - mateBreakpointOverlap : mateStart + mateBreakpointOverlap;
     final int min = gapMin(rgs);
+    final int max = gapMax(rgs);
     assert min < rgs.gapMean() && rgs.gapMean() < max;
-    final int z = x + orientation.getX() * max;
-    final int w = y + orientation.getY() * max;
-    final int r = orientation.x(x) + orientation.y(y) + min;
-    final int s = orientation.x(x) + orientation.y(y) + max;
-    return new BreakpointGeometry(orientation, xName, yName, x, z, y, w, r, s);
+    final int xHi = x + orientation.x(max);
+    final int yHi = y + orientation.y(max);
+    final int rLo = orientation.r(x, y) + Math.max(min, 0); // rLo can't be left of x,y
+    final int rHi = orientation.r(x, y) + max;
+    return new BreakpointGeometry(orientation, xName, yName, x, xHi, y, yHi, rLo, rHi);
   }
 
-  static int min(int or, int a, int b) {
+  /**
+   * Check if this is a constraint that fits within the ranges for a normal
+   * non-discordant case.
+   * @param rgs read group statistics
+   * @return true iff not discordant;
+   */
+  boolean isConcordant(ReadGroupStats rgs) {
+    return getXName().equals(getYName())
+      && (getOrientation() == Orientation.UD || getOrientation() == Orientation.DU)
+      && (getOrientation().r(getXLo(), getYLo()) + gapMin(rgs)) <= 0
+      && (getOrientation().r(getXLo(), getYLo()) + gapMax(rgs)) >= 0;
+  }
+
+  /**
+   * Get an object representing the break point position.
+   * @return the position
+   */
+  BreakpointPosition position() {
+    final int rm = (int) MathUtils.round(mMeanR);
+    final int r = rm >= getRHi() ? getRHi() - 1 : rm <= getRLo() ? getRLo() : rm;
+    //System.err.println("rm=" + rm + " r=" + r + " ox=" + ox + " xy=" + xy + " z=" + z);
+
+    final int ax = min(getOrientation().xDir(), x(r, getYLo()), getXHi());
+    final int bx = min(-getOrientation().xDir(), x(r, getYHi()), getXLo());
+    final int mid = (ax + bx) / 2;
+
+    final int ay = min(getOrientation().yDir(), y(r, getXLo()), getYHi());
+    final int by = min(-getOrientation().yDir(), y(r, getXHi()), getYLo());
+    final int midy = (ay + by) / 2;
+
+    //System.err.println("a=" + a + " b=" + b);
+    return (ax < bx) ? new BreakpointPosition(ax, mid, bx, midy) : new BreakpointPosition(bx, mid, ax, midy);
+  }
+
+  private static int min(int or, int a, int b) {
     assert or == +1 || or == -1;
     if (or == +1) {
       return Math.min(a, b);
     }
     return Math.max(a, b);
-  }
-
-  /**
-   * Get a VCF record for the specified sequence.
-   * @return <code>vcfRecord</code> for displaying the selected breakpoint (null if sequence name doesn't agree).
-   */
-  BreakpointPosition position() {
-    final int rm = (int) MathUtils.round(mMeanR);
-    final int r = rm >= getS() ? getS() - 1 : rm <= getR() ? getR() : rm;
-    final int xy = x(r, getY());
-    final int z = getZ();
-    final int ox = getOrientation().getX();
-    //System.err.println("rm=" + rm + " r=" + r + " ox=" + ox + " xy=" + xy + " z=" + z);
-
-    final int a = min(ox, xy, z);
-    final int b = min(-ox, x(r, getW()), getX());
-    final int mid = (a + b) / 2;
-
-    final int ay = min(getOrientation().getY(), y(r, getX()), getW());
-    final int by = min(-getOrientation().getY(), y(r, z), getY());
-    final int midy = (ay + by) / 2;
-
-    //System.err.println("a=" + a + " b=" + b);
-    return (a < b) ? new BreakpointPosition(a, mid, b, midy) : new BreakpointPosition(b, mid, a, midy);
   }
 
   BreakpointConstraint outputGeometry(final String axis) {
@@ -213,6 +209,21 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
     } else {
       return null;
     }
+  }
+
+  String gnuPlotMean() {
+    final double r = mMeanR;
+    return gnu(getXLo(), y(r, getXLo())) + gnu(x(r, getYLo()), getYLo());
+  }
+
+  private double x(double r, int y) {
+    final Orientation or = getOrientation();
+    return or.x(r - or.y(y));
+  }
+
+  private double y(double r, int x) {
+    final Orientation or = getOrientation();
+    return or.y(r - or.x(x));
   }
 
   /**
@@ -268,21 +279,6 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
     return makeDistribution((BreakpointConstraint) that, union);
   }
 
-  /**
-   * Check if this is a constraint that fits within the ranges for a normal
-   * non-discordant case.
-   * @return true iff not discordant;
-   */
-  boolean isConcordant() {
-    if (!getXName().equals(getYName())) {
-      return false;
-    }
-    if (getOrientation() == Orientation.UU || getOrientation() == Orientation.DD) {
-      return false;
-    }
-    return getR() <= 0 && 0 <= getS();
-  }
-
   @Override
   BreakpointConstraint flip() {
     return new BreakpointConstraint(mProxy.flip(), mMeanR, mStdDeviation);
@@ -294,23 +290,23 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   }
 
   @Override
-  protected int getR() {
-    return mProxy.getR();
+  protected int getRLo() {
+    return mProxy.getRLo();
   }
 
   @Override
-  protected int getS() {
-    return mProxy.getS();
+  protected int getRHi() {
+    return mProxy.getRHi();
   }
 
   @Override
-  protected int getW() {
-    return mProxy.getW();
+  protected int getYHi() {
+    return mProxy.getYHi();
   }
 
   @Override
-  protected int getX() {
-    return mProxy.getX();
+  protected int getXLo() {
+    return mProxy.getXLo();
   }
 
   @Override
@@ -319,8 +315,8 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   }
 
   @Override
-  protected int getY() {
-    return mProxy.getY();
+  protected int getYLo() {
+    return mProxy.getYLo();
   }
 
   @Override
@@ -329,8 +325,8 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   }
 
   @Override
-  protected int getZ() {
-    return mProxy.getZ();
+  protected int getXHi() {
+    return mProxy.getXHi();
   }
 
   /**

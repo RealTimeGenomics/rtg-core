@@ -56,7 +56,7 @@ class DiscordantReadSet {
    * @return start position for a constraint beyond which nothing can overlap this read set.
    */
   int flushPosition() {
-    return mUnion.getX() + mMaxVariation;
+    return mUnion.getXLo() + mMaxVariation;
   }
 
 
@@ -70,8 +70,8 @@ class DiscordantReadSet {
       return false;
     }
     if (bg.getXName().equals(bg.getYName())) {
-      final boolean me = mUnion.getX() <= mUnion.getY();
-      final boolean you = bg.getX() <= bg.getY();
+      final boolean me = mUnion.getXLo() <= mUnion.getYLo();
+      final boolean you = bg.getXLo() <= bg.getYLo();
       if (me != you) {
         return false;
       }

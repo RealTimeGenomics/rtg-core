@@ -47,7 +47,7 @@ class ReorderingDebugOutput extends ReorderingQueue<DiscordantReadSet> {
 
   @Override
   protected int getPosition(DiscordantReadSet record) {
-    return record.getUnion().getX();
+    return record.getUnion().getXLo();
   }
 
   @Override

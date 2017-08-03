@@ -123,6 +123,7 @@ public enum Orientation {
 
   private final int mX;
   private final int mY;
+
   /**
    * @param x direction of the first read
    * @param y direction of the second read
@@ -131,19 +132,49 @@ public enum Orientation {
     mX = x;
     mY = y;
   }
+
   /**
-   * Get x.
-   * @return Returns the x where +1 means up and -1 means down
+   * @return the x direction, where +1 means up and -1 means down
    */
-  public int getX() {
+  public int xDir() {
     return mX;
   }
+
   /**
-   * Get y.
-   * @return Returns the y where +1 means up and -1 means down
+   * @return the y direction, where +1 means up and -1 means down
    */
-  public int getY() {
+  public int yDir() {
     return mY;
+  }
+
+  /**
+   * Compute r coordinate value from x and y
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the r coordinate
+   */
+  public int r(int x, int y) {
+    return x(x) + y(y);
+  }
+
+  /**
+   * Compute x coordinate value from r and y
+   * @param r the r coordinate
+   * @param y the y coordinate
+   * @return the r coordinate
+   */
+  public int x(int r, int y) {
+    return x(r - y(y));
+  }
+
+  /**
+   * Compute y coordinate value from r and x
+   * @param r the r coordinate
+   * @param x the x coordinate
+   * @return the r coordinate
+   */
+  public int y(int r, int x) {
+    return y(r - x(x));
   }
 
   /**
@@ -159,7 +190,7 @@ public enum Orientation {
   public abstract int x(final int x);
 
   /**
-   * Transform along the ys-axis.
+   * Transform along the y-axis.
    * @param y value to be transformed.
    * @return the transformed value.
    */
@@ -173,7 +204,7 @@ public enum Orientation {
   public abstract double x(final double x);
 
   /**
-   * Transform along the ys-axis.
+   * Transform along the y-axis.
    * @param y value to be transformed.
    * @return the transformed value.
    */

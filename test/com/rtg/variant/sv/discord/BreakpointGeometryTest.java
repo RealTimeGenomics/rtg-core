@@ -21,14 +21,14 @@ public class BreakpointGeometryTest extends TestCase {
     final AbstractBreakpointGeometry bc = new BreakpointGeometry(Orientation.UU, "a", "b", 42, 151, 256, 365, 298, 407);
     bc.integrity();
     assertEquals(Orientation.UU, bc.getOrientation());
-    assertEquals(42, bc.getX());
-    assertEquals(256, bc.getY());
+    assertEquals(42, bc.getXLo());
+    assertEquals(256, bc.getYLo());
 
-    assertEquals(/* 42 + 109 */151, bc.getZ());
-    assertEquals(/* 256 + 109 */ 365, bc.getW());
+    assertEquals(/* 42 + 109 */151, bc.getXHi());
+    assertEquals(/* 256 + 109 */ 365, bc.getYHi());
 
-    assertEquals(298, bc.getR());
-    assertEquals(407, bc.getS());
+    assertEquals(298, bc.getRLo());
+    assertEquals(407, bc.getRHi());
 
   }
 
@@ -36,15 +36,15 @@ public class BreakpointGeometryTest extends TestCase {
     final AbstractBreakpointGeometry bc = new BreakpointGeometry(Orientation.UD, "a", "b", 42, 151, 256, 147, -214, -105);
     bc.integrity();
     assertEquals(Orientation.UD, bc.getOrientation());
-    assertEquals(42, bc.getX());
-    assertEquals(256, bc.getY());
+    assertEquals(42, bc.getXLo());
+    assertEquals(256, bc.getYLo());
 
 
-    assertEquals(/* 42 + 109 */151, bc.getZ());
-    assertEquals(/* 256 - 109 */ 147, bc.getW());
+    assertEquals(/* 42 + 109 */151, bc.getXHi());
+    assertEquals(/* 256 - 109 */ 147, bc.getYHi());
 
-    assertEquals(-214, bc.getR());
-    assertEquals(-105, bc.getS());
+    assertEquals(-214, bc.getRLo());
+    assertEquals(-105, bc.getRHi());
 
   }
 
@@ -52,14 +52,14 @@ public class BreakpointGeometryTest extends TestCase {
     final AbstractBreakpointGeometry bc = new BreakpointGeometry(Orientation.DD, "a", "b", 42, -67, 256, 147, -298, -189);
     bc.integrity();
     assertEquals(Orientation.DD, bc.getOrientation());
-    assertEquals(42, bc.getX());
-    assertEquals(256, bc.getY());
+    assertEquals(42, bc.getXLo());
+    assertEquals(256, bc.getYLo());
 
-    assertEquals(/* 42 - 109 */ -67, bc.getZ());
-    assertEquals(/* 256 - 109 */ 147, bc.getW());
+    assertEquals(/* 42 - 109 */ -67, bc.getXHi());
+    assertEquals(/* 256 - 109 */ 147, bc.getYHi());
 
-    assertEquals(-298, bc.getR());
-    assertEquals(-189, bc.getS());
+    assertEquals(-298, bc.getRLo());
+    assertEquals(-189, bc.getRHi());
   }
 
   public void testConstructor4() {
@@ -68,14 +68,14 @@ public class BreakpointGeometryTest extends TestCase {
     assertEquals(Orientation.DU, bc.getOrientation());
     assertEquals("a", bc.getXName());
     assertEquals("b", bc.getYName());
-    assertEquals(256, bc.getX());
-    assertEquals(42, bc.getY());
+    assertEquals(256, bc.getXLo());
+    assertEquals(42, bc.getYLo());
 
-    assertEquals(/* 256 - 109 */ 147, bc.getZ());
-    assertEquals(/* 42 + 109 */151, bc.getW());
+    assertEquals(/* 256 - 109 */ 147, bc.getXHi());
+    assertEquals(/* 42 + 109 */151, bc.getYHi());
 
-    assertEquals(-214, bc.getR());
-    assertEquals(-105, bc.getS());
+    assertEquals(-214, bc.getRLo());
+    assertEquals(-105, bc.getRHi());
 
     final String exp = "Break-point constraint:DU x=256,147:a y=42,151:b r=-214,-105";
     assertEquals(exp, bc.toString());
@@ -85,14 +85,14 @@ public class BreakpointGeometryTest extends TestCase {
     assertEquals(Orientation.UD, fl.getOrientation());
     assertEquals("b", fl.getXName());
     assertEquals("a", fl.getYName());
-    assertEquals(42, fl.getX());
-    assertEquals(256, fl.getY());
+    assertEquals(42, fl.getXLo());
+    assertEquals(256, fl.getYLo());
 
-    assertEquals(/* 42 + 109 */151, fl.getZ());
-    assertEquals(/* 256 - 109 */ 147, fl.getW());
+    assertEquals(/* 42 + 109 */151, fl.getXHi());
+    assertEquals(/* 256 - 109 */ 147, fl.getYHi());
 
-    assertEquals(-214, fl.getR());
-    assertEquals(-105, fl.getS());
+    assertEquals(-214, fl.getRLo());
+    assertEquals(-105, fl.getRHi());
   }
 
   public void testMakeGeometry1() {

@@ -602,14 +602,21 @@ public class BreakpointConstraintTest extends TestCase {
     //System.err.println("bc2=" + bc2);
     bc1.integrity();
     bc2.integrity();
+
     final BreakpointConstraint i1 = bc1.intersect(bc2);
     //System.err.println(" i1=" + i1);
     assertEquals(exp, i1);
     checkStats(i1);
+
     final BreakpointConstraint i2 = bc2.intersect(bc1);
     //System.err.println(" i2=" + i2);
     assertEquals(exp, i2);
     checkStats(i2);
+
+    final BreakpointConstraint i3 = i1.intersect(i2);
+    //System.err.println(" i2=" + i2);
+    assertEquals(exp, i3);
+    // checkStats(i3); // stdDev
   }
 
   private void checkStats(BreakpointConstraint bc) {
@@ -745,9 +752,11 @@ public class BreakpointConstraintTest extends TestCase {
   }
 
   public void testIsConcordant() {
-    assertFalse(makeConstraint("x", 110, true, "y", 110 + 9, false, 10).isConcordant());
-    assertFalse(makeConstraint("x", 110, false, "x", 110 + 9, false, 10).isConcordant());
-    assertFalse(makeConstraint("x", 110, true, "x", 110 + 9, true, 10).isConcordant());
+    final int mean = 10;
+    final ReadGroupStats rgs = new MockReadGroupStats(mean);
+    assertFalse(makeConstraint("x", 110, true, "y", 110 + 9, false, mean).isConcordant(rgs));
+    assertFalse(makeConstraint("x", 110, false, "x", 110 + 9, false, mean).isConcordant(rgs));
+    assertFalse(makeConstraint("x", 110, true, "x", 110 + 9, true, mean).isConcordant(rgs));
   }
 
   private void checkIsConcordantUD(boolean expected, int offset) {
@@ -757,13 +766,14 @@ public class BreakpointConstraintTest extends TestCase {
     final int basey = basex + length + mean;
 
     final BreakpointConstraint b = makeConstraint("x", basex, true, "x", basey, false, mean);
+    final ReadGroupStats rgs = new MockReadGroupStats(mean);
     assertEquals(0.0, b.rMean());
-    assertEquals(-b.getR(), b.getS());
-    assertEquals(true, b.isConcordant());
-    assertEquals(expected, makeConstraint("x", basex, true, "x", basey + offset, false, mean).isConcordant());
-    assertEquals(expected, makeConstraint("x", basex, true, "x", basey - offset, false, mean).isConcordant());
-    assertEquals(expected, makeConstraint("x", basex + offset, true, "x", basey, false, mean).isConcordant());
-    assertEquals(expected, makeConstraint("x", basex - offset, true, "x", basey, false, mean).isConcordant());
+    assertEquals(-b.getRLo(), b.getRHi());
+    assertEquals(true, b.isConcordant(rgs));
+    assertEquals(expected, makeConstraint("x", basex, true, "x", basey + offset, false, mean).isConcordant(rgs));
+    assertEquals(expected, makeConstraint("x", basex, true, "x", basey - offset, false, mean).isConcordant(rgs));
+    assertEquals(expected, makeConstraint("x", basex + offset, true, "x", basey, false, mean).isConcordant(rgs));
+    assertEquals(expected, makeConstraint("x", basex - offset, true, "x", basey, false, mean).isConcordant(rgs));
   }
 
   public void testIsConcordantUD() {
@@ -777,13 +787,14 @@ public class BreakpointConstraintTest extends TestCase {
     final int length = 7;
     final int basey = basex + length + mean;
     final BreakpointConstraint b = makeConstraint("x", basey, false, "x", basex, true, mean);
+    final ReadGroupStats rgs = new MockReadGroupStats(mean);
     assertEquals(0.0, b.rMean());
-    assertEquals(-b.getR(), b.getS());
-    assertEquals(true, b.isConcordant());
-    assertEquals(expected, makeConstraint("x", basey, false, "x", basex + offset, true, mean).isConcordant());
-    assertEquals(expected, makeConstraint("x", basey, false, "x", basex - offset, true, mean).isConcordant());
-    assertEquals(expected, makeConstraint("x", basey + offset, false, "x", basex, true, mean).isConcordant());
-    assertEquals(expected, makeConstraint("x", basey - offset, false, "x", basex, true, mean).isConcordant());
+    assertEquals(-b.getRLo(), b.getRHi());
+    assertEquals(true, b.isConcordant(rgs));
+    assertEquals(expected, makeConstraint("x", basey, false, "x", basex + offset, true, mean).isConcordant(rgs));
+    assertEquals(expected, makeConstraint("x", basey, false, "x", basex - offset, true, mean).isConcordant(rgs));
+    assertEquals(expected, makeConstraint("x", basey + offset, false, "x", basex, true, mean).isConcordant(rgs));
+    assertEquals(expected, makeConstraint("x", basey - offset, false, "x", basex, true, mean).isConcordant(rgs));
   }
 
   public void testIsConcordantDU() {
@@ -815,55 +826,55 @@ public class BreakpointConstraintTest extends TestCase {
 
   public void testNoNM() {
     final BreakpointConstraint bc = makeConstraint(true, null, false, true);
-    assertEquals(10, bc.getX());
-    assertEquals(30, bc.getY());
+    assertEquals(10, bc.getXLo());
+    assertEquals(30, bc.getYLo());
     final BreakpointConstraint bf = makeConstraint(false, null, false, true);
-    assertEquals(10, bf.getX());
-    assertEquals(30, bf.getY());
+    assertEquals(10, bf.getXLo());
+    assertEquals(30, bf.getYLo());
   }
 
   public void testNM0() {
     final BreakpointConstraint bc = makeConstraint(true, 0, false, true);
-    assertEquals(10, bc.getX());
-    assertEquals(30, bc.getY());
+    assertEquals(10, bc.getXLo());
+    assertEquals(30, bc.getYLo());
     final BreakpointConstraint bf = makeConstraint(false, 0, false, true);
-    assertEquals(10, bf.getX());
-    assertEquals(30, bf.getY());
+    assertEquals(10, bf.getXLo());
+    assertEquals(30, bf.getYLo());
   }
 
   public void testNM1UU() {
     final BreakpointConstraint bc = makeConstraint(true, 1, true, true);
-    assertEquals(16, bc.getX());
-    assertEquals(30, bc.getY());
+    assertEquals(16, bc.getXLo());
+    assertEquals(30, bc.getYLo());
     final BreakpointConstraint bf = makeConstraint(false, 1, true, true);
-    assertEquals(30, bf.getY());
-    assertEquals(16, bf.getX());
+    assertEquals(30, bf.getYLo());
+    assertEquals(16, bf.getXLo());
   }
 
   public void testNM1UD() {
     final BreakpointConstraint bc = makeConstraint(true, 1, true, false);
-    assertEquals(16, bc.getX());
-    assertEquals(20, bc.getY());
+    assertEquals(16, bc.getXLo());
+    assertEquals(20, bc.getYLo());
     final BreakpointConstraint bf = makeConstraint(false, 1, true, false);
-    assertEquals(20, bf.getY());
-    assertEquals(16, bf.getX());
+    assertEquals(20, bf.getYLo());
+    assertEquals(16, bf.getXLo());
   }
 
   public void testNM1DU() {
     final BreakpointConstraint bc = makeConstraint(true, 1, false, true);
-    assertEquals(11, bc.getX());
-    assertEquals(30, bc.getY());
+    assertEquals(11, bc.getXLo());
+    assertEquals(30, bc.getYLo());
     final BreakpointConstraint bf = makeConstraint(false, 1, false, true);
-    assertEquals(30, bf.getY());
-    assertEquals(11, bf.getX());
+    assertEquals(30, bf.getYLo());
+    assertEquals(11, bf.getXLo());
   }
 
   public void testNM1DD() {
     final BreakpointConstraint bc = makeConstraint(true, 1, false, false);
-    assertEquals(11, bc.getX());
-    assertEquals(20, bc.getY());
+    assertEquals(11, bc.getXLo());
+    assertEquals(20, bc.getYLo());
     final BreakpointConstraint bf = makeConstraint(false, 1, false, false);
-    assertEquals(20, bf.getY());
-    assertEquals(11, bf.getX());
+    assertEquals(20, bf.getYLo());
+    assertEquals(11, bf.getXLo());
   }
 }

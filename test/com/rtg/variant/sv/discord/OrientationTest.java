@@ -99,14 +99,14 @@ public class OrientationTest extends TestCase {
   }
 
   public void testConstructors() {
-    assertEquals(+1, Orientation.UU.getX());
-    assertEquals(+1, Orientation.UU.getY());
-    assertEquals(+1, Orientation.UD.getX());
-    assertEquals(-1, Orientation.UD.getY());
-    assertEquals(-1, Orientation.DU.getX());
-    assertEquals(+1, Orientation.DU.getY());
-    assertEquals(-1, Orientation.DD.getX());
-    assertEquals(-1, Orientation.DD.getY());
+    assertEquals(+1, Orientation.UU.xDir());
+    assertEquals(+1, Orientation.UU.yDir());
+    assertEquals(+1, Orientation.UD.xDir());
+    assertEquals(-1, Orientation.UD.yDir());
+    assertEquals(-1, Orientation.DU.xDir());
+    assertEquals(+1, Orientation.DU.yDir());
+    assertEquals(-1, Orientation.DD.xDir());
+    assertEquals(-1, Orientation.DD.yDir());
   }
   public void testXY() {
     assertEquals(+42, Orientation.UU.x(42));

@@ -209,7 +209,7 @@ public class DummyBreakpointGeometryTest extends TestCase {
   }
 
   private void checkInterAndOver1(Interval a, Interval b, Interval exp) {
-    assertEquals(exp, AbstractBreakpointGeometry.inter(a.getA(), a.getB(), b.getA(), b.getB()));
+    assertEquals(exp, AbstractBreakpointGeometry.intersect(a.getA(), a.getB(), b.getA(), b.getB()));
     assertEquals(exp != null, AbstractBreakpointGeometry.over(a.getA(), a.getB(), b.getA(), b.getB()));
   }
 
@@ -331,17 +331,4 @@ public class DummyBreakpointGeometryTest extends TestCase {
     assertFalse(AbstractBreakpointGeometry.isInRange(1, -1, 2));
   }
 
-  public void testIsInRangeLimit() {
-    assertFalse(AbstractBreakpointGeometry.isInRangeLimit(0, 2, -1));
-    assertTrue(AbstractBreakpointGeometry.isInRangeLimit(0, 2, 0));
-    assertTrue(AbstractBreakpointGeometry.isInRangeLimit(0, 2, 1));
-    assertTrue(AbstractBreakpointGeometry.isInRangeLimit(0, 2, 2));
-    assertFalse(AbstractBreakpointGeometry.isInRangeLimit(0, 2, 3));
-
-    assertFalse(AbstractBreakpointGeometry.isInRangeLimit(1, -1, -2));
-    assertTrue(AbstractBreakpointGeometry.isInRangeLimit(1, -1, -1));
-    assertTrue(AbstractBreakpointGeometry.isInRangeLimit(1, -1, 0));
-    assertTrue(AbstractBreakpointGeometry.isInRangeLimit(1, -1, 1));
-    assertFalse(AbstractBreakpointGeometry.isInRangeLimit(1, -1, 2));
-  }
 }

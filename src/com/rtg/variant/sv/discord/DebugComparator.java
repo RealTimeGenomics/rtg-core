@@ -25,11 +25,11 @@ class DebugComparator implements Comparator<DiscordantReadSet>, Serializable {
   @Override
   public int compare(DiscordantReadSet o1, DiscordantReadSet o2) {
     return new CompareHelper()
-        .compare(o1.getUnion().getX(), o2.getUnion().getX())
-        .compare(o1.getUnion().getZ(), o2.getUnion().getZ())
+        .compare(o1.getUnion().getXLo(), o2.getUnion().getXLo())
+        .compare(o1.getUnion().getXHi(), o2.getUnion().getXHi())
         .compare(o1.getUnion().getYName(), o2.getUnion().getYName())
-        .compare(o1.getUnion().getY(), o2.getUnion().getY())
-        .compare(o1.getUnion().getW(), o2.getUnion().getW())
+        .compare(o1.getUnion().getYLo(), o2.getUnion().getYLo())
+        .compare(o1.getUnion().getYHi(), o2.getUnion().getYHi())
         .compare(o1.getCounts(), o2.getCounts())
         .result();
   }

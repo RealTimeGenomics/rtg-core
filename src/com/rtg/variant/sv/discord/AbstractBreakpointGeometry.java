@@ -12,6 +12,7 @@
 
 package com.rtg.variant.sv.discord;
 
+import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
@@ -56,15 +57,15 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
   abstract Orientation getOrientation();
 
   abstract String getXName();
-  abstract int getX();
-  abstract int getZ();
+  abstract int getXLo(); // AKA x()
+  abstract int getXHi(); // AKA z()
 
   abstract String getYName();
-  abstract int getY();
-  abstract int getW();
+  abstract int getYLo(); // AKA y()
+  abstract int getYHi(); // AKA w()
 
-  protected abstract int getR();
-  protected abstract int getS();
+  protected abstract int getRLo(); // AKA r()
+  protected abstract int getRHi(); // AKA s()
 
   protected boolean overlap(AbstractBreakpointGeometry that) {
     if (this.getOrientation() != that.getOrientation()) {
@@ -77,22 +78,22 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
       return false;
     }
 
-    if (!over(this.getX(), this.getZ(), that.getX(), that.getZ())) {
+    if (!over(this.getXLo(), this.getXHi(), that.getXLo(), that.getXHi())) {
       return false;
     }
 
-    if (!over(this.getY(), this.getW(), that.getY(), that.getW())) {
+    if (!over(this.getYLo(), this.getYHi(), that.getYLo(), that.getYHi())) {
       return false;
     }
 
-    if (!over(this.getR(), this.getS(), that.getR(), that.getS())) {
+    if (!over(this.getRLo(), this.getRHi(), that.getRLo(), that.getRHi())) {
       return false;
     }
 
     return true;
   }
 
-  static Interval inter(int a0, int b0, int a1, int b1) {
+  static Interval intersect(int a0, int b0, int a1, int b1) {
     //System.err.println("inter a0=" + a0 + " b0=" + b0 + " a1=" + a1 + " b1=" + b1);
     final int a2;
     final int b2;
@@ -135,24 +136,23 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
       return null;
     }
 
-    final Interval x = inter(this.getX(), this.getZ(), that.getX(), that.getZ());
+    final Interval x = intersect(this.getXLo(), this.getXHi(), that.getXLo(), that.getXHi());
     if (x == null) {
       return null;
     }
-    final Interval y = inter(this.getY(), this.getW(), that.getY(), that.getW());
+    final Interval y = intersect(this.getYLo(), this.getYHi(), that.getYLo(), that.getYHi());
     if (y == null) {
       return null;
     }
-    final Interval r = inter(this.getR(), this.getS(), that.getR(), that.getS());
+    final Interval r = intersect(this.getRLo(), this.getRHi(), that.getRLo(), that.getRHi());
     if (r == null) {
       return null;
     }
 
     //TODO prove that xp, yp, rp cannot be null
-    final Interval xp = inter(x.getA(), x.getB(), x(r.getA(), y.getB()), x(r.getB(), y.getA()));
-    final Interval yp = inter(y.getA(), y.getB(), y(r.getA(), x.getB()), y(r.getB(), x.getA()));
-    final Interval rp = inter(r.getA(), r.getB(), r(x.getA(), y.getA()), r(x.getB(), y.getB()));
-
+    final Interval xp = intersect(x.getA(), x.getB(), x(r.getA(), y.getB()), x(r.getB(), y.getA()));
+    final Interval yp = intersect(y.getA(), y.getB(), y(r.getA(), x.getB()), y(r.getB(), x.getA()));
+    final Interval rp = intersect(r.getA(), r.getB(), r(x.getA(), y.getA()), r(x.getB(), y.getB()));
     final AbstractBreakpointGeometry res = makeBreakpointGeometry(xp, yp, rp);
     //System.err.println(" res=" + res);
     assert res.integrity();
@@ -164,18 +164,15 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
   }
 
   int r(int x, int y) {
-    final Orientation or = getOrientation();
-    return or.x(x) + or.y(y);
+    return getOrientation().r(x, y);
   }
 
   int x(int r, int y) {
-    final Orientation or = getOrientation();
-    return or.x(r - or.y(y));
+    return getOrientation().x(r, y);
   }
 
   int y(int r, int x) {
-    final Orientation or = getOrientation();
-    return or.y(r - or.x(x));
+    return getOrientation().y(r, x);
   }
 
   AbstractBreakpointGeometry union(AbstractBreakpointGeometry that) {
@@ -189,9 +186,9 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
       return null;
     }
 
-    final Interval x = union(this.getX(), this.getZ(), that.getX(), that.getZ());
-    final Interval y = union(this.getY(), this.getW(), that.getY(), that.getW());
-    final Interval r = union(this.getR(), this.getS(), that.getR(), that.getS());
+    final Interval x = union(this.getXLo(), this.getXHi(), that.getXLo(), that.getXHi());
+    final Interval y = union(this.getYLo(), this.getYHi(), that.getYLo(), that.getYHi());
+    final Interval r = union(this.getRLo(), this.getRHi(), that.getRLo(), that.getRHi());
 
     final AbstractBreakpointGeometry res = makeBreakpointGeometry(x, y, r);
     //System.err.println(this.gnuPlot());
@@ -225,17 +222,17 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
   @Override
   public void toString(StringBuilder sb) {
     sb.append("Break-point constraint:").append(getOrientation());
-    sb.append(" x=").append(getX()).append(",").append(getZ()).append(":").append(getXName());
-    sb.append(" y=").append(getY()).append(",").append(getW()).append(":").append(getYName());
-    sb.append(" r=").append(getR()).append(",").append(getS());
+    sb.append(" x=").append(getXLo()).append(",").append(getXHi()).append(":").append(getXName());
+    sb.append(" y=").append(getYLo()).append(",").append(getYHi()).append(":").append(getYName());
+    sb.append(" r=").append(getRLo()).append(",").append(getRHi());
   }
 
   private boolean equalsLocal(Object obj) {
     final AbstractBreakpointGeometry that = (AbstractBreakpointGeometry) obj;
     return this.getXName().equals(that.getXName()) && this.getYName().equals(that.getYName())
-        && this.getX() == that.getX() && this.getY() == that.getY()
-        && this.getZ() == that.getZ() && this.getW() == that.getW()
-        && this.getR() == that.getR() && this.getS() == that.getS();
+        && this.getXLo() == that.getXLo() && this.getYLo() == that.getYLo()
+        && this.getXHi() == that.getXHi() && this.getYHi() == that.getYHi()
+        && this.getRLo() == that.getRLo() && this.getRHi() == that.getRHi();
   }
 
   @Override
@@ -280,24 +277,34 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
    */
   static String gnuPlot(final AbstractBreakpointGeometry bg) {
     final StringBuilder sb = new StringBuilder();
-    final int x = bg.getX();
-    final int y = bg.getY();
-    final int r = bg.getR();
-    final int s = bg.getS();
+    final int x = bg.getXLo();
+    final int y = bg.getYLo();
+    final int r = bg.getRLo();
+    final int s = bg.getRHi();
     final Orientation or = bg.getOrientation();
     final int rx = or.x(r - or.y(y));
     final int ry = or.y(r - or.x(x));
-    final int w = bg.getW();
+    final int w = bg.getYHi();
     final int sx = or.x(s - or.y(w));
-    final int z = bg.getZ();
+    final int z = bg.getXHi();
     final int sy = or.y(s - or.x(z));
-    sb.append(gnu(max(or.getX(), x, rx), y));
-    sb.append(gnu(x, max(or.getY(), y, ry)));
+    sb.append(gnu(max(or.xDir(), x, rx), y));
+    sb.append(gnu(x, max(or.yDir(), y, ry)));
     sb.append(gnu(x, w));
-    sb.append(gnu(max(or.getX(), x, sx), w));
-    sb.append(gnu(z, max(or.getY(), y, sy)));
+    sb.append(gnu(max(or.xDir(), x, sx), w));
+    sb.append(gnu(z, max(or.yDir(), y, sy)));
     sb.append(gnu(z, y));
-    sb.append(gnu(max(or.getX(), x, rx), y));
+    sb.append(gnu(max(or.xDir(), x, rx), y));
+    if (max(or.xDir(), x, rx) != rx) {
+      sb.append(StringUtils.LS);
+      sb.append(gnu(rx, y));
+      sb.append(gnu(max(or.xDir(), x, rx), y));
+    }
+    if (max(or.yDir(), y, ry) != ry) {
+      sb.append(StringUtils.LS);
+      sb.append(gnu(x, ry));
+      sb.append(gnu(x, max(or.yDir(), y, ry)));
+    }
     return sb.toString();
   }
 
@@ -327,10 +334,10 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
    */
   int count() {
     int count = 0;
-    final int xo = getOrientation().getX();
-    final int yo = getOrientation().getY();
-    for (int xi = getX(); isInRange(getX(), getZ(), xi); xi += xo) {
-      for (int yi = getY(); isInRange(getY(), getW(), yi); yi += yo) {
+    final int xo = getOrientation().xDir();
+    final int yo = getOrientation().yDir();
+    for (int xi = getXLo(); isInRange(getXLo(), getXHi(), xi); xi += xo) {
+      for (int yi = getYLo(); isInRange(getYLo(), getYHi(), yi); yi += yo) {
         count += probe(xi, yi);
       }
     }
@@ -339,7 +346,7 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
 
   int probe(int x, int y) {
     final int r = r(x, y);
-    final boolean pr = isInRange(getX(), getZ(), x) && isInRange(getY(), getW(), y) && isInRange(getR(), getS(), r);
+    final boolean pr = isInRange(getXLo(), getXHi(), x) && isInRange(getYLo(), getYHi(), y) && isInRange(getRLo(), getRHi(), r);
     return pr ? 1 : 0;
   }
 
@@ -362,33 +369,15 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
   }
 
   /**
-   * Check that x which is assumed to be an exclusive bound is in the range from a (inclusive) to b (exclusive bound but inclusive because checking another bound).
-   * Works for either a &lt; b or a &gt; b.
-   * @param a start of range (inclusive).
-   * @param b end of range (exclusive).
-   * @param x exclusive bound to be checked
-   * @return true iff x is range from a to b.
-   */
-  static boolean isInRangeLimit(final int a, final int b, final int x) {
-    //System.err.println("probe a=" + a + " b=" + b + " x=" + x);
-    if (a < b) {
-      return a <= x && x <= b;
-    } else {
-      assert b < a;
-      return a >= x && x >= b;
-    }
-  }
-
-  /**
    * Find the earliest position along the specified axis that is covered by this geometry.
    * @param name of the axis along which a position is being found.
    * @return the position (null if neither axis matches the name).
    */
   Integer position(final String name) {
     if (name.equals(getXName())) {
-      return getX();
+      return getXLo();
     } else if (name.equals(getYName())) {
-      return getY();
+      return getYLo();
     } else {
       return null;
     }
@@ -397,38 +386,38 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
   @Override
   public boolean integrity() {
     final Orientation or = getOrientation();
-    if (or.getX() == +1) {
-      Exam.assertTrue(getX() < getZ());
+    if (or.xDir() == +1) {
+      Exam.assertTrue(getXLo() < getXHi());
     } else {
-      Exam.assertTrue(getX() > getZ());
+      Exam.assertTrue(getXLo() > getXHi());
     }
-    if (or.getY() == +1) {
-      Exam.assertTrue(getY() < getW());
+    if (or.yDir() == +1) {
+      Exam.assertTrue(getYLo() < getYHi());
     } else {
-      Exam.assertTrue(getY() > getW());
+      Exam.assertTrue(getYLo() > getYHi());
     }
-    Exam.assertTrue(this.toString(), getR() < getS());
+    Exam.assertTrue(this.toString(), getRLo() < getRHi());
 
     boolean error = false;
     final StringBuilder sb = new StringBuilder();
     //constraints on the range of r
-    final int rxy = r(getX(), getY());
+    final int rxy = r(getXLo(), getYLo());
     //Assert.assertTrue(getR() >= rxy);
 
-    final int rxw = r(getX(), getW());
-    final int rzy = r(getZ(), getY());
+    final int rxw = r(getXLo(), getYHi());
+    final int rzy = r(getXHi(), getYLo());
     final int rmax = Math.min(rxw, rzy);
     //Assert.assertTrue(getR() <= rmax);
-    if (!(rxy <= getR() && getR() <= rmax)) {
-      sb.append("R=").append(getR()).append(" not in range ").append(rxy).append(":").append(rmax).append(LS);
+    if (!(rxy <= getRLo() && getRLo() <= rmax)) {
+      sb.append("RLo=").append(getRLo()).append(" not in range ").append(rxy).append(":").append(rmax).append(LS);
       error = true;
     }
 
     //constraints on the range of s
-    final int rzw = r(getZ(), getW());
+    final int rzw = r(getXHi(), getYHi());
     final int smin = Math.max(rxw, rzy);
-    if (!(smin <= getS() && getS() <= rzw)) {
-      sb.append("S=").append(getS()).append(" not in range ").append(smin).append(":").append(rzw).append(LS);
+    if (!(smin <= getRHi() && getRHi() <= rzw)) {
+      sb.append("RHi=").append(getRHi()).append(" not in range ").append(smin).append(":").append(rzw).append(LS);
       error = true;
     }
     //Assert.assertTrue(smin <= getS());

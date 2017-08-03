@@ -76,8 +76,8 @@ public class VcfDiscordantOutputFormatter {
     final boolean unionOnly = readset.getIntersection() == null;
     final BreakpointConstraint geo = unionOnly ? readset.getUnion() : readset.getIntersection();
     final BreakpointPosition pos = geo.position();
-    final int ory = geo.getOrientation().getY();
-    final int orx = geo.getOrientation().getX();
+    final int ory = geo.getOrientation().yDir();
+    final int orx = geo.getOrientation().xDir();
     // Adjust ref pos include anchoring base for "local up" breakends
     // Use Math.max(x, 0) to handle breakends positioned before the start of the reference
     final int refAdjust = orx == +1 ? 1 : 0;

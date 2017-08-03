@@ -13,7 +13,6 @@ package com.rtg.variant.sv.discord;
 
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -69,7 +68,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
   }
 
   static final String OUTPUT_FILENAME = "discordant_pairs.vcf";
-  static final String DEBUG_FILENAME = "debug_discordant_pairs.txt";
+  static final String DEBUG_FILENAME = "debug_discordant_pairs.tsv";
   static final String BED_FILENAME = "discordant_pairs.bed";
   static final String BAM_FILENAME_PREFIX = "discordant";
   static final String DT_OUTPUT_VERSION = "1";
@@ -252,8 +251,8 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       }
       final double dev = BreakpointConstraint.concordantDeviation(rgs);
       Diagnostic.userLog("Read group " + srgr.getId() + " concordant deviation +/-" + MathUtils.round(dev)
-        + ", fragment (" + Math.max(0, (int) (rgs.fragmentMean() - dev)) + "," + (int) (rgs.fragmentMean() + dev) + ")"
-        + ", gap (" + Math.max(0, (int) (rgs.gapMean() - dev)) + "," + (int) (rgs.gapMean() + dev) + ")");
+        + ", fragment (" + (int) (rgs.fragmentMean() - dev) + "," + (int) rgs.fragmentMean() + "," + (int) (rgs.fragmentMean() + dev) + ")"
+        + ", gap (" + (int) (rgs.gapMean() - dev) + "," + (int) rgs.gapMean() + "," + (int) (rgs.gapMean() + dev) + ")");
       maxMaxGap = Math.max(maxMaxGap, BreakpointConstraint.gapMax(rgs));
     }
     if (!mParams.multisample() && sampleNames.size() > 1) {
@@ -296,11 +295,11 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       if ((rec.getAlignmentEnd() - rec.getAlignmentStart()) >= rgs.meanLength() / 3) {
 
         final BreakpointConstraint constraint = new BreakpointConstraint(rec, mo, rgs, mParams.overlapFraction());
-        if (!constraint.isConcordant()) {
+        if (!constraint.isConcordant(rgs)) {
           processConstraint(constraint, mReadSets, mTemplateName, mMaxGap, mBamType == BamType.NONE ? null : rec);
           ++mTotalDiscordantRecords;
           if (DEBUG_PER_RECORD) {
-            dumpAllReadSets();
+            dumpAllReadSets(constraint);
           }
         }
       }
@@ -309,8 +308,9 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
     return true;
   }
 
-  private void dumpAllReadSets() throws IOException {
-    try (OutputStream debugOutput = new FileOutputStream(mParams.file("debug_discordant_pairs_" + mTotalDiscordantRecords + ".txt"))) {
+  private void dumpAllReadSets(BreakpointConstraint constraint) throws IOException {
+    final File dumpFile = mParams.outFile("debug_discordant_pairs_" + mTotalDiscordantRecords + ".tsv");
+    try (OutputStream debugOutput = FileUtils.createOutputStream(dumpFile)) {
       debugOutput.write(mDebugFormatter.header().getBytes());
       try (final ReorderingDebugOutput r = new ReorderingDebugOutput(mDebugFormatter, debugOutput, 5 * mMaxGap)) {
         for (DiscordantReadSet drs : mWritten) {
@@ -319,7 +319,12 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
         for (DiscordantReadSet drs : mReadSets) {
           r.addRecord(drs);
         }
+        // Also output a DRS corresponding to the current record only, useful for seeing how it overlaps the DRS it is merged into
+        r.addRecord(new DiscordantReadSet(mTemplateName, mMaxGap, constraint));
       }
+    }
+    if (mParams.blockCompressed() && mParams.outputTabixIndex()) {
+      indexTsv(dumpFile);
     }
   }
 
@@ -339,8 +344,13 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       newDrs = new DiscordantReadSet(templateName, maxGap, constraint);
     } else if (size == 1) {
       newDrs = overlap.get(0);
+      final boolean hasIntersection = newDrs.getIntersection() != null;
       newDrs.add(constraint);
+      if (record != null && hasIntersection && newDrs.getIntersection() == null) {
+        Diagnostic.developerLog("Intersection eliminated in " + newDrs + " with the addition of " + record.getSAMString());
+      }
     } else {
+      Diagnostic.developerLog("Merging multiple existing DRS: " + overlap);
       newDrs = new DiscordantReadSet(templateName, maxGap, constraint);
       for (final DiscordantReadSet over : overlap) {
         newDrs.addAll(over);
@@ -373,29 +383,48 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       }
     }
     if (mParams.blockCompressed() && mParams.outputTabixIndex()) {
+      if (mDebugOutput != null) {
+        indexTsv(mParams.outFile(DEBUG_FILENAME));
+      }
       if (mBedOutput != null) {
-        final Timer indexing = new Timer("BedIndex");
-        indexing.start();
-        final File file = mParams.outFile(BED_FILENAME);
-        try {
-          new TabixIndexer(file, new File(file.getParent(), file.getName() + TabixIndexer.TABIX_EXTENSION)).saveBedIndex();
-        } catch (final UnindexableDataException e) {
-          Diagnostic.warning("Cannot produce TABIX index for: " + file + ": " + e.getMessage());
-        }
-        indexing.stop();
-        indexing.log();
+        indexBed();
       }
-      final Timer indexing = new Timer("VcfIndex");
-      indexing.start();
-      final File file = mParams.outFile(OUTPUT_FILENAME);
-      try {
-        new TabixIndexer(file).saveVcfIndex();
-      } catch (final UnindexableDataException e) {
-        Diagnostic.warning("Cannot produce TABIX index for: " + file + ": " + e.getMessage());
-      }
-      indexing.stop();
-      indexing.log();
+      indexVcf();
     }
+  }
+
+  private void indexTsv(File file) throws IOException {
+    try {
+      new TabixIndexer(file, new File(file.getParent(), file.getName() + TabixIndexer.TABIX_EXTENSION)).saveIndex(new DebugDiscordantOutputFormatter.DebugIndexerFactory());
+    } catch (final UnindexableDataException e) {
+      Diagnostic.warning("Cannot produce TABIX index for: " + file + ": " + e.getMessage());
+    }
+  }
+
+  private void indexBed() throws IOException {
+    final Timer indexing = new Timer("BedIndex");
+    indexing.start();
+    final File file = mParams.outFile(BED_FILENAME);
+    try {
+      new TabixIndexer(file, new File(file.getParent(), file.getName() + TabixIndexer.TABIX_EXTENSION)).saveBedIndex();
+    } catch (final UnindexableDataException e) {
+      Diagnostic.warning("Cannot produce TABIX index for: " + file + ": " + e.getMessage());
+    }
+    indexing.stop();
+    indexing.log();
+  }
+
+  private void indexVcf() throws IOException {
+    final Timer indexing = new Timer("VcfIndex");
+    indexing.start();
+    final File file = mParams.outFile(OUTPUT_FILENAME);
+    try {
+      new TabixIndexer(file).saveVcfIndex();
+    } catch (final UnindexableDataException e) {
+      Diagnostic.warning("Cannot produce TABIX index for: " + file + ": " + e.getMessage());
+    }
+    indexing.stop();
+    indexing.log();
   }
 
   private class BreakpointPositionComparator implements Comparator<DiscordantReadSet> {
@@ -403,11 +432,11 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
     public int compare(DiscordantReadSet o1, DiscordantReadSet o2) {
       return new CompareHelper()
           .compare(readSetPosition(o1), readSetPosition(o2))
-          .compare(o1.getUnion().getX(), o2.getUnion().getX())
-          .compare(getConstraint(o1).getZ(), getConstraint(o2).getZ())
+          .compare(o1.getUnion().getXLo(), o2.getUnion().getXLo())
+          .compare(getConstraint(o1).getXHi(), getConstraint(o2).getXHi())
           .compare(getConstraint(o1).getYName(), getConstraint(o2).getYName())
-          .compare(getConstraint(o1).getY(), getConstraint(o2).getY())
-          .compare(getConstraint(o1).getW(), getConstraint(o2).getW())
+          .compare(getConstraint(o1).getYLo(), getConstraint(o2).getYLo())
+          .compare(getConstraint(o1).getYHi(), getConstraint(o2).getYHi())
           .result();
     }
   }

@@ -45,12 +45,12 @@ public final class BreakpointGeometry extends AbstractBreakpointGeometry {
   private final Orientation mOrientation;
   private final String mXName;
   private final String mYName;
-  private final int mX;
-  private final int mZ;
-  private final int mY;
-  private final int mW;
-  private final int mR;
-  private final int mS;
+  private final int mXLo;
+  private final int mXHi;
+  private final int mYLo;
+  private final int mYHi;
+  private final int mRLo;
+  private final int mRHi;
 
   private final AbstractBreakpointGeometry mFlip;
 
@@ -58,24 +58,24 @@ public final class BreakpointGeometry extends AbstractBreakpointGeometry {
    * @param orientation along the two axes.
    * @param xName name of x sequence.
    * @param yName name of y sequence.
-   * @param x first x co-ordinate value
-   * @param z second x co-ordinate value
-   * @param y first y co-ordinate value
-   * @param w second y co-ordinate value
-   * @param r first diagonal value
-   * @param s second diagonal value
+   * @param xLo first x co-ordinate value
+   * @param xHi second x co-ordinate value
+   * @param yLo first y co-ordinate value
+   * @param yHi second y co-ordinate value
+   * @param rLo first diagonal value
+   * @param rHi second diagonal value
    */
-  protected BreakpointGeometry(Orientation orientation, String xName, String yName, int x, int z, int y, int w, int r, int s) {
+  protected BreakpointGeometry(Orientation orientation, String xName, String yName, int xLo, int xHi, int yLo, int yHi, int rLo, int rHi) {
     super();
     mOrientation = orientation;
     mXName = xName;
     mYName = yName;
-    mX = x;
-    mZ = z;
-    mY = y;
-    mW = w;
-    mR = r;
-    mS = s;
+    mXLo = xLo;
+    mXHi = xHi;
+    mYLo = yLo;
+    mYHi = yHi;
+    mRLo = rLo;
+    mRHi = rHi;
     mFlip = new FlippedProxyBreakpointConstraint(this);
     //assert globalIntegrity();
   }
@@ -112,8 +112,8 @@ public final class BreakpointGeometry extends AbstractBreakpointGeometry {
    * @return Returns the x.
    */
   @Override
-  protected int getX() {
-    return mX;
+  protected int getXLo() {
+    return mXLo;
   }
 
   /**
@@ -121,8 +121,8 @@ public final class BreakpointGeometry extends AbstractBreakpointGeometry {
    * @return Returns the z.
    */
   @Override
-  protected int getZ() {
-    return mZ;
+  protected int getXHi() {
+    return mXHi;
   }
 
   /**
@@ -130,8 +130,8 @@ public final class BreakpointGeometry extends AbstractBreakpointGeometry {
    * @return Returns the y.
    */
   @Override
-  protected int getY() {
-    return mY;
+  protected int getYLo() {
+    return mYLo;
   }
 
   /**
@@ -139,8 +139,8 @@ public final class BreakpointGeometry extends AbstractBreakpointGeometry {
    * @return Returns the w.
    */
   @Override
-  protected int getW() {
-    return mW;
+  protected int getYHi() {
+    return mYHi;
   }
 
   /**
@@ -148,8 +148,8 @@ public final class BreakpointGeometry extends AbstractBreakpointGeometry {
    * @return Returns the r.
    */
   @Override
-  protected int getR() {
-    return mR;
+  protected int getRLo() {
+    return mRLo;
   }
 
   /**
@@ -157,8 +157,8 @@ public final class BreakpointGeometry extends AbstractBreakpointGeometry {
    * @return Returns the s.
    */
   @Override
-  protected int getS() {
-    return mS;
+  protected int getRHi() {
+    return mRHi;
   }
 
   @Override
@@ -166,9 +166,9 @@ public final class BreakpointGeometry extends AbstractBreakpointGeometry {
     super.integrity();
     Exam.assertNotNull(mOrientation);
     Exam.assertNotNull(mXName);
-    Exam.assertTrue(0 <= mX);
+    Exam.assertTrue(0 <= mXLo);
     Exam.assertNotNull(mYName);
-    Exam.assertTrue(0 <= mY);
+    Exam.assertTrue(0 <= mYLo);
     return true;
   }
 

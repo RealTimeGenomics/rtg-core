@@ -145,8 +145,6 @@ public final class SvCliUtils {
       if (!e.isValid()) {
         throw new NoTalkbackSlimException("Invalid read group statistics for read group: " + e.id());
       //the below checks are what was previously being asserted upon output of rg stats file.
-      } else if (e.gapMean() <= 20.0) {
-        throw new NoTalkbackSlimException("Gap mean in statistics for read group: " + e.id() + " must be greater than 20.0");
       } else if (e.meanLength() <= 10.0) {
         throw new NoTalkbackSlimException("Mean length in statistics for read group: " + e.id() + " must be greater than 10.0");
       } else if (e.fragmentMean() <= 20.0) {

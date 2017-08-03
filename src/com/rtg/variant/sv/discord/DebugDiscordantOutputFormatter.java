@@ -15,13 +15,40 @@ package com.rtg.variant.sv.discord;
 import static com.rtg.util.StringUtils.LS;
 import static com.rtg.util.StringUtils.TAB;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.rtg.tabix.BlockCompressedLineReader;
+import com.rtg.tabix.BlockCompressedPositionReader;
+import com.rtg.tabix.GenericPositionReader;
+import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.Environment;
 import com.rtg.util.cli.CommandLine;
+
+import htsjdk.samtools.util.BlockCompressedInputStream;
 
 /**
  * Produces debug output for investigations
  */
 public class DebugDiscordantOutputFormatter {
+
+  /** Permit tabix indexing of debug output files */
+  static class DebugIndexerFactory extends TabixIndexer.IndexerFactory {
+
+    DebugIndexerFactory() {
+      super(0);
+    }
+
+    @Override
+    public TabixIndexer.TabixOptions getOptions() {
+      return new TabixIndexer.TabixOptions(TabixIndexer.TabixOptions.FORMAT_GENERIC, 1, 2, 3, '#', mSkip, true);
+    }
+
+    @Override
+    public BlockCompressedPositionReader getReader(InputStream is) throws IOException {
+      return new GenericPositionReader(new BlockCompressedLineReader(new BlockCompressedInputStream(is)), getOptions());
+    }
+  }
 
   /**
    * Format the given object
@@ -44,19 +71,19 @@ public class DebugDiscordantOutputFormatter {
   private void output(AbstractBreakpointGeometry geo, StringBuilder sb) {
     sb.append(geo.getXName());
     sb.append(TAB);
-    sb.append(geo.getX());
+    sb.append(geo.getXLo());
     sb.append(TAB);
-    sb.append(geo.getZ());
+    sb.append(geo.getXHi());
     sb.append(TAB);
     sb.append(geo.getYName());
     sb.append(TAB);
-    sb.append(geo.getY());
+    sb.append(geo.getYLo());
     sb.append(TAB);
-    sb.append(geo.getW());
+    sb.append(geo.getYHi());
     sb.append(TAB);
-    sb.append(geo.getR());
+    sb.append(geo.getRLo());
     sb.append(TAB);
-    sb.append(geo.getS());
+    sb.append(geo.getRHi());
   }
 
   /**
