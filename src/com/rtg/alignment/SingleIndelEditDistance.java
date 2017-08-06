@@ -33,10 +33,6 @@ import com.rtg.util.integrity.IntegralAbstract;
 @TestClass({"com.rtg.alignment.SingleIndelEditDistanceTest", "com.rtg.alignment.SingleIndelEditDistancePropsFileTest"})
 public class SingleIndelEditDistance extends IntegralAbstract implements UnidirectionalEditDistance {
 
-//  private static final String INDEL_TABLE = GlobalFlags.getStringValue(GlobalFlags.EDIT_DIST_INDEL_TABLE_FLAG);
-  //private static final String INDEL_TABLE = System.getProperty(GlobalFlags.EDIT_DIST_INDEL_TABLE_FLAG);
-  //private static final String INDEL_TABLE = "/home/len/indeltable.properties";
-
   protected static final int UNKNOWN = DNA.N.ordinal();
 
   protected final int mSubstitutionPenalty;
@@ -203,11 +199,10 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
   }
 
   /**
-   * Tries to perform a quick alignment with substitutions only and as many
-   * as possible, permitted by the penalties. This is not
-   * useful for Complete Genomics data (and all Complete Genomics testing has
-   * been removed from it).
-   * <br><br>
+   * Perform an alignment containing at most one insertion or deletion and as up
+   * to as many substitutions as permitted by the penalties.  This aligner is not
+   * applicable to Complete Genomics reads.
+   * <br>
    * The following diagram illustrates the relationship of the various parts.
    * More detailed diagrams are given for individual methods below.
    * <br>
