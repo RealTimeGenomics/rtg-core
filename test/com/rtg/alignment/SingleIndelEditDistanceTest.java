@@ -91,9 +91,9 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
 
   private void checkm(final int rb, final int tb, final boolean treatnsAsMismatches, final int exp) {
     final int penalty = 9;
-    final int m0 = SingleIndelEditDistance.m((byte) tb, (byte) rb, penalty, treatnsAsMismatches ? 9 : 0);
+    final int m0 = SingleIndelEditDistance.m((byte) tb, (byte) rb, 0, penalty, treatnsAsMismatches ? 9 : 0);
     assertEquals(exp, m0);
-    final int m1 = SingleIndelEditDistance.m((byte) rb, (byte) tb, penalty, treatnsAsMismatches ? 9 : 0);
+    final int m1 = SingleIndelEditDistance.m((byte) rb, (byte) tb, 0, penalty, treatnsAsMismatches ? 9 : 0);
     assertEquals(exp, m1);
   }
 
@@ -104,7 +104,7 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
         + " rLen=8" + " maxScore=2147483647" + " mMaxShift=9" + LS
         + " 0" + " 0" + " 0" + " 0" + " 0" + " 0" + " 0" + " 0" + LS
         + " 0" + " 0" + " 0" + " 0" + " 0" + " 0" + " 0" + " 0" + LS
-        + " firstMiss=0" + " lastMiss=7" + " diagScore=0" + " bestOffset=0" + LS
+        + " firstMiss=-1" + " lastMiss=-1" + " diagScore=0" + " bestOffset=0" + LS
         ;
     final int[] actions = make("ACGTACGT", "ACGTACGT", 0, exp, ed);
     assertEquals(0, actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);

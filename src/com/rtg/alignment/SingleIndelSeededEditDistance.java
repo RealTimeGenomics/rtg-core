@@ -317,10 +317,10 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
           }
         } else {
           assert deltaOff < 0;
-          final int firsti = mFirstMiss - deltaOff;
+          final int firstI = mFirstMiss - deltaOff;
           final int tEndFN = zeroBasedStart + deltaOff + rLen; //check if this should be + deltaOff or - deltaOff
-          if (firsti < rLen && tEndFN <= templateLength) {
-            offDiagonalForwardNegative(firsti, rLen, tEndFN, deltaOff, offsetScore, mDiagScore - mDiagonalCum[rLen + deltaOff]);
+          if (firstI < rLen && tEndFN <= templateLength) {
+            offDiagonalForwardNegative(firstI, rLen, tEndFN, deltaOff, offsetScore, mDiagonalCum[rLen + deltaOff]);
           }
 
         }
@@ -329,12 +329,12 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
         assert dir == -1;
         final int rEnd = Math.min(mLastMiss + 1, rLen - deltaOff);
         if (tEndRP <= templateLength && deltaOff > 0 && rEnd > 0) {
-          offDiagonalReversePositive(0, rEnd, zeroBasedStart + deltaOff, deltaOff, offsetScore);
+          offDiagonalReversePositive(rEnd, zeroBasedStart + deltaOff, deltaOff, offsetScore);
         } else {
           final int tStart = zeroBasedStart + deltaOff;
           final int tEndRN = zeroBasedStart + rLen + deltaOff;
           if (tStart >= 0 && tEndRN <= templateLength) {
-            offDiagonalReverseNegative(0, mLastMiss + 1, tStart, deltaOff, offsetScore);
+            offDiagonalReverseNegative(mLastMiss + 1, tStart, deltaOff, offsetScore);
           }
         }
       }
