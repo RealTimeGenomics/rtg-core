@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.SortedSet;
@@ -36,6 +37,7 @@ import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 import com.rtg.variant.sv.discord.DiscordBedRecord;
 import com.rtg.variant.sv.discord.SmartBedWriter;
+import com.rtg.vcf.AltVariantTypeFilter;
 import com.rtg.vcf.AssertVcfSorted;
 import com.rtg.vcf.PassOnlyFilter;
 import com.rtg.vcf.VariantType;
@@ -44,9 +46,7 @@ import com.rtg.vcf.VcfFilterIterator;
 import com.rtg.vcf.VcfInfoFilter;
 import com.rtg.vcf.VcfIterator;
 import com.rtg.vcf.VcfReader;
-import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
-import com.rtg.vcf.header.VcfHeader;
 
 /**
  */
@@ -54,20 +54,6 @@ public class SvPatternsTask extends ParamsTask<BreakpointPatternParams, NoStatis
 
   private static final String FILE_NAME = "sv_patterns.bed";
   private static final String SV_OUTPUT_VERSION = "0.1";
-
-  // Accept only break-end records
-  static class BreakEndFilter implements VcfFilter {
-    @Override
-    public void setHeader(VcfHeader header) { }
-    @Override
-    public boolean accept(VcfRecord record) {
-      if (record.getAltCalls().size() != 1) {
-        return false;
-      }
-      return VariantType.getType(record.getAllele(0), record.getAllele(1)) == VariantType.SV_BREAKEND;
-    }
-  }
-
 
   private final int mSameDistance;
   private final int mMinDepth;
@@ -111,7 +97,7 @@ public class SvPatternsTask extends ParamsTask<BreakpointPatternParams, NoStatis
     final List<VcfFilter> filters = new ArrayList<>();
     filters.add(new AssertVcfSorted());
     filters.add(new PassOnlyFilter());
-    filters.add(new BreakEndFilter());
+    filters.add(new AltVariantTypeFilter(EnumSet.of(VariantType.SV_BREAKEND)));
     filters.add(new VcfInfoFilter.MinMaxIntFilter(null, null, mMinDepth, Integer.MAX_VALUE, VcfUtils.INFO_COMBINED_DEPTH));
 
     final BreakpointStore store = new BreakpointStore();
