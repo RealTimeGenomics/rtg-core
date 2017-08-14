@@ -32,14 +32,14 @@ public class VcfBreakpoint implements Comparable<VcfBreakpoint> {
   private final int mDepth;
 
   /**
-   * Create a breakpoint from a VCF record
-   * @param  record the VCF record that describes a breakpoint
+   * Create a breakpoint from a VCF record, assuming that the first ALT contains the breakend.
+   * @param record the VCF record that describes a breakpoint
    */
   public VcfBreakpoint(VcfRecord record) {
     this(record, new BreakpointAlt(record.getAltCalls().get(0)));
   }
 
-  VcfBreakpoint(VcfRecord record, BreakpointAlt alt) {
+  private VcfBreakpoint(VcfRecord record, BreakpointAlt alt) {
     mLocalChr = record.getSequenceName();
     mLocalPos = record.getStart();
     mBreakpointAlt = alt;

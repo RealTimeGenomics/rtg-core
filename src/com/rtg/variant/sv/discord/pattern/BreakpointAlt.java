@@ -13,9 +13,9 @@
 package com.rtg.variant.sv.discord.pattern;
 
 /**
- * Class that works out what kind of breakpoint a VCF alt record represents
+ * Class that works out what kind of break end a VCF ALT allele represents.
  */
-class BreakpointAlt {
+public class BreakpointAlt {
 
   private static final char UP_BRACKET = ']';
   private static final char DOWN_BRACKET = '[';
@@ -26,7 +26,12 @@ class BreakpointAlt {
   final int mRemotePos;
   final String mRefSubs;
 
-  BreakpointAlt(String alt) {
+  /**
+   * Construct a break end from an ALT string. The caller should have already determined
+   * that the ALT represents a break end rather than a regular allele or symbolic allele.
+   * @param alt the VCF ALT string
+   */
+  public BreakpointAlt(String alt) {
     final int bracketPos;
     final char bracket;
     int tmpPos;
@@ -68,10 +73,11 @@ class BreakpointAlt {
   }
 
   /**
-   * @return true if the remote part of the breakpoint is orientation up see {@link com.rtg.variant.sv.discord.Orientation}
+   * @return true if the local part of the breakpoint is orientation "up", that is,
+   * the remote side of the adjacency is attached to the right of the current position.
    */
-  public boolean isRemoteUp() {
-    return mRemoteUp;
+  public boolean isLocalUp() {
+    return mLocalUp;
   }
 
   /**
@@ -89,10 +95,11 @@ class BreakpointAlt {
   }
 
   /**
-   * @return true if the local part of the breakpoint is orientation up see {@link com.rtg.variant.sv.discord.Orientation}
+   * @return true if the remote part of the breakpoint is orientation "up", that is,
+   * the local side of the adjacency is attached to the right of the remote position.
    */
-  public boolean isLocalUp() {
-    return mLocalUp;
+  public boolean isRemoteUp() {
+    return mRemoteUp;
   }
 
   /**
@@ -109,5 +116,4 @@ class BreakpointAlt {
       ? mRefSubs + bracket + mRemoteChr + ":" + (mRemotePos + 1) + bracket
       : bracket + mRemoteChr + ":" + (mRemotePos + 1) + bracket + mRefSubs ;
   }
-
 }
