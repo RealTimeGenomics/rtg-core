@@ -76,7 +76,7 @@ public final class BreakpointGeometry extends AbstractBreakpointGeometry {
     mYHi = yHi;
     mRLo = rLo;
     mRHi = rHi;
-    mFlip = new FlippedProxyBreakpointConstraint(this);
+    mFlip = new FlippedProxyBreakpointGeometry(this);
     //assert globalIntegrity();
   }
 

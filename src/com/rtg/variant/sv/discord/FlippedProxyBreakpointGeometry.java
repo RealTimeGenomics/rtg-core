@@ -21,14 +21,14 @@ import com.rtg.util.integrity.Exam;
  * Flip x and y co-ordinates.
  */
 @TestClass(value = {"com.rtg.variant.sv.discord.FlipTest"})
-public final class FlippedProxyBreakpointConstraint extends AbstractBreakpointGeometry {
+public final class FlippedProxyBreakpointGeometry extends AbstractBreakpointGeometry {
 
   private final AbstractBreakpointGeometry mProxy;
 
   /**
    * @param br the proxy.
    */
-  protected FlippedProxyBreakpointConstraint(AbstractBreakpointGeometry br) {
+  protected FlippedProxyBreakpointGeometry(AbstractBreakpointGeometry br) {
     mProxy = br;
   }
 

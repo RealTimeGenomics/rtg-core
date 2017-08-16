@@ -16,6 +16,7 @@ import java.util.Collection;
 
 import com.rtg.util.CompareHelper;
 import com.rtg.util.Utils;
+import com.rtg.vcf.BreakpointAlt;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 

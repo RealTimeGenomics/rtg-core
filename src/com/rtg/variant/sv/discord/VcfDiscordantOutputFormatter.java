@@ -20,6 +20,7 @@ import java.util.Map;
 import com.rtg.mode.DNA;
 import com.rtg.reader.NamesInterface;
 import com.rtg.reader.SequencesReader;
+import com.rtg.vcf.BreakpointAlt;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.header.MetaType;
@@ -86,23 +87,7 @@ public class VcfDiscordantOutputFormatter {
     final String ref = getRef(geo.getXName(), refPosition);
     final VcfRecord rec = new VcfRecord(geo.getXName(), refPosition, ref);
     rec.setId(VcfRecord.MISSING);
-    final String alt;
-
-    final String bracket;
-    if (ory == +1) {
-      bracket = "]";
-    } else {
-      assert ory == -1;
-      bracket = "[";
-    }
-    final String alt0 = bracket + geo.getYName() + ":" + (Math.max(pos.positionAlt(), 0) + 1) + bracket;
-    if (orx == +1) {
-      alt = ref + alt0;
-    } else {
-      assert orx == -1;
-      alt = alt0 + ref;
-    }
-
+    final String alt = new BreakpointAlt(ref, orx == +1, geo.getYName(), Math.max(pos.positionAlt(), 0), ory == +1).toString();
     rec.addAltCall(alt);
     rec.setQuality(VcfRecord.MISSING);
     if (unionOnly) {
