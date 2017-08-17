@@ -61,7 +61,7 @@ public class JobIdMultisample extends EnumTimeId<JobType> implements JobId<JobId
 
   @Override
   public boolean equals(Object arg0) {
-    if (arg0 == null || !(arg0 instanceof JobIdMultisample)) {
+    if (!(arg0 instanceof JobIdMultisample)) {
       return false;
     }
     return 0 == compareTo((JobIdMultisample) arg0);

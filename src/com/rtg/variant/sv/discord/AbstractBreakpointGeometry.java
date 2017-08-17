@@ -237,7 +237,7 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj == null) {
+    if (!(obj instanceof AbstractBreakpointGeometry)) {
       return false;
     }
     if (obj == this) {
