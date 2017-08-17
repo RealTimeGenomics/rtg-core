@@ -17,18 +17,19 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import com.rtg.util.ByteUtils;
 import com.rtg.util.CompareHelper;
 import com.rtg.util.ReorderingQueue;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.vcf.DefaultVcfWriter;
 import com.rtg.vcf.VcfRecord;
+import com.rtg.vcf.VcfWriter;
 import com.rtg.vcf.header.VcfHeader;
 
 
 /**
- * Class to reorder VCF records during output. Note that only one record per position is supported.
+ * Class to reorder VCF records during output.
  */
-public class SmartVcfWriter extends ReorderingQueue<VcfRecord> {
+public class SmartVcfWriter extends ReorderingQueue<VcfRecord> implements VcfWriter {
 
   private static final int BUFFER_SIZE = 10000; // Assume records will be out of order by at most this amount.
 
@@ -47,14 +48,26 @@ public class SmartVcfWriter extends ReorderingQueue<VcfRecord> {
     }
   }
 
-  final OutputStream mOut;
+  final VcfWriter mOut;
 
   SmartVcfWriter(OutputStream out, VcfHeader header) throws IOException {
-    super(BUFFER_SIZE, new VcfPositionalComparator());
-    mOut = out;
-    mOut.write(header.toString().getBytes());
+    this(new DefaultVcfWriter(header, out));
   }
 
+  SmartVcfWriter(VcfWriter out) throws IOException {
+    super(BUFFER_SIZE, new VcfPositionalComparator());
+    mOut = out;
+  }
+
+  @Override
+  public VcfHeader getHeader() {
+    return mOut.getHeader();
+  }
+
+  @Override
+  public void write(VcfRecord record) throws IOException {
+    addRecord(record);
+  }
 
   @Override
   protected String getReferenceName(VcfRecord record) {
@@ -68,8 +81,7 @@ public class SmartVcfWriter extends ReorderingQueue<VcfRecord> {
 
   @Override
   protected void flushRecord(VcfRecord rec) throws IOException {
-    mOut.write(rec.toString().getBytes());
-    ByteUtils.writeNewline(mOut);
+    mOut.write(rec);
   }
 
   @Override
