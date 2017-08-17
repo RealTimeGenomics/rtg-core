@@ -28,11 +28,14 @@ import com.rtg.vcf.header.VcfHeader;
 /**
  * Class to reorder VCF records during output. Note that only one record per position is supported.
  */
-class SmartVcfWriter extends ReorderingQueue<VcfRecord> {
+public class SmartVcfWriter extends ReorderingQueue<VcfRecord> {
 
   private static final int BUFFER_SIZE = 10000; // Assume records will be out of order by at most this amount.
 
-  private static final class VcfPositionalComparator implements Comparator<VcfRecord>, Serializable {
+  /**
+   * Position based comparator for VCF record.
+   */
+  public static final class VcfPositionalComparator implements Comparator<VcfRecord>, Serializable {
     @Override
     public int compare(VcfRecord o1, VcfRecord o2) {
       return new CompareHelper()
