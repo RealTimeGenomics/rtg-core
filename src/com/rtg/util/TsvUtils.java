@@ -39,7 +39,7 @@ public final class TsvUtils {
   }
 
   /**
-   * Cats multiple tab separated value files together
+   * Cats multiple tab separated value files together, keeping the header from only the first file.
    * @param gzipped true if the input files are gzipped
    * @param destination destination for cat
    * @param inputFiles files to merge, in order
