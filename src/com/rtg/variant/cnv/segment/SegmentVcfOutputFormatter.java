@@ -12,7 +12,16 @@
 
 package com.rtg.variant.cnv.segment;
 
+import static com.rtg.vcf.VcfUtils.ALT_DEL;
+import static com.rtg.vcf.VcfUtils.ALT_DUP;
 import static com.rtg.vcf.VcfUtils.FORMAT_GENOTYPE;
+import static com.rtg.vcf.VcfUtils.INFO_CIEND;
+import static com.rtg.vcf.VcfUtils.INFO_CIPOS;
+import static com.rtg.vcf.VcfUtils.INFO_END;
+import static com.rtg.vcf.VcfUtils.INFO_IMPRECISE;
+import static com.rtg.vcf.VcfUtils.INFO_SVTYPE;
+import static com.rtg.vcf.VcfUtils.SvType.DEL;
+import static com.rtg.vcf.VcfUtils.SvType.DUP;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -34,26 +43,14 @@ import com.rtg.vcf.header.VcfNumber;
  */
 public class SegmentVcfOutputFormatter {
 
-  // Defined in the VCF spec
-  static final String ALT_DEL = "DEL";
-  static final String ALT_DUP = "DUP";
-
-  static final String INFO_END = "END";
-  static final String INFO_CIPOS = "CIPOS";
-  static final String INFO_CIEND = "CIEND";
-  static final String INFO_SVTYPE = "SVTYPE";
-  static final String INFO_IMPRECISE = "IMPRECISE";
-
-  // Our own fields
+  // Bin count
   private static final String INFO_BC = "BC";
-
+  // Read depth ratio
   static final String FORMAT_RDR = "RDR";
+  // Log of ratio
   static final String FORMAT_LOGR = "LR";
   /** The FORMAT field we use to store an overall quality score */
   public static final String FORMAT_SQS = "SQS";
-
-  private static final String ALT_DEL_BR = "<" + ALT_DEL + ">";
-  private static final String ALT_DUP_BR = "<" + ALT_DUP + ">";
 
 
   private final SequencesReader mTemplate;
@@ -92,8 +89,8 @@ public class SegmentVcfOutputFormatter {
     header.addCommonHeader();
     header.addReference(mTemplate);
     header.addContigFields(mTemplate);
-    header.addAltField(new AltField(ALT_DEL, "Deletion"));
-    header.addAltField(new AltField(ALT_DUP, "Duplication"));
+    header.addAltField(new AltField(DEL.name(), "Deletion"));
+    header.addAltField(new AltField(DUP.name(), "Duplication"));
 
     header.addInfoField(INFO_END, MetaType.INTEGER, VcfNumber.ONE, "End position of the variant described in this record");
     header.addInfoField(INFO_IMPRECISE, MetaType.FLAG, new VcfNumber("0"), "Imprecise structural variation");
@@ -125,12 +122,12 @@ public class SegmentVcfOutputFormatter {
     if (current.bins() >= mMinBins) {
       if (current.mean() >= mThreshold) {
         altered = true;
-        rec.addAltCall(ALT_DUP_BR);
-        rec.setInfo(INFO_SVTYPE, ALT_DUP);
+        rec.addAltCall(ALT_DUP);
+        rec.setInfo(INFO_SVTYPE, DUP.name());
       } else if (current.mean() <= -mThreshold) {
         altered = true;
-        rec.addAltCall(ALT_DEL_BR);
-        rec.setInfo(INFO_SVTYPE, ALT_DEL);
+        rec.addAltCall(ALT_DEL);
+        rec.setInfo(INFO_SVTYPE, DEL.name());
       }
     }
 

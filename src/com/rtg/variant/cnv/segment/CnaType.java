@@ -11,6 +11,8 @@
  */
 package com.rtg.variant.cnv.segment;
 
+import static com.rtg.vcf.VcfUtils.INFO_SVTYPE;
+
 import java.util.ArrayList;
 
 import com.rtg.vcf.VcfRecord;
@@ -24,9 +26,6 @@ public enum CnaType {
   DUP,
   /** Not a copy number alteration */
   NONE;
-
-  static final String INFO_SVTYPE = "SVTYPE";
-  static final String INFO_END = "END";
 
   /**
    * Determines the type of copy number alteration of a VCF record

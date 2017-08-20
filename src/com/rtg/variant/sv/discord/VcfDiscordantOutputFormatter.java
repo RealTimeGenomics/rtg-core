@@ -12,6 +12,14 @@
 
 package com.rtg.variant.sv.discord;
 
+import static com.rtg.vcf.VcfUtils.FILTER_PASS;
+import static com.rtg.vcf.VcfUtils.FORMAT_GENOTYPE;
+import static com.rtg.vcf.VcfUtils.INFO_CIPOS;
+import static com.rtg.vcf.VcfUtils.INFO_COMBINED_DEPTH;
+import static com.rtg.vcf.VcfUtils.INFO_IMPRECISE;
+import static com.rtg.vcf.VcfUtils.INFO_SVTYPE;
+import static com.rtg.vcf.VcfUtils.SvType.BND;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -22,7 +30,6 @@ import com.rtg.reader.NamesInterface;
 import com.rtg.reader.SequencesReader;
 import com.rtg.vcf.BreakpointAlt;
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
 import com.rtg.vcf.header.VcfNumber;
@@ -34,14 +41,10 @@ import htsjdk.samtools.SAMFileHeader;
  */
 public class VcfDiscordantOutputFormatter {
 
-  //private static final String INFO_DIRECTION = "DIRECTION";
-  private static final String INFO_CIPOS = "CIPOS";
-  private static final String INFO_DP = "DP";
   private static final String INFO_COVERAGE = "CV";
   private static final String INFO_AMBIGUITY = "AR";
-  private static final String INFO_SVTYPE = "SVTYPE";
-  private static final String INFO_IMPRECISE = "IMPRECISE";
   private static final String FILTER_INCONSISTENT = "INCONSISTENT";
+
   private final SequencesReader mTemplate;
 
   private final Map<String, Integer> mSequenceMap = new HashMap<>();
@@ -93,11 +96,11 @@ public class VcfDiscordantOutputFormatter {
     if (unionOnly) {
       rec.addFilter(FILTER_INCONSISTENT);
     } else {
-      rec.addFilter(VcfUtils.FILTER_PASS);
+      rec.addFilter(FILTER_PASS);
     }
     rec.addInfo(INFO_IMPRECISE);
-    rec.addInfo(INFO_SVTYPE, "BND");
-    rec.addInfo(INFO_DP, "" + readset.getCounts());
+    rec.addInfo(INFO_SVTYPE, BND.name());
+    rec.addInfo(INFO_COMBINED_DEPTH, "" + readset.getCounts());
     rec.addInfo(INFO_CIPOS, cipos);
     if (coverage > -1) {
       rec.addInfo(INFO_COVERAGE, "" + coverage);
@@ -105,9 +108,8 @@ public class VcfDiscordantOutputFormatter {
     if (ambiguous > -1) {
       rec.addInfo(INFO_AMBIGUITY, "" + ambiguous);
     }
-    //rec.addInfo(INFO_DIRECTION, geo.getOrientation().name());
     rec.setNumberOfSamples(1);
-    rec.addFormatAndSample(VcfUtils.FORMAT_GENOTYPE, "1/1"); //for now default to homozygous
+    rec.addFormatAndSample(FORMAT_GENOTYPE, "1/1"); //for now default to homozygous
     return rec;
   }
 
@@ -149,16 +151,15 @@ public class VcfDiscordantOutputFormatter {
     header.addFilterField(FILTER_INCONSISTENT, "Supporting reads are inconsistent as to breakend location");
     header.addInfoField(INFO_CIPOS, MetaType.INTEGER, new VcfNumber("2"), "Confidence interval around POS for imprecise variants");
     header.addInfoField(INFO_IMPRECISE, MetaType.FLAG, new VcfNumber("0"), "Imprecise structural variation");
-    //header.addInfoField(INFO_DIRECTION, MetaType.STRING, VcfNumber.ONE, "Direction for current breakpoint");
     header.addInfoField(INFO_SVTYPE, MetaType.STRING, VcfNumber.ONE, "Type of structural variant");
-    header.addInfoField(INFO_DP, MetaType.INTEGER, VcfNumber.ONE, "Read Depth");
+    header.addInfoField(INFO_COMBINED_DEPTH, MetaType.INTEGER, VcfNumber.ONE, "Read Depth");
     if (coverage) {
       header.addInfoField(INFO_COVERAGE, MetaType.INTEGER, VcfNumber.ONE, "Coverage at start position");
     }
     if (ambiguity) {
       header.addInfoField(INFO_AMBIGUITY, MetaType.INTEGER, VcfNumber.ONE, "Ambiguity at start position");
     }
-    header.addFormatField(VcfUtils.FORMAT_GENOTYPE, MetaType.STRING, VcfNumber.ONE, "Genotype");
+    header.addFormatField(FORMAT_GENOTYPE, MetaType.STRING, VcfNumber.ONE, "Genotype");
     header.addSampleName(samplename);
     return header;
   }

@@ -15,6 +15,7 @@ import java.util.Collections;
 
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.vcf.VcfRecord;
+import com.rtg.vcf.VcfUtils;
 
 import junit.framework.TestCase;
 
@@ -29,13 +30,13 @@ public class CnvRecordFilterTest extends TestCase {
     f.setHeader(null);
     final VcfRecord record = new VcfRecord("pretend", 42, "A");
     assertFalse(f.accept(record));
-    record.addInfo(CnaType.INFO_END, "42");
+    record.addInfo(VcfUtils.INFO_END, "42");
     assertFalse(f.accept(record));
-    record.addInfo(CnaType.INFO_SVTYPE, CnaType.DEL.toString());
+    record.addInfo(VcfUtils.INFO_SVTYPE, CnaType.DEL.toString());
     assertTrue(f.accept(record));
     final VcfRecord record2 = new VcfRecord("pretend2", 42, "A");
-    record2.addInfo(CnaType.INFO_END, "42");
-    record2.addInfo(CnaType.INFO_SVTYPE, CnaType.DEL.toString());
+    record2.addInfo(VcfUtils.INFO_END, "42");
+    record2.addInfo(VcfUtils.INFO_SVTYPE, CnaType.DEL.toString());
     assertFalse(f.accept(record2));
   }
 
@@ -43,7 +44,7 @@ public class CnvRecordFilterTest extends TestCase {
     Diagnostic.setLogStream();
     final CnvRecordFilter f = new CnvRecordFilter(Collections.singletonList("pretend"), true);
     final VcfRecord record = new VcfRecord("pretend", 42, "A");
-    record.addInfo(CnaType.INFO_SVTYPE, CnaType.DEL.toString());
+    record.addInfo(VcfUtils.INFO_SVTYPE, CnaType.DEL.toString());
     assertFalse(f.accept(record));
   }
 
@@ -51,12 +52,12 @@ public class CnvRecordFilterTest extends TestCase {
     Diagnostic.setLogStream();
     final CnvRecordFilter f = new CnvRecordFilter(Collections.singletonList("pretend"), true);
     final VcfRecord record = new VcfRecord("pretend", 42, "A");
-    record.addInfo(CnaType.INFO_END, "48");
-    record.addInfo(CnaType.INFO_SVTYPE, CnaType.DEL.toString());
+    record.addInfo(VcfUtils.INFO_END, "48");
+    record.addInfo(VcfUtils.INFO_SVTYPE, CnaType.DEL.toString());
     assertTrue(f.accept(record));
     final VcfRecord record2 = new VcfRecord("pretend", 42, "A");
-    record2.addInfo(CnaType.INFO_END, "42");
-    record2.addInfo(CnaType.INFO_SVTYPE, CnaType.DEL.toString());
+    record2.addInfo(VcfUtils.INFO_END, "42");
+    record2.addInfo(VcfUtils.INFO_SVTYPE, CnaType.DEL.toString());
     assertFalse(f.accept(record2));
   }
 

@@ -12,7 +12,7 @@
 package com.rtg.variant.cnv.segment;
 
 import static com.rtg.variant.cnv.segment.SegmentVcfOutputFormatter.FORMAT_LOGR;
-import static com.rtg.variant.cnv.segment.SegmentVcfOutputFormatter.INFO_END;
+import static com.rtg.vcf.VcfUtils.INFO_END;
 
 import java.io.File;
 import java.io.IOException;
@@ -134,8 +134,8 @@ class CnvSummaryReport {
           if (gene.getMeta() != null) {
             final double logR = VcfUtils.getDoubleFormatFieldFromRecord(rec, 0, FORMAT_LOGR);
             if (Math.abs(logR) >= mThreshold) {
-              final int[] cipos = VcfUtils.getConfidenceInterval(rec, VcfUtils.CONFIDENCE_INTERVAL_POS);
-              final int[] ciend = VcfUtils.getConfidenceInterval(rec, VcfUtils.CONFIDENCE_INTERVAL_END);
+              final int[] cipos = VcfUtils.getConfidenceInterval(rec, VcfUtils.INFO_CIPOS);
+              final int[] ciend = VcfUtils.getConfidenceInterval(rec, VcfUtils.INFO_CIEND);
               geneStatus.put(gene.getMeta().get(0), new GeneStatus(status, logR,
                 new SequenceNameLocusSimple(chr, start, end),
                 new SequenceNameLocusSimple(chr, start + (cipos == null ? 0 : cipos[0]), end + (ciend == null ? 0 : ciend[1]))));
