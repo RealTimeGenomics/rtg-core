@@ -34,10 +34,10 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
-import com.rtg.vcf.DefaultVcfWriter;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
+import com.rtg.vcf.VcfWriterFactory;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
 import com.rtg.vcf.header.VcfNumber;
@@ -202,7 +202,7 @@ public class MetaSnpCli extends LoggedCli {
         }
         Diagnostic.info("Estimated strain proportions: " + StringUtils.LS + xiBytes.toString());
       }
-      writeVcf(ref, lines, iterations.get(iterations.size() - 1), FileUtils.createOutputStream(new File(outputDirectory, VCF_OUTPUT)), arith);
+      writeVcf(ref, lines, iterations.get(iterations.size() - 1), new File(outputDirectory, VCF_OUTPUT), arith);
       if (mFlags.isSet(VISUALISATION)) {
         final File visual = new File(outputDirectory, VISUALISATION_PREFIX);
         try (FileOutputStream visualStream = new FileOutputStream(visual)) {
@@ -291,7 +291,7 @@ public class MetaSnpCli extends LoggedCli {
     }
   }
 
-  static void writeVcf(List<Integer> refBytes, List<MetaSnpLine> lines, EmIterate.EmResult res, OutputStream out, PossibilityArithmetic arith) throws IOException {
+  static void writeVcf(List<Integer> refBytes, List<MetaSnpLine> lines, EmIterate.EmResult res, File out, PossibilityArithmetic arith) throws IOException {
     final VcfHeader header = new VcfHeader();
     header.addCommonHeader();
     for (int i = 0; i < res.mAssignments.get(0).mCalls.length; ++i) {
@@ -299,7 +299,7 @@ public class MetaSnpCli extends LoggedCli {
     }
     header.addInfoField(LIKE, MetaType.FLOAT, VcfNumber.DOT, "phred scaled likelihood of genotype assignments");
     header.addInfoField(SYNDROME, MetaType.STRING, VcfNumber.DOT, "packed representation of strain assignment");
-    try (final VcfWriter writer = new DefaultVcfWriter(header, out)) {
+    try (final VcfWriter writer = new VcfWriterFactory().zip(false).make(header, out)) {
       for (int i = 0; i < lines.size(); ++i) {
         final MetaSnpLine line = lines.get(i);
         final int[] assignments = res.mAssignments.get(i).mCalls;

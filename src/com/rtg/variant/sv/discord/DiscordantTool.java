@@ -268,7 +268,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       mBedOutput.write(mBedFormatter.header().getBytes()); // Maybe move this into the bedwriter
       mBedWriter = new SmartBedWriter(mBedOutput);
     }
-    mVcfWriter = new SmartVcfWriter(mOut, mFormatter.header(header, vcfSample, false, false));
+    mVcfWriter = new SmartVcfWriter(mFormatter.header(header, vcfSample, false, false), mOut);
   }
 
   @Override

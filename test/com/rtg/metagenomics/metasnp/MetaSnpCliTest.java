@@ -24,6 +24,7 @@ import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
+import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
@@ -63,13 +64,14 @@ public class MetaSnpCliTest extends AbstractCliTest {
   };
 
   public void testVcfWriting() throws IOException {
-    try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+    try (TestDirectory dir = new TestDirectory()) {
+      final File out = new File(dir, "out.vcf");
       final List<Integer> ref = Arrays.asList(1, 2, 3, 0);
       final List<MetaSnpLine> lines = getLines(LINES);
       final List<AlphaScore> assignments = Arrays.asList(new AlphaScore(0.1, 0.1, 0, 1), new AlphaScore(0.2, 0.2, 2, 3), new AlphaScore(0.3, 0.3, 0, 3), new AlphaScore(0.4, 0.4, 1, 1));
       final EmIterate.EmResult res = new EmIterate.EmResult(new double[][] {{0.1, 0.9}, {0.4, 0.6}}, assignments);
       MetaSnpCli.writeVcf(ref, lines, res, out, SimplePossibility.SINGLETON);
-      final String s = out.toString().replaceAll("\t", " ");
+      final String s = FileUtils.fileToString(out).replaceAll("\t", " ");
       assertTrue(s, s.contains(EXPECTED_VCF));
     }
 

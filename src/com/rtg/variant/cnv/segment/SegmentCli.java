@@ -56,11 +56,10 @@ import com.rtg.variant.cnv.preprocess.RegionColumn;
 import com.rtg.variant.cnv.preprocess.RegionDataset;
 import com.rtg.variant.cnv.preprocess.SimpleJoin;
 import com.rtg.variant.cnv.preprocess.WeightedMedianNormalize;
-import com.rtg.vcf.AsyncVcfWriter;
-import com.rtg.vcf.DefaultVcfWriter;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
+import com.rtg.vcf.VcfWriterFactory;
 
 /**
  * Provide segmentation entry point.
@@ -353,14 +352,13 @@ public class SegmentCli extends LoggedCli {
     final double refThreshold = (Double) mFlags.getValue(MIN_LOGR_FLAG);
 
     final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
-    final boolean index = !mFlags.isSet(CommonFlags.NO_INDEX);
 
     final File vcfFile = VcfUtils.getZippedVcfFileName(gzip, new File(outputDirectory(), "segments.vcf"));
 
     final NumericColumn c = mDataset.asNumeric(mDataCol);
     final RegionColumn regions = mDataset.regions();
     mFormatter = new SegmentVcfOutputFormatter(mReference, refThreshold, minBins, (String) mFlags.getValue(SAMPLE_FLAG));
-    try (final VcfWriter vw = new AsyncVcfWriter(new DefaultVcfWriter(mFormatter.header(), vcfFile, null, gzip, index))) {
+    try (final VcfWriter vw = new VcfWriterFactory(mFlags).make(mFormatter.header(), vcfFile)) {
       mVcfOut = vw;
       double prevMidPoint = -1;
       String prevSeq = null;

@@ -38,7 +38,7 @@ public class SmartVcfWriterTest extends TestCase {
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     final VcfHeader header = new VcfHeader();
     header.addSampleName("SAMPLE");
-    final SmartVcfWriter c = new SmartVcfWriter(bos, header);
+    final SmartVcfWriter c = new SmartVcfWriter(header, bos);
     final VcfRecord rec = createRecord("chr2", 123);
     final VcfRecord rec1 = createRecord("chr1", 12);
     final VcfRecord rec2 = createRecord("chr1", 10).addAltCall("g"); //should be after rec3 since it has more alts
@@ -85,7 +85,7 @@ public class SmartVcfWriterTest extends TestCase {
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
       final VcfHeader header = new VcfHeader();
       header.addSampleName("SAMPLE");
-      final SmartVcfWriter c = new SmartVcfWriter(bos, header);
+      final SmartVcfWriter c = new SmartVcfWriter(header, bos);
       // Why +3 ?
       c.addRecord(createRecord("chr2", 2)); //first output.
       c.addRecord(createRecord("chr2", number + 3)); //if number >  buffer length will cause first record to be written

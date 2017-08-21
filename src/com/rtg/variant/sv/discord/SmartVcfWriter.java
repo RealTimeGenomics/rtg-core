@@ -50,7 +50,7 @@ public class SmartVcfWriter extends ReorderingQueue<VcfRecord> implements VcfWri
 
   final VcfWriter mOut;
 
-  SmartVcfWriter(OutputStream out, VcfHeader header) throws IOException {
+  SmartVcfWriter(VcfHeader header, OutputStream out) throws IOException {
     this(new DefaultVcfWriter(header, out));
   }
 
