@@ -366,9 +366,9 @@ public class MapXCli extends ParamsCli<NgsParams> {
     flags.registerOptional('P', MIN_IDENTITY_FLAG, Integer.class, CommonFlags.INT, "minimum percent identity at output", 60).setCategory(REPORTING);
     flags.registerOptional('E', MAX_ESCORE_FLAG, Double.class, CommonFlags.FLOAT, "maximum e-score at output", 10.0).setCategory(REPORTING);
     flags.registerOptional('B', MIN_BITSCORE_FLAG, Double.class, CommonFlags.FLOAT, "minimum bit score at output").setCategory(REPORTING);
-    flags.registerOptional(COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", true).setCategory(UTILITY);
+    flags.registerOptional(COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", Boolean.TRUE).setCategory(UTILITY);
     flags.registerOptional(TEMP_DIR, File.class, CommonFlags.DIR, "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
-    flags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary files", true).setCategory(UTILITY);
+    flags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary files", Boolean.TRUE).setCategory(UTILITY);
     flags.registerOptional(MapFlags.NO_UNMAPPED, "do not output unmapped reads").setCategory(UTILITY);
     flags.registerOptional('w', WORDSIZE_FLAG, Integer.class, CommonFlags.INT, "word size", 7).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('a', MISMATCHES_FLAG, Integer.class, CommonFlags.INT, "guaranteed minimum number of identical mismatches which will be detected", 1).setCategory(SENSITIVITY_TUNING);

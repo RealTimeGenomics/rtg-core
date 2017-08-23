@@ -32,11 +32,12 @@ public class PairedTempFileRecordComparator implements Comparator<BinaryTempFile
       if (mateStart == 0) {
         final boolean strandCompareDifferent = o1.isReverseStrand() ^ o2.isReverseStrand();
         if (!strandCompareDifferent) {
-          final boolean pairedDifferent = o1.isReadPaired() ^ o2.isReadPaired();
+          final boolean readPaired = o1.isReadPaired();
+          final boolean pairedDifferent = readPaired ^ o2.isReadPaired();
           if (pairedDifferent) {
-            return o1.isReadPaired() ? 1 : -1;
+            return readPaired ? 1 : -1;
           } else {
-            if (!o1.isReadPaired()) {
+            if (!readPaired) {
               return compareScores(o1, o2);
             }
           }

@@ -144,7 +144,7 @@ public final class MapFlags {
 
     flags.registerOptional(THREAD_MULTIPLIER, Integer.class, CommonFlags.INT, "number of work chunks per thread", HashingRegion.DEFAULT_THREAD_MULTIPLIER).setCategory(CommonFlagCategories.UTILITY);
     //flags.registerOptional(INSERT_SIZE_FLAG, Integer.class, INT, "expected insert size for pairs");
-    flags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary SAM files", true).setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary SAM files", Boolean.TRUE).setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(NO_INMEMORY_TEMPLATE, "do not load the template in memory").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(FORCE_LONG_FLAG, "force the use of long read mode").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of sample", null).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);

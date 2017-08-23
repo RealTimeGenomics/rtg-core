@@ -195,7 +195,7 @@ public class VcfValidatorCli extends AbstractCli {
         if (!VcfRecord.MISSING.equals(current.getQuality())) {
           Double val;
           try {
-            val = Double.parseDouble(current.getQuality());
+            val = Double.valueOf(current.getQuality());
           } catch (NumberFormatException e) {
             val = null;
           }

@@ -399,9 +399,9 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
       throw new IllegalArgumentException("Maximum tree depth cannot be negative");
     }
     mSplitCost = Double.parseDouble(props.getProperty(PROP_SPLIT_COST, "0"));
-    mEntropyMissing = Boolean.valueOf(props.getProperty(PROP_ENTROPY_MISSING, Boolean.TRUE.toString()));
+    mEntropyMissing = Boolean.parseBoolean(props.getProperty(PROP_ENTROPY_MISSING, Boolean.TRUE.toString()));
     mPropagateMissing = PropagateMissingType.valueOf(props.getProperty(PROP_PROPAGATE_MISSING, PropagateMissingType.RANDOM.toString()).toUpperCase(Locale.ROOT));
-    mSplitMissing = Boolean.valueOf(props.getProperty(PROP_SPLIT_MISSING, Boolean.TRUE.toString()));
+    mSplitMissing = Boolean.parseBoolean(props.getProperty(PROP_SPLIT_MISSING, Boolean.TRUE.toString()));
   }
 
   @Override

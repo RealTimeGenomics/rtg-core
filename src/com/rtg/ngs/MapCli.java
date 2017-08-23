@@ -202,7 +202,7 @@ public class MapCli extends ParamsCli<NgsParams>  {
     //x flags
     flags.registerOptional(MapFlags.X_LONG_READ, "use the non-default version for long read").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(MapFlags.MASK_FLAG, String.class, CommonFlags.STRING, "mask class name").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(MapFlags.COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", true).setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(MapFlags.COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", Boolean.TRUE).setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(MapFlags.XSCORE_INDEL, Integer.class, CommonFlags.INT, "set max score indel for topn threshold", MapFlags.MAX_SCORE).setCategory(CommonFlagCategories.REPORTING); //7 was used for illumina mappings
     flags.registerOptional(MapFlags.OUTPUT_NULLFILTERED, "write nothing").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(MapFlags.MIN_HITS_FLAG, Integer.class, CommonFlags.INT, "Require this many hits to a logical read position before further processing").setCategory(CommonFlagCategories.UTILITY);

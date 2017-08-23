@@ -80,8 +80,8 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
         throw new NumberFormatException("Invalid error_del_penalty");
       }
       // These factors give the rate at which the penalty increases for each additional base past the last specifed offset penalty
-      final double insslope = Double.valueOf(pr.getProperty("error_ins_penalty_extension_slope", "0.5"));
-      final double delslope = Double.valueOf(pr.getProperty("error_del_penalty_extension_slope", "0.5"));
+      final double insslope = Double.parseDouble(pr.getProperty("error_ins_penalty_extension_slope", "0.5"));
+      final double delslope = Double.parseDouble(pr.getProperty("error_del_penalty_extension_slope", "0.5"));
       int lastInsPenaltyOffset = 0;
       int lastDelPenaltyOffset = 0;
       for (int i = 0, offset = 0; i < offsets.length - 1; ++offset) {

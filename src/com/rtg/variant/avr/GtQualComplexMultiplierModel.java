@@ -72,12 +72,12 @@ public class GtQualComplexMultiplierModel extends AbstractPredictModel {
   private void load(InputStream is) throws IOException {
     final Properties props = new Properties();
     props.load(is);
-    setGqSimpleHomozygousMultiplier(Double.valueOf(props.getProperty(PROP_MULTIPLIER_GQ_SIMPLE_HOMOZYGOUS)));
-    setGqSimpleHeterozygousMultiplier(Double.valueOf(props.getProperty(PROP_MULTIPLIER_GQ_SIMPLE_HETEROZYGOUS)));
-    setGqComplexHomozygousMultiplier(Double.valueOf(props.getProperty(PROP_MULTIPLIER_GQ_COMPLEX_HOMOZYGOUS)));
-    setGqComplexHeterozygousMultiplier(Double.valueOf(props.getProperty(PROP_MULTIPLIER_GQ_COMPLEX_HETEROZYGOUS)));
-    setQualSimpleMultiplier(Double.valueOf(props.getProperty(PROP_MULTIPLIER_QUAL_SIMPLE)));
-    setQualComplexMultiplier(Double.valueOf(props.getProperty(PROP_MULTIPLIER_QUAL_COMPLEX)));
+    setGqSimpleHomozygousMultiplier(Double.parseDouble(props.getProperty(PROP_MULTIPLIER_GQ_SIMPLE_HOMOZYGOUS)));
+    setGqSimpleHeterozygousMultiplier(Double.parseDouble(props.getProperty(PROP_MULTIPLIER_GQ_SIMPLE_HETEROZYGOUS)));
+    setGqComplexHomozygousMultiplier(Double.parseDouble(props.getProperty(PROP_MULTIPLIER_GQ_COMPLEX_HOMOZYGOUS)));
+    setGqComplexHeterozygousMultiplier(Double.parseDouble(props.getProperty(PROP_MULTIPLIER_GQ_COMPLEX_HETEROZYGOUS)));
+    setQualSimpleMultiplier(Double.parseDouble(props.getProperty(PROP_MULTIPLIER_QUAL_SIMPLE)));
+    setQualComplexMultiplier(Double.parseDouble(props.getProperty(PROP_MULTIPLIER_QUAL_COMPLEX)));
   }
 
   @Override
@@ -129,7 +129,7 @@ public class GtQualComplexMultiplierModel extends AbstractPredictModel {
 
     // update QUAL value based on complexity
     final int qualIndex = complex ? 1 : 0;
-    final double newQual = Double.valueOf(record.getQuality()) * mQualMultipliers[qualIndex];
+    final double newQual = Double.parseDouble(record.getQuality()) * mQualMultipliers[qualIndex];
     record.setQuality(Utils.realFormat(newQual, 1));
     incrementCount(qualIndex + mGqMultipliers.length);
 

@@ -78,7 +78,7 @@ public class GtQualComplexMultiplierModelBuilder extends AbstractModelBuilder<Gt
   }
 
   private double getPropertyValue(String property, double defaultValue) {
-    return Double.valueOf(mParameters.getProperty(property, Double.toString(defaultValue)));
+    return Double.parseDouble(mParameters.getProperty(property, Double.toString(defaultValue)));
   }
 
 }

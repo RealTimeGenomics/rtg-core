@@ -191,7 +191,7 @@ public class CnvRegion {
    */
   void addCopy(CnvRegion currentRegion) {
     mCopies.add(currentRegion);
-    mCopiesHetero.add(false);
+    mCopiesHetero.add(Boolean.FALSE);
   }
 
   /**

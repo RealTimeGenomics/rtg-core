@@ -267,8 +267,8 @@ public class SvInterestingRegionExtractor implements Closeable {
             re.setTemplate(chr, 0);
           }
 
-          final Integer pos = Integer.parseInt(parts[1]);
-          final Integer maxValueIndex = Integer.parseInt(parts[parts.length - 1]);
+          final Integer pos = Integer.valueOf(parts[1]);
+          final Integer maxValueIndex = Integer.valueOf(parts[parts.length - 1]);
           for (int i = 2; i < parts.length - 2; ++i) {
             values[i - 2] = Double.parseDouble(parts[i]);
           }

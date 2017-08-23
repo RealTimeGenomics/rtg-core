@@ -57,7 +57,7 @@ abstract class ReportTemplate {
     }
 
     for (String key : replacements.keySet()) {
-      wasPopulated.put(key, false);
+      wasPopulated.put(key, Boolean.FALSE);
     }
     final StringBuilder body = new StringBuilder();
     final String templateFile = ReportUtils.TEMPLATE_DIR + "/" + mTemplateFile;
@@ -78,7 +78,7 @@ abstract class ReportTemplate {
         for (Map.Entry<String, String> entry : replacements.entrySet()) {
           final String replaceKey = "__" + entry.getKey() + "__";
           if (line.contains(replaceKey)) {
-            wasPopulated.put(entry.getKey(), true);
+            wasPopulated.put(entry.getKey(), Boolean.TRUE);
             line = line.replaceAll(replaceKey, entry.getValue().replaceAll("\\\\", "\\\\\\\\"));
           }
         }

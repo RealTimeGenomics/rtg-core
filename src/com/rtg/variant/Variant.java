@@ -509,11 +509,11 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
     for (int i = 0; i < getNumberOfSamples(); ++i) {
       if (getSample(i) == null || getSample(i).getName() == null) {
         if (noCats == null) {
-          noCats = true;
+          noCats = Boolean.TRUE;
         }
         continue;
       } else {
-        noCats = false;
+        noCats = Boolean.FALSE;
       }
       final String name = getSample(i).getName();
       final int len = name.length();

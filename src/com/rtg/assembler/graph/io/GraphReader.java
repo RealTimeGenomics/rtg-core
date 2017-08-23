@@ -217,7 +217,7 @@ public final class GraphReader {
           final String key = kv.substring(0, eq);
           final String value = StringUtils.removeBackslashEscapes(kv.substring(eq + 1));
           if (key.equals("deleted")) {
-            if (Boolean.valueOf(value)) {
+            if (Boolean.parseBoolean(value)) {
               graph.deleteContig(uid);
             }
           } else {
@@ -345,7 +345,7 @@ public final class GraphReader {
           final String key = kv.substring(0, eq);
           final String value = StringUtils.removeBackslashEscapes(kv.substring(eq + 1));
           if (key.equals("deleted")) {
-            if (Boolean.valueOf(value)) {
+            if (Boolean.parseBoolean(value)) {
               graph.deletePath(pathId);
             }
           } else {

@@ -69,7 +69,7 @@ public class NcbiTaxDumpReaderCli extends AbstractCli {
             mErr.println("Malformed line: " + line);
             continue;
           }
-          mDeletedIds.add(Integer.parseInt(parts[0]));
+          mDeletedIds.add(Integer.valueOf(parts[0]));
         }
       }
     }

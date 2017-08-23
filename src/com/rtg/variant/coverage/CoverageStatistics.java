@@ -426,9 +426,9 @@ public class CoverageStatistics extends AbstractStatistics {
           final String[] split = StringUtils.split(line, '\t');
           if (split.length == 4) {
             final List<Double> datum = new ArrayList<>();
-            datum.add(Double.parseDouble(split[1]));
-            datum.add(Double.parseDouble(split[2]));
-            datum.add(Double.parseDouble(split[3]));
+            datum.add(Double.valueOf(split[1]));
+            datum.add(Double.valueOf(split[2]));
+            datum.add(Double.valueOf(split[3]));
             data.add(datum);
           }
         }

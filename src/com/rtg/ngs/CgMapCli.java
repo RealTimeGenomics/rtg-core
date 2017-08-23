@@ -173,11 +173,11 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     CommonFlags.initIndexFlags(mFlags);
     //--X flags
     MapFlags.initReadFreqFlag(mFlags, 65535); //disable read frequency blocking
-    mFlags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary SAM files", true).setCategory(REPORTING);
+    mFlags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary SAM files", Boolean.TRUE).setCategory(REPORTING);
     mFlags.registerOptional(MapFlags.XSCORE_INDEL, Integer.class, CommonFlags.INT, "maximum score indel threshold", MapFlags.MAX_SCORE).setCategory(REPORTING);
     mFlags.registerOptional(MAX_TOPN_RESULTS, Integer.class, CommonFlags.INT, "sets the number of results per read for topn. Allowed values are between 1 and 255", 5).setCategory(REPORTING);
     mFlags.registerOptional(XINTSET_WINDOW, Integer.class, CommonFlags.INT, "windows for int set", 1).setCategory(UTILITY);
-    mFlags.registerOptional(COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", true).setCategory(UTILITY);
+    mFlags.registerOptional(COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", Boolean.TRUE).setCategory(UTILITY);
     mFlags.registerOptional(OUTPUT_UNFILTERED, "output all alignments meeting thresholds instead of applying mating and N limits").setCategory(REPORTING);
     mFlags.registerOptional(MapFlags.N_AS_MISMATCH, "treat unknowns as mismatches").setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(MapFlags.SEX_FLAG, Sex.class, "sex", "sex of individual", null).setCategory(SENSITIVITY_TUNING);

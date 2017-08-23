@@ -98,7 +98,7 @@ public class DwgsimReadNameParser implements SimulatedReadNameParser {
       if (slashpos == -1) {
         return false;
       }
-      mReadNum = Long.valueOf(mFields[READ_LABEL].substring(0, slashpos), 16);
+      mReadNum = Long.parseLong(mFields[READ_LABEL].substring(0, slashpos), 16);
 
       final String[] errors = StringUtils.split(mFields[mFirstArm ? NUM_ERRORS_1 : NUM_ERRORS_2], ':');
       if (errors.length != 3) {

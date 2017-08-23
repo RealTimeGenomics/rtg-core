@@ -130,11 +130,11 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     // Metagenomics
     registerFlag(SPECIES_LTERMINATION_FLAG, Double.class, 0.1);
     registerFlag(SPECIES_TERMINATION_TARGET_FLAG, Double.class, 0.01);
-    registerFlag(SIMILARITY_PCA_FLAG, Boolean.class, true);
+    registerFlag(SIMILARITY_PCA_FLAG, Boolean.class, Boolean.TRUE);
 
     // Alignment (incl all-paths)
     registerFlag(EDIT_DIST_LOGGING_AMOUNT_FLAG, Integer.class, 0);
-    registerFlag(EDIT_DIST_HEURISTIC_ALIGNERS_FLAG, Boolean.class, true);
+    registerFlag(EDIT_DIST_HEURISTIC_ALIGNERS_FLAG, Boolean.class, Boolean.TRUE);
     registerFlag(EDIT_DIST_GOTOH_ONLY_FLAG);
     registerFlag(EDIT_DIST_SINGLE_INDEL_SEEDED_ONLY_FLAG);
     registerFlag(EDIT_DIST_INDEL_TABLE_FLAG, String.class, "");
@@ -155,29 +155,29 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     registerFlag(ASSEMBLER_INSERT_DEVIATIONS_FLAG, Integer.class, 4);
 
     // variant calling
-    registerFlag(VARIANT_MASK_HOMOPOLYMER, Boolean.class, false);
+    registerFlag(VARIANT_MASK_HOMOPOLYMER, Boolean.class, Boolean.FALSE);
 
     // Complex caller
     registerFlag(COMPLEX_CALLER_MAX_HYPOTH_FLAG, Integer.class, 20);
     registerFlag(COMPLEX_REGION_INDEL_EXTENSION);
     registerFlag(COMPLEX_REGION_SIMPLE_REPEAT_LIMIT, Integer.class, 3);
     registerFlag(COMPLEX_REGION_SIMPLE_REPEAT_IMPL, String.class, "default");
-    registerFlag(DUMP_COMPLEX_TRIGGER_SIGNALS, Boolean.class, false);
-    registerFlag(SOFT_CLIP_COMPLEX_TRIGGER, Boolean.class, false);
+    registerFlag(DUMP_COMPLEX_TRIGGER_SIGNALS, Boolean.class, Boolean.FALSE);
+    registerFlag(SOFT_CLIP_COMPLEX_TRIGGER, Boolean.class, Boolean.FALSE);
     registerFlag(COMPLEX_EVIDENCE_DETAILS);
     registerFlag(COMPLEX_HYPOTHESIS_DETAILS);
-    registerFlag(COMPLEX_HYPOTHESIS_NEW_PRIORS, Boolean.class, true);
-    registerFlag(COMPLEX_HYPOTHESIS_ADJUST_PRIORS, Boolean.class, true);
-    registerFlag(COMPLEX_CALLER_UNROLL_CG_FLAG, Boolean.class, true);
-    registerFlag(COMPLEX_CALLER_HOTSPOT_HACK, Boolean.class, true);
+    registerFlag(COMPLEX_HYPOTHESIS_NEW_PRIORS, Boolean.class, Boolean.TRUE);
+    registerFlag(COMPLEX_HYPOTHESIS_ADJUST_PRIORS, Boolean.class, Boolean.TRUE);
+    registerFlag(COMPLEX_CALLER_UNROLL_CG_FLAG, Boolean.class, Boolean.TRUE);
+    registerFlag(COMPLEX_CALLER_HOTSPOT_HACK, Boolean.class, Boolean.TRUE);
 
     // Misc calling
     registerFlag(CALLER_N_MIN_DEPTH, Integer.class, 5);
-    registerFlag(FAMILY_CALLER_FALLBACK_FLAG, Boolean.class, false);
-    registerFlag(FAMILY_CALLER_SORTED_HYPOTHESES, Boolean.class, true);
-    registerFlag(MIN_BASE_QUALITY_AS_TWO, Boolean.class, false);
+    registerFlag(FAMILY_CALLER_FALLBACK_FLAG, Boolean.class, Boolean.FALSE);
+    registerFlag(FAMILY_CALLER_SORTED_HYPOTHESES, Boolean.class, Boolean.TRUE);
+    registerFlag(MIN_BASE_QUALITY_AS_TWO, Boolean.class, Boolean.FALSE);
     registerFlag(QUALITY_CALIBRATION_MIN_EVIDENCE, Integer.class, 10);
-    registerFlag(QUALITY_CALIBRATION_COVARIATE_INTERSECTION, Boolean.class, false);
+    registerFlag(QUALITY_CALIBRATION_COVARIATE_INTERSECTION, Boolean.class, Boolean.FALSE);
     registerFlag(TUMOR_ALLELE_BALANCE, String.class, "binomial");
 
     // Structural variation
@@ -188,10 +188,10 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
 
     registerFlag(COVERAGE_DP, Integer.class, 2);
 
-    registerFlag(AVR_ALLOW_UNDECLARED_ATTRIBUTES, Boolean.class, false);
+    registerFlag(AVR_ALLOW_UNDECLARED_ATTRIBUTES, Boolean.class, Boolean.FALSE);
 
     //Aview
-    registerFlag(CP437_DELETES, Boolean.class, false);
+    registerFlag(CP437_DELETES, Boolean.class, Boolean.FALSE);
 
   }
 }

@@ -339,8 +339,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
 
     flags.registerOptional(X_ALLELE_BALANCE_PROBABILITY, AlleleBalanceFactor.class, CommonFlags.STRING, "method for calculating allele balance", AlleleBalanceFactor.NONE).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_EXPECTED_ALLELIC_FRACTION, Double.class, CommonFlags.FLOAT, "expected germline heterozygous alternate allele fraction", 0.5).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_EXPAND_COMPLEX_READ_QUERIES, Boolean.class, CommonFlags.BOOL, "expand queries for reads by one base either side of a complex region", false).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_COMPLEX_USE_SOFT_CLIP, Boolean.class, CommonFlags.BOOL, "use soft clipped bases in evidence for complex calls", true).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_EXPAND_COMPLEX_READ_QUERIES, Boolean.class, CommonFlags.BOOL, "expand queries for reads by one base either side of a complex region", Boolean.FALSE).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_COMPLEX_USE_SOFT_CLIP, Boolean.class, CommonFlags.BOOL, "use soft clipped bases in evidence for complex calls", Boolean.TRUE).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_FORCE_COMPLEX_REGION, String.class, CommonFlags.STRING, "Force a complex region over specified range").setCategory(UTILITY);
   }
 
@@ -595,7 +595,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
         builder.threadingEnvironment(ThreadingEnvironment.PARALLEL);
       } else {
         final String[] split = val.split("=");
-        final Long l = Long.parseLong(split[1]);
+        final Long l = Long.valueOf(split[1]);
         builder
         .threadingEnvironment(ThreadingEnvironment.RANDOM)
         .threadingEnvironmentSeed(l);

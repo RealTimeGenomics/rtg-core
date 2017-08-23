@@ -141,7 +141,7 @@ public final class AlleleCountsFileReader implements Closeable {
       final String allele = splitLine[i];
       final Integer count;
       try {
-        count = Integer.parseInt(splitLine[i + 1]);
+        count = Integer.valueOf(splitLine[i + 1]);
       } catch (final NumberFormatException nfe) {
         throw new NoTalkbackSlimException(splitLine[i + 1] + " not an integer in line: " + line);
       }
@@ -150,7 +150,7 @@ public final class AlleleCountsFileReader implements Closeable {
 
     final Integer position;
     try {
-      position = Integer.parseInt(splitLine[1]);
+      position = Integer.valueOf(splitLine[1]);
     } catch (final NumberFormatException nfe) {
       throw new NoTalkbackSlimException("Position: " + splitLine[1] + " not an integer in line: " + line);
     }
@@ -217,7 +217,7 @@ public final class AlleleCountsFileReader implements Closeable {
         }
         final Integer totalAlleleNumber;
         try {
-          totalAlleleNumber = Integer.parseInt(anValue.get(0));
+          totalAlleleNumber = Integer.valueOf(anValue.get(0));
         } catch (final NumberFormatException nfe) {
           ++mWarnings;
           if (mWarnings < 10) {
@@ -234,7 +234,7 @@ public final class AlleleCountsFileReader implements Closeable {
         }
         for (int i = 0; i < acValue.size(); ++i) {
           try {
-            final Integer thisAlleleCount = Integer.parseInt(acValue.get(i));
+            final Integer thisAlleleCount = Integer.valueOf(acValue.get(i));
             countsMap.put(vcfRecord.getAltCalls().get(i), thisAlleleCount);
             totalAllelesSeen += thisAlleleCount;
           } catch (final NumberFormatException nfe) {

@@ -31,7 +31,7 @@ import com.rtg.util.integrity.IntegralAbstract;
  */
 public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
 
-  private static final boolean DAVE_N_HACK = false; //Boolean.valueOf(System.getProperty("dave.n.hack", "false"));
+  private static final boolean DAVE_N_HACK = false;
 
   private static final int WRONG_LENGTH_REPORT_LIMIT = 10;
 

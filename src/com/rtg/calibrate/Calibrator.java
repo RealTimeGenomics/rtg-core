@@ -382,7 +382,7 @@ public class Calibrator {
         if (names[0].startsWith(REFERENCE_SIZE)) {
           final int secondTab = names[0].length() + names[1].length() + 2;
           try {
-            mSequenceLengths.put(line.substring(secondTab), Integer.parseInt(names[1]));
+            mSequenceLengths.put(line.substring(secondTab), Integer.valueOf(names[1]));
           } catch (final NumberFormatException e) {
             throw new NoTalkbackSlimException("calibration file had an invalid sequence length: " + names[1]);
           }

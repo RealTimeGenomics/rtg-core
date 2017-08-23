@@ -226,7 +226,7 @@ public class SegregationChecker {
       }
       final int childGroup = selectedPatternChildren.group(child);
       groupCounts[childGroup]++;
-      groupDprSums[childGroup] += rec.getFormat(VcfFormatField.DPR.name()) == null ? 0.0 : Double.valueOf(rec.getFormat(VcfFormatField.DPR.name()).get(i));
+      groupDprSums[childGroup] += rec.getFormat(VcfFormatField.DPR.name()) == null ? 0.0 : Double.parseDouble(rec.getFormat(VcfFormatField.DPR.name()).get(i));
       ++child;
     }
     for (int i = 0; i < groupCounts.length; ++i) {
