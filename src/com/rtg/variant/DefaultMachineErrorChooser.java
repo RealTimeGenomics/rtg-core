@@ -17,7 +17,6 @@ import java.io.IOException;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.realign.RealignParamsImplementation;
@@ -56,13 +55,9 @@ public class DefaultMachineErrorChooser implements MachineErrorChooserInterface 
    * @throws IOException when reading the errors file.
    */
   public DefaultMachineErrorChooser(final String errorName) throws IOException {
-    try {
-      mMachineError = MachineErrorParams.builder(errorName).create();
-      mRealignParams = new RealignParamsImplementation(mMachineError);
-      Diagnostic.developerLog("Machine errors for all read groups: " + errorName + StringUtils.LS + VariantUtils.dumpMachineErrors(mMachineError));
-    } catch (final InvalidParamsException e) {
-      throw new NoTalkbackSlimException(e.getMessage());
-    }
+    mMachineError = MachineErrorParams.builder(errorName).create();
+    mRealignParams = new RealignParamsImplementation(mMachineError);
+    Diagnostic.developerLog("Machine errors for all read groups: " + errorName + StringUtils.LS + VariantUtils.dumpMachineErrors(mMachineError));
   }
 
   static final String PLATFORM_WARNING =

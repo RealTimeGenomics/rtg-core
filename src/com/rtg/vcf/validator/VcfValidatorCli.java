@@ -307,7 +307,7 @@ public class VcfValidatorCli extends AbstractCli {
     try {
       number = new VcfNumber(fieldNum);
     } catch (NumberFormatException e) {
-      throw new IOException("Rules for " + type + " field " + name + " has invalid NUM field value.");
+      throw new IOException("Rules for " + type + " field " + name + " has invalid NUM field value.", e);
     }
     if (number.getNumber() < 0 && number.getNumberType() == VcfNumberType.INTEGER) {
       throw new IOException("Rules for " + type + " field " + name + " has negative value for NUM field value.");
@@ -336,7 +336,7 @@ public class VcfValidatorCli extends AbstractCli {
       }
       return returnRules;
     } catch (RuleValidationException e) {
-      throw new IOException("Rules for " + type + " field " + name + " has one or more invalid values.");
+      throw new IOException("Rules for " + type + " field " + name + " has one or more invalid values.", e);
     }
   }
 

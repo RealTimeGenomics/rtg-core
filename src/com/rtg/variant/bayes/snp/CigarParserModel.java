@@ -73,7 +73,7 @@ public class CigarParserModel implements ReadParserInterface {
       // Note that we don't use the SuperCigar for CG here, as the overlaps would be treated as double-evidence (whereas allpaths does the right thing).
       mParser.setStandardCigar(var.getCigar(), var.getRead(), var.getRead().length);
     } catch (final IllegalArgumentException iae) {
-      throw new BadSuperCigarException("Illegal DNA character: " + iae.getMessage());
+      throw new BadSuperCigarException("Illegal DNA character", iae);
     }
     qualities = var.getRecalibratedQuality().length == 0 || mParams.ignoreQualityScores() ? null : var.getRecalibratedQuality();
 

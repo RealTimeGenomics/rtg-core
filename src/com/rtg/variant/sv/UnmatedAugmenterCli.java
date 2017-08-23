@@ -227,7 +227,7 @@ public class UnmatedAugmenterCli extends LoggedCli {
         } catch (final UnindexableDataException e) {
           Diagnostic.warning("Could not create BAM index: " + indexFile.getPath());
           if (indexFile.exists() && !indexFile.delete()) {
-            throw new IOException("Could not delete old index file: " + indexFile.getPath());
+            throw new IOException("Could not delete old index file: " + indexFile.getPath(), e);
           }
         }
       }
@@ -239,7 +239,7 @@ public class UnmatedAugmenterCli extends LoggedCli {
         } catch (final UnindexableDataException e) {
           Diagnostic.warning("Could not create SAM index: " + indexFile.getPath());
           if (indexFile.exists() && !indexFile.delete()) {
-            throw new IOException("Could not delete old index file: " + indexFile.getPath());
+            throw new IOException("Could not delete old index file: " + indexFile.getPath(), e);
           }
         }
       }

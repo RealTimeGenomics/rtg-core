@@ -43,10 +43,10 @@ public class CalibratedMachineErrorChooser implements MachineErrorChooserInterfa
       try {
         sCompleteParams = MachineErrorParams.builder(mt.priors()).create();
       } catch (final IOException e) {
-        throw new RuntimeException("Could not load built-in complete genomics error rates");
+        throw new RuntimeException("Could not load built-in complete genomics error rates", e);
       } catch (final InvalidParamsException e) {
         // Converted here because this is a build-problem and we don't want to add InvalidParamsException to callers of this constructor
-        throw new RuntimeException("Bad built-in complete genomics error rates");
+        throw new RuntimeException("Bad built-in complete genomics error rates", e);
       }
     }
     return sCompleteParams;

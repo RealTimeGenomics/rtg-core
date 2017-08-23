@@ -314,7 +314,7 @@ public class IndexSimple extends IndexBase {
       assert count <= Integer.MAX_VALUE;
       return (int) count;
     } catch (final IOException e) {
-      throw new RuntimeException("Unpossible: " + e.getMessage()); // CountingFinder has no IOException
+      throw new RuntimeException(e); // CountingFinder has no IOException
     }
   }
 

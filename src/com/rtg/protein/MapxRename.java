@@ -180,7 +180,7 @@ public class MapxRename extends AbstractCli {
         try {
           return new SdfId(line.substring(line.indexOf('\t') + 1));
         } catch (final NumberFormatException e) {
-          throw new NoTalkbackSlimException("Malformed READ-SDF-ID from mapx header." + e);
+          throw new NoTalkbackSlimException("Malformed READ-SDF-ID from mapx header." + e.getMessage());
         }
       }
     }

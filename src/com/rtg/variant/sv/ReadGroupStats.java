@@ -187,7 +187,7 @@ public class ReadGroupStats {
       mUnmated = Long.parseLong(parts[fnum++]);
       calculate();
     } catch (final NumberFormatException e) {
-      throw new IllegalArgumentException("Badly formatted field " + fnum + " on line: " + statsLine);
+      throw new IllegalArgumentException("Badly formatted field " + fnum + " on line: " + statsLine, e);
     }
   }
 

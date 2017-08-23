@@ -43,11 +43,7 @@ public class ReadGroupMachineErrorChooser implements MachineErrorChooserInterfac
    * @throws IOException if an IO error occurs
    */
   public ReadGroupMachineErrorChooser(SAMFileHeader header) throws IOException {
-    try {
-      addReadGroups(header.getReadGroups());
-    } catch (final InvalidParamsException e) {
-      throw new NoTalkbackSlimException(e.getMessage());
-    }
+    addReadGroups(header.getReadGroups());
   }
 
   private void addReadGroups(final List<SAMReadGroupRecord> groups) throws InvalidParamsException, IOException {

@@ -173,7 +173,7 @@ public final class BinarySplitter {
         final Direction retVal = ((Comparable) mSplitValue).compareTo(splitValue) >= 0 ? Direction.LEFT : Direction.RIGHT;
         return retVal;
       } catch (ClassCastException e) {
-        throw new RuntimeException("Illegal value type for attribute " + mName + ". " + e.getMessage());
+        throw new RuntimeException("Illegal value type for attribute " + mName + ".", e);
       }
     } else { // Other nominal attributes take a binary split
       //in this case the double is effectively an enumeration, so should only take integer values

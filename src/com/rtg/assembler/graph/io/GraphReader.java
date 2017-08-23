@@ -168,7 +168,7 @@ public final class GraphReader {
     try {
       return Integer.parseInt(parts[1]);
     } catch (NumberFormatException e) {
-      throw new IOException(mHeader + ": malformed header, expecting " + CONTIG_OVERLAP + " line, saw: " + line);
+      throw new IOException(mHeader + ": malformed header, expecting " + CONTIG_OVERLAP + " line, saw: " + line, e);
     }
 
   }

@@ -76,7 +76,7 @@ public final class MetaSnpLine {
       }
       return new MetaSnpLine(fields[0], Integer.parseInt(fields[1]) - 1, (byte) DNA.valueOf(fields[2]).ordinal() - 1, DEFAULT_ALLELES, counts);
     } catch (final NumberFormatException e) {
-      throw new IOException("Error on line: " + lineNumber + " " + e.getMessage());
+      throw new IOException("Error on line: " + lineNumber + " " + e.getMessage(), e);
     }
   }
 
