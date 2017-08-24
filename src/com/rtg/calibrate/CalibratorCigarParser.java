@@ -195,15 +195,4 @@ class CalibratorCigarParser extends SuperCigarParser {
       startMatchMismatch();
     }
   }
-
-  @Override
-  protected void doUnknownOnTemplate(int readNt, int templateNt) throws BadSuperCigarException {
-    // Skip sites where the template is N, we can then use Ns to mask sites where calibration should
-    // not be carried out (e.g. at sites of known variants)
-  }
-
-  @Override
-  protected void doUnknownOnRead() throws BadSuperCigarException {
-    // N's on the read are simply skipped
-  }
 }

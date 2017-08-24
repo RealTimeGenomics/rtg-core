@@ -42,11 +42,6 @@ public class ExtractPath extends AbstractCli {
   }
 
   @Override
-  public String description() {
-    return null;
-  }
-
-  @Override
   protected void initFlags() {
     initFlagsLocal(mFlags);
   }

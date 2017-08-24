@@ -65,29 +65,13 @@ public class SuperCigarUnroller extends SuperCigarParser {
   }
 
   @Override
-  protected void doReadHardClip() {
-  }
-
-  @Override
   protected void doReadSoftClip(int readNt) {
     mBaos.write(readNt);
   }
 
   @Override
-  protected void doTemplateOverlap() {
-  }
-
-  @Override
-  protected void doTemplateSkip(int templateNt) {
-  }
-
-  @Override
   protected void doReadOnly(int readNt) {
     mBaos.write(readNt);
-  }
-
-  @Override
-  protected void doTemplateOnly(int templateNt) {
   }
 
   @Override
@@ -100,17 +84,13 @@ public class SuperCigarUnroller extends SuperCigarParser {
     mBaos.write(nt);
   }
 
-
   @Override
   protected void doUnknownOnTemplate(int readNt, int templateNt) {
     mBaos.write(readNt);
   }
 
-
   @Override
   protected void doUnknownOnRead() {
     mBaos.write(DNA.N.ordinal());
   }
-
-
 }

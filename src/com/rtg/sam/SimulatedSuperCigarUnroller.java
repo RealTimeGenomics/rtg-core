@@ -100,30 +100,9 @@ public class SimulatedSuperCigarUnroller extends SuperCigarParser {
     return res;
   }
 
-
-  @Override
-  protected void doReadHardClip() {
-  }
-
-  @Override
-  protected void doReadSoftClip(int readNt) {
-  }
-
-  @Override
-  protected void doTemplateOverlap() {
-  }
-
-  @Override
-  protected void doTemplateSkip(int templateNt) {
-  }
-
   @Override
   protected void doReadOnly(int readNt) {
     mBuilder.append(DNA.valueChars()[readNt]);
-  }
-
-  @Override
-  protected void doTemplateOnly(int templateNt) {
   }
 
   @Override

@@ -223,10 +223,6 @@ public class CigarParserModel implements ReadParserInterface {
     }
 
     @Override
-    protected void doTemplateOverlap() {
-    }
-
-    @Override
     protected void doUnknownOnTemplate(int readNt, int templateNt) throws BadSuperCigarException {
       doSubstitutionOrEquality(readNt);
     }

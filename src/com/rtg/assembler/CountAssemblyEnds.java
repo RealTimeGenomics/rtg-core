@@ -36,11 +36,6 @@ public class CountAssemblyEnds extends AbstractCli {
     return MODULE_NAME;
   }
 
-  @Override
-  public String description() {
-    return null;
-  }
-
   /**
    * @param args command line
    */

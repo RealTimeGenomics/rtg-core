@@ -79,11 +79,6 @@ public class VcfValidatorCli extends AbstractCli {
   }
 
   @Override
-  public String description() {
-    return null;
-  }
-
-  @Override
   protected void initFlags() {
     mFlags.setDescription("Validates the contents of a VCF file conform to expected value ranges.");
     CommonFlagCategories.setCategories(mFlags);

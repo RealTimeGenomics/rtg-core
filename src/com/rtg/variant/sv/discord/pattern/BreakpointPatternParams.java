@@ -105,11 +105,6 @@ public final class BreakpointPatternParams extends ModuleParams {
   }
 
   @Override
-  @ParamsNoField
-  public void close() {
-  }
-
-  @Override
   public String toString() {
     return "BreakpointPatternParams"
       + " fragment-length=" + mFragmentLength

@@ -48,9 +48,4 @@ public class MapXStatistics extends SingleEndMapStatistics {
     appendValue(sb, MapStatisticsField.TOTAL_READS, "total", formatLength);
     return sb.toString();
   }
-
-  @Override
-  public void generateReport() {
-    //TODO somehow wrangle the MapXCli report stuff into here - unfortunately it heavily relies on the params object of all things, so that'll be fun.
-  }
 }

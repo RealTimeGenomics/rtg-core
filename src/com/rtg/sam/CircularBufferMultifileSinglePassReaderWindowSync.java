@@ -69,15 +69,4 @@ public final class CircularBufferMultifileSinglePassReaderWindowSync<T extends R
   public synchronized void advanceBuffer(int end) {
     super.advanceBuffer(end);
   }
-
-  @Override
-  public synchronized int flushedTo() {
-    return super.flushedTo();
-  }
-
-  @Override
-  public synchronized int finishedTo() {
-    return super.finishedTo();
-  }
-
 }

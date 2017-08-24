@@ -64,11 +64,6 @@ public final class BitVector extends AbstractBitVector {
   public long bytes() {
     return (((long) mArray.length) << BITS_PER_ENTRY) >> BITS_PER_BYTE;
   }
-
-  @Override
-  public long length() {
-    return mLength;
-  }
 }
 
 

@@ -69,11 +69,6 @@ public final class BigBitVector extends AbstractBitVector {
   public long bytes() {
     return (mArray.length() << BITS_PER_ENTRY) >> BITS_PER_BYTE;
   }
-
-  @Override
-  public long length() {
-    return mLength;
-  }
 }
 
 

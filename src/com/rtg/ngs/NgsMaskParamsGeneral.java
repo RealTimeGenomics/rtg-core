@@ -94,11 +94,6 @@ public class NgsMaskParamsGeneral extends ObjectParams implements NgsMaskParams,
   }
 
   @Override
-  public void close() {
-    // do nothing
-  }
-
-  @Override
   public String toString() {
     return "General Mask: w=" + mWordSize + " s=" + mSubstitutions + " i=" + mIndels + " l=" + mIndelLength;
   }
