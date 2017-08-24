@@ -168,9 +168,9 @@ public final class AlleleCountsFileReader implements Closeable {
     boolean supportsAN = false;
     boolean supportsAC = false;
     for (final InfoField infoField : infoLines) {
-      if (infoField.getId().equals(AN_INFO_ID)) {
+      if (AN_INFO_ID.equals(infoField.getId())) {
         supportsAN = true;
-      } else if (infoField.getId().equals(AC_INFO_ID)) {
+      } else if (AC_INFO_ID.equals(infoField.getId())) {
         supportsAC = true;
       }
       if (supportsAC && supportsAN) {

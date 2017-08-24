@@ -237,7 +237,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
     if (!mContigAttributes.containsKey(attribute)) {
       throw new IllegalArgumentException();
     }
-    if (attribute.equals("deleted")) {
+    if ("deleted".equals(attribute)) {
       return contigDeleted(contigId) ? Boolean.toString(true) : null;
     }
     final long acontig = absContig(contigId);
@@ -254,7 +254,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
     if (!mPathAttributes.containsKey(attribute)) {
       throw new IllegalArgumentException();
     }
-    if (attribute.equals("deleted")) {
+    if ("deleted".equals(attribute)) {
       return pathDeleted(pathId) ? Boolean.toString(true) : null;
     }
     final long apath = absPath(pathId);
@@ -379,7 +379,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
     if (!mContigAttributes.containsKey(attribute)) {
       throw new IllegalArgumentException();
     }
-    if (attribute.equals("deleted")) {
+    if ("deleted".equals(attribute)) {
       if (Boolean.parseBoolean(value)) {
         deleteContig(contigId);
       }
@@ -436,7 +436,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
     if (!mPathAttributes.containsKey(attribute)) {
       throw new IllegalArgumentException();
     }
-    if (attribute.equals("deleted")) {
+    if ("deleted".equals(attribute)) {
       if (Boolean.parseBoolean(value)) {
         deletePath(pathId);
       }

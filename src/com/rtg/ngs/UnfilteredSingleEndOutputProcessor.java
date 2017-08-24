@@ -216,7 +216,7 @@ public class UnfilteredSingleEndOutputProcessor extends AbstractSdfOutputProcess
 
     @Override
     public void process(final long templateId, final String frame, final int readId, final int tStart, final int score, final int scoreIndel) throws IOException {
-      final boolean bFrame = frame.equals("R");
+      final boolean bFrame = "R".equals(frame);
       if (templateId != mTemplateId) {
         mTemplateId = templateId;
         mTempWriter.nextTemplateId(templateId);

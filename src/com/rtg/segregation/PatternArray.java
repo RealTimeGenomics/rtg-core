@@ -164,8 +164,7 @@ public class PatternArray extends IntegralAbstract {
   int faCount() {
     int cnt = 0;
     for (Pattern mPattern : mPatterns) {
-      final String faString = mPattern.faString();
-      if (faString.equals("0")) {
+      if ("0".equals(mPattern.faString())) {
         ++cnt;
       }
     }
@@ -178,8 +177,7 @@ public class PatternArray extends IntegralAbstract {
   int moCount() {
     int cnt = 0;
     for (Pattern mPattern : mPatterns) {
-      final String moString = mPattern.moString();
-      if (moString.equals("0")) {
+      if ("0".equals(mPattern.moString())) {
         ++cnt;
       }
     }

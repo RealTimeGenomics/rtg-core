@@ -221,11 +221,11 @@ public class CombinedReport {
       final StringBuilder sb = new StringBuilder();
       try (BufferedReader reader = new BufferedReader(FileUtils.createReader(helper.getReportFile(), false))) {
         String line;
-        while ((line = reader.readLine()) != null && !line.equals(MapReport.START_PARAMS_SUMMARY)) {
+        while ((line = reader.readLine()) != null && !MapReport.START_PARAMS_SUMMARY.equals(line)) {
           //skip line
         }
 
-        while ((line = reader.readLine()) != null && !line.equals(MapReport.END_PARAMS_SUMMARY)) {
+        while ((line = reader.readLine()) != null && !MapReport.END_PARAMS_SUMMARY.equals(line)) {
           sb.append(line).append(StringUtils.LS);
         }
       }

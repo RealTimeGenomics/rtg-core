@@ -284,7 +284,7 @@ public class SegmentCli extends LoggedCli {
     if (panelData.columnId(NORMALIZED_COVERAGE_COLUMN) == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + NORMALIZED_COVERAGE_COLUMN + " in " + panelData);
     }
-    panelData.getColumns().removeIf((Column col) -> !col.getName().equals(NORMALIZED_COVERAGE_COLUMN));
+    panelData.getColumns().removeIf((Column col) -> !NORMALIZED_COVERAGE_COLUMN.equals(col.getName()));
 
 
     Diagnostic.userLog("Joining");

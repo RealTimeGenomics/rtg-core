@@ -198,8 +198,8 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     }
     if (right != null) {
       if (ReaderUtils.isSDF(left) && ReaderUtils.isSDF(right) && left.getParent().equals(right.getParent())
-          && left.getName().equals("left")
-          && right.getName().equals("right")) {
+          && "left".equals(left.getName())
+          && "right".equals(right.getName())) {
         samples.add(new File(left.getParent()));
       } else {
         samples.add(left);

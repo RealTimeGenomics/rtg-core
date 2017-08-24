@@ -138,7 +138,7 @@ public class BitSet extends IntegralAbstract {
     Exam.assertTrue(0 < mLength && mLength <= Integer.SIZE);
     Exam.assertEquals(mNames.length, mLength);
     for (int i = 0; i < mLength; ++i) {
-      Exam.assertFalse(mNames[i].trim().equals(""));
+      Exam.assertFalse(mNames[i].trim().isEmpty());
       final int t = 1 << i;
       Exam.assertTrue((mMask & t) != 0);
     }

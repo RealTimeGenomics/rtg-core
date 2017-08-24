@@ -134,7 +134,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     @Override
     public boolean isValid(final CFlags flags) {
       final String format = flags.isSet(FormatCli.FORMAT_FLAG) ? flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()) : FormatCli.SDF_FORMAT;
-      final boolean sdf = format.equals(FormatCli.SDF_FORMAT);
+      final boolean sdf = FormatCli.SDF_FORMAT.equals(format);
       if (!CommonFlags.validateOutputDirectory(flags)
         || !CommonFlags.validateReads(flags, sdf)
         || !CommonFlags.validateTemplate(flags)

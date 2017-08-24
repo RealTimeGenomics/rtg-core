@@ -48,7 +48,7 @@ public final class NgsMaskParamsExplicit extends ObjectParams implements NgsMask
 
   @Override
   public boolean integrity() {
-    Exam.assertTrue(mMask != null && !mMask.trim().equals(""));
+    Exam.assertTrue(mMask != null && !mMask.trim().isEmpty());
     return true;
   }
 

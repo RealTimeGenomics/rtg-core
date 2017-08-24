@@ -190,7 +190,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     }
     if (flags.isSet(X_THREADING_ENVIRONMENT)) {
       final String val = (String) flags.getValue(X_THREADING_ENVIRONMENT);
-      if (!val.equalsIgnoreCase("simple") && !val.equalsIgnoreCase("single") && !val.equalsIgnoreCase("parallel") && !val.toLowerCase(Locale.getDefault()).startsWith("random")) {
+      if (!"simple".equalsIgnoreCase(val) && !"single".equalsIgnoreCase(val) && !"parallel".equalsIgnoreCase(val) && !val.toLowerCase(Locale.getDefault()).startsWith("random")) {
         flags.setParseMessage("Unknown value " + val + " for --" + X_THREADING_ENVIRONMENT);
         return false;
       }
@@ -589,18 +589,15 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     builder.execThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)));
     if (mFlags.isSet(X_THREADING_ENVIRONMENT)) {
       final String val = (String) mFlags.getValue(X_THREADING_ENVIRONMENT);
-      if (val.equalsIgnoreCase("single")) {
+      if ("single".equalsIgnoreCase(val)) {
         builder.threadingEnvironment(ThreadingEnvironment.SINGLE);
-      } else if  (val.equalsIgnoreCase("parallel")) {
+      } else if ("parallel".equalsIgnoreCase(val)) {
         builder.threadingEnvironment(ThreadingEnvironment.PARALLEL);
       } else {
         final String[] split = val.split("=");
         final Long l = Long.valueOf(split[1]);
-        builder
-        .threadingEnvironment(ThreadingEnvironment.RANDOM)
-        .threadingEnvironmentSeed(l);
+        builder.threadingEnvironment(ThreadingEnvironment.RANDOM).threadingEnvironmentSeed(l);
       }
-
     }
   }
 

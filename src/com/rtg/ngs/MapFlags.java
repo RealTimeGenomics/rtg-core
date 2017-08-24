@@ -262,7 +262,7 @@ public final class MapFlags {
       return false;
     } else {
       final String format = flags.isSet(FormatCli.FORMAT_FLAG) ? flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()) : FormatCli.SDF_FORMAT;
-      if (format.equals(FormatCli.SAM_SE_FORMAT) || format.equals(FormatCli.SAM_PE_FORMAT)) {
+      if (FormatCli.SAM_SE_FORMAT.equals(format) || FormatCli.SAM_PE_FORMAT.equals(format)) {
         flags.setParseMessage("Do not use left and right flags when using SAM single or paired end input.");
         return false;
       }
@@ -356,7 +356,7 @@ public final class MapFlags {
 
   static boolean validateMapInputOutputParams(CFlags flags) {
     final String format = flags.isSet(FormatCli.FORMAT_FLAG) ? flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()) : FormatCli.SDF_FORMAT;
-    final boolean sdf = format.equals(FormatCli.SDF_FORMAT);
+    final boolean sdf = FormatCli.SDF_FORMAT.equals(format);
     if (sdf) {
       if (!flags.isSet(CommonFlags.READS_FLAG)) {
         flags.setParseMessage("Must set --" + CommonFlags.READS_FLAG + " when --" + FormatCli.FORMAT_FLAG + " is set to " + FormatCli.SDF_FORMAT);

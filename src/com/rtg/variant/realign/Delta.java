@@ -112,10 +112,10 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
   protected static String formatTerse(final double x) {
     assert 0.0 <= x && x <= 1.0;
     final String res = Utils.realFormat(x, 3);
-    if (res.equals("0.000")) {
+    if ("0.000".equals(res)) {
       return " ";
     }
-    if (res.equals("1.000")) {
+    if ("1.000".equals(res)) {
       return "*";
     }
     if (res.startsWith("0.00")) {
@@ -184,7 +184,7 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
   private static String format(final double x) {
     assert 0.0 <= x && x <= 1.0;
     final String res = "  " + Utils.realFormat(x, FIELD_DP);
-    if (res.equals("  0.000")) {
+    if ("  0.000".equals(res)) {
       return StringUtils.padLeft("", FIELD_WIDTH);
     }
     return res;

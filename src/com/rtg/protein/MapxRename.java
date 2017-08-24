@@ -149,16 +149,16 @@ public class MapxRename extends AbstractCli {
       } else if (line.startsWith(ProteinOutputProcessor.MAPX_OUTPUT_VERSION_HEADER)) {
         // Check version number
         final String[] parts = line.split("\t");
-        if ((parts.length != 2) || !parts[1].equals(ProteinOutputProcessor.MAPX_OUTPUT_VERSION)) {
+        if ((parts.length != 2) || !ProteinOutputProcessor.MAPX_OUTPUT_VERSION.equals(parts[1])) {
           throw new IOException("Unsupported mapx output format: " + line);
         }
       } else if ((line.startsWith("#")
           && line.contains(ProteinOutputProcessor.HEADER_COL_NAME_READNAME))
-          || line.equals(ProteinOutputProcessor.UNMAPPED_HEADER_READ_NAMES)) {
+          || ProteinOutputProcessor.UNMAPPED_HEADER_READ_NAMES.equals(line)) {
         throw new NoTalkbackSlimException("This file has already been renamed");
       } else if ((line.startsWith("#")
           && line.contains(ProteinOutputProcessor.HEADER_COL_NAME_READID))
-          || line.equals(ProteinOutputProcessor.UNMAPPED_HEADER)) {
+          || ProteinOutputProcessor.UNMAPPED_HEADER.equals(line)) {
         return header;
       }
     }
@@ -207,7 +207,7 @@ public class MapxRename extends AbstractCli {
         final String colHeader = header.get(header.size() - 1).substring(1);
         final String[] colHeadings = colHeader.split("\t");
         for (int i = 0; i < colHeadings.length; ++i) {
-          if (colHeadings[i].equals("read-id")) {
+          if ("read-id".equals(colHeadings[i])) {
             idColumn = i;
             break;
           }

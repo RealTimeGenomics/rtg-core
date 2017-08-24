@@ -132,7 +132,7 @@ public class CnvPonBuildCli extends AbstractCli {
           sum[k] += covData.get(k);
         }
       }
-      typicalSample.getColumns().removeIf((Column col) -> !col.getName().equals(LABEL_COLUMN));
+      typicalSample.getColumns().removeIf((Column col) -> !LABEL_COLUMN.equals(col.getName()));
       final int n = mFlags.getAnonymousValues(0).size();
       final NumericColumn col = new NumericColumn(NORMALIZED_COVERAGE_COLUMN);
       for (final double v : sum) {

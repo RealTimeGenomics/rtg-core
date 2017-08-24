@@ -72,9 +72,9 @@ public class HomoPolymerParams extends IntegralAbstract {
         throw new IOException("Invalid line in homopolymer calibration:" + line);
       }
       final int tag;
-      if (split[0].equals("A+T")) {
+      if ("A+T".equals(split[0])) {
         tag = 0;
-      } else if (split[0].equals("C+G")) {
+      } else if ("C+G".equals(split[0])) {
         tag = 1;
       } else {
         throw new IOException("Invalid line in homopolymer calibration:" + line);

@@ -94,7 +94,7 @@ public final class GraphWriter {
         }
         ps.print(">" + l);
         for (final String key : contigAttributes) {
-          if (mIncludeDeletions || !key.equals("deleted")) {
+          if (mIncludeDeletions || !"deleted".equals(key)) {
             final String attr = mGraph.contigAttribute(l, key);
             if (attr != null) {
               ps.print(TAB + key + "=" + attr);
@@ -124,7 +124,7 @@ public final class GraphWriter {
         }
         ps.print("path" + TAB + l);
         for (final String key : pathAttributes) {
-          if (mIncludeDeletions || !key.equals("deleted")) {
+          if (mIncludeDeletions || !"deleted".equals(key)) {
             final String attr = mGraph.pathAttribute(l, key);
             if (attr != null) {
               ps.print(TAB + key + "=" + attr);

@@ -109,7 +109,7 @@ public class SamAssistanceCgLegacy implements SamAssistance {
     //System.err.println("readStart: " + readStart + " overstart was: " + length +  " now: " + overStart);
     for (int i = 0, tPos = 0; i < overLapLength; ++tPos) {
       final String te = template.substring(overStart + tPos, overStart + tPos + 1).toUpperCase(Locale.getDefault());
-      if (te.equals("" + DisplayHelper.INSERT_CHAR)) {
+      if (String.valueOf(DisplayHelper.INSERT_CHAR).equals(te)) {
         continue;
       }
 

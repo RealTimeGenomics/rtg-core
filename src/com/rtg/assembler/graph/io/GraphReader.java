@@ -140,7 +140,7 @@ public final class GraphReader {
       }
       final String attrName = StringUtils.removeBackslashEscapes(split[1]);
       final String attrDescription = split.length == 3 ? StringUtils.removeBackslashEscapes(split[2]) : "";
-      if (!attrName.equals("deleted")) {
+      if (!"deleted".equals(attrName)) {
         attr.put(attrName, attrDescription);
       }
     } while ((line = nextValidLine(r)) != null && line.startsWith(attrType));
@@ -162,7 +162,7 @@ public final class GraphReader {
       throw new IOException(mHeader + ": missing or incorrect contigOverlap line");
     }
     final String[] parts = line.split("\t");
-    if (parts.length != 2 || !parts[0].equals(CONTIG_OVERLAP)) {
+    if (parts.length != 2 || !CONTIG_OVERLAP.equals(parts[0])) {
       throw new IOException(mHeader + ": malformed header, expecting " + CONTIG_OVERLAP + " line, saw: " + line);
     }
     try {
@@ -216,7 +216,7 @@ public final class GraphReader {
           final int eq = kv.indexOf('=');
           final String key = kv.substring(0, eq);
           final String value = StringUtils.removeBackslashEscapes(kv.substring(eq + 1));
-          if (key.equals("deleted")) {
+          if ("deleted".equals(key)) {
             if (Boolean.parseBoolean(value)) {
               graph.deleteContig(uid);
             }
@@ -301,7 +301,7 @@ public final class GraphReader {
     String line;
     while ((line = nextValidLine(r)) != null) {
       final String[] pathSplit = line.split("\t");
-      if (pathSplit.length < 2 || !pathSplit[0].equals(PATH)) {
+      if (pathSplit.length < 2 || !PATH.equals(pathSplit[0])) {
         throw new IOException("Expected line starting with 'path', saw: " + line);
       }
 
@@ -314,7 +314,7 @@ public final class GraphReader {
       if (cids.length < 3) {
         throw new IOException("Insufficient (<2) contig identifiers on path: " + path);
       }
-      if (!cids[0].equals("contigs")) {
+      if (!"contigs".equals(cids[0])) {
         throw new IOException("Expected line starting with 'contigs', saw: " + path);
       }
       final long[] translatedCids = new long[cids.length - 1];
@@ -344,7 +344,7 @@ public final class GraphReader {
         if (eq >= 0) {
           final String key = kv.substring(0, eq);
           final String value = StringUtils.removeBackslashEscapes(kv.substring(eq + 1));
-          if (key.equals("deleted")) {
+          if ("deleted".equals(key)) {
             if (Boolean.parseBoolean(value)) {
               graph.deletePath(pathId);
             }
@@ -457,7 +457,7 @@ public final class GraphReader {
       String line;
       while ((line = reader.readLine()) != null) {
         final String[] split = StringUtils.split(line, '\t');
-        if (split.length == 2 && split[0].equals("guid")) {
+        if (split.length == 2 && "guid".equals(split[0])) {
           uuidString = split[1];
           break;
         }
