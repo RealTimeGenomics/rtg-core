@@ -11,15 +11,17 @@
  */
 package com.rtg.metagenomics.metasnp;
 
+import static com.rtg.vcf.VcfUtils.FORMAT_ADE;
+import static com.rtg.vcf.VcfUtils.FORMAT_ALLELIC_DEPTH;
+import static com.rtg.vcf.VcfUtils.MISSING_FIELD;
+
 import java.io.IOException;
 import java.util.List;
 
 import com.rtg.mode.DNA;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.variant.format.VcfFormatField;
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.VcfUtils;
 
 /**
  * Represent a variant and allele counts.
@@ -80,9 +82,6 @@ public final class MetaSnpLine {
     }
   }
 
-  private static final String ADE = "ADE"; // todo replace with VcfFormatField.ADE.name();
-  private static final String AD = VcfFormatField.AD.name();
-
   static MetaSnpLine create(final VcfRecord rec) {
     final List<String> alts = rec.getAltCalls();
     final String[] alleles = new String[alts.size() + 1];
@@ -92,14 +91,14 @@ public final class MetaSnpLine {
     }
     final double[][] counts = new double[alleles.length][rec.getNumberOfSamples()];
     for (int j = 0; j < rec.getNumberOfSamples(); ++j) {
-      String ade = rec.getSampleString(j, ADE);
+      String ade = rec.getSampleString(j, FORMAT_ADE);
       if (ade == null) {
-        ade = rec.getSampleString(j, AD);
+        ade = rec.getSampleString(j, FORMAT_ALLELIC_DEPTH);
         if (ade == null) {
           throw new NoTalkbackSlimException("A VCF file with ADE or AD format fields is required.");
         }
       }
-      if (VcfUtils.MISSING_FIELD.equals(ade)) {
+      if (MISSING_FIELD.equals(ade)) {
         return null; // This record has no AD or ADE, skip it
       }
       final String[] perAllele = StringUtils.split(ade, ',');
