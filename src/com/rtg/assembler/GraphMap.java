@@ -295,6 +295,7 @@ public class GraphMap {
     }
     return null;
   }
+
   static void finalizeCounts(List<GraphMap> mappings, MutableGraph graph) {
     for (long i = 1; i < graph.numberContigs() + 1; ++i) {
       final String readCount = graph.contigAttribute(i, GraphKmerAttribute.READ_COUNT);

@@ -256,13 +256,11 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
 
     @Override
     public UnmappedSamAlignmentWriter getWriter(SAMRecord r) {
-      final UnmappedSamAlignmentWriter unmappedSamAlignmentWriter;
       final long referenceIndex = (long) r.getReferenceIndex();
       final int loc = r.getAlignmentStart() - 1;
       final RangeList<UnmappedSamAlignmentWriter> unmappedSamAlignmentWriterRangeList = mLookup.get(referenceIndex);
       final List<UnmappedSamAlignmentWriter> unmappedSamAlignmentWriters = unmappedSamAlignmentWriterRangeList.find(loc);
-      unmappedSamAlignmentWriter = unmappedSamAlignmentWriters.get(0);
-      return unmappedSamAlignmentWriter;
+      return unmappedSamAlignmentWriters.get(0);
     }
   }
   private static final class SimpleRecordToWriter implements  RecordToWriter {

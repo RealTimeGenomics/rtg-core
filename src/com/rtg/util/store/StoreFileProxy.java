@@ -45,16 +45,12 @@ public class StoreFileProxy extends IntegralAbstract implements StoreFile {
 
   @Override
   public OutputStream outputStream() throws FileNotFoundException {
-    final FileOutputStream fos;
-    fos = new FileOutputStream(mFile);
-    return fos;
+    return new FileOutputStream(mFile);
   }
 
   @Override
   public InputStream inputStream() throws IOException {
-    final FileInputStream fos;
-    fos = new FileInputStream(mFile);
-    return fos;
+    return new FileInputStream(mFile);
   }
 
   @Override

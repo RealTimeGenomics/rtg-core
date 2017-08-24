@@ -64,12 +64,11 @@ public class DedupifyingIterator<T extends ReaderRecord<T> & MateInfo> implement
      * @return like a regular compare method
      */
     public int incomingSortOrderCompareTo(ReadDuplicateAttributes<?> o) {
-      int ret = compareInts(firstRef(), o.firstRef());
+      final int ret = compareInts(firstRef(), o.firstRef());
       if (ret != 0) {
         return ret;
       }
-      ret = compareInts(firstPos(), o.firstPos());
-      return ret;
+      return compareInts(firstPos(), o.firstPos());
     }
 
     //Duplicates must be considered equal according to this comparator method
