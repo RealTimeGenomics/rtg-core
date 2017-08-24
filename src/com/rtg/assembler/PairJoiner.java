@@ -147,7 +147,7 @@ public class PairJoiner {
   }
 
   private boolean checkPathAgrees(final GraphAlignment start, final GraphAlignment destination, final int startPos) {
-    for (int j = startPos, k = destination.contigs().size() - 1; j < start.contigs().size() && k >= 0; ++j, --k) {
+    for (int j = startPos, k = destination.contigs().size() - 1; k >= 0 && j < start.contigs().size(); ++j, --k) {
       final long forwardContig = start.contigs().get(j);
       final long reverseContig = destination.contigs().get(k);
       // Check match allowing for differing direction and presence of palindromes

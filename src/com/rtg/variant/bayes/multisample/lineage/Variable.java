@@ -45,7 +45,7 @@ public class Variable implements Comparable<Variable> {
       return false;
     }
     final Variable s = (Variable) that;
-    return mName.equals(s.mName) && mSize == s.mSize;
+    return mSize == s.mSize && mName.equals(s.mName);
   }
 
   @Override

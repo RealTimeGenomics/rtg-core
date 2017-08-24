@@ -54,8 +54,8 @@ public class NewtonRaphsonSolver extends AbstractSolver {
       //System.err.println("hi: " + xhi + " thi: " + thi + " vhis: " + Arrays.toString(xvhis));
 
       double t;
-      if (isFinite(tlo) && tlo < xhi) {
-        if (isFinite(thi) && thi > xlo) {
+      if (tlo < xhi && isFinite(tlo)) {
+        if (thi > xlo && isFinite(thi)) {
           // both tlo and thi are valid
           // move both hi and lo in...
           t = (tlo + thi) / 2;

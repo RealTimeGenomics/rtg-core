@@ -143,7 +143,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
         double prevValue = Double.NaN;
         for (Instance inst : sorted) {
           final double currentValue = inst.instance()[attribute];
-          if (!Attribute.isMissingValue(prevValue) && prevValue != currentValue) {
+          if (prevValue != currentValue && !Attribute.isMissingValue(prevValue)) {
             // Evaluate gain
             final double entropy = mEntropyMissing ? entropy(dist, missingPos, missingNeg) : entropy(dist);
             if (entropy < bestEntropy) {

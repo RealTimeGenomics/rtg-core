@@ -208,7 +208,7 @@ public class AlignmentResult {
     int mismatches = 0;
     int tempPos = getStart();
 
-    while (iter.hasNext() && tempPos < 0) {
+    while (tempPos < 0 && iter.hasNext()) {
       final int action = iter.next();
       switch (action) {
         case SAME:
@@ -228,7 +228,7 @@ public class AlignmentResult {
         default:
       }
     }
-    while (iter.hasNext() && tempPos < mTemplate.length) {
+    while (tempPos < mTemplate.length && iter.hasNext()) {
       final int action = iter.next();
       if (action == DELETION_FROM_REFERENCE || action == MISMATCH || action == INSERTION_INTO_REFERENCE) {
         ++mismatches;

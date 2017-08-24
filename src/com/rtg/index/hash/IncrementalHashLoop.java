@@ -76,7 +76,7 @@ public abstract class IncrementalHashLoop extends HashLoop {
     int internalId = (int) startSequence * frames.length;
     final long maxSequenceEver = reader.numberSequences();
     long totalLength = 0;
-    for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; ++seq) {
+    for (long seq = startSequence; seq < maxSequenceEver && region.isInRange(seq); ++seq) {
       ProgramState.checkAbort();
       //System.err.println("seq=" + seq + " " +  reader.currentSequenceId() + " " + reader.getClass());
       final int currentLength = reader.length(seq);
@@ -113,7 +113,7 @@ public abstract class IncrementalHashLoop extends HashLoop {
             final long hash = mFunction.hashStep((byte) c);
             final int jcp = j + jcpAdjustment + startPos;
             //System.err.println("seq=" + seq + " frame=" + frame + " j=" + j + " jcp=" + jcp + " step=" + step);
-            if (mFunction.isValid() && jcp % step == 0) {
+            if (jcp % step == 0 && mFunction.isValid()) {
               assert jcp >= 0;
               //System.err.println("hashCall");
               if (mDualMode) {

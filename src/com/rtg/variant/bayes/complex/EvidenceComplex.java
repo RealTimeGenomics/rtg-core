@@ -59,7 +59,7 @@ public class EvidenceComplex extends Evidence {
   }
 
   private static AllPaths getAllPaths(final RealignParams params) {
-    if (params.machineType() != null && params.machineType().isCG() && CG_ALLPATHS) {
+    if (CG_ALLPATHS && params.machineType() != null && params.machineType().isCG()) {
       return new ScoreFastUnderflowCG(params);
     }
     return new ScoreFastUnderflow(params);

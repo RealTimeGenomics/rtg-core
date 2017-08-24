@@ -40,7 +40,7 @@ class KmerIterator implements Iterator<Kmer> {
 
   private void step() {
     ++mStart;
-    while (hasNext() && mI - mStart < mKmerSize) {
+    while (mI - mStart < mKmerSize && hasNext()) {
       ++mI;
       if (mI > mRead.length) {
         break;
