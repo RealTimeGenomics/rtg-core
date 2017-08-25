@@ -565,7 +565,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     builder.calibrator(c);
   }
 
-  private void checkLowCoverage(CalibratedPerSequenceExpectedCoverage expectedCoverages, SexMemo sexMemo) throws IOException {
+  private void checkLowCoverage(CalibratedPerSequenceExpectedCoverage expectedCoverages, SexMemo sexMemo) {
     boolean doWarning = false;
     for (String sample : expectedCoverages.samples()) {
       for (String seq : expectedCoverages.sequences()) {

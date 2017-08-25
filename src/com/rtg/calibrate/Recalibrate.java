@@ -57,9 +57,8 @@ public class Recalibrate implements Closeable {
    * Constructor
    * @param template reference SDF
    * @param regions bed file regions to restrict calibration
-   * @throws IOException if an IO error occurs
    */
-  public Recalibrate(SequencesReader template, ReferenceRegions regions) throws IOException {
+  public Recalibrate(SequencesReader template, ReferenceRegions regions) {
     mRegions = regions;
     mTemplate = template;
     mTemplateSdfId = mTemplate.getSdfId();

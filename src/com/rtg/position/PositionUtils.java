@@ -11,8 +11,6 @@
  */
 package com.rtg.position;
 
-import java.io.IOException;
-
 import com.rtg.index.Add;
 import com.rtg.index.IndexUtils;
 import com.rtg.index.hash.ExactHashFunction;
@@ -70,9 +68,8 @@ public final class PositionUtils {
    * @param buildSecond  the parameters for the other arm of the pair.
    * @param winBits number of bits required to encode a window
    * @return the <code>HashLoop</code>.
-   * @throws IOException whenever.
    */
-  public static HashLoop makePairedBuild(final Add index, final BuildParams buildFirst, final BuildParams buildSecond, int winBits) throws IOException {
+  public static HashLoop makePairedBuild(final Add index, final BuildParams buildFirst, final BuildParams buildSecond, int winBits) {
     final int mxs = Math.max(maxMatches(buildFirst), maxMatches(buildSecond));
     return makeBuild(index, buildFirst, winBits, mxs, true);
   }
@@ -83,9 +80,8 @@ public final class PositionUtils {
    * @param buildParams the parameters.
    * @param winBits number of bits required to encode a window
    * @return the <code>HashLoop</code>.
-   * @throws IOException whenever.
    */
-  public static HashLoop makeBuild(final Add index, final BuildParams buildParams, int winBits) throws IOException {
+  public static HashLoop makeBuild(final Add index, final BuildParams buildParams, int winBits) {
     final int mxs = maxMatches(buildParams);
     return makeBuild(index, buildParams, winBits, mxs, false);
   }

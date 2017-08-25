@@ -104,7 +104,7 @@ public abstract class OutputFilter implements PseudoEnum, Serializable {
   /** Produce SAM no output, for testing speed of indexing / searching. */
   public static final OutputFilter NULL = new OutputFilter(++sCounter, "NULL") {
     @Override
-    public OutputProcessor makeProcessor(final NgsParams params, MapStatistics stats) throws IOException {
+    public OutputProcessor makeProcessor(final NgsParams params, MapStatistics stats) {
       return new NullOutputProcessor();
     }
   };

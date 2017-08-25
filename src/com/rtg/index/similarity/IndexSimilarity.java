@@ -11,8 +11,6 @@
  */
 package com.rtg.index.similarity;
 
-import java.io.IOException;
-
 import com.rtg.index.Finder;
 import com.rtg.index.IndexCompressed;
 import com.rtg.index.IndexFilterMethod;
@@ -37,7 +35,7 @@ public final class IndexSimilarity extends IndexCompressed {
   }
 
   @Override
-  public void search(long hash, Finder finder) throws IOException, IllegalStateException {
+  public void search(long hash, Finder finder) {
     throw new UnsupportedOperationException();
   }
 
