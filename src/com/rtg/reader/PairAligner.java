@@ -29,7 +29,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 
 /**
  */
-class PairAligner {
+public class PairAligner {
 
   /**
    * Select the behaviour when encountering a mismatch/indel within the overlap region
@@ -282,7 +282,15 @@ class PairAligner {
     }
   }
 
-  private String bytesToSequence(int[] actions, byte[] bases, boolean ref, int skipStart) {
+  /**
+   * Convert a sequence and actions into a form suitable for display.
+   * @param actions alignment actions
+   * @param bases bases of sequence
+   * @param ref true if this is the reference sequence
+   * @param skipStart offset
+   * @return read string
+   */
+  public static String bytesToSequence(int[] actions, byte[] bases, boolean ref, int skipStart) {
     final StringBuilder sb = new StringBuilder();
     int refPos = actions[ActionsHelper.TEMPLATE_START_INDEX];
     int readPos = 0;
