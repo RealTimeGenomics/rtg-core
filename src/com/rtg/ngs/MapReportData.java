@@ -26,7 +26,7 @@ import java.util.List;
 
 import com.rtg.sam.SamUtils;
 import com.rtg.util.Environment;
-import com.rtg.util.Histogram;
+import com.rtg.util.HistogramWithNegatives;
 import com.rtg.util.License;
 import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommandLine;
@@ -50,7 +50,7 @@ public final class MapReportData {
   private static final String SEPARATOR = "\t";
 
   private final ArrayList<String> mCommandLines = new ArrayList<>();
-  private final HashMap<DistributionType, Histogram> mHistograms = new HashMap<>();
+  private final HashMap<DistributionType, HistogramWithNegatives> mHistograms = new HashMap<>();
 
   /**
    * The name of the map report text file
@@ -234,7 +234,7 @@ public final class MapReportData {
    */
   public MapReportData() {
     for (DistributionType d : DistributionType.values()) {
-      mHistograms.put(d, new Histogram());
+      mHistograms.put(d, new HistogramWithNegatives());
     }
   }
 
@@ -272,7 +272,7 @@ public final class MapReportData {
    * @param type the type of the histogram to fetch
    * @return the histogram for the given type
    */
-  public Histogram getHistogram(DistributionType type) {
+  public HistogramWithNegatives getHistogram(DistributionType type) {
     return mHistograms.get(type);
   }
 
@@ -406,11 +406,11 @@ public final class MapReportData {
 
   private void writeHistograms(Appendable out, boolean addSectionHeader) throws IOException {
     for (DistributionType dist : DistributionType.values()) {
-      final Histogram histogram = mHistograms.get(dist);
+      final HistogramWithNegatives histogram = mHistograms.get(dist);
       if (addSectionHeader) {
         out.append("#").append(dist.longName()).append(StringUtils.LS);
       }
-      for (int i = 0; i < histogram.getLength(); ++i) {
+      for (int i = histogram.min(); i < histogram.max(); ++i) {
         final long value = histogram.getValue(i);
         if (value > 0) {
           out.append(dist.toString())

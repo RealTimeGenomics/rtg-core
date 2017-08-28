@@ -54,7 +54,7 @@ import com.rtg.sam.SamReadingContext;
 import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIterator;
-import com.rtg.util.Histogram;
+import com.rtg.util.HistogramWithNegatives;
 import com.rtg.util.HtmlReportHelper;
 import com.rtg.util.License;
 import com.rtg.util.MathUtils;
@@ -200,8 +200,8 @@ public class MapReport extends MapSummaryReport {
     return false;
   }
 
-  private Histogram[] getHistogramsForTypes(MapReportData reporter, DistributionType... dt) {
-    final Histogram[] hists = new Histogram[dt.length];
+  private HistogramWithNegatives[] getHistogramsForTypes(MapReportData reporter, DistributionType... dt) {
+    final HistogramWithNegatives[] hists = new HistogramWithNegatives[dt.length];
     for (int i = 0; i < dt.length; ++i) {
       hists[i] = reporter.getHistogram(dt[i]);
     }
@@ -213,9 +213,9 @@ public class MapReport extends MapSummaryReport {
       return "";
     }
     final boolean isPaired = FileUtils.fileToString(summaryFile).contains("mated");
-    final Histogram[] grams = new Histogram[isPaired ? 2 : 1];
+    final HistogramWithNegatives[] grams = new HistogramWithNegatives[isPaired ? 2 : 1];
     for (int i = 0; i < grams.length; ++i) {
-      grams[i] = new Histogram();
+      grams[i] = new HistogramWithNegatives();
     }
     final StringBuilder summaryText = new StringBuilder();
     //summaryText.append("<html><body><pre>\n");
@@ -260,9 +260,9 @@ public class MapReport extends MapSummaryReport {
     if (!dt[0].showData() && !dt[0].showImage()) { //no report to be shown for this type at this time
       return "";
     }
-    final Histogram[] grams = getHistogramsForTypes(reporter, dt);
+    final HistogramWithNegatives[] grams = getHistogramsForTypes(reporter, dt);
     boolean empty = true;
-    for (Histogram gram : grams) {
+    for (HistogramWithNegatives gram : grams) {
       if (gram.getLength() > 0) {
         empty = false;
         break;
@@ -372,13 +372,13 @@ public class MapReport extends MapSummaryReport {
     static final String[] MAPPING_TITLES = {"Mapped", "Mated", "Unmated", "Unmapped"};
     final String[] mTitles;
 
-    DataTable(String[] titles, Histogram... grams) {
+    DataTable(String[] titles, HistogramWithNegatives... grams) {
       assert grams.length > 0 && grams.length <= 2;
       int min = Integer.MAX_VALUE;
       int max = 0;
       for (int j = 0; j < grams.length; ++j) {
-        final Histogram gram = grams[j];
-        for (int i = 0; i < gram.getLength(); ++i) {
+        final HistogramWithNegatives gram = grams[j];
+        for (int i = gram.min(); i < gram.max(); ++i) {
           final long val = gram.getValue(i);
           if (val != 0) {
             Values vals = mMap.get(i);
@@ -399,7 +399,7 @@ public class MapReport extends MapSummaryReport {
       mTitles = titles;
     }
 
-    DataTable(Histogram... grams) {
+    DataTable(HistogramWithNegatives... grams) {
       this(null, grams);
     }
 
