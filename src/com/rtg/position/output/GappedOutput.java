@@ -367,12 +367,13 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
       }
 
       //scan all the buckets
+      final Set<Integer> ids = new HashSet<>();
       for (int i = 0; i < mBuckets.numberBuckets(); ++i) {
         final AbstractGappedRegion<G> last = mBuckets.get(i);
         if (last == null) {
           continue;
         }
-        final Set<Integer> ids = new HashSet<>();
+        ids.clear();
         G ptr = last.next();
         int lastEnd = 0;
         while (true) {

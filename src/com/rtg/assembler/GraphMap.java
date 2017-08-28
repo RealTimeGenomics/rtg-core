@@ -154,6 +154,7 @@ public class GraphMap {
     final long numberReads = reader.getNumberReads();
     final AlignmentIterator it = new AlignmentIterator(reader, mGraph, aligner, mIndex, mStatistics);
     final int expectedInsert = (reader.minInsertSize() + reader.maxInsertSize()) / 2;
+    final List<GraphAlignment> bestList = new ArrayList<>();
     while (it.hasNext()) {
       ProgramState.checkAbort();
       final AlignmentIterator.ReadAlignment alignment = it.next();
@@ -175,7 +176,7 @@ public class GraphMap {
       }
       boolean singleBest = true;
 
-      final List<GraphAlignment> bestList = new ArrayList<>();
+      bestList.clear();
       for (Set<GraphAlignment> alignments : fragmentAlignments) {
         final GraphAlignment best = addBestAlignment(alignments, false, asHistogram);
         singleBest &= best != null;

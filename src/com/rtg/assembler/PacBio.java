@@ -156,10 +156,11 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
 
   static Map<Long, List<PacBioPath>> joinAlignments(List<PartialAlignment> alignments, MutableGraph graph) {
     final Map<Long, List<PacBioPath>> pathMap = new HashMap<>();
+    final List<PacBioPath> newPathList = new ArrayList<>();
     for (PartialAlignment part : alignments) {
       final Set<Long> predecessors = MergeNodes.predecessors(graph, part.getContig());
       boolean foundPrevious = false;
-      final List<PacBioPath> newPathList = new ArrayList<>();
+      newPathList.clear();
       for (long previousContig : predecessors) {
         final List<PacBioPath> paths = pathMap.get(previousContig);
         if (paths != null) {
@@ -174,7 +175,6 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
       }
       final List<PacBioPath> mapPaths = getOrAdd(pathMap, part.getContig());
       for (PacBioPath newPath : newPathList) {
-//        out.println("considering: " + newPath.toString());
         addOrReplace(mapPaths, newPath);
       }
       if (!foundPrevious && part.getReadStart() == 0) {

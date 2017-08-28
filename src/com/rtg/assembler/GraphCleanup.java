@@ -84,6 +84,7 @@ public final class GraphCleanup {
   static int clean(int minLength, MutableGraph mutable) {
     int totalDeleted = 0;
     int deleted = 1;
+    final Set<Long> combined = new HashSet<>();
     while (deleted > 0) {
       deleted = 0;
       for (long i = 1; i <= mutable.numberContigs(); ++i) {
@@ -99,7 +100,7 @@ public final class GraphCleanup {
           mutable.deleteContig(i);
           ++deleted;
         }
-        final Set<Long> combined = new HashSet<>();
+        combined.clear();
         combined.addAll(predecessors);
         for (Long l : successors) {
           combined.add(-l);

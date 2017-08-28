@@ -299,12 +299,13 @@ public class MetaSnpCli extends LoggedCli {
     }
     header.addInfoField(LIKE, MetaType.FLOAT, VcfNumber.DOT, "phred scaled likelihood of genotype assignments");
     header.addInfoField(SYNDROME, MetaType.STRING, VcfNumber.DOT, "packed representation of strain assignment");
+    final List<Integer> alts = new ArrayList<>();
     try (final VcfWriter writer = new VcfWriterFactory().zip(false).make(header, out)) {
       for (int i = 0; i < lines.size(); ++i) {
         final MetaSnpLine line = lines.get(i);
         final int[] assignments = res.mAssignments.get(i).mCalls;
         final int ref = refBytes.get(i);
-        final List<Integer> alts = new ArrayList<>();
+        alts.clear();
         alts.add(ref);
         for (int assignment1 : assignments) {
           if (!alts.contains(assignment1)) {
