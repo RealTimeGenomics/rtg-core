@@ -98,7 +98,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
           dists = histogramsToCgV1Dists(gapH, olapH);
         }
       } else {
-        throw new RuntimeException("CG calibration not supported for machine type: " + mMachineType.toString());
+        throw new RuntimeException("CG calibration not supported for machine type: " + mMachineType);
       }
       if (dists == null) {
         Diagnostic.developerLog("Calibration file without CG gap/overlap information, using default priors");

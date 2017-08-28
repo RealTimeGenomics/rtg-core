@@ -153,7 +153,7 @@ public class AttributeExtractor {
       try {
         res[i] = mAttributes[i].encodeValue(mAnnotations[i].getValue(record, sampleNumber));
       } catch (final NumberFormatException e) {
-        throw new NoTalkbackSlimException("Problem parsing a number in a VCF record:\n" + record.toString() + "\n" + e.getMessage());
+        throw new NoTalkbackSlimException("Problem parsing a number in a VCF record:\n" + record + "\n" + e);
       }
     }
     return res;
@@ -178,7 +178,7 @@ public class AttributeExtractor {
     for (int k = 0; k < numAtts; ++k) {
       t.addRow(mAnnotations[k].getName(), String.valueOf(counts[k]));
     }
-    return "Number of examples with missing values:" + LS + t.toString();
+    return "Number of examples with missing values:" + LS + t;
   }
 
   @Override

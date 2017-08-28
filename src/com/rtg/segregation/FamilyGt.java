@@ -173,10 +173,10 @@ public class FamilyGt extends IntegralAbstract {
   public void toString(StringBuilder sb) {
     sb.append(mSeq);
     sb.append(" ").append(mPosn);
-    sb.append(" ").append(mFa.toString());
-    sb.append(" ").append(mMo.toString());
-    for (GType aMCh : mCh) {
-      sb.append(" ").append(aMCh.toString());
+    sb.append(" ").append(mFa);
+    sb.append(" ").append(mMo);
+    for (final GType a : mCh) {
+      sb.append(" ").append(a);
     }
   }
 }

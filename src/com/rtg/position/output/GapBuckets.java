@@ -158,7 +158,7 @@ public class GapBuckets<A> extends IntegralAbstract {
     for (long i = 0; i < mBuckets.length(); ++i) {
       final A a = mBuckets.get(i);
       if (a != null) {
-        sb.append("[").append(i).append("] ").append(a.toString()).append(StringUtils.LS);
+        sb.append("[").append(i).append("] ").append(a).append(StringUtils.LS);
       }
     }
   }

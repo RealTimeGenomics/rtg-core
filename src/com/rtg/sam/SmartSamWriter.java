@@ -38,6 +38,7 @@ public class SmartSamWriter extends ReorderingQueue<SAMRecord> {
    */
   public SmartSamWriter(SAMFileWriter out) {
     super(BUFFER_SIZE, new SAMRecordCoordinateComparator() {
+      @Override
       public int compare(final SAMRecord samRecord1, final SAMRecord samRecord2) {
         final int cmp = super.compare(samRecord1, samRecord2);
         if (cmp != 0) {
@@ -85,7 +86,7 @@ public class SmartSamWriter extends ReorderingQueue<SAMRecord> {
 
   @Override
   protected void reportReorderingFailure(SAMRecord rec) {
-    Diagnostic.warning("SAMRecord dropped due to excessive out-of-order processing.\n" + rec.toString());
+    Diagnostic.warning("SAMRecord dropped due to excessive out-of-order processing.\n" + rec);
   }
 
   @Override

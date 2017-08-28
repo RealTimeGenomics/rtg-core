@@ -77,6 +77,6 @@ public class EvidenceMatcher<D extends EvidenceAcceptor> implements MatcherInter
 
   @Override
   public String toString() {
-    return "Matcher:" + StringUtils.LS + mBuffer.toString();
+    return "Matcher:" + StringUtils.LS + mBuffer;
   }
 }

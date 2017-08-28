@@ -112,7 +112,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
   /** runs the task */
   @Override
   protected void exec() throws IOException {
-    Diagnostic.developerLog("NGSParams" + LS + mParams.toString());
+    Diagnostic.developerLog("NGSParams" + LS + mParams);
     //make all the components we need
     final OneShotTimer fullTimer = new OneShotTimer("total_time");
     assert mParams.searchParams().numberSequences() < Integer.MAX_VALUE : mParams.buildFirstParams().numberSequences();
@@ -253,7 +253,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     final HashFunctionFactory factory = params.maskParams().maskFactory((int) params.getMaxReadLength());
     final long numSeqs = params.buildFirstParams().numberSequences() + (params.paired() ? params.buildSecondParams().numberSequences() : 0);
     final CreateParams indexParams = new CreateParams(numSeqs, factory.hashBits(), factory.windowBits(), NgsParams.calculateValueBitsShortReads(params.buildFirstParams().numberSequences(), params.paired()), params.compressHashes(), true, false, false);
-    Diagnostic.developerLog("Index params: " + indexParams.toString());
+    Diagnostic.developerLog("Index params: " + indexParams);
     final NgsHashLoopImpl hashLoop = new NgsHashLoopImpl(params.buildFirstParams().numberSequences(), params.outputParams().progress(), 0x3FFFFL, ((pMask + 1L) << threadBits) - 1L);
     hashLoop.setThreadPadding(params.calculateThreadPadding());
     usageMetric.setMetric(indexThenSearchShortReads(params, hashLoop, statistics, indexParams));
@@ -271,7 +271,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
    * @throws IOException if error
    */
   static long indexThenSearchShortReads(final NgsParams params, final NgsHashLoop shl, final MapStatistics statistics, final CreateParams indexParams) throws IOException {
-    Diagnostic.developerLog("index params: " + indexParams.toString());
+    Diagnostic.developerLog("index params: " + indexParams);
     final HashFunctionFactory hashFunctionFactory = params.maskParams().maskFactory((int) params.getMaxReadLength());
     final IndexSet indexes = new IndexSet(params, indexParams, hashFunctionFactory.numberWindows());
     if (indexes.size() > INDEX_USAGE_REPORTING_THRESHOLD) {

@@ -285,7 +285,7 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
     final String correction = String.format("%1$04.3f", totalError());
     sb.append(" correction=").append(correction);
     sb.append(StringUtils.LS);
-    sb.append(mCounts.toString());
+    sb.append(mCounts);
     return sb.toString();
   }
 

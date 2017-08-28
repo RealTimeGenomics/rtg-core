@@ -64,7 +64,7 @@ class BreakpointStore implements Iterable<VcfBreakpoint> {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    forEach(b-> sb.append(b.toString()).append(StringUtils.LS));
+    forEach(b-> sb.append(b).append(StringUtils.LS));
     return sb.toString();
   }
   private static class StoreIterator implements Iterator<VcfBreakpoint> {

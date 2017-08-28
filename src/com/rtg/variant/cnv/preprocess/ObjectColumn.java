@@ -35,7 +35,7 @@ public abstract class ObjectColumn<T> extends Column {
 
   @Override
   String toString(int i) {
-    return "" + get(i);
+    return String.valueOf(get(i));
   }
 
   /**

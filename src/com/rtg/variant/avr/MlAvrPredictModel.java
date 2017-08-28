@@ -151,7 +151,7 @@ public class MlAvrPredictModel extends AbstractPredictModel {
     if (mAttributeExtractor == null) {
       sb.append("NOT SET").append(StringUtils.LS);
     } else {
-      sb.append(mAttributeExtractor.toString()).append(StringUtils.LS);
+      sb.append(mAttributeExtractor).append(StringUtils.LS);
     }
     sb.append("MODEL:").append(StringUtils.LS);
     mClassifier.toString(sb, "", mAttributeExtractor != null ? mAttributeExtractor.getDataset() : null);

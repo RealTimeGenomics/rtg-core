@@ -224,7 +224,7 @@ public final class DiscordantToolParams extends SvParams {
     final String pref = "    ";
     final StringBuilder sb = new StringBuilder();
     sb.append("DiscordantToolParams")
-      .append(" mapped-reads=").append(mapped().toString())
+      .append(" mapped-reads=").append(mapped())
       .append(" output-tabix-index=").append(mOutputTabixIndex)
       .append(" debug-output=").append(mDebugOutput)
       .append(" bed-output=").append(mBedOutput)
@@ -232,12 +232,12 @@ public final class DiscordantToolParams extends SvParams {
       .append(" intersection-only=").append(mIntersectionOnly)
       .append(" min-breakpoint-depth=").append(mMinBreakpointDepth)
       .append(" overlap-fraction=").append(mOverlapFraction).append(LS);
-    sb.append(filterParams().toString()).append(LS);
+    sb.append(filterParams()).append(LS);
     if (genome() != null) {
-      sb.append(pref).append(genome().toString());
+      sb.append(pref).append(genome());
       sb.append(LS);
     }
-    sb.append(outputParams().toString());
+    sb.append(outputParams());
     sb.append(LS);
     return sb.toString();
   }

@@ -171,7 +171,7 @@ class Labelling extends IntegralAbstract {
       } else if (father.b() == a) {
         return fal == 0 ? fatherAlt : father;
       } else {
-        throw new RuntimeException("i:" + i + " father:" + father.toString() + " phasedLabels:" + Arrays.toString(mPhasedLabels));
+        throw new RuntimeException("i:" + i + " father:" + father + " phasedLabels:" + Arrays.toString(mPhasedLabels));
       }
     }
     return null;
@@ -198,7 +198,7 @@ class Labelling extends IntegralAbstract {
       } else if (mother.b() == b) {
         return mol == 0 ? motherAlt : mother;
       } else {
-        throw new RuntimeException("i:" + i + " mother:" + mother.toString() + " phasedLabels:" + Arrays.toString(mPhasedLabels));
+        throw new RuntimeException("i:" + i + " mother:" + mother + " phasedLabels:" + Arrays.toString(mPhasedLabels));
       }
     }
     return null;

@@ -439,7 +439,7 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
   public void toString(StringBuilder sb) {
     sb.append(mStartFixed ? "" : "*").append(mReferenceName).append("[").append(mStartOfChunk).append("..").append(mEndOfChunk).append(")").append(mEndFixed ? "" : "*");
     sb.append("#").append(mOriginalCalls.size());
-    sb.append(mRegions.toString());
+    sb.append(mRegions);
   }
 
   @Override

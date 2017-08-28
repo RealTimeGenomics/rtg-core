@@ -159,7 +159,7 @@ public final class EmIterate {
       Diagnostic.userLog("Frobenius: " + Frobenius.frobeniusDistance(arith, xi, newXi));
       xi = newXi;
       Diagnostic.progress("Finished Iteration: " + emIterations);
-      Diagnostic.info("Iteration " + emIterations + " beta: " + pAlpha.toString());
+      Diagnostic.info("Iteration " + emIterations + " beta: " + pAlpha);
       results.add(new EmResult(xi, scores));
     }
     return results;

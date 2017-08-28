@@ -638,7 +638,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
       out.writeln(COMMENT_CHAR + "CL\t" + CommandLine.getCommandLine());
     }
     if (templateReader.getSdfId().available()) {
-      out.writeln(COMMENT_CHAR + TEMPLATE_SDF_ATTRIBUTE + TAB + templateReader.getSdfId().toString());
+      out.writeln(COMMENT_CHAR + TEMPLATE_SDF_ATTRIBUTE + TAB + templateReader.getSdfId());
     }
 
     out.writeln(COMMENT_CHAR + SPECIES_HEADER);

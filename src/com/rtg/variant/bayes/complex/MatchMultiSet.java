@@ -114,7 +114,7 @@ public class MatchMultiSet {
     for (final Map.Entry<String, SingleCounts> entry : mMatchMap.entrySet()) {
       final String name = entry.getKey();
       final SingleCounts count = entry.getValue();
-      sb.append(name).append(" > ").append(count.toString()).append(LS);
+      sb.append(name).append(" > ").append(count).append(LS);
     }
     sb.append("]").append(LS);
     return sb.toString();

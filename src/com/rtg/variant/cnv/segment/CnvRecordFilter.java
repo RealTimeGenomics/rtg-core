@@ -50,7 +50,7 @@ public class CnvRecordFilter implements VcfFilter {
     }
     final Integer end = VcfUtils.getIntegerInfoFieldFromRecord(rec, VcfUtils.INFO_END);
     if (end == null) {
-      Diagnostic.warning("Skipping SV record without a defined END: " + rec.toString());
+      Diagnostic.warning("Skipping SV record without a defined END: " + rec);
       return false;
     }
     if (mFilterOverlap && rec.getSequenceName().equals(mLastSeq) && rec.getStart() + 1 < mLastEnd) { // Maybe it's OK to keep?
@@ -58,7 +58,7 @@ public class CnvRecordFilter implements VcfFilter {
       return false;
     }
     if (!mChrs.contains(rec.getSequenceName())) {
-      Diagnostic.warning("Skipping SV record on untargeted chromosome: " + rec.toString());
+      Diagnostic.warning("Skipping SV record on untargeted chromosome: " + rec);
       return false;
     }
     mLastSeq = rec.getSequenceName();

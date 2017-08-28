@@ -82,6 +82,6 @@ public class SequenceLengthBuckets {
   }
   @Override
   public String toString() {
-    return "SequenceLengthBuchets: minLength=" + mMinLength + " buckets=" + mLengthCounts.toString();
+    return "SequenceLengthBuchets: minLength=" + mMinLength + " buckets=" + mLengthCounts;
   }
 }

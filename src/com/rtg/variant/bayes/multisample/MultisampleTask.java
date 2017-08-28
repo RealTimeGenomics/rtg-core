@@ -290,7 +290,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     ++mInvalidRecords;
     if (mInvalidRecords <= 5) {
       Diagnostic.warning(WarningType.SAM_BAD_FORMAT_WARNING1, record.toString());
-      Diagnostic.userLog("Invalid record: " + record.toString());
+      Diagnostic.userLog("Invalid record: " + record);
     }
   }
 
@@ -732,7 +732,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       }
       vpb.pruneHypotheses(true);
       mParams = vpb.create();
-      Diagnostic.developerLog("New params:" + mParams.toString());
+      Diagnostic.developerLog("New params:" + mParams);
     }
 
     mConfig = mConfigurator.getConfig(mParams, mStatistics);

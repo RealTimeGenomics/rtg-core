@@ -648,7 +648,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   public boolean integrity() {
     super.integrity();
     if (mState == IndexState.FROZEN) {
-      Exam.assertEquals(mInitialPositionLength + ":" + mInitialPosition.toString(), mInitialPosition.get(mInitialPositionLength - 1), mInitialPosition.get(mInitialPositionLength - 2));
+      Exam.assertEquals(mInitialPositionLength + ":" + mInitialPosition, mInitialPosition.get(mInitialPositionLength - 1), mInitialPosition.get(mInitialPositionLength - 2));
     }
     Exam.assertTrue(mExcessBits == 0 || mExcessBits == mHashBits - Long.SIZE);
     return true;

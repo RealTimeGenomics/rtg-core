@@ -321,7 +321,7 @@ public final class CoverageParams extends SingleMappedParams {
   @Override
   public String toString() {
     return "CoverageParams"
-      + " mapped reads=" + mapped().toString()
+      + " mapped reads=" + mapped()
       + " smoothing=" + mSmoothing
       + " error rates=" + mErrorRates
       + " min coverage threshold=" + mMinimumCoverageThreshold

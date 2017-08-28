@@ -132,7 +132,7 @@ public class GraphMap {
       }
       final NormalDistribution combined = new NormalDistribution();
       combined.add(deviations);
-      Diagnostic.info("Insert size distribution: " + combined.toString());
+      Diagnostic.info("Insert size distribution: " + combined);
       reader.setMinInsertSize((int) MathUtils.round(combined.mean() - combined.stdDev() * INSERT_DEVIATIONS));
       Diagnostic.info("Min Insert: " + reader.minInsertSize());
       reader.setMaxInsertSize((int) MathUtils.round(combined.mean() + combined.stdDev() * INSERT_DEVIATIONS));

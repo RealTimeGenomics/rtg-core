@@ -78,7 +78,7 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
           if (file.isFile() && (!FALLBACK || streamOk || SamUtils.isIndexed(file))) {
             adaptor = new SamClosedFileReader(file, context.referenceRanges(), context.reference(), context.header());
           } else { // Fall back to SamFileAndRecord for non-file (i.e. pipes)
-            Diagnostic.userLog("Using fallback for non-file or non-indexed SAM source: " + file.toString());
+            Diagnostic.userLog("Using fallback for non-file or non-indexed SAM source: " + file);
             adaptor = new SamFileReaderAdaptor(SamUtils.makeSamReader(FileUtils.createInputStream(file, true), context.reference(), context.header()), context.referenceRanges());
           }
         } catch (IOException | RuntimeIOException | RuntimeEOFException e) {

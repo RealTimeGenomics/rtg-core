@@ -85,7 +85,7 @@ public class FormatAnnotation implements Annotation {
     for (FormatField field : header.getFormatLines()) {
       if (field.getId().equals(mFieldName)) {
         if (!getType().isMetaTypeCompatible(field.getType())) {
-          return "FORMAT field type mismatch: " + mFieldName + " : " + field.getType() + " != " + getType().toString();
+          return "FORMAT field type mismatch: " + mFieldName + " : " + field.getType() + " != " + getType();
         }
         final VcfNumber number = field.getNumber();
         switch (number.getNumberType()) {

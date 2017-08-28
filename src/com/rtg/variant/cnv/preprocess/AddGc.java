@@ -67,7 +67,7 @@ public class AddGc implements DatasetProcessor {
         length = mSequencesReader.read(mNames.get(chr), template);
       }
       if (r.getEnd() > length) {
-        throw new NoTalkbackSlimException("Region is out of range for the supplied chromosome! " + r.toString());
+        throw new NoTalkbackSlimException("Region is out of range for the supplied chromosome! " + r);
       }
       int gc = 0;
       int nc = 0;

@@ -280,7 +280,7 @@ public final class SequenceParams implements ISequenceParams, Integrity {
 
   @Override
   public String toString() {
-    return "SequenceParams mode=" + mReaderParams.mode() + " region=" + mRegion.toString() + " directory=" + mReaderParams.directory()
+    return "SequenceParams mode=" + mReaderParams.mode() + " region=" + mRegion + " directory=" + mReaderParams.directory()
     + (mSex != null ? " sex=" + mSex : "");
   }
 

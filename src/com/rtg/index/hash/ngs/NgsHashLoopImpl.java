@@ -317,7 +317,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
   }
 
   private static void timeLog(final long t0, final String name, final String label, final HashingRegion region) {
-    Diagnostic.userLog("Thread Search " + name + " " + label + " " + region.toString() + " " + (System.currentTimeMillis() - t0) / 1000L + " s");
+    Diagnostic.userLog("Thread Search " + name + " " + label + " " + region + " " + (System.currentTimeMillis() - t0) / 1000L + " s");
   }
 
   static class SequenceLoop implements IORunnable {

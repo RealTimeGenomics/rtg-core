@@ -43,7 +43,7 @@ public class SpeciesStatistics extends AbstractStatistics {
     table.addRow("Shannon:", String.format(FORMAT, mShannon));
     table.addRow("Pielou:", String.format(FORMAT, mPielou));
     table.addRow("Inverse Simpson:", String.format(FORMAT, mInvSimpson));
-    return diversity.append(table.toString()).toString();
+    return diversity.append(table).toString();
   }
 
   @Override

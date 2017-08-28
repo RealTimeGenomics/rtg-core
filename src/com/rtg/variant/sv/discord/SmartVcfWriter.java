@@ -86,7 +86,7 @@ public class SmartVcfWriter extends ReorderingQueue<VcfRecord> implements VcfWri
 
   @Override
   protected void reportReorderingFailure(VcfRecord rec) {
-    Diagnostic.warning("VcfRecord dropped due to excessive out-of-order processing.\n" + rec.toString());
+    Diagnostic.warning("VcfRecord dropped due to excessive out-of-order processing.\n" + rec);
   }
 
   @Override

@@ -189,7 +189,7 @@ public final class AlleleCountsFileReader implements Closeable {
     if (VcfRecord.MISSING.equals(vcfRecord.getRefCall())) {
       ++mWarnings;
       if (mWarnings < 10) {
-        Diagnostic.warning("Empty value in reference field not supported: " + vcfRecord.toString());
+        Diagnostic.warning("Empty value in reference field not supported: " + vcfRecord);
       }
       return null;
     } else if (vcfRecord.isFiltered()) {
@@ -211,7 +211,7 @@ public final class AlleleCountsFileReader implements Closeable {
         if (anValue.size() != 1) {
           ++mWarnings;
           if (mWarnings < 10) {
-            Diagnostic.warning("INFO field " + AN_INFO_ID + " contains too many values: " + vcfRecord.toString());
+            Diagnostic.warning("INFO field " + AN_INFO_ID + " contains too many values: " + vcfRecord);
           }
           return null;
         }
@@ -221,7 +221,7 @@ public final class AlleleCountsFileReader implements Closeable {
         } catch (final NumberFormatException nfe) {
           ++mWarnings;
           if (mWarnings < 10) {
-            Diagnostic.warning("INFO field " + AN_INFO_ID + " not an integer: " + vcfRecord.toString());
+            Diagnostic.warning("INFO field " + AN_INFO_ID + " not an integer: " + vcfRecord);
           }
           return null;
         }
@@ -240,7 +240,7 @@ public final class AlleleCountsFileReader implements Closeable {
           } catch (final NumberFormatException nfe) {
             ++mWarnings;
             if (mWarnings < 10) {
-              Diagnostic.warning("INFO field " + AC_INFO_ID + " contained a non-integer: " + vcfRecord.toString());
+              Diagnostic.warning("INFO field " + AC_INFO_ID + " contained a non-integer: " + vcfRecord);
             }
             return null;
           }
@@ -265,7 +265,7 @@ public final class AlleleCountsFileReader implements Closeable {
       for (final int gti : VcfUtils.splitGt(gt)) {
         if (gti != -1) { // to ignore . alleles in GT like ./1 which is valid (e.g. on sex chromosome PAR regions, depending on representation).
           if (gti >= counts.length) {
-            throw new NoTalkbackSlimException("GT field referenced ALT which does not exist on line: " + vcfRecord.toString());
+            throw new NoTalkbackSlimException("GT field referenced ALT which does not exist on line: " + vcfRecord);
           }
           counts[gti]++;
         }
@@ -288,7 +288,7 @@ public final class AlleleCountsFileReader implements Closeable {
   private synchronized void duplicateAlleleWarning(String allele, VcfRecord vcfRecord) {
     ++mWarnings;
     if (mWarnings < 10) {
-      Diagnostic.warning("Ignoring duplicate allele: " + allele + " in VCF record: " + vcfRecord.toString());
+      Diagnostic.warning("Ignoring duplicate allele: " + allele + " in VCF record: " + vcfRecord);
     }
   }
 

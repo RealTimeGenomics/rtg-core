@@ -103,7 +103,7 @@ public class ArffDatasetWriter extends MlAvrModelBuilder {
         sb.append(" numeric");
         break;
       case BOOLEAN:
-        sb.append(" {").append(Boolean.TRUE.toString()).append(",").append(Boolean.FALSE.toString()).append("}");
+        sb.append(" {").append(Boolean.TRUE).append(",").append(Boolean.FALSE).append("}");
         break;
       case STRING:
         if (att.nominalSize() < MAX_NOMINAL) {

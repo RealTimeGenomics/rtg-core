@@ -520,7 +520,7 @@ public class Calibrator {
 
   protected void writeHistogram(String name, Histogram hist, BufferedWriter out) throws IOException {
     if (hist.getLength() > 0) {
-      out.write(name + "\t" + hist.toString() + StringUtils.LS);
+      out.write(name + "\t" + hist + StringUtils.LS);
     } else {
       out.write(name + StringUtils.LS);
     }

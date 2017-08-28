@@ -79,7 +79,7 @@ public class SmartBedWriter extends ReorderingQueue<DiscordBedRecord> {
 
   @Override
   protected void reportReorderingFailure(DiscordBedRecord rec) {
-    Diagnostic.warning("DiscordBedRecord dropped due to excessive out-of-order processing.\n" + rec.toString());
+    Diagnostic.warning("DiscordBedRecord dropped due to excessive out-of-order processing.\n" + rec);
   }
 
   @Override

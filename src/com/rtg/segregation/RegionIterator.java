@@ -94,7 +94,7 @@ class RegionIterator extends IntegralAbstract {
       final SegregationBlock block = sc.block();
       //System.err.println(type.toString());
       //System.err.println(block.toString());
-      mOut.println(type.code() + " " + block.toString() + " " + sc.pattern().faString() + " " + sc.pattern().moString());
+      mOut.println(type.code() + " " + block + " " + sc.pattern().faString() + " " + sc.pattern().moString());
       switch (type) {
         case OK:
           mEnd = block.end();
@@ -115,7 +115,7 @@ class RegionIterator extends IntegralAbstract {
         case XO:
           final CrossOver xo = sc.xo();
           //TODO this output is redundant and can be got rid of - but is currently used by some of the downstream scripts
-          mOut.println("XO " + mSeq + " " + block.start() + " " + xo.toString());
+          mOut.println("XO " + mSeq + " " + block.start() + " " + xo);
           out(block.start() - 1);
           mStart = mEnd;
           mStartType = SearchType.XO;

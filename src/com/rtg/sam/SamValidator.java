@@ -596,12 +596,12 @@ public final class SamValidator {
         assert n > 0;
         for (int j = 0; j < n; ++j) {
           if (tPos >= template.length && c != SamUtils.CIGAR_SOFT_CLIP) {
-            mErr.println("Template length exceeded but read does not indicate soft clipping, " + samRecord.toString());
+            mErr.println("Template length exceeded but read does not indicate soft clipping, " + samRecord);
             return -1;
           }
           if (c == SamUtils.CIGAR_SAME_OR_MISMATCH) { //match OR mismatch
             if (rPos >= read.length) {
-              mErr.println("Match went off end of read, " + samRecord.toString());
+              mErr.println("Match went off end of read, " + samRecord);
               return -1;
             }
             final int nt = Character.toUpperCase((char) read[rPos]);
@@ -623,7 +623,7 @@ public final class SamValidator {
             ++rPos;
           } else if (c == SamUtils.CIGAR_SAME) { //match
             if (rPos >= read.length) {
-              mErr.println("Match went off end of read, " + samRecord.toString());
+              mErr.println("Match went off end of read, " + samRecord);
               return -1;
             }
             final int nt = Character.toUpperCase((char) read[rPos]);
@@ -635,14 +635,14 @@ public final class SamValidator {
             if (nt == 'N' || refNt == 'N') {
               score += mUnknownsPenalty;
             } else if (nt != refNt) { // if nt are different or, both are N, or either are N, mismatch.
-              mErr.println("Expected match " + (char) refNt + " was " + (char) nt + ", rpos=" + rPos + ", " + samRecord.toString());
+              mErr.println("Expected match " + (char) refNt + " was " + (char) nt + ", rpos=" + rPos + ", " + samRecord);
               return -1;
             }
             ++tPos;
             ++rPos;
           } else if (c == SamUtils.CIGAR_MISMATCH) { //mismatch
             if (rPos >= read.length) {
-              mErr.println("Match went off end of read, " + samRecord.toString());
+              mErr.println("Match went off end of read, " + samRecord);
               return -1;
             }
             final int nt = Character.toUpperCase((char) read[rPos]);
@@ -657,7 +657,7 @@ public final class SamValidator {
             } else if (nt != refNt) {
               score += mMismatchPenalty;
             } else {
-              mErr.println("Expected mismatch " + samRecord.toString());
+              mErr.println("Expected mismatch " + samRecord);
               return -1;
             }
             mCurrentVariables.mTotalMismatches++;
@@ -695,7 +695,7 @@ public final class SamValidator {
     if (samRecord.getIntegerAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES) != null) {
       final Integer samnm = samRecord.getIntegerAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES);
       if (samnm == null) {
-        mErr.println("SAM record did not contain " + SamUtils.ATTRIBUTE_NUM_MISMATCHES + " attribute. " + samRecord.toString());
+        mErr.println("SAM record did not contain " + SamUtils.ATTRIBUTE_NUM_MISMATCHES + " attribute. " + samRecord);
         return -1;
       }
       ok = samnm == mismatches;

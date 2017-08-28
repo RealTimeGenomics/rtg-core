@@ -116,7 +116,7 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
   private void maybeWarn(SAMRecord record) {
     if (mInvalidRecords <= 5) {
       Diagnostic.warning(WarningType.SAM_BAD_FORMAT_WARNING1, record.toString());
-      Diagnostic.userLog("Invalid record: " + record.toString());
+      Diagnostic.userLog("Invalid record: " + record);
     }
   }
 

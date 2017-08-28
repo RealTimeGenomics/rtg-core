@@ -177,7 +177,7 @@ public class Species extends IntegralAbstract {
       while (true) {
         final String msg = "B:" + mBlockInfo.id() + " Iteration:" + iter;
         if (BlockInfo.VERY_VERBOSE) {
-          Diagnostic.developerLog(msg + " R: " + mLastR.toString());
+          Diagnostic.developerLog(msg + " R: " + mLastR);
         }
         final Pair<Vector, Double> solved = solveLine(mLastR, delta);
         if (solved == null) {
@@ -241,7 +241,7 @@ public class Species extends IntegralAbstract {
         if (iter >= minIter && terminator.terminate(est, mLastL)) {
           Diagnostic.developerLog("B:" + mBlockInfo.id() + " Termination minIter: " + minIter);
           if (BlockInfo.VERY_VERBOSE) {
-            Diagnostic.developerLog("R: " + rnew.toString());
+            Diagnostic.developerLog("R: " + rnew);
           }
           break;
         }
@@ -252,7 +252,7 @@ public class Species extends IntegralAbstract {
           break;
         }
         if (BlockInfo.VERY_VERBOSE) {
-          Diagnostic.developerLog("B:" + mBlockInfo.id() + " D: " + delta.toString());
+          Diagnostic.developerLog("B:" + mBlockInfo.id() + " D: " + delta);
         }
         ++iter;
       }
@@ -326,7 +326,7 @@ public class Species extends IntegralAbstract {
 
   private void message(final String msg, final Vector v) {
     //final String str = msg + (mBlockInfo.isVerbose() && v != null ? LS + v.toString() : "");
-    final String str = msg + (v != null ? LS + v.toString() : "");
+    final String str = msg + (v != null ? LS + v : "");
     Diagnostic.developerLog(str);
   }
 
@@ -354,8 +354,8 @@ public class Species extends IntegralAbstract {
     final Vector jr = pair.getA();
     final Vector jacobian = MatrixUtils.pointProduct(r, jr);
     if (BlockInfo.VERY_VERBOSE) {
-      Diagnostic.developerLog("Jr: " + jr.toString());
-      Diagnostic.developerLog("Js: " + jacobian.toString());
+      Diagnostic.developerLog("Jr: " + jr);
+      Diagnostic.developerLog("Js: " + jacobian);
     }
     return new Pair<>(jacobian, pair.getB());
   }
@@ -490,7 +490,7 @@ public class Species extends IntegralAbstract {
 
     sb.append("fragments:").append(LS);
     for (int i = 0; i < mBlockInfo.getFrags().length; ++i) {
-      sb.append("[").append(i).append("]").append(mBlockInfo.getFrags()[i].toString()).append(LS);
+      sb.append("[").append(i).append("]").append(mBlockInfo.getFrags()[i]).append(LS);
     }
 
   }

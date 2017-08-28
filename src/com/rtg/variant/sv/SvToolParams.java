@@ -207,13 +207,13 @@ public final class SvToolParams extends SvParams {
   public String toString() {
     final String pref = "    ";
     final StringBuilder sb = new StringBuilder();
-    sb.append("SvToolParams" + " mapped-reads=").append(mapped().toString()).append(" output-simple=").append(mOutputSimple).append(" heterozygous=").append(mHeterozygous).append(" bin-size=").append(mBinSize).append(" step-size=").append(mStepSize).append(" fine-step-size=").append(mFineStepSize).append(" correctionsFile=").append(mCorrectionsFile).append(LS);
-    sb.append(filterParams().toString()).append(LS);
+    sb.append("SvToolParams" + " mapped-reads=").append(mapped()).append(" output-simple=").append(mOutputSimple).append(" heterozygous=").append(mHeterozygous).append(" bin-size=").append(mBinSize).append(" step-size=").append(mStepSize).append(" fine-step-size=").append(mFineStepSize).append(" correctionsFile=").append(mCorrectionsFile).append(LS);
+    sb.append(filterParams()).append(LS);
     if (genome() != null) {
-      sb.append(pref).append(genome().toString());
+      sb.append(pref).append(genome());
       sb.append(LS);
     }
-    sb.append(outputParams().toString());
+    sb.append(outputParams());
     sb.append(LS);
     return sb.toString();
   }

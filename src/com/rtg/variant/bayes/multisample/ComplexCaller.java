@@ -180,7 +180,7 @@ final class ComplexCaller {
       return null;
     }
     if (!canCreateHypothesis(matches)) {
-      Diagnostic.userLog("Can not create hypothesis to cover region " + cot.toString());
+      Diagnostic.userLog("Can not create hypothesis to cover region " + cot);
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
         calls.add(makeDummyCall(cot, 0, matches.size()));
       }
@@ -193,7 +193,7 @@ final class ComplexCaller {
 
     final HypothesesComplex hypHap = HypothesesComplex.makeComplexHypotheses(cot, true, mParams);
     if (hypHap.size() == 0 || (hypHap.size() == 1 && hypHap.reference() == 0)) {
-      Diagnostic.userLog("Can not create hypothesis to cover region " + cot.toString());
+      Diagnostic.userLog("Can not create hypothesis to cover region " + cot);
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
         calls.add(makeDummyCall(cot, 0, matches.size()));
       }
@@ -202,7 +202,7 @@ final class ComplexCaller {
       return null;
     }
     if (mParams.pruneHypotheses() && hypHap.size() > MAX_HYPOTH) { // This is after pruning, so will almost never actually trigger.
-      Diagnostic.userLog(hypHap.size() + " haploid hypotheses is too high, at region " + cot.toString());
+      Diagnostic.userLog(hypHap.size() + " haploid hypotheses is too high, at region " + cot);
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
         calls.add(makeDummyCall(cot, 0, matches.size()));
       }
@@ -213,7 +213,7 @@ final class ComplexCaller {
 
     final HypothesesComplex hypDip = HypothesesComplex.makeComplexHypotheses(cot, false, mParams);
     if (hypHap.size() > MAX_HYPOTHESES || hypDip.size() > MAX_HYPOTHESES) {
-      Diagnostic.userLog(hypHap.size() + " haploid hypotheses, " + hypDip.size() + " diploid hypotheses is too high, at region " + cot.toString());
+      Diagnostic.userLog(hypHap.size() + " haploid hypotheses, " + hypDip.size() + " diploid hypotheses is too high, at region " + cot);
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
         calls.add(makeDummyCall(cot, 0, matches.size()));
       }

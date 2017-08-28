@@ -131,7 +131,7 @@ public class CombinedReport {
       ) {
         ReportUtils.fillTemplate(replacements, template, writer);
       }
-      body.append(baos.toString());
+      body.append(baos);
     }
     return body.toString();
   }

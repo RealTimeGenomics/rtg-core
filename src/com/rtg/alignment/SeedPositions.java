@@ -150,7 +150,7 @@ class SeedPositions {
   protected static String dumpSeedsAsString(final SeedPositions[] seeds) {
     final StringBuilder sb = new StringBuilder();
     for (SeedPositions seed : seeds) {
-      sb.append(seed.toString());
+      sb.append(seed);
       sb.append(StringUtils.LS);
     }
     return sb.toString();

@@ -177,14 +177,14 @@ public class SegregationVcfSearch extends AbstractCli {
               mBlock = null;
             }
             if (gty.allPloidyNone()) {
-              mOut.println("NO " + gty.toString());
+              mOut.println("NO " + gty);
               continue;
             }
             final boolean mendelian = gty.isMendelian();
             final boolean parentsSingleAllele = gty.parentsSingleAllele();
             final boolean allhet = gty.isAllHeterozygous();
             final String prefix = mendelian ? (parentsSingleAllele ? "HO" : (allhet ? "AH" : "OK")) : "ME";
-            mOut.println(prefix + " " + gty.toString());
+            mOut.println(prefix + " " + gty);
             if (mendelian && !parentsSingleAllele && !allhet) {
               if (mBlock == null) {
                 mBlock = new SegregationBlock(gty);

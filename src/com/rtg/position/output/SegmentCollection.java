@@ -114,7 +114,7 @@ public class SegmentCollection extends IntegralAbstract {
   public void toString(final StringBuilder sb) {
     sb.append("SegmentCollection [").append(mSize).append("]").append(StringUtils.LS);
     for (int i = 0; i < mSize; ++i) {
-      sb.append("[").append(i).append("] ").append(mSegments[i].toString()).append(StringUtils.LS);
+      sb.append("[").append(i).append("] ").append(mSegments[i]).append(StringUtils.LS);
     }
   }
 

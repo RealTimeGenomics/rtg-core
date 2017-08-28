@@ -588,7 +588,7 @@ public class CnvSimulator {
     final StringBuilder sb2 = new StringBuilder();
     for (final List<CnvRegion> i : mRegionSequences) {
       for (final CnvRegion r : i) {
-        sb2.append(r.toString());
+        sb2.append(r);
       }
     }
     return sb2.toString();

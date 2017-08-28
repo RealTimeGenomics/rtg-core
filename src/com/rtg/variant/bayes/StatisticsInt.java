@@ -104,7 +104,7 @@ public class StatisticsInt extends Statistics<AlleleStatisticsInt> {
     final String correction = String.format("%1$04.3f", mTotalError);
     sb.append(" correction=").append(correction);
     sb.append(StringUtils.LS);
-    sb.append(mCounts.toString());
+    sb.append(mCounts);
     return sb.toString();
   }
 

@@ -480,7 +480,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
         }
         sb.append(LS);
       }
-      sb.append("[").append(extend("", 3, row + "")).append("]");
+      sb.append('[').append(extend("", 3, String.valueOf(row))).append(']');
       final char re = row == 0 ? ' ' : dnaChars[mEnv.read(row - 1)];
       sb.append(re);
       int bi = -1, bm = -1, bd = -1;

@@ -467,7 +467,7 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
       perfString(sb);
       sb.append("Initial position").append(LS);
       sb.append("pointer bits=").append(mInitialPointerBits).append(LS).append("shift bits=").append(mSRBits).append(LS).append("length=").append(mInitialPositionLength).append(LS);
-      sb.append(mInitialPosition.toString());
+      sb.append(mInitialPosition);
       sb.append(LS);
 
       if (mHashVector != null) {

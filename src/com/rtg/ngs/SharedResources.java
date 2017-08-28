@@ -112,13 +112,13 @@ public class SharedResources {
     pg.setProgramVersion(Environment.getVersion());
     header.addComment(SamUtils.RUN_ID_ATTRIBUTE + CommandLine.getRunId());
     if (templateReader.getSdfId().available()) {
-      header.addComment(SamUtils.TEMPLATE_SDF_ATTRIBUTE + templateReader.getSdfId().toString());
+      header.addComment(SamUtils.TEMPLATE_SDF_ATTRIBUTE + templateReader.getSdfId());
     }
     if (leftReader.getSdfId().available()) {
-      header.addComment(SamUtils.READ_SDF_ATTRIBUTE + leftReader.getSdfId().toString());
+      header.addComment(SamUtils.READ_SDF_ATTRIBUTE + leftReader.getSdfId());
     }
     if (sex != null) {
-      header.addComment(SamUtils.GENDER_ATTRIBUTE + sex.toString());
+      header.addComment(SamUtils.GENDER_ATTRIBUTE + sex);
     }
     if (CommandLine.getCommandLine() != null) {
       pg.setCommandLine(CommandLine.getCommandLine());

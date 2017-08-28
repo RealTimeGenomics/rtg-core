@@ -95,7 +95,7 @@ public class InfoAnnotation implements Annotation {
     for (InfoField field : header.getInfoLines()) {
       if (field.getId().equals(mFieldName)) {
         if (!getType().isMetaTypeCompatible(field.getType())) {
-          return "INFO field type mismatch: " + mFieldName + " : " + field.getType() + " != " + getType().toString();
+          return "INFO field type mismatch: " + mFieldName + " : " + field.getType() + " != " + getType();
         }
         final VcfNumber number = field.getNumber();
         switch (number.getNumberType()) {

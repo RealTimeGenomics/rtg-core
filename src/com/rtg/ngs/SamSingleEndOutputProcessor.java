@@ -237,7 +237,7 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
   @Override
   public String toString() {
     final StringBuilder str = new StringBuilder();
-    str.append("SamSingleEndOutputProcessor; topn= ").append(mTopN.toString()).append(StringUtils.LS);
+    str.append("SamSingleEndOutputProcessor; topn= ").append(mTopN).append(StringUtils.LS);
     final long num = mParams.buildFirstParams().reader().numberSequences();
     str.append("numsequences= ").append(num).append(StringUtils.LS);
     str.append("temp files gzipped= " + true);

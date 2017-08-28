@@ -39,7 +39,6 @@ import com.rtg.util.intervals.RegionRestriction;
  * Encapsulates a hashing region with clipping and padding with respect to a set of sequences.
  * Start position is exclusive.
  * End position is exclusive.
- *
  */
 public class HashingRegion implements Serializable, Comparable<HashingRegion> {
 
@@ -281,7 +280,7 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
       rg = new ReferenceGenome(reader, sex, ReferencePloidy.AUTO);
     } else {
       rg = new ReferenceGenome(reader, sex);
-      Diagnostic.userLog("Sex-specific Reference Genome:" + StringUtils.LS + rg.toString());
+      Diagnostic.userLog("Sex-specific Reference Genome:" + StringUtils.LS + rg);
     }
     final HashingRegion[] regions = splitWorkload(reader, rg, startId, endId, numberChunks, minChunkSize, padding);
 

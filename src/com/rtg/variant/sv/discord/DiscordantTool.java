@@ -256,7 +256,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       maxMaxGap = Math.max(maxMaxGap, BreakpointConstraint.gapMax(rgs));
     }
     if (!mParams.multisample() && sampleNames.size() > 1) {
-      throw new NoTalkbackSlimException("Input read groups contain multiple samples: " + sampleNames.toString());
+      throw new NoTalkbackSlimException("Input read groups contain multiple samples: " + sampleNames);
     }
     final String vcfSample = sampleNames.size() == 1 ? sampleNames.iterator().next() : "SAMPLE";
     mMaxGap = maxMaxGap;

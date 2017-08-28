@@ -112,19 +112,19 @@ final class ComplexCnvRegion extends AbstractCnvRegion implements Integrity {
     final StringBuilder sb = new StringBuilder();
     sb.append("ComplexRegion start=").append(getStart()).append(" end=").append(getEnd()).append(" length=").append(mLengthMid).append(StringUtils.LS);
     sb.append("First ");
-    sb.append(mFirst.toString());
+    sb.append(mFirst);
     sb.append(StringUtils.LS);
     if (mMiddle != null) {
       for (int i = 0; i < mMiddle.length; ++i) {
         if (mMiddle[i] != null) {
           sb.append("[").append(i).append("]").append(StringUtils.LS);
-          sb.append(mMiddle[i].toString());
+          sb.append(mMiddle[i]);
           sb.append(StringUtils.LS);
         }
       }
     }
     sb.append("Last ");
-    sb.append(mLast.toString());
+    sb.append(mLast);
     sb.append(StringUtils.LS);
     return sb.toString();
   }

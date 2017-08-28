@@ -200,7 +200,7 @@ public class MetaSnpCli extends LoggedCli {
         try (PrintStream xiString = new PrintStream(xiBytes)) {
           writeXi(xi, arith, xiString, reader.samples());
         }
-        Diagnostic.info("Estimated strain proportions: " + StringUtils.LS + xiBytes.toString());
+        Diagnostic.info("Estimated strain proportions: " + StringUtils.LS + xiBytes);
       }
       writeVcf(ref, lines, iterations.get(iterations.size() - 1), new File(outputDirectory, VCF_OUTPUT), arith);
       if (mFlags.isSet(VISUALISATION)) {

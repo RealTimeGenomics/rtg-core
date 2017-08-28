@@ -126,7 +126,7 @@ public final class ProteinReadIndexer {
     final CreateParams indexParams = indexParamsBuilder.create();
     final IndexSet indexes = new IndexSet(params, indexParams, hashFunctionFactory.numberWindows());
     final ProteinNgsHashLoop shl = new ProteinNgsHashLoop(windowSize, windowSize);
-    Diagnostic.developerLog("index params: " + indexParams.toString());
+    Diagnostic.developerLog("index params: " + indexParams);
     final ReadCallImplementation rci = new ReadCallImplementation(indexes);
     final TemplateCallImplementation tci = new TemplateCallImplementation(params, numValues, indexes, outProcessor);
     final NgsHashFunction hf = hashFunctionFactory.create(rci, tci);

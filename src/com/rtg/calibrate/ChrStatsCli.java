@@ -182,6 +182,6 @@ public class ChrStatsCli extends AbstractCli {
     try (LineWriter w = new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(outFile)))) {
       w.write(PedFileParser.toString(pedigree, "source: " + CommandLine.getCommandLine()));
     }
-    Diagnostic.info("PED file written to " + outFile.toString() + ", please check and add relationships where known.");
+    Diagnostic.info("PED file written to " + outFile + ", please check and add relationships where known.");
   }
 }

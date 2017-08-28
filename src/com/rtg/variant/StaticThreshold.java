@@ -50,7 +50,7 @@ public class StaticThreshold implements CoverageThreshold {
 
   @Override
   public String toString() {
-    return "" + mThreshold + ":" + mTotalThreshold;
+    return mThreshold + ":" + mTotalThreshold;
   }
 
 }
