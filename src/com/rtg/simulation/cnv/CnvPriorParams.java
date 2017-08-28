@@ -51,7 +51,7 @@ public class CnvPriorParams extends ObjectParams {
     protected double mProbDeletedOnOneStrand;
 
     protected double mProbDeletedOnBothStrands;
-
+    private static final String[] MAGNITUTE_STR = {"1", "2", "3", "4", "5", "6", "7", "8"};
 
     /**
      * Creates a builder with initial default values from the <code>cnv-default.properties</code> file.
@@ -81,11 +81,10 @@ public class CnvPriorParams extends ObjectParams {
 
       mCopyRangeEnds = getIntegerArray(priorName, pr, "copy_range_ends");
 
-      final String[] magnituteStr = new String[]{"1", "2", "3", "4", "5", "6", "7", "8"};
-      mCopyNumberDistribution = new double[magnituteStr.length][];
-      for (int i = 0; i < magnituteStr.length; ++i) {
+      mCopyNumberDistribution = new double[MAGNITUTE_STR.length][];
+      for (int i = 0; i < MAGNITUTE_STR.length; ++i) {
         mCopyNumberDistribution[i] = parseDistribution(priorName, pr,
-            "copy_number_distribution_" + magnituteStr[i], 0);
+            "copy_number_distribution_" + MAGNITUTE_STR[i], 0);
       }
 
       mProbDeletedOnOneStrand = getDouble(priorName, pr, "prob_deleted_on_one_strand");
