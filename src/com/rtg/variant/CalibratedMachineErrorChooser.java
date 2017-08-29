@@ -73,9 +73,10 @@ public class CalibratedMachineErrorChooser implements MachineErrorChooserInterfa
     final String rgId = rg.getId();
     Pair<AbstractMachineErrorParams, RealignParams> cr = mReadGroupMachineErrorParams.get(rgId);
     if (cr == null) {
-      final MachineType mt = ReadGroupUtils.platformToMachineType(rg, readPaired);
+      MachineType mt = ReadGroupUtils.platformToMachineType(rg, readPaired);
       if (mt == null) {
-        throw new NoTalkbackSlimException("Read group " + rg.getId() + " does not contain a recognized platform");
+        Diagnostic.warning("Read group " + rg.getId() + " does not contain a recognized platform, assuming generic");
+        mt = MachineType.GENERIC;
       }
       final AbstractMachineErrorParams cal;
       if (mt == MachineType.COMPLETE_GENOMICS && CG_BYPASS_HACK) {

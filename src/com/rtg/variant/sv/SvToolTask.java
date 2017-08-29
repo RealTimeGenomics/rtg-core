@@ -112,7 +112,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
     for (final SAMReadGroupRecord srgr : header.getReadGroups()) {
       final MachineType mt = ReadGroupUtils.platformToMachineType(srgr, true);
       if (mt == null) {
-        throw new NoTalkbackSlimException("Read group with platform specified required");
+        throw new NoTalkbackSlimException("Read group " + srgr.getId() + " does not contain a recognized platform");
       } else if (mt.orientation() == null
           || mt != MachineType.ILLUMINA_PE && mt != MachineType.COMPLETE_GENOMICS && mt != MachineType.COMPLETE_GENOMICS_2 //TODO prove other types are ok and this check can be removed
           ) {
