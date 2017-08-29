@@ -15,7 +15,6 @@ package com.rtg.ngs;
 import static com.rtg.util.StringUtils.LS;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -59,7 +58,6 @@ import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.OneShotTimer;
 import com.rtg.util.diagnostic.SlimException;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 
 /**
@@ -126,7 +124,6 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     logMemStats("Free memory post-GC ");
     fullTimer.stopLog();
     chrStatsCheck();
-    mapReport();
   }
 
   /** Put free-memory statistics into the log, if we can. */
@@ -138,25 +135,16 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     }
   }
 
-  private List<File> findCalibrationFiles(final File dir) throws IOException {
-    return Arrays.asList(FileUtils.listFiles(dir, new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String name) {
-        return name.endsWith(Recalibrate.EXTENSION);
-      }
-    }));
-  }
-
   private void chrStatsCheck() throws IOException {
     if (mParams.outputParams().calibrate() && mParams.sex() != null) {
-      // This checking assumes presence of calibration
-      final Collection<File> calibrationFiles = findCalibrationFiles(mParams.outputParams().directory());
+      // This checking requires the presence of calibration information
+      final Collection<File> calibrationFiles = Arrays.asList(FileUtils.listFiles(mParams.directory(), (dir1, name) -> name.endsWith(Recalibrate.EXTENSION)));
       if (!calibrationFiles.isEmpty()) {
         final Calibrator c = Calibrator.initCalibrator(calibrationFiles);
         if (c != null) {
           final String sample = mParams.outputParams().readGroup().getSample();
           final Map<String, String> readGroupToSampleId = Collections.singletonMap(mParams.outputParams().readGroup().getReadGroupId(), sample);
-          final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(mParams.searchParams().reader(), (RegionRestriction) null);
+          final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(mParams.searchParams().reader(), null);
           final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, null);
           final ChrStats cc = new ChrStats(mParams.searchParams().reader());
           if (cc.referenceOk()) {
@@ -170,11 +158,8 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     }
   }
 
-  /**
-   *   TODO This is fairly ugly (specific to map report, but tidying up the API to allow this to be more module
-   *   specific is currently more effort than is worthwhile)
-   */
-  private void mapReport() throws IOException {
+  @Override
+  protected void generateReport() throws IOException {
     final MapSummaryReport mr;
     if (new File(mParams.directory(), MapReportData.MAP_REPORT_FILE_NAME).exists()) {
       mr = new MapReport(null); //this filter params ought to be ignored, since the data exists...
