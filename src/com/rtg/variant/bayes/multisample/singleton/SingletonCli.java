@@ -12,6 +12,11 @@
 
 package com.rtg.variant.bayes.multisample.singleton;
 
+import static com.rtg.launcher.CommonFlags.FILE;
+import static com.rtg.launcher.CommonFlags.INPUT_LIST_FLAG;
+import static com.rtg.launcher.CommonFlags.PEDIGREE_FLAG;
+import static com.rtg.launcher.CommonFlags.STRING;
+import static com.rtg.launcher.CommonFlags.TEMPLATE_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
@@ -44,7 +49,6 @@ import com.rtg.vcf.VariantStatistics;
 public class SingletonCli extends AbstractMultisampleCli {
 
   private static final String SEX_FLAG = "sex";
-  private static final String PEDIGREE_FLAG = "pedigree";
 
   private static final String X_STATISTICS_FLAG = "Xstatistics";
   private static final String PLOIDY_FLAG = "ploidy";
@@ -76,7 +80,7 @@ public class SingletonCli extends AbstractMultisampleCli {
       if (!AbstractMultisampleCli.validateCommonOptions(flags)) {
         return false;
       }
-      if (Sex.EITHER != flags.getValue(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, CommonFlags.TEMPLATE_FLAG)) {
+      if ((Sex.EITHER != flags.getValue(SEX_FLAG)) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, TEMPLATE_FLAG)) {
         return false;
       }
       if (!(flags.checkNand(SEX_FLAG, PEDIGREE_FLAG)
@@ -94,12 +98,12 @@ public class SingletonCli extends AbstractMultisampleCli {
     CommonFlags.initMinAvrScore(flags);
     flags.setDescription("Calls sequence variants, such as single nucleotide polymorphisms (SNPs), multi-nucleotide polymorphisms (MNPs) and Indels, from a set of alignments reported in co-ordinate sorted SAM/BAM files.");
     flags.setValidator(new SingletonValidator());
-    final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = flags.registerRequired(File.class, FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(PLOIDY_FLAG, ReferencePloidy.class, CommonFlags.STRING, "ploidy to use", ReferencePloidy.AUTO).setCategory(SENSITIVITY_TUNING);
+    final Flag<File> listFlag = flags.registerOptional('I', INPUT_LIST_FLAG, File.class, FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(PLOIDY_FLAG, ReferencePloidy.class, STRING, "ploidy to use", ReferencePloidy.AUTO).setCategory(SENSITIVITY_TUNING);
 
     SamFilterOptions.registerMaxHitsFlag(flags, SamFilterOptions.NO_SINGLE_LETTER);
     SamFilterOptions.registerMaxASMatedFlag(flags, SamFilterOptions.NO_SINGLE_LETTER);
@@ -110,7 +114,7 @@ public class SingletonCli extends AbstractMultisampleCli {
     registerComplexPruningFlags(flags, false);
     registerAllelicTriggers(flags);
 
-    flags.registerOptional('p', PEDIGREE_FLAG, File.class, CommonFlags.FILE, "genome relationships PED file containing sex of individual").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('p', PEDIGREE_FLAG, File.class, FILE, "genome relationships PED file containing sex of individual").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_STATISTICS_FLAG, "if set, additional statistics is written with the posteriors of all categories").setCategory(REPORTING);
 

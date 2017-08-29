@@ -181,7 +181,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     mFlags.registerOptional(OUTPUT_UNFILTERED, "output all alignments meeting thresholds instead of applying mating and N limits").setCategory(REPORTING);
     mFlags.registerOptional(MapFlags.N_AS_MISMATCH, "treat unknowns as mismatches").setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(MapFlags.SEX_FLAG, Sex.class, "sex", "sex of individual", null).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(MapFlags.PEDIGREE_FLAG, File.class, CommonFlags.FILE, "genome relationships pedigree containing sex of sample").setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(CommonFlags.PEDIGREE_FLAG, File.class, CommonFlags.FILE, "genome relationships pedigree containing sex of sample").setCategory(SENSITIVITY_TUNING);
     MapFlags.initSamOutputFlag(mFlags);
     MapFlags.initDontUnifyFlag(mFlags);
     MapFlags.initNoCalibrationFlag(mFlags);

@@ -11,6 +11,9 @@
  */
 package com.rtg.variant.bayes.multisample.lineage;
 
+import static com.rtg.launcher.CommonFlags.FILE;
+import static com.rtg.launcher.CommonFlags.INPUT_LIST_FLAG;
+import static com.rtg.launcher.CommonFlags.PEDIGREE_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
 import java.io.File;
@@ -32,8 +35,6 @@ import com.rtg.variant.bayes.multisample.MultisampleTask;
 /**
  */
 public class LineageCli extends AbstractMultisampleCli {
-
-  private static final String PEDIGREE_FLAG = "pedigree";
 
   @Override
   protected GenomeRelationships grf() throws IOException {
@@ -76,12 +77,12 @@ public class LineageCli extends AbstractMultisampleCli {
     CommonFlags.initMinAvrScore(flags);
     flags.setDescription("Performs a combined cell lineage variant analysis.");
     flags.setValidator(new LineageValidator());
-    final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = flags.registerRequired(File.class, FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('p', PEDIGREE_FLAG, File.class, CommonFlags.FILE, "genome relationships PED file").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', INPUT_LIST_FLAG, File.class, FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('p', PEDIGREE_FLAG, File.class, FILE, "genome relationships PED file").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
     registerComplexPruningFlags(flags, true);

@@ -110,8 +110,8 @@ public final class MapFlags {
   public static final String SAM_FLAG = "sam";
   /** Sex specification flag. */
   public static final String SEX_FLAG = "sex";
-  static final String PEDIGREE_FLAG = "pedigree";
-  static final String NO_CALIBRATION = "no-calibration";
+  /** Disable calibration */
+  public static final String NO_CALIBRATION = "no-calibration";
   static final String NO_SVPREP = "no-svprep";
 
   static final String N_AS_MISMATCH = "penalize-unknowns";
@@ -148,7 +148,7 @@ public final class MapFlags {
     flags.registerOptional(NO_INMEMORY_TEMPLATE, "do not load the template in memory").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(FORCE_LONG_FLAG, "force the use of long read mode").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of sample", null).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(MapFlags.PEDIGREE_FLAG, File.class, CommonFlags.FILE, "genome relationships pedigree containing sex of sample").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(CommonFlags.PEDIGREE_FLAG, File.class, CommonFlags.FILE, "genome relationships pedigree containing sex of sample").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 
     CommonFlags.initReadRange(flags);
   }
@@ -415,7 +415,7 @@ public final class MapFlags {
   }
 
   static boolean validateSexTemplateReference(CFlags flags) {
-    return CommonFlags.validateSexTemplateReference(flags, MapFlags.SEX_FLAG, MapFlags.PEDIGREE_FLAG, CommonFlags.TEMPLATE_FLAG);
+    return CommonFlags.validateSexTemplateReference(flags, MapFlags.SEX_FLAG, CommonFlags.PEDIGREE_FLAG, CommonFlags.TEMPLATE_FLAG);
   }
 
   static boolean validatePenaltyFlags(CFlags flags) {

@@ -11,6 +11,8 @@
  */
 package com.rtg.calibrate;
 
+import static com.rtg.launcher.CommonFlags.PEDIGREE_FLAG;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -51,7 +53,6 @@ import htsjdk.samtools.SAMFileHeader;
 public class ChrStatsCli extends AbstractCli {
 
   private static final String OUTPUT_PEDIGREE_FLAG = "output-pedigree";
-  private static final String PEDIGREE_FLAG = "pedigree";
   private static final String SAMPLE_FLAG = "sample";
 
   private static final String SEX_Z_THRESHOLD_FLAG = "sex-z-threshold";

@@ -12,6 +12,11 @@
 
 package com.rtg.variant.bayes.multisample.population;
 
+import static com.rtg.launcher.CommonFlags.FILE;
+import static com.rtg.launcher.CommonFlags.INPUT_LIST_FLAG;
+import static com.rtg.launcher.CommonFlags.INT;
+import static com.rtg.launcher.CommonFlags.PEDIGREE_FLAG;
+import static com.rtg.launcher.CommonFlags.STRING;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
@@ -42,8 +47,6 @@ import com.rtg.variant.bayes.multisample.MultisampleTask;
 /**
  */
 public class PopulationCli extends AbstractMultisampleCli {
-
-  private static final String PEDIGREE_FLAG = "pedigree";
 
   private static final String IMPUTE_FLAG = "impute";
 
@@ -84,26 +87,26 @@ public class PopulationCli extends AbstractMultisampleCli {
     CommonFlags.initMinAvrScore(flags);
     flags.setDescription("Performs a multiple sample variant analysis of many, potentially related, genomes.");
     flags.setValidator(new MultisampleValidator());
-    final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads")
+    final Flag<File> inFlag = flags.registerRequired(File.class, FILE, "SAM/BAM format files containing mapped reads")
         .setCategory(INPUT_OUTPUT)
         .setMinCount(0)
         .setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('p', PEDIGREE_FLAG, File.class, CommonFlags.FILE, "genome relationships PED file").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(IMPUTE_FLAG, String.class, CommonFlags.STRING, "name of sample absent from mappings to impute genotype for")
+    final Flag<File> listFlag = flags.registerOptional('I', INPUT_LIST_FLAG, File.class, FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('p', PEDIGREE_FLAG, File.class, FILE, "genome relationships PED file").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(IMPUTE_FLAG, String.class, STRING, "name of sample absent from mappings to impute genotype for")
     .setCategory(REPORTING)
     .setMaxCount(Integer.MAX_VALUE).enableCsv();
     registerComplexPruningFlags(flags, true);
     flags.registerOptional(REMOVE_RELATIONSHIPS_FLAG, "if set, remove all relationship information from pedigree.").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(PROPAGATING_FLAG, "true to use propagating priors algorithm for pedigrees").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(MAX_EM_ITERATIONS_FLAG, Integer.class, CommonFlags.INT, "maximum number of EM iterations. 0 to disable EM", EmAlgorithm.DEFAULT_MAX_ITERATIONS).setCategory(REPORTING);
+    flags.registerOptional(MAX_EM_ITERATIONS_FLAG, Integer.class, INT, "maximum number of EM iterations. 0 to disable EM", EmAlgorithm.DEFAULT_MAX_ITERATIONS).setCategory(REPORTING);
 
     final ArrayList<String> connectivties = new ArrayList<>();
     connectivties.add("auto");
     for (GenomeConnectivity conn : GenomeConnectivity.values()) {
       connectivties.add(conn.toString().toLowerCase(Locale.getDefault()));
     }
-    flags.registerOptional(PEDIGREE_CONNECTIVITY_FLAG, String.class, CommonFlags.STRING, "sets mode of operation based on how well connected the pedigree is", "auto").setCategory(SENSITIVITY_TUNING).setParameterRange(connectivties);
+    flags.registerOptional(PEDIGREE_CONNECTIVITY_FLAG, String.class, STRING, "sets mode of operation based on how well connected the pedigree is", "auto").setCategory(SENSITIVITY_TUNING).setParameterRange(connectivties);
 
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);

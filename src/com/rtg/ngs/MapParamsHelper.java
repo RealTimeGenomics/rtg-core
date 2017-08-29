@@ -388,7 +388,7 @@ public final class MapParamsHelper {
 
   static Sex getMappingSex(NgsParamsBuilder ngsParamsBuilder, CFlags flags) throws IOException {
     final Sex sex;
-    if (flags.isSet(MapFlags.PEDIGREE_FLAG)) {
+    if (flags.isSet(CommonFlags.PEDIGREE_FLAG)) {
       final SAMReadGroupRecord rg = ngsParamsBuilder.mOutputParams.readGroup();
       if (rg == null) {
         throw new InvalidParamsException("No read group information has been provided, so cannot obtain sex information from pedigree file.");
@@ -397,7 +397,7 @@ public final class MapParamsHelper {
       if (sample == null) {
         throw new InvalidParamsException("Supplied read group information does not contain a sample, so cannot obtain sex information from pedigree file.");
       }
-      final File relfile = (File) flags.getValue(MapFlags.PEDIGREE_FLAG);
+      final File relfile = (File) flags.getValue(CommonFlags.PEDIGREE_FLAG);
       final GenomeRelationships gr = GenomeRelationships.loadGenomeRelationships(relfile);
       if (!gr.hasGenome(sample)) {
         throw new InvalidParamsException("Supplied pedigree file does not contain sample " + sample);
