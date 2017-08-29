@@ -75,10 +75,4 @@ public interface MapStatistics extends Statistics {
    */
   double totalValueAsPercent(MapStatisticsField field);
 
-  /**
-   * Merges the counts of another <code>stats</code> into this statistics.
-   *
-   * @param stats statistics to merge
-   */
-  void merge(MapStatistics stats);
 }

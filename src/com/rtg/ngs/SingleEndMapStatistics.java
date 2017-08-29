@@ -183,40 +183,6 @@ public class SingleEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   @Override
-  public void merge(MapStatistics stats) {
-    // Special case for old aligner...
-    if (stats instanceof SingleEndMapStatistics) {
-      final SingleEndMapStatistics seStats = (SingleEndMapStatistics) stats;
-
-      mMissing += seStats.mMissing;
-
-      mMatedUnique += seStats.mMatedUnique;
-      mMatedAmbig += seStats.mMatedAmbig;
-      mUnmatedUnique += seStats.mUnmatedUnique;
-      mUnmatedAmbig += seStats.mUnmatedAmbig;
-      mUnmappedBlocked += seStats.mUnmappedBlocked;      //XC B
-      mUnmappedMatedTooMany += seStats.mUnmappedMatedTooMany; //XC e
-      mUnmappedMatedPoor += seStats.mUnmappedMatedPoor;    //XC d
-      mUnmappedUnmatedTooMany += seStats.mUnmappedUnmatedTooMany;   //XC E
-      mUnmappedUnmatedPoor += seStats.mUnmappedUnmatedPoor;  //XC D
-      mUnmappedTopN += seStats.mUnmappedTopN;  //XC C
-
-      if (seStats.mTotal != 0) {  // matching old functionality...
-        mTotal = seStats.mTotal;
-      }
-
-      final long sum = mMatedUnique + mUnmatedUnique + mMatedAmbig
-      + mUnmatedAmbig + mUnmappedBlocked + mUnmappedMatedTooMany
-      + mUnmappedMatedPoor + mUnmappedUnmatedTooMany
-      + mUnmappedUnmatedPoor + mUnmappedTopN;
-
-      mUnmappedNoHits = mTotal - sum;
-    } else {
-      throw new IllegalArgumentException("Invalid MapStatistics type.");
-    }
-  }
-
-  @Override
   public void generateReport() {
   }
 }

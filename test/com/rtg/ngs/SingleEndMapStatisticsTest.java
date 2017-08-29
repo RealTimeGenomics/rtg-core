@@ -59,31 +59,6 @@ public class SingleEndMapStatisticsTest extends TestCase {
     assertFalse(outString.contains("right arms missing"));
   }
 
-  public void testMerge() {
-    Diagnostic.setLogStream();
-    final SingleEndMapStatistics testStats = new SingleEndMapStatistics(null);
-    testStats.set(MapStatisticsField.TOTAL_READS, Arm.LEFT, 220L);
-    testStats.set(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT, 25L);
-    testStats.set(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT, 75L);
-    testStats.set(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT, 80L);
-    testStats.set(MapStatisticsField.MISSING, Arm.LEFT, 0L);
-
-    final SingleEndMapStatistics testStats2 = new SingleEndMapStatistics(null);
-    testStats2.set(MapStatisticsField.TOTAL_READS, Arm.LEFT, 220L);
-    testStats2.set(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT, 80L);
-    testStats2.set(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT, 20L);
-    testStats2.set(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT, 7L);
-    testStats2.set(MapStatisticsField.MISSING, Arm.LEFT, 2L);
-
-    testStats.merge(testStats2);
-
-    assertEquals(220L, testStats.value(MapStatisticsField.TOTAL_READS, Arm.LEFT));
-    assertEquals(105L, testStats.value(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT));
-    assertEquals(95L, testStats.value(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT));
-    assertEquals(20L, testStats.value(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT));
-    assertEquals(2L, testStats.value(MapStatisticsField.MISSING, Arm.LEFT));
-  }
-
   public void testMisc() {
     final SingleEndMapStatistics testStats = new SingleEndMapStatistics(null);
 

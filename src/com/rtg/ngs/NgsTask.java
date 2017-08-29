@@ -176,7 +176,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
    */
   private void mapReport() throws IOException {
     final MapSummaryReport mr;
-    if (new File(mParams.outputParams().directory(), MapReportData.MAP_REPORT_FILE_NAME).exists()) {
+    if (new File(mParams.directory(), MapReportData.MAP_REPORT_FILE_NAME).exists()) {
       mr = new MapReport(null); //this filter params ought to be ignored, since the data exists...
     } else if (mParams.outputParams().sdf()) {
       // Probably mapf

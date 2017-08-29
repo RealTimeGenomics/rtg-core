@@ -230,18 +230,6 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   @Override
-  public void merge(MapStatistics stats) {
-    if (stats instanceof PairedEndMapStatistics) {
-      final PairedEndMapStatistics peStats = (PairedEndMapStatistics) stats;
-      mLeft.merge(peStats.mLeft);
-      mRight.merge(peStats.mRight);
-      mBothUnmapped += peStats.mBothUnmapped;
-    } else {
-      throw new IllegalArgumentException("Invalid MapStatistics type.");
-    }
-  }
-
-  @Override
   public void set(MapStatisticsField field, Arm arm, long value) {
     switch (arm) {
     case RIGHT: mRight.set(field, arm, value); break;
