@@ -94,12 +94,6 @@ public final class Mask extends ImplementHashFunction {
 
   private ExtractTemplate[] mTemplateMasks;
 
-
-  @Override
-  public Mask clone() throws CloneNotSupportedException {
-    return (Mask) super.clone();
-  }
-
   /**
    * @param sk the skeleton used to generate the mask.
    * @param readCall used in subclasses to process results of read hits.
