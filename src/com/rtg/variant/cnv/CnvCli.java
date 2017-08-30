@@ -29,7 +29,6 @@ import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.util.IORunnable;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
@@ -162,7 +161,7 @@ public class CnvCli extends ParamsCli<CnvProductParams> {
   }
 
   @Override
-  protected CnvProductParams makeParams() throws InvalidParamsException, IOException {
+  protected CnvProductParams makeParams() throws IOException {
     final CnvProductParamsBuilder builder = CnvProductParams.builder();
     builder.name(mFlags.getName());
     final boolean gzip = !mFlags.isSet(NO_GZIP);

@@ -304,7 +304,7 @@ public class ReadSimEvalCli extends LoggedCli {
     }
   }
 
-  void init() throws IOException, InvalidParamsException {
+  void init() throws IOException {
     mParams = new ReadSimEvalParams(mFlags);
     mLeftStats = new ReadSimEvalStatistics(mParams.isPaired() ? getNumReads(ReaderUtils.getLeftEnd(mParams.readDirectory())) : getNumReads(mParams.readDirectory()));
     mRightStats = mParams.isPaired() ? new ReadSimEvalStatistics(getNumReads(ReaderUtils.getRightEnd(mParams.readDirectory()))) : null;
@@ -325,7 +325,7 @@ public class ReadSimEvalCli extends LoggedCli {
     }
   }
 
-  private void process(final PrintStream out) throws IOException, InvalidParamsException {
+  private void process(final PrintStream out) throws IOException {
     long totalRecords = 0;
     long unmappedRecords = 0;
     init();

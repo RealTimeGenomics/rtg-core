@@ -32,7 +32,6 @@ import com.rtg.launcher.ParamsCli;
 import com.rtg.ngs.MapFlags;
 import com.rtg.util.IORunnable;
 import com.rtg.util.IntegerOrPercentage;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
@@ -73,7 +72,7 @@ public class GraphMapCli extends ParamsCli<GraphMapParams> {
   }
 
   @Override
-  protected GraphMapParams makeParams() throws InvalidParamsException, IOException {
+  protected GraphMapParams makeParams() throws IOException {
     return makeParamsLocal(mFlags);
   }
 

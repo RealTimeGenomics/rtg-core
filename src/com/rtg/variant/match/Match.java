@@ -30,7 +30,7 @@ public abstract class Match {
    *         (<code>hasQuality()</code> returns false).
    * @throws IndexOutOfBoundsException if index is negative or greater than or equal to <code>length()</code>.
    */
-  public abstract double baseError(int index) throws NoQualityException, IndexOutOfBoundsException;
+  public abstract double baseError(int index);
 
   /**
    * Get the average base error over the whole region.

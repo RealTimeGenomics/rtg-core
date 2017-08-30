@@ -30,7 +30,7 @@ public interface Index extends Add {
    * It is not possible to call add after this.
    * @throws IllegalStateException if index has already been frozen.
    */
-  void freeze() throws IllegalStateException;
+  void freeze();
 
   /**
    * Search for the supplied hash code.
@@ -41,7 +41,7 @@ public interface Index extends Add {
    * @throws IllegalStateException if index has not been frozen.
    * @throws IOException if the finder produces such an exception.
    */
-  void search(long hash, Finder finder) throws IOException, IllegalStateException;
+  void search(long hash, Finder finder) throws IOException;
 
   /**
    * Iterate over all entries in this index.
@@ -50,7 +50,7 @@ public interface Index extends Add {
    * @throws IllegalStateException if index has not been frozen.
    * @throws IOException if the finder produces such an exception.
    */
-  void scan(FinderHashValue finder) throws IOException, IllegalStateException;
+  void scan(FinderHashValue finder) throws IOException;
 
   /**
    * Determine whether the index contains the supplied hash code.
@@ -58,7 +58,7 @@ public interface Index extends Add {
    * @return true iff the hash is contained in the index
    * @throws IllegalStateException if index has not been frozen.
    */
-  boolean contains(long hash) throws IllegalStateException;
+  boolean contains(long hash);
 
   /**
    * Search for the supplied hash code and return the number of hits.
@@ -66,7 +66,7 @@ public interface Index extends Add {
    * @return the number of hits for the hash (&gt;= 0).
    * @throws IllegalStateException if index has not been frozen.
    */
-  int count(long hash) throws IllegalStateException;
+  int count(long hash);
 
   /**
    * Returns a human readable string reporting on
@@ -100,7 +100,7 @@ public interface Index extends Add {
    * @return the number of entries stored
    * @throws IllegalStateException if index is not frozen.
    */
-  long numberEntries() throws IllegalStateException;
+  long numberEntries();
 
   /**
    * Get the number of hashes actually stored.
@@ -109,7 +109,7 @@ public interface Index extends Add {
    * @return the number of hashes stored
    * @throws IllegalStateException if index is not frozen.
    */
-  long numberHashes() throws IllegalStateException;
+  long numberHashes();
 
   /**
    * @return the number of hashes added before the freeze stage
@@ -134,7 +134,7 @@ public interface Index extends Add {
    * @return internal location of the hash (if &lt; 0 then not found).
    * @throws IllegalStateException if index has not been frozen.
    */
-  long first(long hash) throws IllegalStateException;
+  long first(long hash);
 
   /**
    * Get the hash at the found location (see search).

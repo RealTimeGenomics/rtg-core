@@ -195,7 +195,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
   }
 
   @Override
-  protected NgsParams makeParams() throws InvalidParamsException, IOException {
+  protected NgsParams makeParams() throws IOException {
 
     final NgsFilterParams filterParams = makeFilterParams();
     final NgsOutputParams outputParams = makeOutputParams(filterParams);
@@ -311,7 +311,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     }
   }
 
-  private NgsOutputParams makeOutputParams(NgsFilterParams filterParams) throws InvalidParamsException, IOException {
+  private NgsOutputParams makeOutputParams(NgsFilterParams filterParams) throws IOException {
     final NgsOutputParamsBuilder ngsOutputParamsBuilder = NgsOutputParams.builder();
     ngsOutputParamsBuilder.outputIndex(!mFlags.isSet(CommonFlags.NO_INDEX))
     .progress(true)

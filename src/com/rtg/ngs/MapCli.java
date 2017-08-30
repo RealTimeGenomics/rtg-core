@@ -25,7 +25,6 @@ import com.rtg.launcher.ParamsTask;
 import com.rtg.sam.ReadGroupUtils;
 import com.rtg.sam.SamCommandHelper;
 import com.rtg.usage.UsageMetric;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
@@ -79,11 +78,11 @@ public class MapCli extends ParamsCli<NgsParams>  {
   }
 
   @Override
-  protected NgsParams makeParams() throws InvalidParamsException, IOException {
+  protected NgsParams makeParams() throws IOException {
     return makeRamMapParams(mFlags, MapFlags.DEFAULT_WORD_SIZE, 1);
   }
 
-  private static NgsParams makeRamMapParams(CFlags flags, int defWordSize, int defStepRatio) throws InvalidParamsException, IOException {
+  private static NgsParams makeRamMapParams(CFlags flags, int defWordSize, int defStepRatio) throws IOException {
     final NgsParamsBuilder ngsParamsBuilder = NgsParams.builder();
     ngsParamsBuilder.useTopRandom(flags.isSet(TOP_RANDOM));
     final boolean paired = MapParamsHelper.isPaired(flags); //ReaderUtils.isPairedEndDirectory(input);
@@ -117,7 +116,7 @@ public class MapCli extends ParamsCli<NgsParams>  {
   }
 
 
-  private static NgsOutputParams makeOutputParams(CFlags flags, NgsFilterParams filterParams, SAMReadGroupRecord rg) throws InvalidParamsException, IOException {
+  private static NgsOutputParams makeOutputParams(CFlags flags, NgsFilterParams filterParams, SAMReadGroupRecord rg) throws IOException {
     final NgsOutputParamsBuilder ngsOutputParamsBuilder = NgsOutputParams.builder();
     ngsOutputParamsBuilder.progress(flags.isSet(BuildCommon.PROGRESS_FLAG))
     .outputDir((File) flags.getValue(CommonFlags.OUTPUT_FLAG))

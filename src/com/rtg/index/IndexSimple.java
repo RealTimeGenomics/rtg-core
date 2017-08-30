@@ -255,7 +255,7 @@ public class IndexSimple extends IndexBase {
   }
 
   @Override
-  public void search(final long hash, final Finder finder) throws IOException, IllegalStateException {
+  public void search(final long hash, final Finder finder) throws IOException {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -294,7 +294,7 @@ public class IndexSimple extends IndexBase {
   }
 
   @Override
-  public void scan(FinderHashValue finder) throws IOException, IllegalStateException {
+  public void scan(FinderHashValue finder) throws IOException {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -346,7 +346,7 @@ public class IndexSimple extends IndexBase {
   }
 
   @Override
-  public long first(long hash) throws IllegalStateException {
+  public long first(long hash) {
     long index = find(hash);
     if (index < 0) {
       return index;

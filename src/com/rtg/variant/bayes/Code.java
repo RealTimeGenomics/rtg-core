@@ -70,7 +70,7 @@ public interface Code {
    * @return a valid code.
    * @throws IllegalArgumentException if a does not specify a valid homozygous hypothesis.
    */
-  int code(int a) throws IllegalArgumentException;
+  int code(int a);
 
   /**
    * Compute a code given a pair of haploid hypothesis.
@@ -80,5 +80,5 @@ public interface Code {
    * @throws IllegalArgumentException if a or b does not specify a valid haploid hypothesis.
    * @throws UnsupportedOperationException if the code does not support diploid codes and a &ne; b.
    */
-  int code(int a, int b) throws IllegalArgumentException, UnsupportedOperationException;
+  int code(int a, int b);
 }

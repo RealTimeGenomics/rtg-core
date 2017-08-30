@@ -361,7 +361,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
   }
 
   @Override
-  public final void deleteContig(long contigId) throws IllegalArgumentException, IllegalStateException {
+  public final void deleteContig(long contigId) {
     final long acontig = absContig(contigId);
     mContigDeleted.set(acontig, 1);
     final PathsIterator it = paths(contigId, false);
@@ -375,7 +375,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
   }
 
   @Override
-  public void setContigAttribute(long contigId, String attribute, String value) throws IllegalArgumentException, IllegalStateException {
+  public void setContigAttribute(long contigId, String attribute, String value) {
     if (!mContigAttributes.containsKey(attribute)) {
       throw new IllegalArgumentException();
     }
@@ -426,7 +426,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
   }
 
   @Override
-  public final void deletePath(long pathId) throws IllegalArgumentException, IllegalStateException {
+  public final void deletePath(long pathId) {
     final long apath = absPath(pathId);
     mPathDeleted.set(apath, 1);
   }

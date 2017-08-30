@@ -124,7 +124,7 @@ public class CnvRegion {
    * @throws IllegalStateException if illegal state
    * @throws IllegalArgumentException if illegal argument
    */
-  byte[] getCopy(int k, SequencesReader input) throws IllegalArgumentException, IllegalStateException, IOException {
+  byte[] getCopy(int k, SequencesReader input) throws IOException {
     final CnvRegion copy = mCopies.get(k);
     final byte[] genomeSeq = new byte[input.length(copy.mSequenceId)];
     input.read(copy.mSequenceId, genomeSeq);

@@ -59,15 +59,13 @@ public interface PathsIterator {
    */
   void set(long contigId, boolean showDeleted);
 
-
   /**
    * Get the index within the current path (as given by the last call to <code>nextPathId()</code>) of the contig used to select the paths.
    *
    * @return the index  within the current path of the contig used to set the <code>PathIterator</code>.
    * @throws IllegalStateException if <code>nextPathId()</code> has not been called since the last
    */
-  int contigIndex() throws IllegalStateException;
-
+  int contigIndex();
 
   /**
    * Once this has returned a 0 subsequent calls will return 0 until it is reset.

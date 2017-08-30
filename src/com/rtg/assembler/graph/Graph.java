@@ -49,7 +49,7 @@ public interface Graph {
    * @return true iff this contig has been deleted.
    * @throws IllegalArgumentException if <code>abs(contigId)</code> is 0 or &gt; <code>numberContigs()</code>.
    */
-  boolean contigDeleted(long contigId) throws IllegalArgumentException;
+  boolean contigDeleted(long contigId);
 
   //Nucleotides
 
@@ -59,7 +59,7 @@ public interface Graph {
    * @return the number of nucleotides in the contig.
    * @throws IllegalArgumentException if <code>abs(contigId)</code> is 0 or &gt; <code>numberContigs()</code>.
    */
-  int contigLength(long contigId) throws IllegalArgumentException;
+  int contigLength(long contigId);
 
 
   /**
@@ -71,7 +71,7 @@ public interface Graph {
    * @throws IllegalArgumentException if <code>abs(contigId)</code> is 0 or &gt; <code>numberContigs()</code>.
    * @throws RuntimeException if <code>index &lt; 0</code> or <code>index &ge; lengthContig(contigId)</code>.
    */
-  byte nt(long contigId, int index) throws IllegalArgumentException;
+  byte nt(long contigId, int index);
 
   /**
    * Extract contig information into a <code>Contig</code>.
@@ -81,7 +81,7 @@ public interface Graph {
    * @return a <code>Contig</code> that holds the information associated with <code>contigId</code>.
    * @throws IllegalArgumentException if <code>abs(contigId)</code> is 0 or &gt; <code>numberContigs()</code>.
    */
-  Contig contig(long contigId) throws IllegalArgumentException;
+  Contig contig(long contigId);
 
   //Attributes
 
@@ -111,7 +111,7 @@ public interface Graph {
    * @return the attribute value (null if not stored or there is no such attribute).
    * @throws IllegalArgumentException if <code>pathId</code> is 0.
    */
-  String pathAttribute(long pathId, String attribute) throws IllegalArgumentException;
+  String pathAttribute(long pathId, String attribute);
 
   /**
    * Check if a path has been deleted.
@@ -119,7 +119,7 @@ public interface Graph {
    * @return true iff this path has been deleted.
    * @throws IllegalArgumentException if <code>abs(pathId)</code> is 0 or &gt; <code>numberPaths()</code>.
    */
-  boolean pathDeleted(long pathId) throws IllegalArgumentException;
+  boolean pathDeleted(long pathId);
 
   /**
    * This enables a faster way of finding paths that does not require reconstructing <code>PathIterator</code>s for each call.
@@ -135,7 +135,7 @@ public interface Graph {
    * @return iterator over the the paths.
    * @throws IllegalArgumentException if <code>abs(contigId)</code> is 0 or &gt; <code>numberContigs()</code>.
    */
-  PathsIterator paths(long contigId) throws IllegalArgumentException;
+  PathsIterator paths(long contigId);
 
 
   /**
@@ -147,7 +147,7 @@ public interface Graph {
    * @return iterator over all the selected paths.
    * @throws IllegalArgumentException if <code>abs(contigId)</code> is 0 or &gt; <code>numberContigs()</code>.
    */
-  PathsIterator paths(long contigId, boolean showDeleted) throws IllegalArgumentException;
+  PathsIterator paths(long contigId, boolean showDeleted);
 
   /**
    * Get the number of contigs included in a path.
@@ -155,7 +155,7 @@ public interface Graph {
    * @return the number of contigs (&ge; 2).
    * @throws IllegalArgumentException if <code>pathId</code> is 0.
    */
-  int pathLength(long pathId) throws IllegalArgumentException;
+  int pathLength(long pathId);
 
   /**
    * Get one contig from the path.
@@ -165,7 +165,7 @@ public interface Graph {
    * @throws IllegalArgumentException if <code>abs(pathId)</code> is 0 or &gt; <code>numberPaths()</code>.
    * @throws RuntimeException <code>index &lt; 0</code> or <code>index &ge; pathLength(pathId)</code>.
    */
-  long pathContig(long pathId, int index) throws IllegalArgumentException;
+  long pathContig(long pathId, int index);
 
   /**
    * Extract path information into a <code>Path</code>.
@@ -175,7 +175,7 @@ public interface Graph {
    * @return a <code>Path</code> that holds the information associated with <code>pathId</code>.
    * @throws IllegalArgumentException if <code>abs(pathId)</code> is 0 or &gt; <code>numberPaths()</code>.
    */
-  Path path(long pathId) throws IllegalArgumentException;
+  Path path(long pathId);
 
   /**
    * @return the number of bases adjacent contigs overlap within the graph

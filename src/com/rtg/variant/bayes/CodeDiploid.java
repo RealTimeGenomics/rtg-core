@@ -131,7 +131,7 @@ public final class CodeDiploid implements Code {
   }
 
   @Override
-  public int code(int a, int b) throws IllegalArgumentException, UnsupportedOperationException {
+  public int code(int a, int b) {
     assert 0 <= a && a <= mL;
     if (b > a) {
       return code(b, a);

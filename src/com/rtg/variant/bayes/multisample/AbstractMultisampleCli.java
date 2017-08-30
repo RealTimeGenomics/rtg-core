@@ -362,13 +362,13 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   protected abstract GenomeRelationships grf() throws IOException;
 
   @Override
-  public VariantParams makeParams() throws InvalidParamsException, IOException {
+  public VariantParams makeParams() throws IOException {
     final VariantParams localParams = makeParamsBuilder().create();
     localParams.globalIntegrity();
     return localParams;
   }
 
-  protected VariantParamsBuilder makeParamsBuilder() throws InvalidParamsException, IOException {
+  protected VariantParamsBuilder makeParamsBuilder() throws IOException {
     final VariantParamsBuilder builder = new VariantParamsBuilder();
     builder.name(mFlags.getName());
     builder.callLevel(mFlags.isSet(ALL_FLAG) ? VariantOutputLevel.ALL : VariantOutputLevel.INTERESTING);
@@ -484,7 +484,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     }
   }
 
-  private void makeInputParams(final VariantParamsBuilder builder, final SequenceParams genomeParams, SamFilterParams filterParams) throws IOException, InvalidParamsException {
+  private void makeInputParams(final VariantParamsBuilder builder, final SequenceParams genomeParams, SamFilterParams filterParams) throws IOException {
     final GenomeRelationships grf = grf();
     builder.genomeRelationships(grf);
     final Collection<File> inputFiles;
@@ -584,7 +584,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   }
 
 
-  private void parseThreads(final VariantParamsBuilder builder) throws NumberFormatException {
+  private void parseThreads(final VariantParamsBuilder builder) {
     builder.ioThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(X_IO_THREADS)));
     builder.execThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)));
     if (mFlags.isSet(X_THREADING_ENVIRONMENT)) {
@@ -601,7 +601,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     }
   }
 
-  private void processDefaultAndMaxMappingQuality(final VariantParamsBuilder builder) throws InvalidParamsException {
+  private void processDefaultAndMaxMappingQuality(final VariantParamsBuilder builder) {
     final int qDefault = (Integer) mFlags.getValue(X_Q_DEFAULT_FLAG);
     if (qDefault < 0 || qDefault > 63) {
       throw new InvalidParamsException(ErrorType.INVALID_INTEGER, X_Q_DEFAULT_FLAG, "" + qDefault, "0", "63");

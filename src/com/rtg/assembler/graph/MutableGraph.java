@@ -33,7 +33,7 @@ public interface MutableGraph extends Graph {
    * @param contigId directional identifier of contig being checked.
    * @throws IllegalArgumentException if <code>abs(contigId)</code> is &le; 0 or &gt; <code>numberContigs()</code>.
    */
-  void deleteContig(long contigId) throws IllegalArgumentException;
+  void deleteContig(long contigId);
 
   /**
    * Set the value of an attribute for a contig.
@@ -43,7 +43,7 @@ public interface MutableGraph extends Graph {
    * @throws IllegalArgumentException if <code>contigId</code> is &le; 0 or &gt; <code>numberContigs()</code> or has been deleted
    * or attribute is not in <code>contigAttributes()</code>.
    */
-  void setContigAttribute(long contigId, String attribute, String value) throws IllegalArgumentException;
+  void setContigAttribute(long contigId, String attribute, String value);
 
   /**
    * Add another path to the graph copying its contents from <code>path</code> and allocating and returning a new unique contig identifier.
@@ -61,7 +61,7 @@ public interface MutableGraph extends Graph {
    * @param pathId directional identifier of path.
    * @throws IllegalArgumentException if <code>abs(pathId)</code> is 0 or &gt; <code>numberPaths()</code>.
    */
-  void deletePath(long pathId) throws IllegalArgumentException;
+  void deletePath(long pathId);
 
   /**
    * Set the value of an attribute for a path.

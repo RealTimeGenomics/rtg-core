@@ -69,7 +69,7 @@ public class CodeHaploid implements Code {
   }
 
   @Override
-  public int code(int a, int b) throws IllegalArgumentException, UnsupportedOperationException {
+  public int code(int a, int b) {
     if (a == b) {
       return code(a);
     }

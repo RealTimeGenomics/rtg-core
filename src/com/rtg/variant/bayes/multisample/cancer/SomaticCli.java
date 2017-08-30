@@ -25,7 +25,6 @@ import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.Relationship;
 import com.rtg.relation.Relationship.RelationshipType;
 import com.rtg.usage.UsageMetric;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
@@ -188,7 +187,7 @@ public class SomaticCli extends AbstractMultisampleCli {
   }
 
   @Override
-  protected VariantParamsBuilder makeParamsBuilder() throws InvalidParamsException, IOException {
+  protected VariantParamsBuilder makeParamsBuilder() throws IOException {
     final SomaticParamsBuilder somaticBuilder = getSomaticParamsBuilder();
     final VariantParamsBuilder vpb = super.makeParamsBuilder();
     vpb

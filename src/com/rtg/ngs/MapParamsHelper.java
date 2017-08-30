@@ -76,7 +76,7 @@ public final class MapParamsHelper {
 
   private MapParamsHelper() { }
 
-  static long populateCommonMapParams(NgsParamsBuilder ngsParamsBuilder, CFlags flags, int defWordSize, int defStepRatio, boolean includeNames, boolean includeFullNames) throws InvalidParamsException, IOException {
+  static long populateCommonMapParams(NgsParamsBuilder ngsParamsBuilder, CFlags flags, int defWordSize, int defStepRatio, boolean includeNames, boolean includeFullNames) throws IOException {
     final int numberThreads = CommonFlags.parseThreads((Integer) flags.getValue(CommonFlags.THREADS_FLAG));
 
     final NameParams nameParams = new NameParams(includeNames, includeFullNames);
@@ -237,7 +237,7 @@ public final class MapParamsHelper {
    * @throws InvalidParamsException when stuff goes wrong
    * @throws IOException when other stuff goes wrong
    */
-  private static long populateReaders(NgsParamsBuilder ngsParamsBuilder, CFlags flags, NameParams nameParams) throws InvalidParamsException, IOException {
+  private static long populateReaders(NgsParamsBuilder ngsParamsBuilder, CFlags flags, NameParams nameParams) throws IOException {
     final boolean paired = initReaders(ngsParamsBuilder, flags, nameParams, true, SequenceMode.BIDIRECTIONAL, SequenceMode.UNIDIRECTIONAL, new SamSequenceReaderParams(false, true));
     final long maxReadLength;
     final boolean useLongReads;
@@ -283,7 +283,7 @@ public final class MapParamsHelper {
    * @throws InvalidParamsException when stuff goes wrong
    * @throws IOException when other stuff goes wrong
    */
-  public static boolean initReaders(NgsParamsBuilder ngsParamsBuilder, CFlags flags, NameParams nameParams, boolean useQuality, SequenceMode templateMode, SequenceMode readsMode, SamSequenceReaderParams samParams) throws InvalidParamsException, IOException {
+  public static boolean initReaders(NgsParamsBuilder ngsParamsBuilder, CFlags flags, NameParams nameParams, boolean useQuality, SequenceMode templateMode, SequenceMode readsMode, SamSequenceReaderParams samParams) throws IOException {
     final DataSourceDescription inputDesc = FormatCli.getFormat(flags, useQuality);
     final File reads = (File) flags.getValue(CommonFlags.READS_FLAG);
     final boolean paired = MapParamsHelper.isPaired(flags);
@@ -414,7 +414,7 @@ public final class MapParamsHelper {
    * Loads template and reads (left and right if paired end) in parallel.
    * @throws IOException if an IO problem occurs.
    */
-  private static void makeSequenceParamsMulti(final NgsParamsBuilder ngsParamsBuilder, CFlags flags, final File build, final File buildSecond, NameParams nameParams, SequenceMode templateMode, SequenceMode readsMode) throws InvalidParamsException, IOException {
+  private static void makeSequenceParamsMulti(final NgsParamsBuilder ngsParamsBuilder, CFlags flags, final File build, final File buildSecond, NameParams nameParams, SequenceMode templateMode, SequenceMode readsMode) throws IOException {
     final LongRange buildRegion = CommonFlags.getReaderRestriction(flags);
     final ExecutorService executor = Executors.newFixedThreadPool(3);
     try {
@@ -457,7 +457,7 @@ public final class MapParamsHelper {
    * Loads template and reads (left and right if paired end) in parallel.
    * @throws IOException if an IO problem occurs.
    */
-  private static void makeOnTheFlySequenceParamsMulti(NgsParamsBuilder ngsParamsBuilder, CFlags flags, DataSourceDescription desc, File build, File buildSecond, NameParams nameParams, boolean useQuality, SequenceMode templateMode, SequenceMode readsMode, SamSequenceReaderParams samParams) throws InvalidParamsException, IOException {
+  private static void makeOnTheFlySequenceParamsMulti(NgsParamsBuilder ngsParamsBuilder, CFlags flags, DataSourceDescription desc, File build, File buildSecond, NameParams nameParams, boolean useQuality, SequenceMode templateMode, SequenceMode readsMode, SamSequenceReaderParams samParams) throws IOException {
     final FutureTask<SequenceParams> templateTask = getTemplateFutureTask(ngsParamsBuilder, flags, nameParams.includeFullNames(), templateMode);
     final LongRange buildRegion = CommonFlags.getReaderRestriction(flags);
     final ExecutorService executor = Executors.newFixedThreadPool(3);

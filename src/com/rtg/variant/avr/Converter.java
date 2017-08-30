@@ -25,7 +25,7 @@ interface Converter {
    * @return converted to another type
    * @throws IllegalArgumentException if the string cannot be converted
    */
-  Object stringToObjectOfType(String string) throws IllegalArgumentException;
+  Object stringToObjectOfType(String string);
 
   MlDataType getDataType();
 }

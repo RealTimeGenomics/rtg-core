@@ -73,7 +73,7 @@ public class CnvPriorParams extends ObjectParams {
      * @throws InvalidParamsException if the resource file is invalid.
      * @throws IOException if the resource file cannot be read.
      */
-    public CnvPriorParamsBuilder cnvpriors(final String priorName) throws InvalidParamsException, IOException {
+    public CnvPriorParamsBuilder cnvpriors(final String priorName) throws IOException {
       //TODO error messages change to cnv-priors
       final Properties pr = PropertiesUtils.getPriorsResource(priorName, PropertiesUtils.PropertyType.CNV_PROPERTY);
 

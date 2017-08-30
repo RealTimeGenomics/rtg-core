@@ -35,7 +35,6 @@ import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.IORunnable;
 import com.rtg.util.IntegerOrPercentage;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
@@ -68,7 +67,7 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
   }
 
   @Override
-  protected AssembleParams makeParams() throws InvalidParamsException, IOException {
+  protected AssembleParams makeParams() throws IOException {
     return makeParamsLocal(mFlags);
   }
 

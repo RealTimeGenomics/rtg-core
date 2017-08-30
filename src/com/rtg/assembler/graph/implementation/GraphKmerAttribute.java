@@ -90,7 +90,7 @@ public class GraphKmerAttribute extends GraphImplementation {
   }
 
   @Override
-  public void setContigAttribute(long contigId, String attribute, String value) throws IllegalArgumentException, IllegalStateException {
+  public void setContigAttribute(long contigId, String attribute, String value) {
     if (K_MER_FREQ.equals(attribute)) {
       final int ival = Integer.parseInt(value);
       setKmerFreq(contigId, ival);

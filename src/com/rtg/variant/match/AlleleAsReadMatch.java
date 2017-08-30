@@ -75,7 +75,7 @@ public class AlleleAsReadMatch extends Match {
   }
 
   @Override
-  public double baseError(final int index) throws NoQualityException, IndexOutOfBoundsException {
+  public double baseError(final int index) throws NoQualityException {
     return mQuality;
   }
 

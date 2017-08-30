@@ -164,7 +164,7 @@ public class CnvSimulator {
     }
   }
 
-  protected void generate(final String[] lengthAndVariance) throws IOException, InvalidParamsException {
+  protected void generate(final String[] lengthAndVariance) throws IOException {
     initialize();
     try {
       final int avgLength = Integer.parseInt(lengthAndVariance[0]);
@@ -203,7 +203,7 @@ public class CnvSimulator {
     outputBreakPointsToInfoFile();
   }
 
-  protected void generate(final FixedRegion[] fixedRegions) throws IOException, InvalidParamsException {
+  protected void generate(final FixedRegion[] fixedRegions) throws IOException {
 
     assert mPriors == null;
     initialize();

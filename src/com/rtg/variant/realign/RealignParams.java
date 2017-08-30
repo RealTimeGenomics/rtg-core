@@ -72,7 +72,7 @@ public interface RealignParams {
    * @return For example: -3 for the overlap region (gap == 0).
    * @throws UnsupportedOperationException if <code>completeGenomics()</code> is false.
    */
-  int gapStart(int gap) throws UnsupportedOperationException;
+  int gapStart(int gap);
 
   /**
    * The maximum (most positive) width of a given gap.
@@ -81,7 +81,7 @@ public interface RealignParams {
    * @return For example: -1 for the overlap region (gap == 0).
    * @throws UnsupportedOperationException if <code>completeGenomics()</code> is false.
    */
-  int gapEnd(int gap) throws UnsupportedOperationException;
+  int gapEnd(int gap);
 
   /**
    * Get the probability of a gap of a given width.
@@ -92,7 +92,7 @@ public interface RealignParams {
    * @return For example: <code>ln(0.84)</code> for a width of -2, when gap == 0.
    * @throws UnsupportedOperationException if <code>completeGenomics()</code> is false.
    */
-  double gapFreqLn(int gap, int width) throws UnsupportedOperationException;
+  double gapFreqLn(int gap, int width);
 
   /**
    * @param arith arithmetic delegate.

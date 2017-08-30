@@ -33,7 +33,6 @@ import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.usage.UsageMetric;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
@@ -123,7 +122,7 @@ public class SingletonCli extends AbstractMultisampleCli {
   }
 
   @Override
-  protected VariantParamsBuilder makeParamsBuilder() throws InvalidParamsException, IOException {
+  protected VariantParamsBuilder makeParamsBuilder() throws IOException {
     final VariantParamsBuilder builder = super.makeParamsBuilder();
     builder.sex((Sex) mFlags.getValue(SEX_FLAG));
     builder.ploidy((ReferencePloidy) mFlags.getValue(PLOIDY_FLAG));
@@ -131,7 +130,7 @@ public class SingletonCli extends AbstractMultisampleCli {
   }
 
   @Override
-  public VariantParams makeParams() throws InvalidParamsException, IOException {
+  public VariantParams makeParams() throws IOException {
     return super.makeParams();
   }
 

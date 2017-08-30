@@ -126,7 +126,7 @@ public class IndexQueues extends IntegralAbstract {
     freezeTimer2.stopLog();
   }
 
-  private void freeze1(final Index index, String label) throws RuntimeException {
+  private void freeze1(final Index index, String label) {
     final SimpleThreadPool pool = new SimpleThreadPool(mNumberThreads, label, true);
     pool.enableBasicProgress(mNumberThreads);
     final SizeSplit ss = new SizeSplit(1 << mRadixBits, mNumberThreads);

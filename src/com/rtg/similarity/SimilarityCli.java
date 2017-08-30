@@ -531,7 +531,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
   }
 
   @Override
-  protected BuildSearchParams makeParams() throws InvalidParamsException, IOException {
+  protected BuildSearchParams makeParams() throws IOException {
     final ProgramMode pm = ProgramMode.PHYLOGENY;
     final File output = (File) mFlags.getValue(OUTPUT_FLAG);
     final Integer window = (Integer) mFlags.getValue(WORDSIZE_FLAG);

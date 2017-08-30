@@ -188,7 +188,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
   }
 
   @Override
-  protected NgsParams makeParams() throws InvalidParamsException, IOException {
+  protected NgsParams makeParams() throws IOException {
     final NgsParamsBuilder ngsParamsBuilder = NgsParams.builder();
     final NameParams nameParams = new NameParams(mFlags.isSet(OUTPUT_READ_NAMES_FLAG), false);
     MapParamsHelper.initReaders(ngsParamsBuilder, mFlags, nameParams, false, SequenceMode.PROTEIN, SequenceMode.TRANSLATED, new SamSequenceReaderParams(false, false));

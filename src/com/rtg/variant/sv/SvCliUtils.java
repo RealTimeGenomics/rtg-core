@@ -117,7 +117,7 @@ public final class SvCliUtils {
    * @throws InvalidParamsException if there are errors in the values of the command line flags
    * @throws IOException If an I/O error occurs
    */
-  public static void populateCommonParams(SvParamsBuilder<?> builder, SequenceParamsBuilder genomeBuilder, CFlags flags)  throws InvalidParamsException, IOException {
+  public static void populateCommonParams(SvParamsBuilder<?> builder, SequenceParamsBuilder genomeBuilder, CFlags flags) throws IOException {
     builder.name(flags.getName())
            .genome(genomeBuilder.directory((File) flags.getValue(CommonFlags.TEMPLATE_FLAG)).create().readerParams())
            .outputParams(new OutputParams((File) flags.getValue(CommonFlags.OUTPUT_FLAG), flags.isSet(BuildCommon.PROGRESS_FLAG), !flags.isSet(CommonFlags.NO_GZIP)))

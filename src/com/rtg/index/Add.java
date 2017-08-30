@@ -23,6 +23,6 @@ public interface Add {
    * @param id to be associated with the key (might be a sequence id or a position)
    * @throws IllegalStateException if index has been frozen.
    */
-  void add(long hash, long id) throws IllegalStateException;
+  void add(long hash, long id);
 
 }

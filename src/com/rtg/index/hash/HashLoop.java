@@ -140,7 +140,7 @@ public abstract class HashLoop {
    * @return a byte array of the length of the longest sequence.
    * @throws SlimException if the longest sequence is greater than Integer.MAX_VALUE in length
    */
-  public static byte[] makeBuffer(SequencesReader reader) throws SlimException {
+  public static byte[] makeBuffer(SequencesReader reader) {
     final long maxLength = reader.maxLength();
     if (maxLength >= Integer.MAX_VALUE) {
       Diagnostic.error(ErrorType.SEQUENCE_TOO_LONG, maxLength + "");

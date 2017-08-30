@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.rtg.sam.ReadGroupUtils;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -46,7 +45,7 @@ public class ReadGroupMachineErrorChooser implements MachineErrorChooserInterfac
     addReadGroups(header.getReadGroups());
   }
 
-  private void addReadGroups(final List<SAMReadGroupRecord> groups) throws InvalidParamsException, IOException {
+  private void addReadGroups(final List<SAMReadGroupRecord> groups) throws IOException {
     if (groups.size() == 0) {
       throw new NoTalkbackSlimException("No read groups found. Unable to determine machine error rate. Try explicitly specifying machine type");
     }

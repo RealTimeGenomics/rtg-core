@@ -25,7 +25,7 @@ public interface IndexExtended extends Index {
    * @param value to be associated with the key
    * @throws IllegalStateException if index has been frozen.
    */
-  void add(long[] hash, long value) throws IllegalStateException;
+  void add(long[] hash, long value);
 
   /**
    * Search for the supplied hash code.
@@ -36,7 +36,7 @@ public interface IndexExtended extends Index {
    * @throws IllegalStateException if index has not been frozen.
    * @throws IOException if the finder produces such an exception.
    */
-  void search(long[] hash, Finder finder) throws IOException, IllegalStateException;
+  void search(long[] hash, Finder finder) throws IOException;
 
   /**
    * Iterate over all entries in this index.
@@ -45,7 +45,7 @@ public interface IndexExtended extends Index {
    * @throws IllegalStateException if index has not been frozen.
    * @throws IOException if the finder produces such an exception.
    */
-  void scanAll(FinderHashValueExtended finder) throws IOException, IllegalStateException;
+  void scanAll(FinderHashValueExtended finder) throws IOException;
 
   /**
    * Determine whether the index contains the supplied hash code.
@@ -53,7 +53,7 @@ public interface IndexExtended extends Index {
    * @return true iff the index contains the hash.
    * @throws IllegalStateException if index has not been frozen.
    */
-  boolean contains(long[] hash) throws IllegalStateException;
+  boolean contains(long[] hash);
 
   /**
    * Search for the supplied hash code and return the number of hits.
@@ -61,7 +61,7 @@ public interface IndexExtended extends Index {
    * @return the number of hits for the hash (&gt;= 0).
    * @throws IllegalStateException if index has not been frozen.
    */
-  int count(long[] hash) throws IllegalStateException;
+  int count(long[] hash);
 
   /**
    * Find the index of the first occurrence of the hash, or negative if the hash is not in the index.
@@ -69,7 +69,7 @@ public interface IndexExtended extends Index {
    * @return internal location of the hash (if &lt; 0 then not found).
    * @throws IllegalStateException if index has not been frozen.
    */
-  long first(long[] hash) throws IllegalStateException;
+  long first(long[] hash);
 
   /**
    * Get the hash at the found location (see search).

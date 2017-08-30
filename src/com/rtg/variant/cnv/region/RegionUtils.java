@@ -101,7 +101,7 @@ public final class RegionUtils {
    * @throws IOException when reader fails
    * @throws IllegalStateException when not a DNA sequence
    */
-  public static Map<String, Region> regionsFromSDF(final SequencesReader reader, int blockSize) throws IllegalStateException, IOException {
+  public static Map<String, Region> regionsFromSDF(final SequencesReader reader, int blockSize) throws IOException {
     if (reader.type() == SequenceType.DNA) {
       final Map<String, Region> map = new HashMap<>();
       final byte[] buf = new byte[(int) reader.maxLength()];

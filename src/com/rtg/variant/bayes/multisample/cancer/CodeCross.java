@@ -75,7 +75,7 @@ public class CodeCross implements Code {
   }
 
   @Override
-  public int code(int a, int b) throws IllegalArgumentException, UnsupportedOperationException {
+  public int code(int a, int b) {
     return a * mBaseSize + b;
   }
 }

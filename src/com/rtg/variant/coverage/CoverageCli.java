@@ -30,7 +30,6 @@ import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.util.IORunnable;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
@@ -170,7 +169,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
   }
 
   @Override
-  protected CoverageParams makeParams() throws InvalidParamsException, IOException {
+  protected CoverageParams makeParams() throws IOException {
     final CoverageParams.CoverageParamsBuilder builder = CoverageParams.builder();
     builder.name(mFlags.getName());
     final OutputParams outParams = new OutputParams((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), mFlags.isSet(BuildCommon.PROGRESS_FLAG), !mFlags.isSet(NO_GZIP));

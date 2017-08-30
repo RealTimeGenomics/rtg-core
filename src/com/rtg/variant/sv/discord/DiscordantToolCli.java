@@ -24,7 +24,6 @@ import com.rtg.launcher.ParamsCli;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.util.IORunnable;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.variant.sv.SvCliUtils;
 import com.rtg.variant.sv.SvCliUtils.SvValidator;
@@ -92,11 +91,11 @@ public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
   }
 
   @Override
-  protected DiscordantToolParams makeParams() throws InvalidParamsException, IOException {
+  protected DiscordantToolParams makeParams() throws IOException {
     return makeParams(mFlags);
   }
 
-  protected static DiscordantToolParams makeParams(CFlags flags) throws InvalidParamsException, IOException {
+  protected static DiscordantToolParams makeParams(CFlags flags) throws IOException {
     final DiscordantToolParamsBuilder builder = DiscordantToolParams.builder();
     SvCliUtils.populateCommonParams(builder, SequenceParams.builder().useMemReader(false), flags);
 

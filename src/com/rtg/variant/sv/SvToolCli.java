@@ -24,7 +24,6 @@ import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.ngs.MapFlags;
 import com.rtg.util.IORunnable;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
@@ -94,11 +93,11 @@ public class SvToolCli extends ParamsCli<SvToolParams> {
   }
 
   @Override
-  protected SvToolParams makeParams() throws InvalidParamsException, IOException {
+  protected SvToolParams makeParams() throws IOException {
     return makeParams(mFlags);
   }
 
-  protected SvToolParams makeParams(CFlags flags) throws InvalidParamsException, IOException {
+  protected SvToolParams makeParams(CFlags flags) throws IOException {
     final SvToolParamsBuilder builder = SvToolParams.builder();
     SvCliUtils.populateCommonParams(builder, SequenceParams.builder().mode(SequenceMode.UNIDIRECTIONAL), flags);
 

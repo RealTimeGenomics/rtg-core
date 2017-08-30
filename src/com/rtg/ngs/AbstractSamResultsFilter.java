@@ -236,7 +236,7 @@ public abstract class AbstractSamResultsFilter {
     return SamUtils.samReadName(names.name(readId), paired);
   }
 
-  protected String read(int readId, SequencesReader reader, boolean isReverse) throws IllegalArgumentException, IOException {
+  protected String read(int readId, SequencesReader reader, boolean isReverse) throws IOException {
     if (reader == null) {
       return "";
     }

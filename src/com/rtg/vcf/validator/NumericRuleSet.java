@@ -25,7 +25,7 @@ public class NumericRuleSet<T extends Number & Comparable<T>> extends RuleSet<T>
    */
   public static class LongConverter implements Converter<Long> {
     @Override
-    public Long getValue(String value) throws NumberFormatException {
+    public Long getValue(String value) {
       return Long.valueOf(value);
     }
   }
@@ -35,7 +35,7 @@ public class NumericRuleSet<T extends Number & Comparable<T>> extends RuleSet<T>
    */
   public static class DoubleConverter implements Converter<Double> {
     @Override
-    public Double getValue(String value) throws NumberFormatException {
+    public Double getValue(String value) {
       return Double.valueOf(value);
     }
   }

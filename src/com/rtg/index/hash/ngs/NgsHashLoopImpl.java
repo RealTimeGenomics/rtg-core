@@ -22,7 +22,6 @@ import com.rtg.util.IORunnable;
 import com.rtg.util.ProgramState;
 import com.rtg.util.SimpleThreadPool;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.SlimException;
 import com.rtg.util.diagnostic.WarningType;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
@@ -438,11 +437,11 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
     hashFunction.endSequence();
   }
 
-  static byte[] makeBuffer(final SequencesReader reader) throws SlimException, IOException {
+  static byte[] makeBuffer(final SequencesReader reader) throws IOException {
     return makeBuffer(reader, HashingRegion.NONE, 0);
   }
 
-  static byte[] makeBuffer(SequencesReader reader, HashingRegion r, long padding) throws IOException, SlimException {
+  static byte[] makeBuffer(SequencesReader reader, HashingRegion r, long padding) throws IOException {
     final int longestSubSeq = (int) (r.longestSubSequence(reader) + 2 * padding);
     final int size;
     if ((long) longestSubSeq + 2 * MASKED_CALL_PADDING_ADJUSTMENT > Integer.MAX_VALUE) {

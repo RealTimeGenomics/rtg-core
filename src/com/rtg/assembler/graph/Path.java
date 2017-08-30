@@ -37,5 +37,5 @@ public interface Path {
    * @return the position of the contig within the path or -1 if the contig (including its direction) is not in the path.
    * @throws IllegalArgumentException if <code>abs(contigId)</code> is &le; 0 or &gt; <code>numberContigs()</code>.
    */
-  int index(long contigId) throws IllegalArgumentException;
+  int index(long contigId);
 }

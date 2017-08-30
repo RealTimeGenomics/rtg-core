@@ -28,7 +28,6 @@ import com.rtg.launcher.ParamsCli;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.util.IORunnable;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
@@ -84,7 +83,7 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
   }
 
   @Override
-  protected SpeciesParams makeParams() throws InvalidParamsException, IOException {
+  protected SpeciesParams makeParams() throws IOException {
     final Collection<File> inputFiles = CommonFlags.getFileList(mFlags, CommonFlags.INPUT_LIST_FLAG, null, false);
     Diagnostic.userLog("Input SAM files: " + inputFiles);
     final File output = (File) mFlags.getValue(OUTPUT_FLAG);

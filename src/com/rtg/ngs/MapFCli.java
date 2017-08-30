@@ -22,7 +22,6 @@ import com.rtg.reader.ReaderUtils;
 import com.rtg.sam.SamCommandHelper;
 import com.rtg.usage.UsageMetric;
 import com.rtg.util.IORunnable;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
@@ -60,7 +59,7 @@ public class MapFCli extends ParamsCli<NgsParams> {
   }
 
   @Override
-  protected NgsParams makeParams() throws InvalidParamsException, IOException {
+  protected NgsParams makeParams() throws IOException {
     return makeMapfParams(mFlags, DEFAULT_WORD_SIZE, 2);
   }
 
@@ -120,7 +119,7 @@ public class MapFCli extends ParamsCli<NgsParams> {
     }
   }
 
-  private static NgsParams makeMapfParams(CFlags flags, int defWordSize, int defStepRatio) throws InvalidParamsException, IOException {
+  private static NgsParams makeMapfParams(CFlags flags, int defWordSize, int defStepRatio) throws IOException {
     final NgsParamsBuilder ngsParamsBuilder = NgsParams.builder();
 
     final NgsFilterParams.NgsFilterParamsBuilder ngsFilterParamsBuilder = NgsFilterParams.builder();

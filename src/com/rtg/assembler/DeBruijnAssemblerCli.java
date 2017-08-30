@@ -23,7 +23,6 @@ import java.util.Collection;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.ParamsCli;
 import com.rtg.util.IORunnable;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
@@ -55,7 +54,7 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
   }
 
   @Override
-  protected DeBruijnParams makeParams() throws InvalidParamsException, IOException {
+  protected DeBruijnParams makeParams() throws IOException {
     return makeParamsLocal(mFlags);
   }
 

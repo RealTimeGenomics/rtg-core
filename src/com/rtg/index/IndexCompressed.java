@@ -427,7 +427,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
 
 
   @Override
-  public void search(final long hash, final Finder finder) throws IOException, IllegalStateException {
+  public void search(final long hash, final Finder finder) throws IOException {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -459,7 +459,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public void search(long[] hash, Finder finder) throws IOException, IllegalStateException {
+  public void search(long[] hash, Finder finder) throws IOException {
 
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
@@ -510,7 +510,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public void scan(FinderHashValue finder) throws IOException, IllegalStateException {
+  public void scan(FinderHashValue finder) throws IOException {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -528,7 +528,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public void scanAll(FinderHashValueExtended finder) throws IOException, IllegalStateException {
+  public void scanAll(FinderHashValueExtended finder) throws IOException {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -568,7 +568,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public long first(long hash) throws IllegalStateException {
+  public long first(long hash) {
     long index = find(hash);
     if (index < 0) {
       return index;
@@ -605,7 +605,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public long first(long[] hash) throws IllegalStateException {
+  public long first(long[] hash) {
     long index = find(hash);
     if (index < 0) {
       return index;

@@ -308,7 +308,7 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
   protected abstract long position(final long hash);
 
   @Override
-  public long numberEntries() throws IllegalStateException {
+  public long numberEntries() {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -316,7 +316,7 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
   }
 
   @Override
-  public long numberHashes() throws IllegalStateException {
+  public long numberHashes() {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }

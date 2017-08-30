@@ -545,7 +545,7 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
    * @throws SlimException If a sequence is longer than allowed by the size of an integer
    * @throws IOException if an IO exception occurs
    */
-  public long longestSubSequence(final SequencesReader reader) throws SlimException, IOException {
+  public long longestSubSequence(final SequencesReader reader) throws IOException {
     if (this.equals(HashingRegion.NONE)) {
       final long maxLength = reader.maxLength();
       if (maxLength >= Integer.MAX_VALUE) {

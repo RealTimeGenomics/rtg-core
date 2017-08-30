@@ -25,7 +25,6 @@ import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.Environment;
 import com.rtg.util.IORunnable;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
@@ -231,7 +230,7 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
   }
 
   @Override
-  protected MetaPipelineParams makeParams() throws InvalidParamsException, IOException {
+  protected MetaPipelineParams makeParams() throws IOException {
     final MetaPipelineParamsBuilder builder = MetaPipelineParams.builder().name(mFlags.getName());
     final File output = (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
     final OutputParams outParams = new OutputParams(output, false, false);

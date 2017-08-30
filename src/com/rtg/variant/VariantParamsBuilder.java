@@ -291,7 +291,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    * @throws InvalidParamsException if priors file does not contain desired
    *           values.
    */
-  public VariantParamsBuilder genomePriors(final String priors) throws InvalidParamsException, IOException {
+  public VariantParamsBuilder genomePriors(final String priors) throws IOException {
     mGenomePriors = GenomePriorParams.builder().genomePriors(priors).create();
     return self();
   }

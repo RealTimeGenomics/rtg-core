@@ -47,7 +47,7 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
   }
 
   @Override
-  protected HashDistParams makeParams() throws InvalidParamsException, IOException {
+  protected HashDistParams makeParams() throws IOException {
     final File sdfDir = (File) mFlags.getAnonymousValue(0);
     if (ReaderUtils.isPairedEndDirectory(sdfDir)) {
       throw new InvalidParamsException("Analysis of paired-end SDFs is not supported");
