@@ -284,7 +284,6 @@ public class PairedTempFileWriterImpl extends AbstractTempFileWriter implements 
   @Override
   public boolean unmatedResult(int readId, boolean first, boolean rc, int start) throws IOException {
     final SequencesReader reader = first ? mFirstReader : mSecondReader;
-    final MapQScoringReadBlocker blocker = first ? mUnmatedBlockerFirst : mUnmatedBlockerSecond;
     final byte[] read = ReadHelper.getRead(reader, readId);
     final int size = reader.length(readId);
     if ((start - mTemplateOffset < 0) || (start - mTemplateOffset > mTemplate.length)) {
@@ -307,6 +306,7 @@ public class PairedTempFileWriterImpl extends AbstractTempFileWriter implements 
     final int maxMismatches = mUnmatedMaxMismatches.getValue(size);
     final int maxScore = maxMismatches * mSubstitutionPenalty;
     if (matchActions[ActionsHelper.ALIGNMENT_SCORE_INDEX] <= maxScore) {
+      final MapQScoringReadBlocker blocker = first ? mUnmatedBlockerFirst : mUnmatedBlockerSecond;
       mListener.addStatus(readId, first ? ReadStatusTracker.UNMATED_ALIGN_SCORE_FIRST : ReadStatusTracker.UNMATED_ALIGN_SCORE_SECOND);
       if (!blocker.isBlocked2(readId, matchActions[ActionsHelper.ALIGNMENT_SCORE_INDEX])) {
         final AlignmentResult matchResult = new AlignmentResult(read, matchActions, mTemplate);

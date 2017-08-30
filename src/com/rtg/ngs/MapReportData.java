@@ -301,14 +301,15 @@ public final class MapReportData {
    */
   public void processRead(SAMRecord sam) {
     final boolean isPaired = sam.getReadPairedFlag();
-    final boolean isRight = isPaired && sam.getSecondOfPairFlag();
-    final boolean isMated = isPaired && sam.getProperPairFlag();
 
     // Read length
     final int readLength = sam.getReadLength();
 
     // Read Orientation
     if (!sam.getReadUnmappedFlag()) {
+      final boolean isRight = isPaired && sam.getSecondOfPairFlag();
+      final boolean isMated = isPaired && sam.getProperPairFlag();
+
       // total mapped count is 0
       increment(DistributionType.MAPC, 0);
 

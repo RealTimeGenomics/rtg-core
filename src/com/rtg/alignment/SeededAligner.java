@@ -422,11 +422,9 @@ final class SeededAligner implements UnidirectionalEditDistance {
     if (mNumSeeds > 0) {
       if ((mSeeds[mNumSeeds - 1].mX2 < rlen) || (mSeeds[mNumSeeds - 1].mY2 < template.length)) {
         x1 = mSeeds[mNumSeeds - 1].mX2;
-        x2 = rlen;
-
-        if (mSeeds[mNumSeeds - 1].mX2 != rlen) {
+        if (x1 != rlen) {
           // then the gap to the start
-          final int[] res = mFixedStart.calculateEditDistanceFixedStart(read, x1, x2, template, mSeeds[mNumSeeds - 1].mY2, maxScore, maxShift);
+          final int[] res = mFixedStart.calculateEditDistanceFixedStart(read, x1, rlen, template, mSeeds[mNumSeeds - 1].mY2, maxScore, maxShift);
           ActionsHelper.prepend(mWorkspace, res);
           mWorkspace[ActionsHelper.TEMPLATE_START_INDEX] = mSeeds[mNumSeeds - 1].mY1;
 

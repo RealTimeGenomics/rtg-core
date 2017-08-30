@@ -473,8 +473,8 @@ public final class SamValidator {
           mErr.println("Mate ref name not same as record ref name " + samRec.getSAMString().trim());
         }
         final String mateKey = samRec.getMateAlignmentStart() + ":" + samRec.getAlignmentStart() + ":" + samRec.getReadName() + samRec.getSecondOfPairFlag() + samRec.getReadNegativeStrandFlag() + samRec.getMateNegativeStrandFlag() + samRec.getInferredInsertSize();
-        final String key = samRec.getAlignmentStart() + ":" + samRec.getMateAlignmentStart() + ":" + samRec.getReadName() + samRec.getFirstOfPairFlag() + samRec.getMateNegativeStrandFlag() + samRec.getReadNegativeStrandFlag() + -samRec.getInferredInsertSize();
         if (!mExpectedMates.remove(mateKey)) {
+          final String key = samRec.getAlignmentStart() + ":" + samRec.getMateAlignmentStart() + ":" + samRec.getReadName() + samRec.getFirstOfPairFlag() + samRec.getMateNegativeStrandFlag() + samRec.getReadNegativeStrandFlag() + -samRec.getInferredInsertSize();
           mExpectedMates.add(key);
         }
       }   //else the mate is unmapped...

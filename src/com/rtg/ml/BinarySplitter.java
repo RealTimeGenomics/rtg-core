@@ -142,12 +142,12 @@ public final class BinarySplitter {
   }
 
   void saveV2(DataOutputStream dos, Dataset data) throws IOException {
-    final Attribute attribute = data.getAttributes()[mAttributeIndex];
     dos.writeInt(2);
     dos.writeInt(mAttributeIndex);
     dos.writeInt(mSplitValueDataType.ordinal());
     dos.writeBoolean(mSplitMissing);
     if (!mSplitMissing) {
+      final Attribute attribute = data.getAttributes()[mAttributeIndex];
       mSplitValueDataType.save(attribute.decodeValue(mSplitValue), dos);
     }
   }

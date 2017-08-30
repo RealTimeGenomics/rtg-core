@@ -100,7 +100,6 @@ class MetagenomicsWrapperTask extends ParamsTask<MetaPipelineParams, NoStatistic
   protected void exec() throws IOException {
     final File output = mParams.directory();
     final File mapfOutput = new File(output, "mapf");
-    final File filter = mParams.filterSdf();
     final List<String> inputFlags = new ArrayList<>();
     if (mParams.inputFile() != null) {
       final File inputFile =  mParams.inputFile();
@@ -132,7 +131,7 @@ class MetagenomicsWrapperTask extends ParamsTask<MetaPipelineParams, NoStatistic
       final List<String> mapfArgs = new ArrayList<>();
       mapfArgs.addAll(Arrays.asList(
           "--" + CommonFlags.OUTPUT_FLAG, mapfOutput.getPath()
-          , "--" + CommonFlags.TEMPLATE_FLAG, filter.getPath()
+          , "--" + CommonFlags.TEMPLATE_FLAG, mParams.filterSdf().getPath()
           // Because mapf uses the --sam-rg flag to detect platform for internal aligner config :(
           , "--" + SamCommandHelper.SAM_RG, "@RG\\tPL:" + mParams.inputPlatform() + "\\tSM:sample\\tID:id"
       ));

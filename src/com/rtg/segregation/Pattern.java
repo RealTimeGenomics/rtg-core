@@ -228,10 +228,10 @@ public class Pattern extends IntegralAbstract {
 
   Pattern(final GType fa, final GType mo, final GType ch) {
     final int a = ch.a();
-    final int b = ch.b();
     if (fa.ploidy() == Ploidy.HAPLOID && mo.ploidy() == Ploidy.DIPLOID && ch.ploidy() == Ploidy.HAPLOID) {
       mPattern = pat(mo, a);
     } else {
+      final int b = ch.b();
       mPattern = pat(fa, mo, a, b) | pat(fa, mo, b, a);
     }
   }

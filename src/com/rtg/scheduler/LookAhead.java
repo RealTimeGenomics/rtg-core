@@ -38,8 +38,8 @@ public class LookAhead extends IntegralAbstract {
   @Override
   public synchronized boolean globalIntegrity() {
     integrity();
-    int total = 0;
     if (mCurrent >= 0) {
+      int total = 0;
       for (int i = mCurrent; i <= mCurrent + mLookAhead + mDelta; ++i) {
         final int cnt = mCounts[i & mMask];
         Exam.assertTrue(cnt >= 0);

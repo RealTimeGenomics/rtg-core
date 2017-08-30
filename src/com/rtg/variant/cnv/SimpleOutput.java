@@ -43,8 +43,7 @@ public class SimpleOutput extends IntegralAbstract implements LsmOutput {
   public void out(final String id, final int start, final int end, final double sum, final double sum2) throws IOException {
     final int length = end - start;
     final double mean = sum / length;
-    final double threshold = sum * mean;
-    final double stdDev = length == 1 ? 0.0 : Math.sqrt((sum2 - threshold) / (length - 1));
+    final double stdDev = length == 1 ? 0.0 : Math.sqrt((sum2 - sum * mean) / (length - 1));
     mOut.write(id.getBytes());
     mOut.write('\t');
     mOut.write(Integer.toString(ntPos(start)).getBytes());

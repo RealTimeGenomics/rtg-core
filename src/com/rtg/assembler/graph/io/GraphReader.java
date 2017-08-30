@@ -283,10 +283,8 @@ public final class GraphReader {
         //if (f.isFile()) {
         readContigs(graph, contigTranslationMap, mGraphDirectory.child(fname).inputStream(), false, md5sums.get(fname));
       } else {
-        final String gname = "contig." + fileNumber + ".fa.gz";
         if (mGraphDirectory.childExists(fname)) {
-          //final File g = new File(mGraphDirectory, gname);
-          //if (g.isFile()) {
+          final String gname = "contig." + fileNumber + ".fa.gz";
           readContigs(graph, contigTranslationMap, mGraphDirectory.child(gname).inputStream(), true, md5sums.get(gname));
         } else {
           // I suppose in theory should really check all files in manifest existed ...

@@ -306,8 +306,8 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
         dir = 0;
       }
     }
-    final int offsetScore = mIndelOpenPenalty + mIndelExtendPenalty * Math.abs(deltaOff);
     if (dir != 0) { //TODO heuristic - should it scale with read length?
+      final int offsetScore = mIndelOpenPenalty + mIndelExtendPenalty * Math.abs(deltaOff);
       if (dir == +1) {
         if (deltaOff > 0) {
           final int tEndFP = zeroBasedStart + deltaOff + rLen;

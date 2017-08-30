@@ -62,8 +62,8 @@ public class DiseasedFamilyCaller implements MultisampleJointCaller {
     // In practice we have to allow for lower weight hypothesis coming up when considered
     // in combination, hence we only short-circuit for large enough posteriors as well.
     final HypothesisScore fatherBest = models.get(0).best(hypotheses.get(models.get(0)));
-    final int fName = fatherBest.hypothesis();
     if (fatherBest.posterior() > POSTERIOR_THRESHOLD_NOT_INTERESTING) {
+      final int fName = fatherBest.hypothesis();
       boolean ok = true;
       for (int k = 1; k < models.size(); ++k) {
         final HypothesisScore bc = models.get(k).best(hypotheses.get(models.get(k)));

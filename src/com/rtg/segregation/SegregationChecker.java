@@ -176,7 +176,7 @@ public class SegregationChecker {
       mCurrPhaseGroup = null;
       mLastSeq = sequence;
     }
-    assert !((mLastPatternHolder == null) ^ (mCurrPhaseGroup == null));
+    assert (mLastPatternHolder == null) == (mCurrPhaseGroup == null);
     assert mLastSeq.equals(sequence);
     final VcfRecord repairedRecord = VcfReader.vcfLineToRecord(rec.toString());
     final PatternHolder recPhasing = new PatternHolder(familyFromRecord(rec).pattern(), false);

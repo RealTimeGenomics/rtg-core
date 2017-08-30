@@ -109,10 +109,10 @@ public class DefaultOutputProcessorSynch implements OutputProcessor {
   }
 
   private static boolean appendFile(final OutputStream out, final File in, final boolean gzipIn, final boolean copyHeader) throws IOException {
-    boolean skipLine = !copyHeader;
     //System.err.println("in=" + in.getAbsolutePath());
     boolean ret = false; //wrote out data
     if (in.length() > 0) {
+      boolean skipLine = !copyHeader;
       try (InputStream inStream = gzipIn ? FileUtils.createGzipInputStream(in, true) : FileUtils.createFileInputStream(in, true)) {
         final byte[] buf = new byte[4096];
         int len;

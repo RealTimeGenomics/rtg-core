@@ -354,13 +354,13 @@ public final class Aview extends AbstractCli {
   private void printCoordIndicators(final String ref) {
     final String label = mDisplayHelper.getSpaces(DisplayHelper.LABEL_LENGTH + 1);
     final int selectionStart = mParams.start() - mModel.oneBasedStart();
-    final int selectionLength = Math.min(mParams.end()  - mParams.start() - 1, mModel.inserts().length - selectionStart); //if they've asked for more region than available, just give what we've got.
     mScreenSelectionStart = getInsertsBetween(0, selectionStart) + selectionStart;
 
     final String startSpaces = mDisplayHelper.getSpaces(mScreenSelectionStart);
     final int difference = Math.abs(mParams.end() - mParams.start());
     final String indicatorStr;
     if (difference > 1) {
+      final int selectionLength = Math.min(mParams.end()  - mParams.start() - 1, mModel.inserts().length - selectionStart); //if they've asked for more region than available, just give what we've got.
       final int newSelectionLength = getInsertsBetween(selectionStart, selectionStart + selectionLength) + selectionLength;
       mScreenSelectionEnd = mScreenSelectionStart + newSelectionLength + 1;
 
@@ -521,8 +521,8 @@ public final class Aview extends AbstractCli {
   }
 
   private void printBeds(final ArrayList<BedRecord> records, final int correctStart, final int correctEnd, final String label, String endLabel, boolean[] highlightMask) {
-    Integer charPosition = 0; // Current character position (i.e. including inserts)
     if (records != null) {
+      Integer charPosition = 0; // Current character position (i.e. including inserts)
       int refPosition = correctStart; // Reference position we are currently up to, zero-based. (correctStart, correctEnd are zero-based)
       int residualInsertLength = 0;
       final StringBuilder line = new StringBuilder();
@@ -611,8 +611,8 @@ public final class Aview extends AbstractCli {
 
 
   private void printVariants(final ArrayList<AviewVariant> snpArray, final int correctStart, final int correctEnd, boolean baseline, final String label, String endLabel, boolean[] highlightMask) {
-    Integer charPosition = 0; // Current character position (i.e. including inserts)
     if (snpArray != null) {
+      Integer charPosition = 0; // Current character position (i.e. including inserts)
       int refPosition = correctStart; // Reference position we are currently up to, zero-based. (correctStart, correctEnd are zero-based)
       int residualInsertLength = 0;
       final StringBuilder strand1 = new StringBuilder();

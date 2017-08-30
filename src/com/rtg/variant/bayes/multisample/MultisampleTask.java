@@ -510,10 +510,10 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       @Override
       protected Result run() throws IOException {
         final Complexities last = mArguments[0] == null ? null : (Complexities) mArguments[0].result(0);
-        final Complexities current = mArguments[1] == null ? null : (Complexities) mArguments[1].result(0);
         //operating 1 time step behind increment job. So operating on 'last'
         if (last != null) {
           if (mParams.expandComplexReadQueries()) {
+            final Complexities current = mArguments[1] == null ? null : (Complexities) mArguments[1].result(0);
             //complex calls may have are will be made +/- 1 outside of chunk boundaries
             final int flushStart = Math.max(mMinimumPosition, last.startOfChunk() - 1);
             //don't flush last base so it can be used by next complex region

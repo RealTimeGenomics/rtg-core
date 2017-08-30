@@ -741,11 +741,11 @@ public class Calibrator {
         final String readDelta = sam.getStringAttribute(SamUtils.CG_READ_DELTA);
         getParser().setCigar(superCigar, readDelta);
 
-        final int flags = sam.getFlags();
-        final boolean first = (flags & SamBamConstants.SAM_READ_IS_FIRST_IN_PAIR) != 0;
-        final boolean rc = (flags & SamBamConstants.SAM_READ_IS_REVERSE) != 0;
-        final String xqField = sam.getStringAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY);
         if (baseQualities != null && baseQualities.length > 0) {
+          final int flags = sam.getFlags();
+          final boolean first = (flags & SamBamConstants.SAM_READ_IS_FIRST_IN_PAIR) != 0;
+          final boolean rc = (flags & SamBamConstants.SAM_READ_IS_REVERSE) != 0;
+          final String xqField = sam.getStringAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY);
           final int xqlength = xqField == null ? 0 : xqField.length();
           if (mCgQualities == null || baseQualities.length + xqlength != mCgQualities.length) {
             mCgQualities = new byte[baseQualities.length + xqlength];

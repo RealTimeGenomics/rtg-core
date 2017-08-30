@@ -150,8 +150,8 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     mTaxonomy.addNode(Taxonomy.ROOT_ID, -1, "root", "no rank");
 
     int nextId = 2;
-    final Map<String, Long> namemap = ReaderUtils.getSequenceNameMap(sr);
     if (referenceMap != null) {
+      final Map<String, Long> namemap = ReaderUtils.getSequenceNameMap(sr);
       try (final BufferedReader inputList = new BufferedReader(new FileReader(referenceMap))) {
         String line;
         while ((line = inputList.readLine()) != null) {
@@ -200,10 +200,10 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
   }
 
   static HashMap<String, String> getRenameMap(File referenceMap, SequencesReader sr) throws IOException {
-    final Map<String, Long> namemap = ReaderUtils.getSequenceNameMap(sr);
     int warningCount = 0;
     final HashMap<String, String> renameMap = new HashMap<>();
     if (referenceMap != null) {
+      final Map<String, Long> namemap = ReaderUtils.getSequenceNameMap(sr);
       try (BufferedReader inputList = new BufferedReader(new FileReader(referenceMap))) {
         String line;
         while ((line = inputList.readLine()) != null) {
@@ -493,10 +493,10 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
               if (mInBlock[j]) {
                 final int nodeId = j;
                 final Runnable run = () -> {
-                  final Species psp = new Species(mMembersOf, mCurrentBlock); // Species is not thread-safe, so make a new one
                   final IdSet idSet = new IdSet(mMembersOf[nodeId]);
                   final Double v = mKnownSolutions.get(idSet);
                   if (v == null) {
+                    final Species psp = new Species(mMembersOf, mCurrentBlock); // Species is not thread-safe, so make a new one
                     final double l = subBlockResults.getL();
                     final String name = mTaxonomy.get(mSpeciesMap.taxonId(nodeId)).getName();
                     Diagnostic.developerLog("B:" + mCurrentBlockId + " Doing p-value estimation for node " + nodeId + " " + name + " base L= " + l);

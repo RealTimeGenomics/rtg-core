@@ -64,9 +64,9 @@ public class AligningDecomposer extends AbstractDecomposer {
 
   // XXX These should be recomputed directly from the measure, in order to include alleles not called in the originalLikelihoods
   private static Map<Set<String>, Double> newGenotypeLikelihoods(final VariantSample sample, final SplitAlleles splitter, final String[] alleles, final int leftClip) {
-    final Map<Set<String>, Double> newMap = new HashMap<>();
     final Map<Set<String>, Double> originalLikelihoods = sample.getGenotypeLikelihoods();
     if (originalLikelihoods != null) {
+      final Map<Set<String>, Double> newMap = new HashMap<>();
       for (final Map.Entry<Set<String>, Double> entry : originalLikelihoods.entrySet()) {
         final Set<String> newSet = new HashSet<>();
         for (final String s : entry.getKey()) {

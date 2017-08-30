@@ -171,27 +171,22 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
   }
 
   private IntSet makeIntSet() {
-    final IntSetCaller caller = new IntSetCaller() {
-      @Override
-      public void call(final int readId) throws IOException {
-        //System.err.println("rc=" + mRC + " readId=" + readId + " templateLength=" + mTemplateLength + " endPosition=" + mEndPosition);
+    final IntSetCaller caller = readId -> {
+      final int scoreIndel = mHashFunction.indelScore(readId);
+      //System.err.println("call score=" + score + " indelScore=" + scoreIndel + " errorLimit=" + mErrorLimit);
+      if (scoreIndel <= mErrorLimit) {
         final int tzero = mIsProtein ? mEndPosition - mHashFunction.readLength() + 1 : Math.max(0, mEndPosition - mHashFunction.readLength() + 1);
-
-        final int scoreIndel = mHashFunction.indelScore(readId);
-        //System.err.println("call score=" + score + " indelScore=" + scoreIndel + " errorLimit=" + mErrorLimit);
-        if (scoreIndel <= mErrorLimit) {
-          final String frame;
-          if (mIsCGV1) {
-            final boolean second = (readId & 1) == 1;
-            frame = second == mRC ? "F" : "R";
-          } else {
-            frame = mRC ? "R" : "F";
-          }
-          ++mProcessStatistics;
-          //System.err.println("calling process");
-          final int score = mHashFunction.fastScore(readId);
-          mOutputProcessor.process(mTemplateId, frame, readId, tzero, score, scoreIndel);
+        final String frame;
+        if (mIsCGV1) {
+          final boolean second = (readId & 1) == 1;
+          frame = second == mRC ? "F" : "R";
+        } else {
+          frame = mRC ? "R" : "F";
         }
+        ++mProcessStatistics;
+        //System.err.println("calling process");
+        final int score = mHashFunction.fastScore(readId);
+        mOutputProcessor.process(mTemplateId, frame, readId, tzero, score, scoreIndel);
       }
     };
     int maxHashCount = mIndexes.get(0).maxHashCount();

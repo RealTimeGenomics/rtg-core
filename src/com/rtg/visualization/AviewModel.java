@@ -339,10 +339,10 @@ final class AviewModel {
   }
 
   private void processVariantLine(final AviewVariant line) {
-    final int position = line.getPosition() - mOneBasedStart;
     final int referenceLength = line.referenceLength();
     final int callDelta = maxPredictionLength(line) - referenceLength;
-    if (callDelta > 0) { // The call represents an insertion of some type
+    if (callDelta > 0) {
+      // The call represents an insertion of some type
       // Ensure the current position has at least that many inserts:
       //mInserts[position] = Math.max(mInserts[position], callDelta);
 
@@ -351,6 +351,7 @@ final class AviewModel {
       // length) that will account for the inserts needed by this
       // call:
       // Check sum of inserts already stored over the length of reference covered
+      final int position = line.getPosition() - mOneBasedStart;
       final int endposition = Math.min(mInserts.length, position + referenceLength + 1);
       int insertTot = 0;
       for (int i = position; i < endposition; ++i) {

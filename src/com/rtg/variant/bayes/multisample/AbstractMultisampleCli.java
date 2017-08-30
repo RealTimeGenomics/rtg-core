@@ -488,7 +488,6 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     final GenomeRelationships grf = grf();
     builder.genomeRelationships(grf);
     final Collection<File> inputFiles;
-    final RegionRestriction simpleRestriction = getSimpleRegionRestriction();
     if (mFlags.isSet(CommonFlags.RESTRICTION_FLAG) || mFlags.isSet(CommonFlags.BED_REGIONS_FLAG)) {
       inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS, CommandLineFiles.VARIANT_INPUT).getFileList(mFlags);
     } else {
@@ -533,6 +532,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     builder.referenceRanges(SamRangeUtils.createReferenceRanges(uberHeader, filterParams));
 
     if (c != null) {
+      final RegionRestriction simpleRestriction = getSimpleRegionRestriction();
       final Map<String, String> readGroupToSampleId = SamUtils.getReadGroupToSampleId(uberHeader);
       final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(genomeParams.reader(), simpleRestriction);
       final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, simpleRestriction);
