@@ -108,8 +108,8 @@ public class ReadStatusTrackerTest extends TestCase {
     tracker.addStatus(6, ReadStatusTracker.BLOCKED_FIRST);
     assertEquals('B', tracker.getXCAttribute(6, true));
 
-    assertEquals('\0', tracker.getXCAttribute(7, true));
-    assertEquals('\0', tracker.getXCAttribute(7, false));
+    assertEquals('A', tracker.getXCAttribute(7, true));
+    assertEquals('A', tracker.getXCAttribute(7, false));
     tracker.addStatus(7, ReadStatusTracker.BLOCKED_FIRST);
     tracker.addStatus(7, ReadStatusTracker.BLOCKED_SECOND);
     assertEquals('B', tracker.getXCAttribute(7, true));

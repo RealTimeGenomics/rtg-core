@@ -334,7 +334,8 @@ public class ReadStatusTracker implements ReadStatusListener {
         return 'E';
       }
     }
-    return '\0';
+    return 'A';
+    //return '\0';
   }
 
   /**
