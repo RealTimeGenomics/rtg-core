@@ -228,7 +228,7 @@ public class ApplyReference {
       final ArrayList<AlignmentState> nextStates = new ArrayList<>();
       for (AlignmentState state : states) {
         final List<AlignmentState> steppedStates = state.step(reference, mGraph, traversion);
-        if (steppedStates.size() == 0) {
+        if (steppedStates.isEmpty()) {
           finalStates.add(state);
         } else {
           for (AlignmentState step : steppedStates) {
@@ -241,7 +241,7 @@ public class ApplyReference {
           }
         }
       }
-      Collections.sort(nextStates, new MismatchComparator());
+      nextStates.sort(new MismatchComparator());
 
       final ArrayList<AlignmentState> filteredState  = new ArrayList<>();
       nextStates: for (AlignmentState state : nextStates) {

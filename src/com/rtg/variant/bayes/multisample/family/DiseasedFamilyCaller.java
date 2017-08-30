@@ -84,7 +84,7 @@ public class DiseasedFamilyCaller implements MultisampleJointCaller {
     if (ref[position] == DNARange.N) {
       return null;
     }
-    if (!USE_SLOW_IMPL && !mParams.callLevel().equals(VariantOutputLevel.ALL) && shortCircuit(models, hypotheses)) {
+    if (!USE_SLOW_IMPL && mParams.callLevel() != VariantOutputLevel.ALL && shortCircuit(models, hypotheses)) {
       return null;
     }
 
@@ -107,7 +107,7 @@ public class DiseasedFamilyCaller implements MultisampleJointCaller {
       return null;
     }
 
-    if (mParams.callLevel().equals(VariantOutputLevel.ALL) || fp.isInteresting()) {
+    if (mParams.callLevel() == VariantOutputLevel.ALL || fp.isInteresting()) {
       // TODO: These outputs are supposed to be ratios but current are not?
       final VariantSample[] samples = new VariantSample[models.size()];
       samples[Family.FATHER_INDEX] = FamilyCaller.createSample(commonHypotheses, bf, fb, mParams);

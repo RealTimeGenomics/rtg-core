@@ -273,15 +273,15 @@ public class MapReport extends MapSummaryReport {
     }
     final DataTable dTable = new DataTable(grams);
     final PlotType pType;
-    if (dt[0].equals(DistributionType.MORI)) {
+    if (dt[0] == DistributionType.MORI) {
       pType = PlotType.MORI;
     } else if (dt[0].ordinal() >= DistributionType.ORI.ordinal() && dt[0].ordinal() <= DistributionType.ORI2M.ordinal()) {
       pType = PlotType.ORI;
-    } else if (dt[0].equals(DistributionType.MAPC)) {
+    } else if (dt[0] == DistributionType.MAPC) {
       pType = PlotType.MAPC;
-    } else if (dt[0].equals(DistributionType.MAPQ)) {
+    } else if (dt[0] == DistributionType.MAPQ) {
       pType = PlotType.BOX;
-    } else if (dt[0].equals(DistributionType.FLEN) || dTable.xWidth() > LINE_GRAPH_THRESHOLD) {
+    } else if (dt[0] == DistributionType.FLEN || dTable.xWidth() > LINE_GRAPH_THRESHOLD) {
       pType = PlotType.LINE;
     } else {
       pType = PlotType.BOX;

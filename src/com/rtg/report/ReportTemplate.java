@@ -70,7 +70,7 @@ abstract class ReportTemplate {
         while (matcher.find(start)) {
           final String match = matcher.group();
           final String key = match.substring(2, match.length() - 2);
-          if (!replacements.keySet().contains(key)) {
+          if (!replacements.containsKey(key)) {
             throw new IllegalArgumentException("Template contained unsupported replacement tag: " + key);
           }
           start = matcher.end();

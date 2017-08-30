@@ -68,12 +68,12 @@ public class GraphAligner {
     final List<AlignmentChain> forwardAlignments = new ArrayList<>();
     assert read[offset] == mGraph.contig(position.mContigId).nt(position.mPosition);
     alignDirectedContigs(read, offset, position.mContigId, position.mPosition, true, null, forwardAlignments);
-    if (forwardAlignments.size() == 0) {
+    if (forwardAlignments.isEmpty()) {
       return Collections.emptySet();
     }
     final List<AlignmentChain> reverseAlignments = new ArrayList<>();
     alignDirectedContigs(read, offset, position.mContigId, position.mPosition, false, null, reverseAlignments);
-    if (reverseAlignments.size() == 0) {
+    if (reverseAlignments.isEmpty()) {
       return Collections.emptySet();
     }
     return squeezePaths(joinPaths(forwardAlignments, reverseAlignments, read.length), mGraph);

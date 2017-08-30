@@ -305,9 +305,9 @@ public class SegregationChecker {
             }
             repairRecord(rec, repairedRecord, sampleIndex, childAlts.get(0), selectedPatternChildren);
           }
-        } else if (fatherAlts.size() == 1 && motherAlts.size() == 0) {
+        } else if (fatherAlts.size() == 1 && motherAlts.isEmpty()) {
           repairRecord(rec, repairedRecord, mSampleFather, fatherAlts.get(0), selectedPatternParents);
-        } else if (motherAlts.size() == 1 && fatherAlts.size() == 0) {
+        } else if (motherAlts.size() == 1 && fatherAlts.isEmpty()) {
           repairRecord(rec, repairedRecord, mSampleMother, motherAlts.get(0), selectedPatternParents);
         }
       }

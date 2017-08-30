@@ -38,7 +38,7 @@ public class SortingSamReader implements Iterable<SAMRecord>, Closeable {
   SortingSamReader(InputStream input, SAMFileHeader.SortOrder order, File tempDir) throws IOException {
     final SamReaderFactory samReaderFactory = SamReaderFactory.makeDefault();
     final SamReader reader = samReaderFactory.open(SamInputResource.of(input));
-    if (!reader.getFileHeader().getSortOrder().equals(order)) {
+    if (reader.getFileHeader().getSortOrder() != order) {
       try {
         final SAMFileHeader header = reader.getFileHeader();
         header.setSortOrder(order);

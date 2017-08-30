@@ -109,7 +109,7 @@ public abstract class AbstractDecomposer implements Decomposer {
       }
     }
     final Variant ret;
-    if (nonDenovoSamples.size() == 0) {
+    if (nonDenovoSamples.isEmpty()) {
       ret = variant;
     } else {
       final VariantLocus newLocus = variant.getLocus();

@@ -115,7 +115,7 @@ public final class SamHelper {
   static ArrayList<SAMRecord> loadAlignments(final AviewParams params, SequencesReader reader) throws IOException {
     final ArrayList<SAMRecord> records = new ArrayList<>();
     final List<File> files = Arrays.asList(params.alignmentsFiles());
-    if (files.size() == 0) {
+    if (files.isEmpty()) {
       return records;
     }
     final SAMFileHeader header = SamUtils.getUberHeader(reader, files);

@@ -117,7 +117,7 @@ public class SimpleDecomposer extends AbstractDecomposer {
 
     // Compute set of called alleles and exit if there are none
     final Set<String> catSet = extractAlts(original);
-    if (catSet.size() == 0) {
+    if (catSet.isEmpty()) {
       return original;
     }
 
@@ -204,7 +204,7 @@ public class SimpleDecomposer extends AbstractDecomposer {
 
     // Compute set of alleles and exit if there are none
     final Set<String> catSet = extractAlts(original);
-    if (catSet.size() == 0) {
+    if (catSet.isEmpty()) {
       return Collections.singletonList(original);
     }
     final String ref = original.getLocus().getRefNts();

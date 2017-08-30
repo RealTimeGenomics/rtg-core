@@ -88,7 +88,7 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
      * @return <code>true</code> if all okay <code>false</code> otherwise
      */
     public static boolean checkSdfFileList(CFlags flags, Collection<File> files) {
-      if (files.size() == 0) {
+      if (files.isEmpty()) {
         flags.setParseMessage("No input files specified.");
         return false;
       }

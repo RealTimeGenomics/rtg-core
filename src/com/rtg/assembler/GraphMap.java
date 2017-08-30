@@ -165,7 +165,7 @@ public class GraphMap {
         final Set<GraphAlignment> pairAlignments = joiner.paired(fragmentAlignments, reader.minInsertSize(), reader.maxInsertSize());
         if (pairAlignments == PairJoiner.TOO_MANY_PATHS) {
           mStatistics.increment(GraphMapStatistics.Stat.TOO_MANY_PAIR_PATHS);
-        } else if (pairAlignments.size() == 0) {
+        } else if (pairAlignments.isEmpty()) {
           mStatistics.increment(GraphMapStatistics.Stat.NO_PAIRINGS);
         } else if (addBestAlignment(pairAlignments, true, asHistogram) != null) {
           mStatistics.increment(GraphMapStatistics.Stat.PAIRED);

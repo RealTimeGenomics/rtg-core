@@ -213,7 +213,7 @@ public class MergeNodes {
   }
 
   private boolean hasLinks(long current) {
-    return predecessors(mGraph, current).size() != 0 || predecessors(mGraph, -current).size() != 0;
+    return predecessors(mGraph, current).size() != 0 || !predecessors(mGraph, -current).isEmpty();
   }
   boolean hasUniquePredecessor(long contig) {
     final Set<Long> predecessors = predecessors(mGraph, contig);

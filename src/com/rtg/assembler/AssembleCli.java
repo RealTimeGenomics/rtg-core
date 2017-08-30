@@ -111,7 +111,7 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
           }
         }
         if (!flags.isSet(GraphMapCli.GRAPH_FLAG)) {
-          if (files.size() == 0) {
+          if (files.isEmpty()) {
             flags.setParseMessage("You must supply at least one input read set or a pre-built graph");
             return false;
           }

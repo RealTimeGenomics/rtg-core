@@ -110,7 +110,7 @@ public final class GraphReader {
         return null;
       }
       final String tidy = StringUtils.removeBackslashEscapes(line);
-      if (tidy.trim().length() > 0) {
+      if (!tidy.trim().isEmpty()) {
         return tidy;
       }
     }

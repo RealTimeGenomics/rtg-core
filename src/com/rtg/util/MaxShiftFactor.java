@@ -48,7 +48,7 @@ public class MaxShiftFactor {
 
   @Override
   public boolean equals(Object o) {
-    return o != null && o instanceof MaxShiftFactor && Double.doubleToLongBits(((MaxShiftFactor) o).mFactor) == Double.doubleToLongBits(mFactor);
+    return o instanceof MaxShiftFactor && Double.doubleToLongBits(((MaxShiftFactor) o).mFactor) == Double.doubleToLongBits(mFactor);
   }
 
   @Override

@@ -44,7 +44,7 @@ public final class SamResultsSansFilter extends AbstractSamResultsFilter {
    * @param legacyCigars true if legacy cigar mode is enabled
    */
   public SamResultsSansFilter(ReadStatusListener listener, long readIdOffset, SequencesReader reader1, SequencesReader reader2, String readGroupId, boolean legacyCigars) {
-    super(reader1, reader2, readGroupId, PrereadType.CG.equals(reader1.getPrereadType()), readIdOffset, true, legacyCigars);
+    super(reader1, reader2, readGroupId, PrereadType.CG == reader1.getPrereadType(), readIdOffset, true, legacyCigars);
     mListener = listener;
     mReader1 = reader1;
     mReader2 = reader2;

@@ -377,7 +377,7 @@ public final class UnmatedAugmenter {
         final PairOrientation po = mt.orientation().getMateOrientation(mateOrientation);
         if (po != null) {
           record.setReferenceIndex(mate.mRefIndex);
-          if (PairOrientation.F1.equals(po) || PairOrientation.F2.equals(po)) {
+          if (PairOrientation.F1 == po || PairOrientation.F2 == po) {
             record.setReadNegativeStrandFlag(false);
           } else {
             record.setReadNegativeStrandFlag(true);

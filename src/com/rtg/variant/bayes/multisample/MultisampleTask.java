@@ -640,7 +640,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
                        + mParams.maxCoverageBypass().thresholdTotal(refName));
 
     final List<RangeList.RangeData<String>> ranges = mWrapper.getCurrentRangeList().getRangeList();
-    assert ranges.size() > 0;
+    assert !ranges.isEmpty();
     final int startPos = ranges.get(0).getStart();
     if (startPos >= refNts.length) {
       throw new NoTalkbackSlimException("Desired start position for sequence " + refName + " (" + startPos + ") is greater than available reference SDF sequence length (" + refNts.length + ")");

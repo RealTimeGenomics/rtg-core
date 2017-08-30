@@ -96,7 +96,7 @@ public final class GraphCleanup {
         }
         final Set<Long> predecessors = MergeNodes.predecessors(mutable, i);
         final Set<Long> successors = MergeNodes.predecessors(mutable, -i);
-        if (predecessors.size() == 0 || successors.size() == 0) {
+        if (predecessors.isEmpty() || successors.isEmpty()) {
           mutable.deleteContig(i);
           ++deleted;
         }

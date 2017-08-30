@@ -61,7 +61,7 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
     if (context.header() == null) {
       throw new NullPointerException();
     }
-    if (context.files().size() == 0) {
+    if (context.files().isEmpty()) {
       throw new IllegalArgumentException("File list is empty!");
     }
     mFilterParams = context.filterParams();

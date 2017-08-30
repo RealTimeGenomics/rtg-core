@@ -46,7 +46,7 @@ public class ReadGroupMachineErrorChooser implements MachineErrorChooserInterfac
   }
 
   private void addReadGroups(final List<SAMReadGroupRecord> groups) throws IOException {
-    if (groups.size() == 0) {
+    if (groups.isEmpty()) {
       throw new NoTalkbackSlimException("No read groups found. Unable to determine machine error rate. Try explicitly specifying machine type");
     }
     for (final SAMReadGroupRecord record : groups) {

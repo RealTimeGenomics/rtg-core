@@ -70,7 +70,7 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
       final List<String> outputGenomes = new ArrayList<>();
 
       // Validate supplied names against what we're using from the relationships
-      if (mappedGenomes.size() == 0) {
+      if (mappedGenomes.isEmpty()) {
         throw new NoTalkbackSlimException("VCF output for Multigenome needs SAM headers with sample names");
       }
       for (String genome : mappedGenomes) {

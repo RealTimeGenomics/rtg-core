@@ -122,7 +122,7 @@ public class RandomWalkXiFinder {
 
     assert alpha.size() == evidence.size(); // indexed over positions x
     
-    final int numStrains = alpha.iterator().next().length; // Ugly
+    final int numStrains = alpha.get(0).length;
     final double[] powers = kurtTransform(numStrains, alpha, evidence, sample);
 
     double best = mArith.zero();

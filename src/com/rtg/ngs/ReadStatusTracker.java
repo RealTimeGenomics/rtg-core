@@ -103,7 +103,7 @@ public class ReadStatusTracker implements ReadStatusListener {
    * @return a string representation of the status
    */
   public static String statusToString(int st) {
-    final StringBuilder str = new StringBuilder("");
+    final StringBuilder str = new StringBuilder();
     if ((st & MATED_FIRST) != 0) {
       str.append("MATED_FIRST ");
     }

@@ -170,7 +170,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
    */
   private void processReference(CoverageProcessor coverageWriter, SAMSequenceRecord r, SamRecordCounter recCounts, RangeList<String> rangeList) throws IOException {
     final List<RangeList.RangeData<String>> ranges = rangeList.getRangeList();
-    if (ranges.size() == 0) { //no ranges were specified for this reference, so bail out
+    if (ranges.isEmpty()) { // no ranges were specified for this reference, so bail out
       return;
     }
     final String sequenceName = r.getSequenceName();

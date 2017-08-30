@@ -61,7 +61,7 @@ public final class UnmatedSamResultsFilter extends AbstractSamResultsFilter {
    * @param augmenterMerger supplier of unmated augmenters
    */
   public UnmatedSamResultsFilter(MapQScoringReadBlocker asBlockerLeft, MapQScoringReadBlocker asBlockerRight, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight, long readIdOffset, SequencesReader reader1, SequencesReader reader2, String readGroupId, boolean legacyCigars, UnmatedAugmenter.Merger augmenterMerger) {
-    super(reader1, reader2, readGroupId, PrereadType.CG.equals(reader1.getPrereadType()), readIdOffset, false, legacyCigars);
+    super(reader1, reader2, readGroupId, PrereadType.CG == reader1.getPrereadType(), readIdOffset, false, legacyCigars);
     mAsBlockerLeft = asBlockerLeft;
     mAsBlockerRight = asBlockerRight;
     mFreqBlockerLeft = freqBlockerLeft;

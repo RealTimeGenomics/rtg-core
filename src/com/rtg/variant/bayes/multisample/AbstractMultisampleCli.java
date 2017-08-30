@@ -497,7 +497,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     final boolean useCalibration = !mFlags.isSet(MACHINE_ERRORS_FLAG) && !mFlags.isSet(NO_CALIBRATION);
     final SamCalibrationInputs inputs = new SamCalibrationInputs(inputFiles, useCalibration);
     final Collection<File> samFiles = inputs.getSamFiles();
-    if (samFiles.size() == 0) {
+    if (samFiles.isEmpty()) {
       throw new InvalidParamsException("No SAM files provided for input.");
     }
     Diagnostic.userLog("Input SAM files: " + samFiles);
@@ -507,10 +507,10 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
       final Collection<File> calibrationFiles = inputs.getCalibrationFiles();
       Diagnostic.userLog("Input calibration files: " + calibrationFiles);
       builder.calibrations(calibrationFiles);
-      if (calibrationFiles.size() == 0) {
+      if (calibrationFiles.isEmpty()) {
         throw new InvalidParamsException("No calibration files were found for input mappings. Please run 'rtg calibrate', or use --" + NO_CALIBRATION + " and set --" + COVERAGE_BYPASS_FLAG + " appropriately to proceed without calibration.");
       }
-      if (calibrationFiles.size() != 0 && calibrationFiles.size() != samFiles.size()) {
+      if (calibrationFiles.size() != samFiles.size()) {
         throw new InvalidParamsException("Number of calibration files (" + calibrationFiles.size() + ") does not match number of SAM files (" + samFiles.size() + ").");
       }
       c = Calibrator.initCalibrator(calibrationFiles);

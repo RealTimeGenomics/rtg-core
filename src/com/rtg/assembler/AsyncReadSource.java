@@ -97,7 +97,7 @@ public final class AsyncReadSource implements IORunnable {
       try {
         final List<byte[]> fragments = mQueue.poll(TIMEOUT, TimeUnit.SECONDS);
         if (fragments != null) {
-          if (fragments.size() == 0) {
+          if (fragments.isEmpty()) {
             // Put back onto queue, so that subsequent calls to nextFragments() get the sentinel
             mQueue.put(fragments);
             return null;

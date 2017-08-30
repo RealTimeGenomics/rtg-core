@@ -224,7 +224,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
     int maxMaxGap = 0;
 
     final Set<String> sampleNames = new HashSet<>();
-    if (header.getReadGroups() == null || header.getReadGroups().size() == 0) {
+    if (header.getReadGroups() == null || header.getReadGroups().isEmpty()) {
       throw new NoTalkbackSlimException("SAM input does not contain read groups");
     }
     for (final SAMReadGroupRecord srgr : header.getReadGroups()) {

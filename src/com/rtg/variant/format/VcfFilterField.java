@@ -112,7 +112,7 @@ public enum VcfFilterField {
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params) {
-      if (rec.getFilters().size() == 0 && call.isFiltered()) {
+      if (rec.getFilters().isEmpty() && call.isFiltered()) {
         rec.addFilter(name());
       }
     }

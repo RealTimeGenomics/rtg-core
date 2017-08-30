@@ -78,7 +78,7 @@ public final class ThreadedMultifileIterator<T> implements RecordIterator<T> {
    * @throws IOException if an IO error occurs
    */
   public ThreadedMultifileIterator(final SamReadingContext context, final PopulatorFactory<T> populatorFactory) throws IOException {
-    if (context.files().size() == 0) {
+    if (context.files().isEmpty()) {
       throw new IllegalArgumentException("File list is empty");
     }
     if (context.numThreads() <= 0) {

@@ -70,10 +70,10 @@ public class CountAssemblyEnds extends AbstractCli {
         continue;
       }
       final Traversion traversion = t.get(i);
-      if (traversion.mNext.size() == 0) {
+      if (traversion.mNext.isEmpty()) {
         print.println(i);
       }
-      if (traversion.mPrevious.size() == 0) {
+      if (traversion.mPrevious.isEmpty()) {
         print.println(-i);
       }
     }

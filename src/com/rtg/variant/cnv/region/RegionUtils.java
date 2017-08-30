@@ -137,7 +137,7 @@ public final class RegionUtils {
       }
     }
     final Region res;
-    if (set.size() == 0) {
+    if (set.isEmpty()) {
       res = EmptyRegion.EMPTY_REGION;
     } else if (set.size() == 1) {
       res = set.first();
@@ -231,7 +231,7 @@ public final class RegionUtils {
       }
     }
     final Region res;
-    if (set.size() == 0) {
+    if (set.isEmpty()) {
       res = EmptyRegion.EMPTY_REGION;
     } else if (set.size() == 1) {
       res = set.first();

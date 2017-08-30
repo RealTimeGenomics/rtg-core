@@ -60,7 +60,7 @@ public class EthernetAddress {
   public static void main(final String[] args) throws SocketException {
     final EthernetAddress ea = new EthernetAddress();
 
-    System.out.println("OS: " + System.getProperties().getProperty("os.name"));
+    System.out.println("OS: " + System.getProperty("os.name"));
     System.out.println("CPU cores: " + Runtime.getRuntime().availableProcessors());
     System.out.println("Mac Addresses: ");
     for (String s : ea.getAddresses()) {

@@ -56,7 +56,7 @@ public class EventListMultiSample<C extends EnumTimeId<?>> extends IntegralAbstr
   @Override
   public C next(final LookAhead lookAhead) {
     int first = mFirst % mLength;
-    while (mItems[first].size() == 0 && mFirst != mLast) {
+    while (mItems[first].isEmpty() && mFirst != mLast) {
       ++mFirst;
       ++first;
       if (first == mLength) {

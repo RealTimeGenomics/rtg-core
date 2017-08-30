@@ -250,7 +250,7 @@ public class SvInterestingRegionExtractor implements Closeable {
         String line;
         double[] values = null;
         while ((line = br.readLine()) != null) {
-          if (line.startsWith("#") || line.trim().length() == 0) {
+          if (line.startsWith("#") || line.trim().isEmpty()) {
             continue;
           }
           final String[] parts = line.split("\t");

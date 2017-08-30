@@ -314,7 +314,7 @@ public class VariantOutputVcfFormatter {
   private static void setMulticallQuality(Variant call, VcfRecord rec) {
     if (call.getNonIdentityPosterior() == null) {
       rec.setQuality(VcfRecord.MISSING);
-    } else if (rec.getAltCalls().size() == 0) {
+    } else if (rec.getAltCalls().isEmpty()) {
       rec.setQuality(MathUtils.cappedFloat(PosteriorUtils.nonIdentityPhredIfy(call.getNonIdentityPosterior())));
     } else {
       rec.setQuality(MathUtils.cappedFloat(PosteriorUtils.phredIfy(call.getNonIdentityPosterior())));
@@ -325,7 +325,7 @@ public class VariantOutputVcfFormatter {
     if (call.getSample(0).getName() != null) {
       if (call.getNonIdentityPosterior() == null) {
         rec.setQuality(VcfRecord.MISSING);
-      } else if (rec.getAltCalls().size() == 0) {
+      } else if (rec.getAltCalls().isEmpty()) {
         rec.setQuality(MathUtils.cappedFloat(PosteriorUtils.nonIdentityPhredIfy(call.getNonIdentityPosterior())));
       } else {
         rec.setQuality(MathUtils.cappedFloat(PosteriorUtils.phredIfy(call.getNonIdentityPosterior())));

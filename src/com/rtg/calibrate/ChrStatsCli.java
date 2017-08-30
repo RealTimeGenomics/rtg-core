@@ -115,7 +115,7 @@ public class ChrStatsCli extends AbstractCli {
     final SamCalibrationInputs inputs = new SamCalibrationInputs(inputFiles, true);
     final Collection<File> samFiles = inputs.getSamFiles();
     final Collection<File> calibrationFiles = inputs.getCalibrationFiles();
-    if (samFiles.size() == 0) {
+    if (samFiles.isEmpty()) {
       throw new InvalidParamsException("No SAM files provided for input.");
     }
     if (calibrationFiles.size() != samFiles.size()) {
@@ -138,7 +138,7 @@ public class ChrStatsCli extends AbstractCli {
         final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(genomeParams.reader(), (RegionRestriction) null);
         final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, null);
         final Set<String> samples = expectedCoverages.samples();
-        if (samples.size() == 0) {
+        if (samples.isEmpty()) {
           throw new NoTalkbackSlimException("No sample information contained in mapping headers");
         }
         if (mFlags.isSet(OUTPUT_PEDIGREE_FLAG)) {

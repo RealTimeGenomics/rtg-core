@@ -185,7 +185,7 @@ public class BubbleExplorer {
 
       for (PendingNode pending : pendingNodes.values()) {
         // no nodes all linksIn explored and no linksOut
-        if (pending.mLinksOut.size() == 0 && pending.allLinksInFollowed()) {
+        if (pending.mLinksOut.isEmpty() && pending.allLinksInFollowed()) {
           return IMPOSSIBLE_BUBBLE;
         }
       }

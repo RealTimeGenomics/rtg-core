@@ -102,7 +102,7 @@ public class PacBioCli extends ParamsCli<PacBioParams> {
         flags.setParseMessage("An error occurred reading " + flags.getValue(CommonFlags.INPUT_LIST_FLAG));
         return false;
       }
-      if (files.size() == 0) {
+      if (files.isEmpty()) {
         flags.setParseMessage("No input files specified.");
         return false;
       }

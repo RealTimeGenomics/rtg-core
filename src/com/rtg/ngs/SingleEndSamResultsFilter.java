@@ -52,7 +52,7 @@ public final class SingleEndSamResultsFilter extends AbstractSamResultsFilter {
    * @param legacyCigars true if legacy cigar mode is enabled
    */
   public SingleEndSamResultsFilter(MapQScoringReadBlocker asBlocker, ReadBlocker freqBlocker, ReadStatusListener listener, long readIdOffset, SequencesReader reader1, String readGroupId, boolean legacyCigars) {
-    super(reader1, null, readGroupId, reader1 != null && PrereadType.CG.equals(reader1.getPrereadType()), readIdOffset, false, legacyCigars);
+    super(reader1, null, readGroupId, reader1 != null && PrereadType.CG == reader1.getPrereadType(), readIdOffset, false, legacyCigars);
     mAsBlocker = asBlocker;
     mFreqBlocker = freqBlocker;
     mListener = listener;
