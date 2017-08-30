@@ -94,7 +94,7 @@ public class MapFilterPairedMapStatistics extends PairedEndMapStatistics {
     appendValue(sb, MapStatisticsField.UNMATED_AMBIG_READS, "mapped", formatLength);
     //unmapped stats
     appendValue(sb, MapStatisticsField.UNMAPPED_UNMATED_POOR, "unmapped with poor hits (XC = D)", formatLength);
-    appendValue(sb, MapStatisticsField.UNMAPPED_NO_HITS, "unmapped with no hits", formatLength);
+    appendValue(sb, MapStatisticsField.UNMAPPED_NO_HITS, "unmapped with no hits (XC = A)", formatLength);
     // always print total
     appendValue(sb, MapStatisticsField.TOTAL_READS, "total", formatLength);
     return sb.toString();

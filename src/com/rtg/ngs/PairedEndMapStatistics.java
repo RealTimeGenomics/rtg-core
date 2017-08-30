@@ -140,7 +140,7 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
     appendValue(sb, MapStatisticsField.UNMAPPED_MATED_TOO_MANY, "unmapped with too many matings (XC = e)", formatLength);
     appendValue(sb, MapStatisticsField.UNMAPPED_UNMATED_POOR, "unmapped with no matings and poor hits (XC = D)", formatLength);
     appendValue(sb, MapStatisticsField.UNMAPPED_UNMATED_TOO_MANY, "unmapped with no matings and too many good hits (XC = E)", formatLength);
-    appendValue(sb, MapStatisticsField.UNMAPPED_NO_HITS, "unmapped with no hits", formatLength);
+    appendValue(sb, MapStatisticsField.UNMAPPED_NO_HITS, "unmapped with no hits (XC = A)", formatLength);
 
     if (includeDevLog && License.isDeveloper()) {
       final long countLeftMissing = value(MapStatisticsField.MISSING, Arm.LEFT);

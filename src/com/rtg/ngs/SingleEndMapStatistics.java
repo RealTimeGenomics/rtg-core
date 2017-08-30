@@ -100,7 +100,7 @@ public class SingleEndMapStatistics extends AbstractStatistics implements MapSta
     appendValue(sb, MapStatisticsField.UNMAPPED_TOPN, "unmapped with too many hits (XC = C)", formatLength);
     appendValue(sb, MapStatisticsField.UNMAPPED_UNMATED_POOR, "unmapped with poor hits (XC = D)", formatLength);
     appendValue(sb, MapStatisticsField.UNMAPPED_UNMATED_TOO_MANY, "unmapped with too many good hits (XC = E)", formatLength);
-    appendValue(sb, MapStatisticsField.UNMAPPED_NO_HITS, "unmapped with no hits", formatLength);
+    appendValue(sb, MapStatisticsField.UNMAPPED_NO_HITS, "unmapped with no hits (XC = A)", formatLength);
 
     appendValue(sb, MapStatisticsField.TOTAL_READS, "total", formatLength);
     return sb.toString();

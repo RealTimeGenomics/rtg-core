@@ -73,7 +73,7 @@ public class MapFilterSingleEndMapStatistics extends SingleEndMapStatistics {
 
     //unmapped stats
     appendValue(sb, MapStatisticsField.UNMAPPED_UNMATED_POOR, "unmapped with poor hits (XC = D)", formatLength);
-    appendValue(sb, MapStatisticsField.UNMAPPED_NO_HITS, "unmapped with no hits", formatLength);
+    appendValue(sb, MapStatisticsField.UNMAPPED_NO_HITS, "unmapped with no hits (XC = A)", formatLength);
 
     appendValue(sb, MapStatisticsField.TOTAL_READS, "total", formatLength);
     return sb.toString();
