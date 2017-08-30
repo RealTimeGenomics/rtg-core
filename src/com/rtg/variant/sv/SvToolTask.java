@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.rtg.launcher.NoStatistics;
@@ -212,7 +213,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
     writeHeader(mBayesianOut, "bayesian", mPosteriorSignals, "max-index");
   }
 
-  private Signal[] getSignals(ArrayList<Signal> list) {
+  private Signal[] getSignals(List<Signal> list) {
     return list.toArray(new Signal[list.size()]);
   }
 

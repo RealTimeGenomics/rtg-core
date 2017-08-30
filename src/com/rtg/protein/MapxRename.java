@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
@@ -165,7 +166,7 @@ public class MapxRename extends AbstractCli {
     throw new IOException("Unexpected end of file while reading header");
   }
 
-  private static void writeModifiedHeader(BufferedWriter writer, ArrayList<String> header) throws IOException {
+  private static void writeModifiedHeader(BufferedWriter writer, List<String> header) throws IOException {
     for (int i = 0; i < header.size() - 1; ++i) {
       writer.write(header.get(i));
       writer.newLine();
@@ -174,7 +175,7 @@ public class MapxRename extends AbstractCli {
     writer.newLine();
   }
 
-  private static SdfId getSdfId(ArrayList<String> header) {
+  private static SdfId getSdfId(List<String> header) {
     for (final String line : header) {
       if (line.startsWith(ProteinOutputProcessor.MAPX_READ_SDF_ID_HEADER + "\t")) {
         try {
@@ -187,7 +188,7 @@ public class MapxRename extends AbstractCli {
     return new SdfId(0L);
   }
 
-  private static void checkSdfId(ArrayList<String> header, SdfId sdfId) {
+  private static void checkSdfId(List<String> header, SdfId sdfId) {
     final SdfId myGuid = getSdfId(header);
     if (!myGuid.check(sdfId)) {
       throw new NoTalkbackSlimException("SDF-ID of given SDF does not match SDF used during mapping.");

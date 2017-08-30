@@ -43,12 +43,12 @@ public class NeighborJoining {
   }
 
   /* Retrieve the distance between two taxa. */
-  private static double distance(final int i, final int j, final ArrayList<ArrayList<Double>> d) {
+  private static double distance(final int i, final int j, final List<List<Double>> d) {
     return i == j ? 0 : (i > j ? d.get(i).get(j) : d.get(j).get(i));
   }
 
   /* Remove a given item from the distance matrix. */
-  private static void remove(final int f, final ArrayList<BinaryTree> s, final ArrayList<ArrayList<Double>> d) {
+  private static void remove(final int f, final List<BinaryTree> s, final List<List<Double>> d) {
     for (int k = f + 1; k < d.size(); ++k) {
       d.get(k).remove(f);
     }
@@ -66,7 +66,7 @@ public class NeighborJoining {
    * @return the resulting tree
    */
   public BinaryTree neighborJoin(final List<String> nodeNames, final SimilarityMatrix matrix) {
-    final ArrayList<ArrayList<Double>> d = makeArray(matrix);
+    final List<List<Double>> d = makeArray(matrix);
     return neighborJoin(nodeNames, d);
   }
 
@@ -76,8 +76,8 @@ public class NeighborJoining {
    * @param matrix with the original counts.
    * @return the lower triangular array.
    */
-  static ArrayList<ArrayList<Double>> makeArray(final SimilarityMatrix matrix) {
-    final ArrayList<ArrayList<Double>> d;
+  static List<List<Double>> makeArray(final SimilarityMatrix matrix) {
+    final List<List<Double>> d;
     final int length = matrix.length();
     //compute normalization factors
     final double[] norm = new double[length];
@@ -89,7 +89,7 @@ public class NeighborJoining {
     }
     d = new ArrayList<>();
     for (int i = 0; i < length; ++i) {
-      final ArrayList<Double> row = new ArrayList<>();
+      final List<Double> row = new ArrayList<>();
       for (int j = 0; j < i; ++j) {
         final double v = matrix.get(i, j) / (norm[i] * norm[j]);
         assert v >= 0.0 && Double.isFinite(v) : v;
@@ -111,8 +111,8 @@ public class NeighborJoining {
    * @param d distance matrices
    * @return the resulting tree
    */
-  BinaryTree neighborJoin(final List<String> nodeNames, final ArrayList<ArrayList<Double>> d) {
-    final ArrayList<BinaryTree> s = new ArrayList<>();
+  BinaryTree neighborJoin(final List<String> nodeNames, final List<List<Double>> d) {
+    final List<BinaryTree> s = new ArrayList<>();
     for (final String name : nodeNames) {
       s.add(new BinaryTree(null, null, 0, 0, name));
     }

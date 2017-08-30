@@ -12,7 +12,7 @@
 package com.rtg.ml;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import com.rtg.util.ContingencyTable;
@@ -212,7 +212,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
   }
 
   /* Randomly permute the attribute across the given set of instances */
-  private static void permuteAttribute(ArrayList<Instance> instances, int attribute, PortableRandom random) {
+  private static void permuteAttribute(List<Instance> instances, int attribute, PortableRandom random) {
     for (int i = instances.size() - 1; i > 0; --i) {
       final double[] current = instances.get(i).instance();
       final double[] target = instances.get(random.nextInt(i + 1)).instance();

@@ -19,13 +19,14 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.calibrate.Recalibrate;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.BamIndexMerge;
 import com.rtg.sam.BamIndexer;
@@ -246,7 +247,7 @@ public abstract class AbstractMulticoreFilterConcat {
     cal.writeToFile(outCal);
   }
 
-  static void mergeIndexes(NgsParams params, File outFile, File[] intermediateIndexes, ArrayList<Long> dataFileSizes) throws IOException {
+  static void mergeIndexes(NgsParams params, File outFile, File[] intermediateIndexes, List<Long> dataFileSizes) throws IOException {
     if (params.outputParams().bam()) {
       BamIndexMerge.mergeBamIndexFiles(indexFileName(outFile, true), Arrays.asList(intermediateIndexes), dataFileSizes);
     } else {

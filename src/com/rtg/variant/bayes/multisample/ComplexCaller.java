@@ -225,7 +225,7 @@ final class ComplexCaller {
     return PopulationHwHypothesesCreator.createHapDipHypotheses(HypothesesNone.SINGLETON_COMPLEX, hypHap, hypDip, dc, hwEstimator);
   }
 
-  private void copyFailedCalls(Complexities complexities, final ArrayList<Variant> calls, final int startOfRegion, final int endOfRegion, VariantParams params) {
+  private void copyFailedCalls(Complexities complexities, final List<Variant> calls, final int startOfRegion, final int endOfRegion, VariantParams params) {
     for (final Variant v : complexities.getOriginalCalls()) {
       if (v != null && v.getLocus().getStart() >= startOfRegion && v.getLocus().getEnd() <= endOfRegion) {
         if (params.callLevel() == VariantOutputLevel.ALL && !v.isIndel() || (v.getNumberOfSamples() > 0 && v.getSample(0) != null && v.getSample(0).getName() != null && !v.getSample(0).isIdentity())) {

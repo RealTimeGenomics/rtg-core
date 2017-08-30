@@ -90,7 +90,7 @@ public class SplitAlleles {
     return expandedCigars;
   }
 
-  private void addSplit(byte[][] sequences, final ArrayList<Pair<Integer, String[]>> split, final int[] prevAltPos, final int[] altPos, final int prevRefPos, final int refPos) {
+  private void addSplit(byte[][] sequences, final Collection<Pair<Integer, String[]>> split, final int[] prevAltPos, final int[] altPos, final int prevRefPos, final int refPos) {
     //System.out.println("Split point at " + refPos);
     final String[] alleles = new String[sequences.length + 1]; // Position 0 is ref
     alleles[0] = getDna(mRef, prevRefPos, refPos);

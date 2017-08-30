@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.MockArraySequencesReader;
@@ -80,10 +81,10 @@ public class NeighborJoiningTest extends TestCase {
         + "X C" + LS, 5);
   }
 
-  static ArrayList<ArrayList<Double>> buildList(final double[][] d) {
-    final ArrayList<ArrayList<Double>> res = new ArrayList<>();
+  static List<List<Double>> buildList(final double[][] d) {
+    final List<List<Double>> res = new ArrayList<>();
     for (final double[] dd : d) {
-      final ArrayList<Double> row = new ArrayList<>();
+      final List<Double> row = new ArrayList<>();
       for (double aDd : dd) {
         row.add(aDd);
       }
@@ -265,8 +266,8 @@ public class NeighborJoiningTest extends TestCase {
       }
     }
     final StringWriter sb = new StringWriter();
-    final ArrayList<ArrayList<Double>> aa = NeighborJoining.makeArray(ma);
-    for (ArrayList<Double> a : aa) {
+    final List<List<Double>> aa = NeighborJoining.makeArray(ma);
+    for (List<Double> a : aa) {
       for (Double d : a) {
         final String strVal = String.format("  %1$02.4f", d);
         sb.append(strVal);
