@@ -12,8 +12,6 @@
 package com.rtg.ngs;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.rtg.ngs.PairedTopRandomImplementation.HitRecord;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
@@ -40,7 +38,6 @@ public final class MatedSamResultsFilter extends AbstractSamResultsFilter {
   private final SequencesReader mReader2;
 
   private PairedTopRandomImplementation.HitRecord[] mHitsToKeep;
-  private Map<String, Integer> mTemplateNames;
 
   /**
    * This version operates on mated results.
@@ -63,20 +60,11 @@ public final class MatedSamResultsFilter extends AbstractSamResultsFilter {
     mReader1 = reader1;
     mReader2 = reader2;
     mHitsToKeep = null;
-    mTemplateNames = null;
   }
 
   /* For toprandom */
   void setHitsToKeep(HitRecord[] hits) {
     mHitsToKeep = hits;
-  }
-
-  /* for toprandom */
-  void setTemplateNames(NamesInterface names) {
-    mTemplateNames = new HashMap<>();
-    for (int i = 0; i < names.length(); ++i) {
-      mTemplateNames.put(names.name(i), i);
-    }
   }
 
   @Override

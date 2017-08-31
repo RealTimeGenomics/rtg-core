@@ -50,8 +50,6 @@ public class DefaultReaderParams extends ReaderParams implements Integrity {
 
   private final LongRange mReaderRestriction;
 
-  private LongRange mAdjustedRegion;
-
   /**
    * @param sequenceDir directory containing sequences.
    * @param mode the sequence mode.
@@ -129,15 +127,14 @@ public class DefaultReaderParams extends ReaderParams implements Integrity {
       }
       try {
         final IndexFile index = new IndexFile(mSequenceDir);
-        final LongRange initialRange = mReaderRestriction;
-        mAdjustedRegion = SequencesReaderFactory.resolveRange(index, initialRange);
-        if (mAdjustedRegion.getLength() > Integer.MAX_VALUE) {
+        final LongRange adjustedRegion = SequencesReaderFactory.resolveRange(index, mReaderRestriction);
+        if (adjustedRegion.getLength() > Integer.MAX_VALUE) {
           throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "There are too many sequences in the specified range of \"" + mSequenceDir + "\", "
                   + "provide a range with at most " + Integer.MAX_VALUE + " sequences");
         }
         mReader = mUseMemSeqReader
-            ? SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(mSequenceDir, mLoadNames, mLoadFullNames, mAdjustedRegion)
-            : SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(mSequenceDir, mAdjustedRegion);
+            ? SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(mSequenceDir, mLoadNames, mLoadFullNames, adjustedRegion)
+            : SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(mSequenceDir, adjustedRegion);
       } catch (final FileNotFoundException e) {
         if (mSequenceDir.isDirectory()) {
           throw new NoTalkbackSlimException(ErrorType.SDF_INDEX_NOT_VALID, mSequenceDir.getPath());

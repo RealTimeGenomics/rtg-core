@@ -306,7 +306,6 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
       filter.setStatsCalculator(mStatsMerger);
       filter.setMapReportData(mReportMerger);
       if (mParams.useTopRandom()) {
-        filter.setTemplateNames(mTemplateNames);
         filter.setHitsToKeep(mHitsToKeep);
       }
       if (mParams.outputParams().outputReadNames()) {

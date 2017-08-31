@@ -51,8 +51,7 @@ public class MendelianLineageFactor extends AbstractFactor implements ToDefaultF
 
   private static Mendelian diploidMendelian(final Code code, final int m, final double deNovo) {
     return new Mendelian() {
-      private final double mDeNovo = deNovo;
-      private final double mMu = 1 - Math.sqrt(1 - mDeNovo); //0.5 * mDeNovo;
+      private final double mMu = 1 - Math.sqrt(1 - deNovo); //0.5 * deNovo;
       private final Code mCode = code;
 
       // See Table 2: Approximate Diploid Mutation in Patent

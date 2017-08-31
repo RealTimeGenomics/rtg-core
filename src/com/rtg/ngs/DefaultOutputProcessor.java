@@ -27,14 +27,10 @@ import com.rtg.reader.NamesInterface;
 
 /**
  * Default implementation for output processing.
- *
- *
- *
  */
 public class DefaultOutputProcessor implements OutputProcessor {
 
   private OutputStreamWriter mOut;
-  private final NgsParams mParam;
   private final NamesInterface mNames;
   private boolean mHeaderWritten = false;
   private final File mFile;
@@ -42,16 +38,15 @@ public class DefaultOutputProcessor implements OutputProcessor {
 
   /**
    * Construct an output processor
-   * @param param parameters
+   * @param params parameters
    * @throws IOException if an I/O Error occurs
    */
-  public DefaultOutputProcessor(final NgsParams param) throws IOException {
-    mParam = param;
-    mOut = new OutputStreamWriter(param.unusedOutStream());
-    if (mParam.searchParams() == null) {
+  public DefaultOutputProcessor(final NgsParams params) throws IOException {
+    mOut = new OutputStreamWriter(params.unusedOutStream());
+    if (params.searchParams() == null) {
       mNames = null;
     } else {
-      mNames = param.searchParams().reader().names();
+      mNames = params.searchParams().reader().names();
     }
     mFile = null;
     mRegion = HashingRegion.NONE;
@@ -66,7 +61,6 @@ public class DefaultOutputProcessor implements OutputProcessor {
   public DefaultOutputProcessor(final OutputStream stream, NamesInterface names, HashingRegion region, File output) {
     mOut = new OutputStreamWriter(stream);
     mNames = names;
-    mParam = null;
     mFile = output;
     mRegion = region;
   }

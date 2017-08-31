@@ -42,7 +42,6 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
   private final PriorityQueue<SamFileAndRecord> mLeftmostPriorityQueue = new PriorityQueue<>();
   private final Queue<SamFileAndRecord> mOriginals = new LinkedList<>();
   private final SAMFileHeader mHeader;
-  private final SamFilterParams mFilterParams;
   private final SamFilter mFilter;
 
   private final long mTotalRawInputLength;
@@ -64,8 +63,8 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
     if (context.files().isEmpty()) {
       throw new IllegalArgumentException("File list is empty!");
     }
-    mFilterParams = context.filterParams();
-    mFilter = mFilterParams == null ? new NoneFilter() : new DefaultSamFilter(mFilterParams);
+    final SamFilterParams filterParams = context.filterParams();
+    mFilter = filterParams == null ? new NoneFilter() : new DefaultSamFilter(filterParams);
     int fileCount = 0;
     long totalFileLength = 0;
     SamFileAndRecord first = null;

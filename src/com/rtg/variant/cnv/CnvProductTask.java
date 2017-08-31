@@ -44,7 +44,6 @@ import htsjdk.samtools.SAMSequenceRecord;
 public class CnvProductTask extends ParamsTask<CnvProductParams, NoStatistics> {
 
   private int[] mSequenceLengths;
-  private Map<Integer, String> mTemplateNameMap;
 
   /**
    * Constructor
@@ -55,7 +54,6 @@ public class CnvProductTask extends ParamsTask<CnvProductParams, NoStatistics> {
   public CnvProductTask(CnvProductParams params, OutputStream reportStream) {
     super(params, reportStream, new NoStatistics(), null);
     mSequenceLengths = null;
-    mTemplateNameMap = null;
     if (mParams.filterParams().restriction() != null && mParams.filterParams().restriction().getStart() != RegionRestriction.MISSING) {
       Diagnostic.warning("WARNING: using only a sub-region of the reads in a template sequence will not produce optimal results.");
     }
@@ -68,7 +66,7 @@ public class CnvProductTask extends ParamsTask<CnvProductParams, NoStatistics> {
     final SequencesReader reference = (mParams.genome() == null) ? null : mParams.genome().reader();
     final SAMFileHeader header = SamUtils.getUberHeader(reference, allFiles, mParams.ignoreIncompatibleSamHeaders(), null);
     final SAMSequenceDictionary dict = header.getSequenceDictionary();
-    mTemplateNameMap = makeTemplateNameMap(dict);
+    final Map<Integer, String> templateNameMap = makeTemplateNameMap(dict);
     setSequenceLengths(makeTemplateLengths(dict));
     final int[][] chunksBase;
     final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
@@ -87,7 +85,7 @@ public class CnvProductTask extends ParamsTask<CnvProductParams, NoStatistics> {
     } else {
       nregions = RegionUtils.regionsFromSDF(reference, mParams.bucketSize());
     }
-    new CnvRatio(mParams.magicConstant(), nregions, mTemplateNameMap, mParams, (double) mSumLengths / mRecordCount, mParams.extraPenaltyOff()).exec(chunksBase, chunksTarget);
+    new CnvRatio(mParams.magicConstant(), nregions, templateNameMap, mParams, (double) mSumLengths / mRecordCount, mParams.extraPenaltyOff()).exec(chunksBase, chunksTarget);
   }
 
   void setSequenceLengths(int[] lengths) {
