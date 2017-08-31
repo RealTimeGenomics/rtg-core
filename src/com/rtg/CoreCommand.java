@@ -60,6 +60,7 @@ import com.rtg.variant.cnv.segment.CnvPonBuildCli;
 import com.rtg.variant.cnv.segment.CnvSummaryCli;
 import com.rtg.variant.cnv.segment.SegmentCli;
 import com.rtg.variant.coverage.CoverageCli;
+import com.rtg.variant.sv.FusionFilter;
 import com.rtg.variant.sv.SvToolCli;
 import com.rtg.variant.sv.UnmatedAugmenterCli;
 import com.rtg.variant.sv.discord.DiscordantToolCli;
@@ -105,6 +106,12 @@ public final class CoreCommand {
   /** Map using zooma native code */
   static final Command ZOOMA_MAP = new Command(new ZoomaNativeMapReadsCli(), CommandCategory.MAPPING, ReleaseLevel.ALPHA);
 
+  /** Do a coverage count from mappings */
+  static final Command COVERAGE = new Command(new CoverageCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
+
+  /** Runs stand alone re-calibration */
+  static final Command CALIBRATE = new Command(new RecalibrateCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
+
   /** Runs Ngs and Alignment*/
   static final Command MAPX = new Command(new MapXCli(), CommandCategory.PROTEIN, ReleaseLevel.GA);
 
@@ -114,17 +121,6 @@ public final class CoreCommand {
   /** Assemble reads into longer contigs */
   static final Command ADDPACBIO = new Command(new PacBioCli(), CommandCategory.ASSEMBLY, ReleaseLevel.BETA);
 
-  /** Preprocess SAM files for use with the SV tool */
-  static final Command SVPREP = new Command(new UnmatedAugmenterCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
-
-  /** Run the structural variant detection tool */
-  static final Command SV = new Command(new SvToolCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
-
-  /** Run the discordant read structural variant detection tool */
-  static final Command DISCORD = new Command(new DiscordantToolCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
-
-  /** Do a coverage count from mappings */
-  static final Command COVERAGE = new Command(new CoverageCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs variant calling*/
   static final Command SINGLETON = new Command(new SingletonCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
@@ -150,6 +146,23 @@ public final class CoreCommand {
   /** Runs AVR model builder. */
   static final Command AVRPREDICT = new Command(new PredictCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
+  /** Search for family phasing using segregation analysis */
+  static final Command PHASINGSEARCH = new Command(new SegregationVcfSearch(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+
+  /** Evaluate calls against segregation phasing */
+  static final Command PHASINGEVAL = new Command(new SegregationCheckerCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+
+  /** Preprocess SAM files for use with the SV tool */
+  static final Command SVPREP = new Command(new UnmatedAugmenterCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
+
+  /** Run the structural variant detection tool */
+  static final Command SV = new Command(new SvToolCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
+
+  /** Run the discordant read structural variant detection tool */
+  static final Command DISCORD = new Command(new DiscordantToolCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
+
+  static final Command FUSIONFILTER = new Command(new FusionFilter(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+
   /** Runs CNV calling */
   static final Command CNV = new Command(new CnvCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
@@ -162,8 +175,6 @@ public final class CoreCommand {
   /** Runs CNV region summary report. */
   static final Command CNVSUMMARY = new Command(new CnvSummaryCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
 
-  /** Runs stand alone re-calibration */
-  static final Command CALIBRATE = new Command(new RecalibrateCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Metagenomics species analysis */
   static final Command SPECIES = new Command(new SpeciesCli(), CommandCategory.METAGENOMICS, ReleaseLevel.GA);
@@ -231,12 +242,6 @@ public final class CoreCommand {
   /** Taxonomy verifier */
   static final Command TAXSTATS = new Command(new TaxStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
-  /** Search for family phasing using segregation analysis */
-  static final Command PHASINGSEARCH = new Command(new SegregationVcfSearch(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
-
-  /** Evaluate calls against segregation phasing */
-  static final Command PHASINGEVAL = new Command(new SegregationCheckerCli(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
-
   /** Runs AVR model status. */
   static final Command AVRSTATS = new Command(new AvrStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
@@ -262,21 +267,23 @@ public final class CoreCommand {
     // Zooma native mapping
     ZOOMA_BUILD, ZOOMA_MAP,
 
+    // Post-mapping
+    COVERAGE, CALIBRATE,
+
     // Protein
     MAPX,
 
     // Assembly
-    ASSEMBLE,
-    ADDPACBIO,
+    ASSEMBLE, ADDPACBIO,
 
-    // Post-mapping
-    CALIBRATE, SVPREP, SV, DISCORD, COVERAGE,
 
     // Variant calling
     SINGLETON, MULTI_FAMILY, MULTI_SOMATIC, MULTI_POPULATION, TUMOR_ONLY,
     MULTI_LINEAGE,
     AVRBUILD, AVRPREDICT,
+    SVPREP, DISCORD, SV, FUSIONFILTER,
     CNV, SEGMENT, CNVSUMMARY, CNVPANELBUILD,
+    PHASINGSEARCH, PHASINGEVAL,
 
     // Metagenomics
     SPECIES, SIMILARITY, METASNP,
@@ -297,7 +304,7 @@ public final class CoreCommand {
     ToolsCommand.SDFSTATS, SDFSPLIT, ToolsCommand.SDFSUBSET, ToolsCommand.SDFSUBSEQ,            // SDF related
     SAM2BAM, SAMMERGE, SAMSTATS, SAMRENAME, SAMSTRIPPROBES, MAPXRENAME,  // Mapping related
     CHRSTATS, SAM2FASTQ,
-    ToolsCommand.MENDELIAN, PHASINGSEARCH, PHASINGEVAL,
+    ToolsCommand.MENDELIAN,
     ToolsCommand.VCFSTATS, ToolsCommand.VCFMERGE,                       // VCF related
     ToolsCommand.VCFFILTER, ToolsCommand.VCFANNOTATE, ToolsCommand.VCFSUBSET, ToolsCommand.VCFEVAL, SNPINTERSECT,
     ToolsCommand.PEDFILTER, ToolsCommand.PEDSTATS,

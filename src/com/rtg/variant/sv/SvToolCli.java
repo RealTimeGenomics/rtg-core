@@ -74,7 +74,7 @@ public class SvToolCli extends ParamsCli<SvToolParams> {
 
   @Override
   public String description() {
-    return "find structural variants";
+    return "find structural variant signals";
   }
 
   @Override
