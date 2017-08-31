@@ -23,7 +23,6 @@ import com.rtg.reader.DefaultSequencesReader;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.TestUtils;
-import com.rtg.util.cli.CFlags;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 
@@ -54,13 +53,11 @@ public class DiscordantToolCliTest extends AbstractCliTest {
       assertTrue(f.createNewFile());
       FileUtils.stringToFile("RG1\t200000\t56893\t1991255\t69693925\t55590\t22261070\t9022416526\t55590\t22261070\t9022416526\t5\t55590\t236\t1067", f);
       final File gen = ReaderTestUtils.getDNADir(">g1" + LS + "aaatcgactggtcagctagg" + LS, tempDir);
-      final CFlags flags = new CFlags();
-      DiscordantToolCli.initFlags(flags);
-      flags.setName("blah");
-      flags.setInvalidFlagHandler(CFlags.DEFAULT_INVALID_FLAG_HANDLER);
-      flags.setFlags("--template", gen.getPath(), "--output", new File(tempDir, "blah").getPath(), "-r", f.getPath(), f.getPath());
-      final DiscordantToolParams params = DiscordantToolCli.makeParams(flags);
+      checkHandleFlags("--template", gen.getPath(), "--output", new File(tempDir, "blah").getPath(), "-r", f.getPath(), f.getPath(), "--min-support=17", "--overlap-fraction=2.3");
+      final DiscordantToolParams params = ((DiscordantToolCli) mCli).makeParams();
       assertTrue(params.genome().reader() instanceof DefaultSequencesReader);
+      assertEquals(17, params.minBreakpointDepth());
+      assertEquals(2.3, params.overlapFraction());
     }
   }
 

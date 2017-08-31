@@ -12,8 +12,6 @@
 package com.rtg.variant.sv.discord;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.launcher.globals.CoreGlobalFlags;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.MathUtils;
 import com.rtg.util.Utils;
@@ -40,37 +38,6 @@ import htsjdk.samtools.SAMRecord;
  */
 @TestClass({"com.rtg.variant.sv.discord.BreakpointConstraintTest", "com.rtg.variant.sv.discord.FlipTest"})
 public final class BreakpointConstraint extends AbstractBreakpointGeometry {
-
-  /** The number of standard deviations delineating concordant vs discordant fragment lengths */
-  private static final double DISCORDANT_NUM_STD_DEV = GlobalFlags.getDoubleValue(CoreGlobalFlags.SV_DISCORDANT_STD_DEV);
-
-  /**
-   * Get the amount of deviation from the mean considered concordant
-   * @param rgs read group statistics.
-   * @return the concordant deviation.
-   */
-  static double concordantDeviation(ReadGroupStats rgs) {
-    return DISCORDANT_NUM_STD_DEV * rgs.fragmentStdDev();
-  }
-
-  /**
-   * Get the minimum gap permitted between a concordant properly paired first and second read.
-   * @param rgs read group statistics.
-   * @return the minimum gap.
-   */
-  static int gapMin(ReadGroupStats rgs) {
-    return (int) (rgs.gapMean() - concordantDeviation(rgs) + .5);
-  }
-
-  /**
-   * Get the maximum gap permitted between a concordant properly paired first and second read.
-   * @param rgs read group statistics.
-   * @return the maximum gap.
-   */
-  static int gapMax(ReadGroupStats rgs) {
-    return (int) (rgs.gapMean() + concordantDeviation(rgs) + .5);
-  }
-
 
   private final AbstractBreakpointGeometry mProxy;
 
@@ -149,8 +116,8 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
     final int mateBreakpointOverlap = fixedOverlap(mateEnd - mateStart, overlapFraction);
     final int x = orientation.xDir() == +1 ?  end - breakpointOverlap : start + breakpointOverlap;
     final int y = orientation.yDir() == +1 ?  mateEnd - mateBreakpointOverlap : mateStart + mateBreakpointOverlap;
-    final int min = gapMin(rgs);
-    final int max = gapMax(rgs);
+    final int min = rgs.gapMin();
+    final int max = rgs.gapMax();
     assert min < rgs.gapMean() && rgs.gapMean() < max;
     final int xHi = x + orientation.x(max);
     final int yHi = y + orientation.y(max);
@@ -168,8 +135,8 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   boolean isConcordant(ReadGroupStats rgs) {
     return getXName().equals(getYName())
       && (getOrientation() == Orientation.UD || getOrientation() == Orientation.DU)
-      && (getOrientation().r(getXLo(), getYLo()) + gapMin(rgs)) <= 0
-      && (getOrientation().r(getXLo(), getYLo()) + gapMax(rgs)) >= 0;
+      && (getOrientation().r(getXLo(), getYLo()) + rgs.gapMin()) <= 0
+      && (getOrientation().r(getXLo(), getYLo()) + rgs.gapMax()) >= 0;
   }
 
   /**

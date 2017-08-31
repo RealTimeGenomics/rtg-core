@@ -46,6 +46,7 @@ public class BreakpointConstraintTest extends TestCase {
   }
   private static BreakpointConstraint makeConstraint(String xSeq, int x, boolean xUp, String ySeq, int y, boolean yUp, double mean) {
     final ReadGroupStats rgs = new MockReadGroupStats(mean);
+    rgs.setNumDeviations(4.0);
     final MockSam rec = new MockSam();
     int shift = 1; // BreakpointConstraint used to assume 1-based coordinates, now 0-based so adjust all coords
     rec.setReferenceName(xSeq);
@@ -767,6 +768,7 @@ public class BreakpointConstraintTest extends TestCase {
 
     final BreakpointConstraint b = makeConstraint("x", basex, true, "x", basey, false, mean);
     final ReadGroupStats rgs = new MockReadGroupStats(mean);
+    rgs.setNumDeviations(4.0);
     assertEquals(0.0, b.rMean());
     assertEquals(-b.getRLo(), b.getRHi());
     assertEquals(true, b.isConcordant(rgs));
@@ -788,6 +790,7 @@ public class BreakpointConstraintTest extends TestCase {
     final int basey = basex + length + mean;
     final BreakpointConstraint b = makeConstraint("x", basey, false, "x", basex, true, mean);
     final ReadGroupStats rgs = new MockReadGroupStats(mean);
+    rgs.setNumDeviations(4.0);
     assertEquals(0.0, b.rMean());
     assertEquals(-b.getRLo(), b.getRHi());
     assertEquals(true, b.isConcordant(rgs));
@@ -804,6 +807,7 @@ public class BreakpointConstraintTest extends TestCase {
 
   private static BreakpointConstraint makeConstraint(final boolean first, final Integer nm, boolean xUp, boolean yUp) {
     final ReadGroupStats rgs = new MockReadGroupStats(10.0);
+    //rgs.setNumDeviations(4.0);
     final MockSam rec = new MockSam();
     rec.setReferenceName("x");
     rec.setAlignmentStart(10 + 1);

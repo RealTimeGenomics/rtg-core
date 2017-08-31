@@ -103,8 +103,6 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
 
   /** The percentage of the read length that may have been erroneously aligned across a breakpoint due to alignment penalties. */
   public static final String SV_ALIGNMENT_END_IGNORED_FRACTION = "com.rtg.variant.sv.alignment-ignore-end-fraction";
-  /** The number of standard deviations delineating concordant vs discordant fragment lengths. */
-  public static final String SV_DISCORDANT_STD_DEV = "com.rtg.variant.sv.discord-std-dev";
   /** If set, just issue a warning when invalid read group stats version is encountered. */
   public static final String SV_IGNORE_RGSTATS_VERSION = "com.rtg.variant.sv.ignore-rgstats-version";
   /** If set, debugging mode also outputs a separate file for every new discordant record */
@@ -182,7 +180,6 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
 
     // Structural variation
     registerFlag(SV_ALIGNMENT_END_IGNORED_FRACTION, Integer.class, 8);
-    registerFlag(SV_DISCORDANT_STD_DEV, Double.class, 4.0);
     registerFlag(SV_IGNORE_RGSTATS_VERSION);
     registerFlag(SV_DISCORD_DEBUG_PER_RECORD);
 

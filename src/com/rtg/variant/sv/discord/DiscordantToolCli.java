@@ -11,6 +11,7 @@
  */
 package com.rtg.variant.sv.discord;
 
+import static com.rtg.launcher.CommonFlags.FLOAT;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
@@ -38,19 +39,11 @@ public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
   private static final String INTERSECTIONS_FLAG = "consistent-only";
   private static final String BED_FLAG = "bed";
   private static final String OVERLAP_FRACTION = "overlap-fraction";
+  private static final String NUM_DEVIATIONS = "Xnum-deviations"; // We may want to use an alternate model of gap distribution
   private static final String BAM_FLAG = "Xbam-output";
   private static final String DEBUG_FLAG = "Xdebug-output";
   private static final String MULTISAMPLE_FLAG = "Xmultisample";
 
-  private static class DiscordantToolValidator extends SvValidator {
-
-    @Override
-    public boolean isValid(final CFlags flags) {
-      return super.isValid(flags)
-        && flags.checkInRange(OVERLAP_FRACTION, 0.0, 1.0)
-        && flags.checkInRange(MIN_SUPPORT_FLAG, 1, Integer.MAX_VALUE);
-    }
-  }
 
   @Override
   public String moduleName() {
@@ -64,22 +57,27 @@ public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
 
   @Override
   protected void initFlags() {
-    initFlags(mFlags);
-  }
+    SvCliUtils.initCommonFlags(mFlags);
+    mFlags.setDescription("Analyses SAM records to determine the location of breakends.");
+    SamFilterOptions.registerMaxHitsFlag(mFlags, 'c');
+    registerMinSupport(mFlags);
+    mFlags.registerOptional(INTERSECTIONS_FLAG, "only include breakends with internally consistent supporting reads").setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(OVERLAP_FRACTION, Double.class, FLOAT, "assume this fraction of an aligned ready may may overlap a breakend", 0.01).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(NUM_DEVIATIONS, Double.class, FLOAT, "the number of standard deviations either side which are considered concordant", 4.0).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(BED_FLAG, "produce output in BED format in addition to VCF").setCategory(INPUT_OUTPUT);
 
-  protected static void initFlags(CFlags flags) {
-    SvCliUtils.initCommonFlags(flags);
-    flags.setDescription("Analyses SAM records to determine the location of breakends.");
-    flags.setValidator(new DiscordantToolValidator());
-    SamFilterOptions.registerMaxHitsFlag(flags, 'c');
-    registerMinSupport(flags);
-    flags.registerOptional(INTERSECTIONS_FLAG, "only include breakends with internally consistent supporting reads").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(OVERLAP_FRACTION, Double.class, CommonFlags.FLOAT, "assume this fraction of an aligned ready may may overlap a breakend", 0.01).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(BED_FLAG, "produce output in BED format in addition to VCF").setCategory(INPUT_OUTPUT);
-
-    flags.registerOptional(BAM_FLAG, DiscordantTool.BamType.class, CommonFlags.STRING, "produce BAM output containing clusters of discordant alignments", DiscordantTool.BamType.NONE).setCategory(REPORTING);
-    flags.registerOptional(DEBUG_FLAG, "produce debug output in addition to VCF").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(MULTISAMPLE_FLAG, "allow running on pooled data from multiple samples").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(BAM_FLAG, DiscordantTool.BamType.class, CommonFlags.STRING, "produce BAM output containing clusters of discordant alignments", DiscordantTool.BamType.NONE).setCategory(REPORTING);
+    mFlags.registerOptional(DEBUG_FLAG, "produce debug output in addition to VCF").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(MULTISAMPLE_FLAG, "allow running on pooled data from multiple samples").setCategory(INPUT_OUTPUT);
+    mFlags.setValidator(new SvValidator() {
+      @Override
+      public boolean isValid(final CFlags flags) {
+        return super.isValid(flags)
+          && flags.checkInRange(OVERLAP_FRACTION, 0.0, 1.0)
+          && flags.checkInRange(NUM_DEVIATIONS, 3.0, Integer.MAX_VALUE)
+          && flags.checkInRange(MIN_SUPPORT_FLAG, 1, Integer.MAX_VALUE);
+      }
+    });
   }
 
   /**
@@ -92,20 +90,16 @@ public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
 
   @Override
   protected DiscordantToolParams makeParams() throws IOException {
-    return makeParams(mFlags);
-  }
-
-  protected static DiscordantToolParams makeParams(CFlags flags) throws IOException {
     final DiscordantToolParamsBuilder builder = DiscordantToolParams.builder();
-    SvCliUtils.populateCommonParams(builder, SequenceParams.builder().useMemReader(false), flags);
-
-    return builder.bedOutput(flags.isSet(BED_FLAG))
-        .minBreakpointDepth((Integer) flags.getValue(MIN_SUPPORT_FLAG))
-        .overlapFraction((Double) flags.getValue(OVERLAP_FRACTION))
-        .intersectionOnly(flags.isSet(INTERSECTIONS_FLAG))
-        .debugOutput(flags.isSet(DEBUG_FLAG))
-        .allowMultisample(flags.isSet(MULTISAMPLE_FLAG))
-        .bamOutput((DiscordantTool.BamType) flags.getValue(BAM_FLAG))
+    SvCliUtils.populateCommonParams(builder, SequenceParams.builder().useMemReader(false), mFlags);
+    return builder.bedOutput(mFlags.isSet(BED_FLAG))
+        .minBreakpointDepth((Integer) mFlags.getValue(MIN_SUPPORT_FLAG))
+        .overlapFraction((Double) mFlags.getValue(OVERLAP_FRACTION))
+        .numDeviations((Double) mFlags.getValue(NUM_DEVIATIONS))
+        .intersectionOnly(mFlags.isSet(INTERSECTIONS_FLAG))
+        .debugOutput(mFlags.isSet(DEBUG_FLAG))
+        .allowMultisample(mFlags.isSet(MULTISAMPLE_FLAG))
+        .bamOutput((DiscordantTool.BamType) mFlags.getValue(BAM_FLAG))
         .create();
   }
 

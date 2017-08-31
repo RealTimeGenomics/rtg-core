@@ -140,7 +140,7 @@ public class ReadGroupStats {
   private long mProper = 0;
   private long mDiscordant = 0;
   private long mUnmated = 0;
-
+  private double mNumDeviations = 3.0;
 
   // Derived from counts stored above
   private double mMeanLength;
@@ -319,11 +319,42 @@ public class ReadGroupStats {
   }
 
   /**
+   * @param numDeviations the number of standard deviations delineating concordant vs discordant fragment lengths
+   */
+  public void setNumDeviations(double numDeviations) {
+    mNumDeviations = numDeviations;
+  }
+
+  /**
+   * Get the amount of deviation from the mean considered concordant
+   * @return the concordant deviation.
+   */
+  public double concordantDeviation() {
+    return mNumDeviations * fragmentStdDev();
+  }
+
+  /**
+   * Get the minimum gap permitted between a concordant properly paired first and second read.
+   * @return the minimum gap.
+   */
+  public int gapMin() {
+    return (int) (gapMean() - concordantDeviation() + .5);
+  }
+
+  /**
+   * Get the maximum gap permitted between a concordant properly paired first and second read.
+   * @return the maximum gap.
+   */
+  public int gapMax() {
+    return (int) (gapMean() + concordantDeviation() + .5);
+  }
+
+  /**
    * A default estimate of the lower bound for a window (inclusive).
    * @return the lower bound.
    */
   public int lo() {
-    return -(int) (fragmentMean() + 3 * fragmentStdDev() + meanLength());
+    return -(int) (fragmentMean() + concordantDeviation() + meanLength());
   }
 
   /**
@@ -331,7 +362,7 @@ public class ReadGroupStats {
    * @return the upper bound.
    */
   public int hi() {
-    return (int) (fragmentMean() + 3 * fragmentStdDev()) + 1;
+    return (int) (fragmentMean() + concordantDeviation()) + 1;
   }
 
   /**
@@ -501,4 +532,5 @@ public class ReadGroupStats {
     }
     loadReadGroupStats(null, files);
   }
+
 }

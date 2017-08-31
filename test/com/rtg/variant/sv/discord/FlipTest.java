@@ -47,8 +47,11 @@ public class FlipTest extends TestCase {
     protected static final int END_FIRST_EXCL = START_FIRST + LENGTH;
     protected static final int END_SECOND_EXCL = START_SECOND + LENGTH;
     protected static final ReadGroupStats RGS = new MockReadGroupStats(100);
-    protected static final int MAX_GAP = BreakpointConstraint.gapMax(RGS);
-    protected static final int MIN_GAP = BreakpointConstraint.gapMin(RGS);
+    static {
+      RGS.setNumDeviations(4.0);
+    }
+    protected static final int MAX_GAP = RGS.gapMax();
+    protected static final int MIN_GAP = RGS.gapMin();
 
     protected BreakpointConstraint mBcFirst;
 

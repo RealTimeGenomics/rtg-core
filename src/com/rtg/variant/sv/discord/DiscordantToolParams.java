@@ -41,10 +41,20 @@ public final class DiscordantToolParams extends SvParams {
     DiscordantTool.BamType mBamOutput = DiscordantTool.BamType.NONE;
     int mMinBreakpointDepth;
     double mOverlapFraction = 0;
+    double mNumDeviations = 4.0;
 
     @Override
     protected DiscordantToolParamsBuilder self() {
       return this;
+    }
+
+    /**
+     * @param num the number of standard deviations delineating concordant vs discordant fragment lengths
+     * @return this builder, so calls can be chained.
+     */
+    public DiscordantToolParamsBuilder numDeviations(double num) {
+      mNumDeviations = num;
+      return self();
     }
 
     /**
@@ -143,6 +153,7 @@ public final class DiscordantToolParams extends SvParams {
   private final DiscordantTool.BamType mBamOutput;
   private final int mMinBreakpointDepth;
   private final double mOverlapFraction;
+  private final double mNumDeviations;
 
 
   /**
@@ -158,8 +169,15 @@ public final class DiscordantToolParams extends SvParams {
     mOverlapFraction = builder.mOverlapFraction;
     mMultisample = builder.mMultisample;
     mBamOutput = builder.mBamOutput;
+    mNumDeviations = builder.mNumDeviations;
   }
 
+  /**
+   * @return the number of standard deviations delineating concordant vs discordant fragment lengths
+   */
+  public double numDeviations() {
+    return mNumDeviations;
+  }
 
   /**
    * @return true if TABIX index should be output.

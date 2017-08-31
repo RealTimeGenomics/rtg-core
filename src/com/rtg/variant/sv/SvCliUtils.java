@@ -50,28 +50,14 @@ public final class SvCliUtils {
    * <code>Validator</code> for common structural variant flags
    */
   public abstract static class SvValidator implements Validator {
-
     @Override
     public boolean isValid(CFlags flags) {
-      if (!CommonFlags.validateOutputDirectory(flags)) {
-        return false;
-      }
-      if (!CommonFlags.validateSDF(flags, CommonFlags.TEMPLATE_FLAG)) {
-        return false;
-      }
-      if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)) {
-        return false;
-      }
-      if (!CommonFlags.checkFileList(flags, RG_STATS_LIST_FLAG, RG_STATS_FILE, Integer.MAX_VALUE)) {
-        return false;
-      }
-      if (!CommonFlags.validateThreads(flags)) {
-        return false;
-      }
-      if (!SamFilterOptions.validateFilterFlags(flags, false)) {
-        return false;
-      }
-      return true;
+      return CommonFlags.validateOutputDirectory(flags)
+        && CommonFlags.validateSDF(flags, CommonFlags.TEMPLATE_FLAG)
+        && CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)
+        && CommonFlags.checkFileList(flags, RG_STATS_LIST_FLAG, RG_STATS_FILE, Integer.MAX_VALUE)
+        && CommonFlags.validateThreads(flags)
+        && SamFilterOptions.validateFilterFlags(flags, false);
     }
   }
 

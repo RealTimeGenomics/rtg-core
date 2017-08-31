@@ -249,11 +249,13 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       if (rgs == null) {
         throw new NoTalkbackSlimException("Read group " + srgr.getId() + " did not have corresponding rgstats data supplied");
       }
-      final double dev = BreakpointConstraint.concordantDeviation(rgs);
+
+      rgs.setNumDeviations(mParams.numDeviations());
+      final double dev = rgs.concordantDeviation();
       Diagnostic.userLog("Read group " + srgr.getId() + " concordant deviation +/-" + MathUtils.round(dev)
         + ", fragment (" + (int) (rgs.fragmentMean() - dev) + "," + (int) rgs.fragmentMean() + "," + (int) (rgs.fragmentMean() + dev) + ")"
         + ", gap (" + (int) (rgs.gapMean() - dev) + "," + (int) rgs.gapMean() + "," + (int) (rgs.gapMean() + dev) + ")");
-      maxMaxGap = Math.max(maxMaxGap, BreakpointConstraint.gapMax(rgs));
+      maxMaxGap = Math.max(maxMaxGap, rgs.gapMax());
     }
     if (!mParams.multisample() && sampleNames.size() > 1) {
       throw new NoTalkbackSlimException("Input read groups contain multiple samples: " + sampleNames);
