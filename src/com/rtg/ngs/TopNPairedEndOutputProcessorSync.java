@@ -175,7 +175,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
       unmatedIntFiles = null;
     }
 
-    final FilterConcatIntermediateFiles matedIntFiles = new MatedMulticoreFilterConcat(mParams, mSharedResources.getBlocker(), mFreqBlockerLeft, mFreqBlockerRight, mSharedResources.names(), mParams.useTopRandom() ? mSharedResources.getPairedEndTopRandom().getRecords() : null, mStatsMerger, mReportMerger)
+    final FilterConcatIntermediateFiles matedIntFiles = new MatedMulticoreFilterConcat(mParams, mSharedResources.getBlocker(), mFreqBlockerLeft, mFreqBlockerRight, mParams.useTopRandom() ? mSharedResources.getPairedEndTopRandom().getRecords() : null, mStatsMerger, mReportMerger)
       .filterConcat(outputFiles, outFile, mSharedResources.getHeader(), mParams.outputParams());
     if (mSharedResources.getPairedEndTopRandom() != null) {
       mSharedResources.getPairedEndTopRandom().finish();
@@ -280,17 +280,15 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     final MapQScoringReadBlocker mXaBlocker;
     final ReadBlocker mFreqBlockerLeft;
     final ReadBlocker mFreqBlockerRight;
-    final NamesInterface mTemplateNames;
     final PairedTopRandomImplementation.HitRecord[] mHitsToKeep;
     final ReadGroupStatsCalculator.Merger mStatsMerger;
     final MapReportData.Merger mReportMerger;
 
-    MatedMulticoreFilterConcat(NgsParams params, MapQScoringReadBlocker xaBlocker, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight, NamesInterface templateNames, PairedTopRandomImplementation.HitRecord[] hitsToKeep, ReadGroupStatsCalculator.Merger statsMerger, MapReportData.Merger reportMerger) {
+    MatedMulticoreFilterConcat(NgsParams params, MapQScoringReadBlocker xaBlocker, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight, PairedTopRandomImplementation.HitRecord[] hitsToKeep, ReadGroupStatsCalculator.Merger statsMerger, MapReportData.Merger reportMerger) {
       super(params, "Mated");
       mXaBlocker = new MapQScoringReadBlocker(xaBlocker);    // Read-only from here, so no need for synchronization
       mFreqBlockerLeft = new ReadBlocker(freqBlockerLeft);   // Read-only from here, so no need for synchronization
       mFreqBlockerRight = new ReadBlocker(freqBlockerRight); // Read-only from here, so no need for synchronization
-      mTemplateNames = templateNames;
       mHitsToKeep = hitsToKeep;
       mStatsMerger = statsMerger;
       mReportMerger = reportMerger;
