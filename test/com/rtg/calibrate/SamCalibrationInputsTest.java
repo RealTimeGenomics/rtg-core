@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.rtg.launcher.CommonFlags;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
@@ -34,13 +35,13 @@ public class SamCalibrationInputsTest extends TestCase {
       final StringBuilder sbCalibration = new StringBuilder();
       sbSamBam.append("[");
       sbCalibration.append("[");
-      final File existingCalFile = new File(tempDir, "samfile0.sam.gz" + Recalibrate.EXTENSION);
+      final File existingCalFile = new File(tempDir, "samfile0.sam.gz" + CommonFlags.RECALIBRATE_EXTENSION);
       inputFiles.add(existingCalFile);
       for (int i = 0; i < 10; ++i) {
         final File samFile = new File(tempDir, "samfile" + i  + ".sam.gz");
-        final File calFile = new File(samFile.getPath() + Recalibrate.EXTENSION);
+        final File calFile = new File(samFile.getPath() + CommonFlags.RECALIBRATE_EXTENSION);
         final File bamFile = new File(tempDir, "bamfile" + i + ".bam");
-        final File bamCalFile = new File(tempDir, "bamcalfile" + i + Recalibrate.EXTENSION);
+        final File bamCalFile = new File(tempDir, "bamcalfile" + i + CommonFlags.RECALIBRATE_EXTENSION);
         assertTrue(calFile.createNewFile());
         inputFiles.add(samFile);
         inputFiles.add(samFile);

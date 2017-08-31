@@ -27,7 +27,6 @@ import java.util.Map;
 import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.ChrStats;
-import com.rtg.calibrate.Recalibrate;
 import com.rtg.index.Index;
 import com.rtg.index.IndexSet;
 import com.rtg.index.hash.ngs.HashFunctionFactory;
@@ -40,6 +39,7 @@ import com.rtg.index.hash.ngs.ReadEncoder;
 import com.rtg.index.hash.ngs.TemplateCall;
 import com.rtg.index.hash.ngs.TemplateCallImplementation;
 import com.rtg.index.params.CreateParams;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.ParamsTask;
 import com.rtg.ngs.longread.LongReadTask;
@@ -138,7 +138,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
   private void chrStatsCheck() throws IOException {
     if (mParams.outputParams().calibrate() && mParams.sex() != null) {
       // This checking requires the presence of calibration information
-      final Collection<File> calibrationFiles = Arrays.asList(FileUtils.listFiles(mParams.directory(), (dir1, name) -> name.endsWith(Recalibrate.EXTENSION)));
+      final Collection<File> calibrationFiles = Arrays.asList(FileUtils.listFiles(mParams.directory(), (dir1, name) -> name.endsWith(CommonFlags.RECALIBRATE_EXTENSION)));
       if (!calibrationFiles.isEmpty()) {
         final Calibrator c = Calibrator.initCalibrator(calibrationFiles);
         if (c != null) {

@@ -16,6 +16,7 @@ import static com.rtg.launcher.CommonFlags.FILE;
 import static com.rtg.launcher.CommonFlags.INPUT_FLAG;
 import static com.rtg.launcher.CommonFlags.INT;
 import static com.rtg.launcher.CommonFlags.NO_GZIP;
+import static com.rtg.launcher.CommonFlags.NO_HEADER;
 import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
@@ -74,7 +75,6 @@ public class FusionFilter extends AbstractCli {
   private static final String DONOR_REGIONS = "donor-regions";
   private static final String SCORES = "fusion-scores";
 
-  private static final String NO_HEADER = "no-header";
   private static final String GENE_COLUMN = "gene-column";
   private static final String STRAND_COLUMN = "strand-column";
 

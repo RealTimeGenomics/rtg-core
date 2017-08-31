@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 
 import com.rtg.calibrate.Calibrator;
-import com.rtg.calibrate.Recalibrate;
 import com.rtg.calibrate.SamCalibrationInputs;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommandLineFiles;
@@ -127,7 +126,7 @@ public class Sam2Bam extends AbstractCli {
       for (final File f : calibrationFiles) {
         c.accumulate(f);
       }
-      c.writeToFile(new File(outFile.getParent(), outFile.getName() + Recalibrate.EXTENSION));
+      c.writeToFile(new File(outFile.getParent(), outFile.getName() + CommonFlags.RECALIBRATE_EXTENSION));
     }
   }
 

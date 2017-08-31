@@ -11,6 +11,8 @@
  */
 package com.rtg.calibrate;
 
+import static com.rtg.launcher.CommonFlags.RECALIBRATE_EXTENSION;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,11 +46,6 @@ import htsjdk.samtools.SamReader;
 @TestClass("com.rtg.calibrate.RecalibrateCliTest")
 public class Recalibrate implements Closeable {
 
-  /**
-   * Extension for calibration files
-   */
-  public static final String EXTENSION = ".calibration";
-
   private final SequencesReader mTemplate;
   private final SdfId mTemplateSdfId;
   private final ReferenceRegions mRegions;
@@ -77,7 +74,7 @@ public class Recalibrate implements Closeable {
       try (SamReader reader = SamUtils.makeSamReader(new AsynchInputStream(new FileInputStream(samFile)), mTemplate)) {
         SamUtils.checkReferenceGuid(reader.getFileHeader(), mTemplateSdfId);
         final Calibrator c = doRecalibrate(reader, CovariateEnum.getCovariates(covs, reader.getFileHeader()));
-        final File calibrationFile = new File(samFile.getParent(), samFile.getName() + EXTENSION);
+        final File calibrationFile = new File(samFile.getParent(), samFile.getName() + RECALIBRATE_EXTENSION);
         if (!force && calibrationFile.exists()) {
           throw new NoTalkbackSlimException("Calibration file already exists: " + calibrationFile);
         }
@@ -121,7 +118,7 @@ public class Recalibrate implements Closeable {
       SamUtils.addProgramRecord(header);
       SamUtils.updateRunId(header);
       try (final SamOutput so = SamOutput.getSamOutput(output, System.out, header, compress, true, mTemplate)) {
-        calibrationFile = new File(so.getOutFile().getParent(), so.getOutFile().getName() + EXTENSION);
+        calibrationFile = new File(so.getOutFile().getParent(), so.getOutFile().getName() + RECALIBRATE_EXTENSION);
         if (!force && calibrationFile.exists()) {
           throw new NoTalkbackSlimException("Calibration file already exists: " + calibrationFile);
         }

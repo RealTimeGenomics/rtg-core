@@ -16,11 +16,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
-import com.rtg.calibrate.Recalibrate;
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.blocking.ReadBlocker;
@@ -180,7 +180,7 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
       if (regions != null) {
         cal.setSequenceLengths(Calibrator.getSequenceLengthMap(params.searchParams().reader(), regions));
       }
-      final File calFile = new File(outFile.getParentFile(), outFile.getName() + Recalibrate.EXTENSION);
+      final File calFile = new File(outFile.getParentFile(), outFile.getName() + CommonFlags.RECALIBRATE_EXTENSION);
       cal.writeToFile(calFile);
       return calFile;
     }

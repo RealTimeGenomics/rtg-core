@@ -24,7 +24,7 @@ import java.util.List;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
-import com.rtg.calibrate.Recalibrate;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.reader.SequencesReader;
@@ -183,7 +183,7 @@ public abstract class AbstractMulticoreFilterConcat {
       final OutputWrapper outWrapper = createStreams(numIntermediateFiles, intermediate, intermediateIndexes, intFilesCompress, createIndex, i);
       final OutputStream intCalStream;
       if (calibrate) {
-        intermediateCal[i] = new File(intermediate[i].getParent(), intermediate[i].getName() + Recalibrate.EXTENSION);
+        intermediateCal[i] = new File(intermediate[i].getParent(), intermediate[i].getName() + CommonFlags.RECALIBRATE_EXTENSION);
         intCalStream = FileUtils.createOutputStream(intermediateCal[i], false);
       } else {
         intCalStream = null;
@@ -236,7 +236,7 @@ public abstract class AbstractMulticoreFilterConcat {
   }
 
   static void mergeCalibration(File outFile, ReferenceRegions referenceRegions, File[] intermediateCal) throws IOException {
-    final File outCal = new File(outFile.getPath() + Recalibrate.EXTENSION);
+    final File outCal = new File(outFile.getPath() + CommonFlags.RECALIBRATE_EXTENSION);
     final Calibrator cal = new Calibrator(CovariateEnum.getCovariates(CovariateEnum.DEFAULT_COVARIATES, null), referenceRegions);
     for (final File f : intermediateCal) {
       cal.accumulate(f);

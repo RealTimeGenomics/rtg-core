@@ -18,8 +18,8 @@ import java.io.PrintStream;
 
 import com.rtg.bed.BedUtils;
 import com.rtg.calibrate.CalibratorTest;
-import com.rtg.calibrate.Recalibrate;
 import com.rtg.index.hash.ngs.OutputProcessor;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.DefaultReaderParams;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
@@ -111,7 +111,7 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
         }
         final String contentsUnmapped = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.UNMAPPED_SAM_FILE_NAME)));
         final String contentsUnmated = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.UNMATED_SAM_FILE_NAME)));
-        final String contentsUnmatedCal = CalibratorTest.stripVersion(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.UNMATED_SAM_FILE_NAME + Recalibrate.EXTENSION)));
+        final String contentsUnmatedCal = CalibratorTest.stripVersion(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.UNMATED_SAM_FILE_NAME + CommonFlags.RECALIBRATE_EXTENSION)));
         mNano.check("topnpeops-checkunmated-unmated", contentsUnmated, false);
         mNano.check("topnpeops-checkunmated-unmapped", contentsUnmapped, false);
         mNano.check("topnpeops-checkunmated-unmated-cal", contentsUnmatedCal, true);
@@ -197,7 +197,7 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
           }
           final String contentsUnmapped = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(hitDir, NgsOutputParams.UNMAPPED_SAM_FILE_NAME)));
           final String contentsUnmated = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(hitDir, NgsOutputParams.UNMATED_SAM_FILE_NAME)));
-          final String calibrateFile = FileUtils.fileToString(new File(hitDir, NgsOutputParams.UNMATED_SAM_FILE_NAME + Recalibrate.EXTENSION));
+          final String calibrateFile = FileUtils.fileToString(new File(hitDir, NgsOutputParams.UNMATED_SAM_FILE_NAME + CommonFlags.RECALIBRATE_EXTENSION));
           final String contentsUnmatedCal = CalibratorTest.stripVersion(calibrateFile);
           mNano.check("topnpeops-checkunmated-unmated", contentsUnmated, false);
           mNano.check("topnpeops-checkunmated-unmapped", contentsUnmapped, false);

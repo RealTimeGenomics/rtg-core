@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.MainResult;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
@@ -68,7 +69,7 @@ public class RecalibrateCliTest extends AbstractCliTest {
       final File templateDwa = FileHelper.resourceToFile("com/rtg/sam/resources/tinyTemplate.dwa", new File(dir, "tinyTemplate.dwa"));
       final File templateDir = new File(dir, "template");
       SimpleArchive.unpackArchive(templateDwa, templateDir);
-      final File calib = new File(dir, testFile.getName() + Recalibrate.EXTENSION);
+      final File calib = new File(dir, testFile.getName() + CommonFlags.RECALIBRATE_EXTENSION);
       assertTrue(calib.createNewFile());
       MainResult r = MainResult.run(getCli(), "-t", templateDir.getPath(), testFile.getPath());
       assertEquals(1, r.rc());

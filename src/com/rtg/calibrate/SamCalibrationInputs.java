@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.rtg.launcher.CommonFlags;
 import com.rtg.util.io.InputFileUtils;
 
 /**
@@ -36,12 +37,12 @@ public class SamCalibrationInputs {
     final List<File> calibrationFiles = new ArrayList<>();
     final List<File> samFiles = new ArrayList<>();
     for (final File f : inputFiles) {
-      if (f.getName().endsWith(Recalibrate.EXTENSION)) {
+      if (f.getName().endsWith(CommonFlags.RECALIBRATE_EXTENSION)) {
         calibrationFiles.add(f);
       } else {
         samFiles.add(f);
         if (autoload) {
-          final File calFile = new File(f.getParent(), f.getName() + Recalibrate.EXTENSION);
+          final File calFile = new File(f.getParent(), f.getName() + CommonFlags.RECALIBRATE_EXTENSION);
           if (calFile.isFile()) {
             calibrationFiles.add(calFile);
           }

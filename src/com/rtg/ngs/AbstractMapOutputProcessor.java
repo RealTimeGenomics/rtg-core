@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.calibrate.Recalibrate;
 import com.rtg.calibrate.SamCalibrationInputs;
 import com.rtg.index.hash.ngs.OutputProcessor;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.globals.CoreGlobalFlags;
@@ -350,7 +350,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
       final File f = regionFiles.get(i);
       dataFileSizes.add(f.length());
       indexFiles[i] = AbstractMulticoreFilterConcat.indexFileName(f, mParams.outputParams().bam());
-      calibrationFiles[i] = new File(f.getParent(), f.getName() + Recalibrate.EXTENSION);
+      calibrationFiles[i] = new File(f.getParent(), f.getName() + CommonFlags.RECALIBRATE_EXTENSION);
     }
     FileUtils.catInSync(finalOutputFile, !keepTempFiles, regionFiles.toArray(new File[regionFiles.size()]));
     if (mParams.outputParams().outputIndex() && (mParams.outputParams().isCompressOutput() || mParams.outputParams().bam())) {

@@ -18,7 +18,7 @@ import java.util.Collection;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.Calibrator;
-import com.rtg.calibrate.Recalibrate;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.reader.SequencesReader;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.SingletonPopulatorFactory;
@@ -113,7 +113,7 @@ public class SamMerger {
         for (final File f : calibrationFiles) {
           c.accumulate(f);
         }
-        c.writeToFile(new File(alignmentOutputFile.getParent(), alignmentOutputFile.getName() + Recalibrate.EXTENSION));
+        c.writeToFile(new File(alignmentOutputFile.getParent(), alignmentOutputFile.getName() + CommonFlags.RECALIBRATE_EXTENSION));
       }
       if (out != null) {
         out.write(("SAM records read:    " + recordsIn + StringUtils.LS).getBytes());
