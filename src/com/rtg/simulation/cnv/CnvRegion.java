@@ -239,7 +239,7 @@ public class CnvRegion {
     line.append(" num flags added: ").append(mCopiesHetero.size()).append(LS);
     line.append(" HeteroList:");
     for (Boolean aMCopiesHetero : mCopiesHetero) {
-      line.append(" ").append(aMCopiesHetero);
+      line.append(' ').append(aMCopiesHetero);
     }
     return line.toString().toLowerCase(Locale.getDefault());
   }
