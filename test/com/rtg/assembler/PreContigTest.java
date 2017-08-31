@@ -17,8 +17,6 @@ import com.rtg.util.StringUtils;
 import junit.framework.TestCase;
 
 /**
- *         Date: 10/05/12
- *         Time: 4:31 PM
  */
 public class PreContigTest extends TestCase {
   public void testPreContig() {

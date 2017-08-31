@@ -27,8 +27,6 @@ import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 /**
- *         Date: 11/05/12
- *         Time: 2:27 PM
  */
 public class DeBruijnAssemblerTaskTest extends AbstractTest {
   public void test() throws IOException {

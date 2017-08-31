@@ -14,8 +14,6 @@ package com.rtg.position.output;
 import com.rtg.launcher.BuildParams;
 
 /**
- *         Date: 10/11/11
- *         Time: 3:22 PM
  */
 public class GappedRegion extends AbstractGappedRegion<GappedRegion> {
   /**

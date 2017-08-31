@@ -23,8 +23,6 @@ import com.rtg.util.diagnostic.Diagnostic;
 
 /**
  * This class encapsulates a collection of Indexes and provides a way to create and freeze them.
- *         Date: 5/10/11
- *         Time: 2:24 PM
  */
 public class IndexSet {
   private final Index[] mIndexes;

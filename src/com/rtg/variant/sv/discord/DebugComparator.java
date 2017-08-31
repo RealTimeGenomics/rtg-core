@@ -18,8 +18,6 @@ import java.util.Comparator;
 import com.rtg.util.CompareHelper;
 
 /**
-*         Date: 1/03/12
-*         Time: 4:02 PM
 */
 class DebugComparator implements Comparator<DiscordantReadSet>, Serializable {
   @Override

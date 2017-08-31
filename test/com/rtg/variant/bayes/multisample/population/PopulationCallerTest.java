@@ -68,8 +68,6 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 import junit.framework.TestCase;
 
 /**
- *         Date: 8/03/12
- *         Time: 11:36 AM
  */
 public class PopulationCallerTest extends TestCase {
 

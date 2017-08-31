@@ -23,8 +23,6 @@ import com.rtg.util.test.params.TestParams;
 import junit.framework.TestCase;
 
 /**
- *         Date: 19/03/12
- *         Time: 2:47 PM
  */
 public class BreakpointPatternParamsTest extends TestCase {
   public void testOmnes() {

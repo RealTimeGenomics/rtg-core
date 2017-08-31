@@ -20,8 +20,6 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 /**
  * Threshold that returns a multiple of the average coverage for the current sequence.
- *         Date: 21/10/11
- *         Time: 4:40 PM
  */
 public class CalibratedPerSequenceThreshold implements CoverageThreshold {
 

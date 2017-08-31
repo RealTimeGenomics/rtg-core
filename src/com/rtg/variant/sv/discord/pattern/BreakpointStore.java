@@ -22,9 +22,7 @@ import com.rtg.util.AutoAddMap;
 import com.rtg.util.StringUtils;
 
 /**
-*         Date: 16/03/12
-*         Time: 10:11 AM
-*/
+ */
 class BreakpointStore implements Iterable<VcfBreakpoint> {
 
   // Java has no typdef and generic map names are clunky

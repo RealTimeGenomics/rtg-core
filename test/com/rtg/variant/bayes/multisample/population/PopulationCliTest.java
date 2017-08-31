@@ -31,8 +31,6 @@ import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.family.FamilyCliTest;
 
 /**
- *         Date: 13/03/12
- *         Time: 10:28 AM
  */
 public class PopulationCliTest extends AbstractParamsCliTest<VariantParams> {
 

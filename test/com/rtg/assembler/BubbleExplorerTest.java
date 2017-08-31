@@ -27,10 +27,7 @@ import com.rtg.util.Histogram;
 
 import junit.framework.TestCase;
 
-
 /**
- *         Date: 9/05/12
- *         Time: 9:49 AM
  */
 public class BubbleExplorerTest extends TestCase {
   long[] link(long first, long second) {

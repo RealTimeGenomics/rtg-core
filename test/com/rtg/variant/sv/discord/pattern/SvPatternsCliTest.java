@@ -26,9 +26,8 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
+
 /**
- *         Date: 15/03/12
- *         Time: 9:22 AM
  */
 public class SvPatternsCliTest extends AbstractParamsCliTest<BreakpointPatternParams> {
   @Override

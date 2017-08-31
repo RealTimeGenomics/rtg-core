@@ -31,8 +31,6 @@ import com.rtg.variant.CalibratedPerSequenceThreshold.ThresholdFunction;
 import junit.framework.TestCase;
 
 /**
- *         Date: 27/10/11
- *         Time: 9:52 AM
  */
 public class CalibratedPerSequenceThresholdTest extends TestCase {
 

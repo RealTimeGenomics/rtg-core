@@ -19,8 +19,6 @@ import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
 
 /**
- *         Date: 12/04/12
- *         Time: 5:38 PM
  */
 public class CorrectingMutator {
   static final byte A = (byte) DNA.A.ordinal();

@@ -18,8 +18,6 @@ import com.rtg.variant.VariantParams;
 import junit.framework.TestCase;
 
 /**
- *         Date: 7/03/12
- *         Time: 4:42 PM
  */
 public class ChunkInfoTest extends TestCase {
   public void testConstructor() {

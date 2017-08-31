@@ -37,8 +37,6 @@ import com.rtg.util.diagnostic.Diagnostic;
 /**
  * A couple of methods for running protein searches that I couldn't really think of anywhere better to put.
  * These functions are used instead of some corresponding NgsTask static functions.
- *         Date: 30/09/11
- *         Time: 2:44 PM
  */
 @TestClass(value = {"com.rtg.protein.MapXCliTest", "com.rtg.protein.ProteinReadIndexerTest"})
 public final class ProteinReadIndexer {

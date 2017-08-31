@@ -27,8 +27,6 @@ import com.rtg.assembler.graph.implementation.PathArray;
 import com.rtg.util.Histogram;
 
 /**
- *         Date: 8/05/12
- *         Time: 2:08 PM
  */
 public class BubbleExplorer {
   private final GraphKmerAttribute mGraph;

@@ -23,8 +23,6 @@ import com.rtg.util.io.MemoryPrintStream;
 import junit.framework.TestCase;
 
 /**
- *         Date: 1/03/12
- *         Time: 3:46 PM
  */
 public class ReorderingDebugOutputTest extends TestCase {
   public void test() throws IOException {

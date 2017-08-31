@@ -22,8 +22,6 @@ import com.rtg.util.test.params.TestParams;
 import junit.framework.TestCase;
 
 /**
- *         Date: 11/05/12
- *         Time: 1:30 PM
  */
 public class DeBruijnParamsTest extends TestCase {
   public void testOmnes() {

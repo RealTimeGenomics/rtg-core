@@ -17,8 +17,6 @@ import com.rtg.assembler.graph.implementation.ContigString;
 import com.rtg.util.diagnostic.Diagnostic;
 
 /**
- *         Date: 10/05/12
- *         Time: 4:08 PM
  */
 public class StringKmerTest extends AbstractKmerTest {
   @Override

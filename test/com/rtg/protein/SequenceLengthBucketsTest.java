@@ -23,8 +23,6 @@ import com.rtg.reader.MockSequencesReader;
 import junit.framework.TestCase;
 
 /**
- *         Date: 30/09/11
- *         Time: 9:54 AM
  */
 public class SequenceLengthBucketsTest extends TestCase {
   private static class MockLengthsReader extends MockSequencesReader {

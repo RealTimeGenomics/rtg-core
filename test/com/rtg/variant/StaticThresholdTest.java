@@ -14,8 +14,6 @@ package com.rtg.variant;
 import junit.framework.TestCase;
 
 /**
- *         Date: 27/10/11
- *         Time: 4:39 PM
  */
 public class StaticThresholdTest extends TestCase {
   public void testThreshold() {

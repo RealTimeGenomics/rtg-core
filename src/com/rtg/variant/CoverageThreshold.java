@@ -12,8 +12,6 @@
 package com.rtg.variant;
 
 /**
- *         Date: 25/10/11
- *         Time: 9:53 AM
  */
 public interface CoverageThreshold {
 

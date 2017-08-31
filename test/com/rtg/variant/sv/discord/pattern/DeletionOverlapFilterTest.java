@@ -17,8 +17,6 @@ import com.rtg.variant.sv.discord.DiscordBedRecord;
 import junit.framework.TestCase;
 
 /**
- *         Date: 20/03/12
- *         Time: 1:26 PM
  */
 public class DeletionOverlapFilterTest extends TestCase {
 

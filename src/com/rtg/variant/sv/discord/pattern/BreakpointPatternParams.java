@@ -22,8 +22,6 @@ import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.test.params.ParamsNoField;
 
 /**
- *         Date: 14/03/12
- *         Time: 3:34 PM
  */
 public final class BreakpointPatternParams extends ModuleParams {
   /** Default value for same distance */

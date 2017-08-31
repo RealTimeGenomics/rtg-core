@@ -12,9 +12,7 @@
 package com.rtg.variant;
 
 /**
- * threshold object that will always return the same value
- *         Date: 25/10/11
- *         Time: 9:52 AM
+ * Threshold object that will always return the same value
  */
 public class StaticThreshold implements CoverageThreshold {
   private final int mThreshold;

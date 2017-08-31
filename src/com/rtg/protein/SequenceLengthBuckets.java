@@ -21,8 +21,6 @@ import com.rtg.util.diagnostic.Diagnostic;
 
 /**
  * Groups length of reads into sizes that will be treated as equal for purposes of protein mapping
- *         Date: 30/09/11
- *         Time: 9:45 AM
  */
 public class SequenceLengthBuckets {
   Map<Long, Long> mLengthCounts = new HashMap<>();
