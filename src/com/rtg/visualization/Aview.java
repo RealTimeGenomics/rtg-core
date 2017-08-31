@@ -565,7 +565,7 @@ public final class Aview extends AbstractCli {
           if (refDisplayLength <= 1) {
             name = "O";
           } else {
-            final StringBuilder sb = new StringBuilder("" + startChar);
+            final StringBuilder sb = new StringBuilder().append(startChar);
             final String regionName = record.getAnnotations().length == 0 ? "" : record.getAnnotations()[0];
             sb.append(regionName.length() > (refDisplayLength - 2) ? regionName.substring(0, refDisplayLength - 2) : regionName);
             while (sb.length() < refDisplayLength - 1) {

@@ -281,7 +281,7 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
 
     final StringBuilder sb = new StringBuilder();
     sb.append("P3\n");
-    sb.append("" + (mLength + mWidth + 2) + " " + (mLength + fragTot + 3) + "\n");
+    sb.append(mLength + mWidth + 2).append(' ').append(mLength + fragTot + 3).append('\n');
     sb.append("100\n");
 
     final int rowStart = rowOffset(0);
