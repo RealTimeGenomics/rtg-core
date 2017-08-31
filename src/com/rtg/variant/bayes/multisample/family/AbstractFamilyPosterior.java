@@ -65,7 +65,7 @@ public abstract class AbstractFamilyPosterior {
     mFatherPloidy = mFatherHypotheses.ploidy();
     mMotherPloidy = mMotherHypotheses.ploidy();
     //assert mMother.hypotheses() == hypotheses; // not true for sex
-    mChildren = new ArrayList<>();
+    mChildren = new ArrayList<>(ids.length - Family.FIRST_CHILD_INDEX);
     for (int i = Family.FIRST_CHILD_INDEX; i < ids.length; ++i) {
       final ModelInterface<?> model = models.get(ids[i]);
       mChildren.add(model);

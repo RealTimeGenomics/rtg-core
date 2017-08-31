@@ -94,7 +94,7 @@ public class PathArray extends IntegralAbstract implements Path {
    * @return a list containing all the contig ids in p in order
    */
   public static List<Long> toList(Path p) {
-    final List<Long> result = new ArrayList<>();
+    final List<Long> result = new ArrayList<>(p.length());
     for (int i = 0; i < p.length(); ++i) {
       result.add(p.contig(i));
     }

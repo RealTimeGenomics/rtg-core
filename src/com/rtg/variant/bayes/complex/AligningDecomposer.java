@@ -66,7 +66,7 @@ public class AligningDecomposer extends AbstractDecomposer {
   private static Map<Set<String>, Double> newGenotypeLikelihoods(final VariantSample sample, final SplitAlleles splitter, final String[] alleles, final int leftClip) {
     final Map<Set<String>, Double> originalLikelihoods = sample.getGenotypeLikelihoods();
     if (originalLikelihoods != null) {
-      final Map<Set<String>, Double> newMap = new HashMap<>();
+      final Map<Set<String>, Double> newMap = new HashMap<>(originalLikelihoods.size());
       for (final Map.Entry<Set<String>, Double> entry : originalLikelihoods.entrySet()) {
         final Set<String> newSet = new HashSet<>();
         for (final String s : entry.getKey()) {
@@ -240,9 +240,10 @@ public class AligningDecomposer extends AbstractDecomposer {
     final String[] extraDescriptionAlleles = getExtraDescriptionAlleles(ref, alts, original);
     final SplitAlleles splitter = new SplitAlleles(ref, alts);
     final List<List<Pair<Integer, String[]>>> partitions = SplitAlleles.removeAllRefList(splitter.partition(extraDescriptionAlleles));
-    final List<Variant> result = new ArrayList<>();
     int splitId = 0;
-    for (int slice = 0; slice < partitions.get(0).size(); ++slice) {
+    final int size = partitions.get(0).size();
+    final List<Variant> result = new ArrayList<>(size);
+    for (int slice = 0; slice < size; ++slice) {
       result.add(createVariant(original, splitter, extraDescriptionAlleles, partitions, slice, splitId++));
     }
     return result;

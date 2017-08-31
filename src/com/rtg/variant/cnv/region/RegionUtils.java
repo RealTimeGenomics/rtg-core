@@ -72,7 +72,7 @@ public final class RegionUtils {
       final int end = Integer.parseInt(sEnd);
       st.add(new SimpleCnvRegion(start, end));
     }
-    final Map<String, Region> mapr = new HashMap<>();
+    final Map<String, Region> mapr = new HashMap<>(map.size());
     for (final Map.Entry<String, SortedSet<AbstractCnvRegion>> entry : map.entrySet()) {
       final SortedSet<AbstractCnvRegion> set = entry.getValue();
       final int size = set.size();
@@ -103,9 +103,11 @@ public final class RegionUtils {
    */
   public static Map<String, Region> regionsFromSDF(final SequencesReader reader, int blockSize) throws IOException {
     if (reader.type() == SequenceType.DNA) {
-      final Map<String, Region> map = new HashMap<>();
       final byte[] buf = new byte[(int) reader.maxLength()];
-      for (long i = 0; i < reader.numberSequences(); ++i) {
+      final long numSequences = reader.numberSequences();
+      assert numSequences <= Integer.MAX_VALUE;
+      final Map<String, Region> map = new HashMap<>((int) numSequences);
+      for (long i = 0; i < numSequences; ++i) {
         final int length = reader.read(i, buf);
         map.put(reader.name(i), detectNs(buf, 0, length, blockSize));
       }

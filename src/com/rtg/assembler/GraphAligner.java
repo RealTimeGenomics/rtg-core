@@ -79,7 +79,7 @@ public class GraphAligner {
     return squeezePaths(joinPaths(forwardAlignments, reverseAlignments, read.length), mGraph);
   }
   Set<GraphAlignment> squeezePaths(Set<GraphAlignment> initial, Graph g) {
-    final Set<GraphAlignment> result = new HashSet<>();
+    final Set<GraphAlignment> result = new HashSet<>(initial.size());
     for (GraphAlignment alignment : initial) {
       result.add(sqeezePath(alignment, g));
     }

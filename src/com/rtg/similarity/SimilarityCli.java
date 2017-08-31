@@ -449,8 +449,9 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       if (params.build().sequences().directory() != null) {
         names = makeNames(params.build().sequences().reader());
       } else {
-        names = new ArrayList<>();
-        for (int i = 0; i < params.sequences().size(); ++i) {
+        final int n = params.sequences().size();
+        names = new ArrayList<>(n);
+        for (int i = 0; i < n; ++i) {
           names.add(params.sequences().get(i).getA());
         }
       }
@@ -642,8 +643,8 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
         if (labelMap.isEmpty()) {
           throw new InvalidParamsException(ErrorType.INFO_ERROR, "The input list file contained no target files.");
         }
-        final List<Pair<String, List<SequenceParams>>> subjects = new ArrayList<>();
         assert orderedLabels.size() == labelMap.size();
+        final List<Pair<String, List<SequenceParams>>> subjects = new ArrayList<>(orderedLabels.size());
         for (final String label : orderedLabels) {
           subjects.add(new Pair<>(label, labelMap.get(label)));
         }

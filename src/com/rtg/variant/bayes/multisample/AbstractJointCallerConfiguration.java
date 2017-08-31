@@ -178,7 +178,7 @@ public abstract class AbstractJointCallerConfiguration {
    * @return set of models for complex calling, one per sample.
    */
   public List<ModelInterface<?>> getModelComplex(HaploidDiploidHypotheses<HypothesesPrior<DescriptionComplex>> hyp, SequenceNameLocus locus) {
-    final List<ModelInterface<?>> list = new ArrayList<>();
+    final List<ModelInterface<?>> list = new ArrayList<>(mIndividualFactories.size());
     for (IndividualSampleFactory<?> individualFactory : mIndividualFactories) {
       list.add(individualFactory.makeModelComplex(hyp, locus));
     }

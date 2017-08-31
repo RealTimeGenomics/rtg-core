@@ -232,7 +232,6 @@ public class SplitAlleles {
     if (extraSequences.length == 0) {
       return Collections.singletonList(partition());
     }
-    final List<List<Pair<Integer, String[]>>> res = new ArrayList<>();
 
     final byte[][] extraSeq = new byte[extraSequences.length][];
     for (int k = 0; k < extraSequences.length; ++k) {
@@ -240,8 +239,9 @@ public class SplitAlleles {
     }
 
     final String[] expandedCigars = getCigarStrings(mAlts);
-    res.add(getPartition(mAlts, expandedCigars)); // The partition without extra sequences
     final String[] extraCigars = getCigarStrings(extraSequences);
+    final List<List<Pair<Integer, String[]>>> res = new ArrayList<>(expandedCigars.length + 1);
+    res.add(getPartition(mAlts, expandedCigars)); // The partition without extra sequences
     final byte[][] sequences = Arrays.copyOf(mAlts, mAlts.length + 1);
     final String[] cigars = Arrays.copyOf(expandedCigars, expandedCigars.length + 1);
     for (int k = 0; k < extraCigars.length; ++k) {
@@ -278,7 +278,7 @@ public class SplitAlleles {
    * @return partitions with reference pieces removed
    */
   public static List<List<Pair<Integer, String[]>>> removeAllRefList(final List<List<Pair<Integer, String[]>>> partition) {
-    final List<List<Pair<Integer, String[]>>> retained = new ArrayList<>();
+    final List<List<Pair<Integer, String[]>>> retained = new ArrayList<>(partition.size());
     for (final List<Pair<Integer, String[]>> part : partition) {
       retained.add(removeAllRef(part));
     }

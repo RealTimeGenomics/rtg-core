@@ -66,16 +66,19 @@ final class AssembleTask extends ParamsTask<AssembleParams, GraphMapStatistics> 
     // TODO region handling is kind of weird here, given potential for more than one read set
     // currently this assumes any restriction applies to all read sets.
     final LongRange region = assembleParams.region();
-    final List<ReadPairSource> readPairSources = new ArrayList<>();
-    for (File f : assembleParams.reads()) {
+    final List<File> reads = assembleParams.reads();
+    final List<File> reads454 = assembleParams.reads454();
+    final List<File> readsMatePair = assembleParams.readsMatePair();
+    final List<ReadPairSource> readPairSources = new ArrayList<>(reads.size() + reads454.size() + readsMatePair.size());
+    for (File f : reads) {
       final LongRange r = adjustRegionRestriction(region, f);
       readPairSources.add(ReadPairSource.makeSource(f, r));
     }
-    for (File f : assembleParams.reads454()) {
+    for (File f : reads454) {
       final LongRange r = adjustRegionRestriction(region, f);
       readPairSources.add(ReadPairSource454.makeSource(f, r));
     }
-    for (File f : assembleParams.readsMatePair()) {
+    for (File f : readsMatePair) {
       final LongRange r = adjustRegionRestriction(region, f);
       readPairSources.add(ReadPairSourceMatePair.makeSource(f, r));
     }

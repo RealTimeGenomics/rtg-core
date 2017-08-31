@@ -63,7 +63,7 @@ public class SimpleDecomposer extends AbstractDecomposer {
   private static Map<Set<String>, Double> newGenotypeLikelihoods(final VariantSample sample, final int leftClip, final int rightClip) {
     final Map<Set<String>, Double> originalLikelihoods = sample.getGenotypeLikelihoods();
     if (originalLikelihoods != null) {
-      final Map<Set<String>, Double> newMap = new HashMap<>();
+      final Map<Set<String>, Double> newMap = new HashMap<>(originalLikelihoods.size());
       for (final Map.Entry<Set<String>, Double> entry : originalLikelihoods.entrySet()) {
         final Set<String> newSet = new HashSet<>();
         for (final String s : entry.getKey()) {

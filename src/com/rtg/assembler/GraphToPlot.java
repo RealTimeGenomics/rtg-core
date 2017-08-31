@@ -268,9 +268,9 @@ public final class GraphToPlot extends LoggedCli {
   private static void writeGraph(Graph graph, Set<Node> nodes, Set<Long> paths, PrintStream out) {
     out.println("digraph contigGraph {");
     out.println("graph [rankdir=LR, ratio=fill]");
-    final Map<Long, Long> translated = new LinkedHashMap<>();
+    final Map<Long, Long> translated = new LinkedHashMap<>(nodes.size());
     long i = 0;
-    for (Node node : nodes) {
+    for (final Node node : nodes) {
       translated.put(node.mContigId, i);
       out.println(node.output(i));
       ++i;

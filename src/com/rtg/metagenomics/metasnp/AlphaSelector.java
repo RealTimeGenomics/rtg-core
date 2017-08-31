@@ -53,7 +53,7 @@ public final class AlphaSelector {
     double bestScore = arith.zero();
     double bestEvidenceScore = arith.zero();
     double restScore = arith.zero();
-    List<Integer> best = new ArrayList<>();
+    List<Integer> best = new ArrayList<>(nStrains);
     for (int i = 0; i < nStrains ; ++i) {
       best.add(0);
     }
@@ -83,7 +83,7 @@ public final class AlphaSelector {
         restScore = arith.add(restScore, bestScore);
         bestScore = currentScore;
         bestEvidenceScore = evidenceScore;
-        best = new ArrayList<>();
+        best = new ArrayList<>(strainVariants.length);
         for (int base : strainVariants) {
           best.add(base);
         }

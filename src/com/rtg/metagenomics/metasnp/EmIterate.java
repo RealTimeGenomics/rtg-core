@@ -134,21 +134,22 @@ public final class EmIterate {
     List<int[]> assignments;
     final RandomWalkXiFinder randomWalkXiFinder = new RandomWalkXiFinder(arith);
     final List<EmResult> results = new ArrayList<>();
-    ProbAlpha pAlpha = getProbAlpha(BetaType.STATIC, ref, Collections.<int[]>emptyList(), 0, beta);
+    ProbAlpha pAlpha = getProbAlpha(BetaType.STATIC, ref, Collections.emptyList(), 0, beta);
     for (int emIterations = 0; !terminate.finished(emIterations, results); ++emIterations) {
       Diagnostic.progress("Starting Iteration: " + emIterations);
-      assignments = new ArrayList<>();
-      scores = new ArrayList<>();
+      final int n = evidence.size();
+      assignments = new ArrayList<>(n);
+      scores = new ArrayList<>(n);
       int percent = 0;
       int lastReport = 0;
       final double[][] outerTheta = AlphaSelector.computeThetaLookup(xi, arith, arith.prob2Poss(1 - error), arith.prob2Poss(error / 3));
-      for (int x = 0; x < evidence.size(); ++x) {
+      for (int x = 0; x < n; ++x) {
 
         final AlphaScore alphaScore =  AlphaSelector.alphaPosition(ref.get(x), pAlpha, evidence.get(x), outerTheta, arith, xi[0].length);
         scores.add(alphaScore);
         assignments.add(alphaScore.mCalls);
-        if ((x * 100 / evidence.size()) > percent && x > lastReport + 10000) {
-          percent = x * 100 / evidence.size();
+        if ((x * 100 / n) > percent && x > lastReport + 10000) {
+          percent = x * 100 / n;
           lastReport = x;
           Diagnostic.progress("Strain assignment: " + percent + "%");
         }

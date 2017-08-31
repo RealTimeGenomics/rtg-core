@@ -114,7 +114,7 @@ public class GraphMap {
       }
     }
     final AsyncReadPool readPool = new AsyncReadPool("ReadForInsertCalclation", paired);
-    final List<InsertSizeRunnable> insertJobs = new ArrayList<>();
+    final List<InsertSizeRunnable> insertJobs = new ArrayList<>(params.numberThreads());
     for (int i = 0; i < params.numberThreads(); ++i) {
       final GraphMap graphMap = new GraphMap(index, graph, null, new PathTracker(new PalindromeTracker(graph)));
       final InsertSizeRunnable run = new InsertSizeRunnable(graphMap, params.maxMismatches(), readPool.sources());
@@ -124,7 +124,7 @@ public class GraphMap {
     pool.terminate();
     readPool.terminate();
     for (final ReadPairSource reader : paired) {
-      final List<NormalDistribution> deviations = new ArrayList<>();
+      final List<NormalDistribution> deviations = new ArrayList<>(insertJobs.size());
       for (InsertSizeRunnable job : insertJobs) {
         final NormalDistribution e = job.mDeviationMap.get(reader);
         deviations.add(e);

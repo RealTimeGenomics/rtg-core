@@ -150,8 +150,9 @@ final class ReadSimEvalParams {
   }
 
   private File[] getSamFiles(CFlags flags) {
-    final List<File> files = new ArrayList<>();
-    for (final Object f : flags.getAnonymousValues(0)) {
+    final List<?> values = flags.getAnonymousValues(0);
+    final List<File> files = new ArrayList<>(values.size());
+    for (final Object f : values) {
       files.add((File) f);
     }
     return files.toArray(new File[files.size()]);

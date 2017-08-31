@@ -98,7 +98,7 @@ public class GraphMapTask extends ParamsTask<GraphMapParams, GraphMapStatistics>
     try {
       final AsyncReadPool readPool = new AsyncReadPool("ReadForMap", reads);
       final SimpleThreadPool mapPool = new SimpleThreadPool(params.numberThreads(), "MapReads", true);
-      final List<GraphMap> mapThreads = new ArrayList<>();
+      final List<GraphMap> mapThreads = new ArrayList<>(params.numberThreads());
       for (int i = 0; i < params.numberThreads(); ++i) {
         final GraphMap mapThread = new GraphMap(index, mutable, writers.get(i), new PathTracker(new PalindromeTracker(mutable)));
         mapThreads.add(mapThread);
@@ -106,16 +106,14 @@ public class GraphMapTask extends ParamsTask<GraphMapParams, GraphMapStatistics>
       }
       mapPool.terminate();
       readPool.terminate();
-      final List<PathTracker> trackers = new ArrayList<>();
-      final List<ConstraintCache> constraints = new ArrayList<>();
+      final List<PathTracker> trackers = new ArrayList<>(mapThreads.size());
+      final List<ConstraintCache> constraints = new ArrayList<>(mapThreads.size());
       for (GraphMap thread : mapThreads) {
         stats.accumulate(thread.getStatistics());
         trackers.add(thread.getPathTracker());
         constraints.add(thread.getConstraints());
       }
-//      if (RecoverLinks.RECOVER_LINKS) {
-        RecoverLinks.recover(constraints, mutable);
-//      }
+      RecoverLinks.recover(constraints, mutable);
       final SortedMap<List<Long>, Integer> merged = PathTracker.merge(trackers);
       PathTracker.apply(merged, mutable);
       GraphMap.finalizeCounts(mapThreads, mutable);

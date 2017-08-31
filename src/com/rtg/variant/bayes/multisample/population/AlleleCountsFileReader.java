@@ -135,8 +135,8 @@ public final class AlleleCountsFileReader implements Closeable {
       Diagnostic.warning("Empty value in reference field not supported: " + line);
       return null;
     }
-    final Map<String, Integer> countsMap = new HashMap<>();
 
+    final Map<String, Integer> countsMap = new HashMap<>(splitLine.length);
     for (int i = 2; i < splitLine.length; i += 2) {
       final String allele = splitLine[i];
       final Integer count;

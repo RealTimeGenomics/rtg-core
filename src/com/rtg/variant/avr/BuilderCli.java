@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -79,8 +80,9 @@ public class BuilderCli extends AbstractCli {
     mFlags.registerOptional(INFO_ANNOTATIONS_FLAG, String.class, CommonFlags.STRING, "INFO fields to use in model").setCategory(SENSITIVITY_TUNING).setMaxCount(Integer.MAX_VALUE).enableCsv();
     mFlags.registerOptional(FORMAT_ANNOTATIONS_FLAG, String.class, CommonFlags.STRING, "FORMAT fields to use in model").setCategory(SENSITIVITY_TUNING).setMaxCount(Integer.MAX_VALUE).enableCsv();
     mFlags.registerOptional(QUAL_ANNOTATION_FLAG, "if set, use QUAL annotation in model").setCategory(SENSITIVITY_TUNING);
-    final List<String> derivedRange = new ArrayList<>();
-    for (final DerivedAnnotations derived : DerivedAnnotations.singleValueAnnotations()) {
+    final EnumSet<DerivedAnnotations> derivedAnnotations = DerivedAnnotations.singleValueAnnotations();
+    final List<String> derivedRange = new ArrayList<>(derivedAnnotations.size());
+    for (final DerivedAnnotations derived : derivedAnnotations) {
       derivedRange.add(derived.toString());
     }
     mFlags.registerOptional(DERIVED_ANNOTATIONS_FLAG, String.class, CommonFlags.STRING, "derived fields to use in model").setParameterRange(derivedRange).setMaxCount(Integer.MAX_VALUE).enableCsv().setCategory(SENSITIVITY_TUNING);

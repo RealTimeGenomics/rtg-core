@@ -11,6 +11,7 @@
  */
 package com.rtg.variant;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,11 +91,12 @@ public class CalibratedPerSequenceThreshold implements CoverageThreshold {
    * @param tfunc the <code>ThresholdFunction</code> to use
    */
   public CalibratedPerSequenceThreshold(CalibratedPerSequenceExpectedCoverage coverages, double multiple, ThresholdFunction tfunc) {
-    mMaxThresholds = new HashMap<>();
-    mSumThresholds = new HashMap<>();
     mMultiple = multiple;
     mThresholdFunction = tfunc;
-    for (final String seqName : coverages.sequences()) {
+    final Collection<String> sequences = coverages.sequences();
+    mMaxThresholds = new HashMap<>(sequences.size());
+    mSumThresholds = new HashMap<>(sequences.size());
+    for (final String seqName : sequences) {
       final Double sum = coverages.expectedTotalCoverage(seqName);
       mSumThresholds.put(seqName, mThresholdFunction.threshold(Math.max(1, sum), mMultiple));
 

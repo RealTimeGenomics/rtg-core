@@ -122,8 +122,12 @@ public class Calibrator {
    * @throws java.io.IOException if your sequences reader is dodgy.
    */
   public static Map<String, Integer> getSequenceLengthMap(SequencesReader reader, ReferenceRegions regions) throws IOException {
-    final Map<String, Integer> lengthMap = new HashMap<>();
-    for (int i = 0; i < reader.numberSequences(); ++i) {
+    final long n = reader.numberSequences();
+    if (n > Integer.MAX_VALUE) {
+      throw new UnsupportedOperationException();
+    }
+    final Map<String, Integer> lengthMap = new HashMap<>((int) n);
+    for (int i = 0; i < n; ++i) {
       lengthMap.put(reader.name(i), regions.coveredLength(reader.name(i)));
     }
     return lengthMap;

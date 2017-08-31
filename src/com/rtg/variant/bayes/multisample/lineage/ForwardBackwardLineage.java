@@ -35,8 +35,8 @@ public class ForwardBackwardLineage {
 
   private final Lineage mLineage;
   private final PossibilityArithmetic mArith;
-  private final List<Factor> mModel = new ArrayList<>();
-  private final List<Hypotheses<?>> mHypotheses = new ArrayList<>();
+  private final List<Factor> mModel;
+  private final List<Hypotheses<?>> mHypotheses;
   private final Factor[] mRootGenotypePrior;
 
   /**
@@ -51,6 +51,8 @@ public class ForwardBackwardLineage {
     mLineage = lineage;
     mArith = arith;
     mRootGenotypePrior = rootGenotypePrior;
+    mModel = new ArrayList<>(models.size());
+    mHypotheses = new ArrayList<>(models.size());
     int k = 0;
     for (final ModelInterface<?> m : models) {
       mModel.add(new ModelFactor(new Variable("G" + k, m.hypotheses().size()), m));

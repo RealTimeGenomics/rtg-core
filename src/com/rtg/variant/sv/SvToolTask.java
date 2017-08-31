@@ -109,8 +109,9 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
   protected void init(SAMFileHeader header) throws IOException {
     final Map<String, ReadGroupStats> rgStats = mParams.readGroupStatistics();
 
-    final Map<String, MachineType> rgMachineTypes = new HashMap<>();
-    for (final SAMReadGroupRecord srgr : header.getReadGroups()) {
+    final List<SAMReadGroupRecord> readGroups = header.getReadGroups();
+    final Map<String, MachineType> rgMachineTypes = new HashMap<>(readGroups.size());
+    for (final SAMReadGroupRecord srgr : readGroups) {
       final MachineType mt = ReadGroupUtils.platformToMachineType(srgr, true);
       if (mt == null) {
         throw new NoTalkbackSlimException("Read group " + srgr.getId() + " does not contain a recognized platform");

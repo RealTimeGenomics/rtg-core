@@ -101,8 +101,8 @@ public final class DiseasedFamilyCallerConfiguration extends AbstractJointCaller
       final ModelSnpFactory haploid = new ModelSnpFactory(params.genomePriors(), true, params.alleleBalance());
       final ModelSnpFactory diploid = new ModelSnpFactory(params.genomePriors(), false, params.alleleBalance());
       final ModelNoneFactory none = new ModelNoneFactory();
-      final List<IndividualSampleFactory<?>> individualFactories = new ArrayList<>();
       final SexMemo sexMemo = Utils.createSexMemo(params);
+      final List<IndividualSampleFactory<?>> individualFactories = new ArrayList<>(genomes.length);
       for (int i = 0; i < genomes.length; ++i) {
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, sexes[i], sexMemo));
       }

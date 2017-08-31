@@ -96,7 +96,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
         bestList = new ArrayList<>();
         mFatherMarginal = createMarginalArray(mHypothesesFatherSize);
         mMotherMarginal = createMarginalArray(mHypothesesMotherSize);
-        mChildMarginal = new ArrayList<>();
+        mChildMarginal = new ArrayList<>(mChildren.size());
         if (anyDenovo) {
           mChildDenovoMarginal = createMarginalArray(mChildren.size());
           mChildNonDenovoMarginal = createMarginalArray(mChildren.size());

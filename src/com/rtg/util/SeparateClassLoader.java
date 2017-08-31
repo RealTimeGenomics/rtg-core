@@ -40,7 +40,7 @@ public final class SeparateClassLoader extends ClassLoader {
    */
   public SeparateClassLoader(final Class<?>... separateClasses) {
     super(SeparateClassLoader.class.getClassLoader());
-    mClassNames = new HashSet<>();
+    mClassNames = new HashSet<>(separateClasses.length);
     for (Class<?> separateClass : separateClasses) {
       mClassNames.add(separateClass.getName());
     }

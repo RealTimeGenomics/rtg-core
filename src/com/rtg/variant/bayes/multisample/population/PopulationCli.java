@@ -125,8 +125,9 @@ public class PopulationCli extends AbstractMultisampleCli {
   protected VariantParamsBuilder makeParamsBuilder() throws  IOException {
     final VariantParamsBuilder builder = super.makeParamsBuilder();
     if (mFlags.isSet(IMPUTE_FLAG)) {
-      final List<String> impute = new ArrayList<>();
-      for (final Object o : mFlags.getValues(IMPUTE_FLAG)) {
+      final List<?> values = mFlags.getValues(IMPUTE_FLAG);
+      final List<String> impute = new ArrayList<>(values.size());
+      for (final Object o : values) {
         impute.add((String) o);
       }
       builder.imputedSamples(impute);

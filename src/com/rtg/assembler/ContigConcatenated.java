@@ -36,7 +36,7 @@ public class ContigConcatenated implements Contig {
    * @param kmerSize the kmer size used to construct the graph
    */
   public ContigConcatenated(List<Long> walkedIds, MutableGraph graph, int kmerSize) {
-    mContigs = new ArrayList<>();
+    mContigs = new ArrayList<>(walkedIds.size());
     for (long id : walkedIds) {
       mContigs.add(graph.contig(id));
     }

@@ -223,7 +223,7 @@ public class MergeNodes {
     if (predecessors.size() <= 1) {
       return true;
     } else if (predecessors.size() == 2) {
-      final Set<Long> forward = new LinkedHashSet<>();
+      final Set<Long> forward = new LinkedHashSet<>(predecessors.size());
       for (long l : predecessors) {
         forward.add(Math.abs(l));
       }

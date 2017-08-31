@@ -59,10 +59,9 @@ class AlignmentIterator {
   }
 
   public ReadAlignment next() throws IOException {
-    final List<Set<GraphAlignment>> fragmentAlignments = new ArrayList<>();
+    final List<Set<GraphAlignment>> fragmentAlignments = new ArrayList<>(mNextFragments.size());
     for (byte[] read : mNextFragments) {
-      final Set<GraphAlignment> alignments = getAlignments(read, mGraph, mAligner);
-      fragmentAlignments.add(alignments);
+      fragmentAlignments.add(getAlignments(read, mGraph, mAligner));
     }
     mNextFragments = mReader.nextFragments();
     return new ReadAlignment(mId++, fragmentAlignments);

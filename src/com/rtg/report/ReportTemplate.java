@@ -49,13 +49,13 @@ abstract class ReportTemplate {
    */
   public String fillTemplate() throws IOException {
     final Map<String, String> replacements = makeReplacements();
-    final Map<String, Boolean> wasPopulated = new HashMap<>();
     for (Map.Entry<String, String> entry : replacements.entrySet()) {
       if (entry.getValue() == null) {
         throw new IllegalArgumentException(entry.getKey() + " is not set");
       }
     }
 
+    final Map<String, Boolean> wasPopulated = new HashMap<>(replacements.size());
     for (String key : replacements.keySet()) {
       wasPopulated.put(key, Boolean.FALSE);
     }

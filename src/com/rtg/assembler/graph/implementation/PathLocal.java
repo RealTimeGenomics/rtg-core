@@ -65,7 +65,7 @@ class PathLocal extends IntegralAbstract implements Path {
 
   @Override
   public String toString() {
-    final List<Long> contigs = new ArrayList<>();
+    final List<Long> contigs = new ArrayList<>(length());
     for (int i = 0; i < length(); ++i) {
       contigs.add(mGraphImplementation.pathContig(mPath, i));
     }

@@ -117,11 +117,7 @@ public class SegregationCheckerCli extends AbstractCli {
         if (!rec.getAnnotations()[0].matches("^[01?]+$") || !rec.getAnnotations()[1].matches("^[01?]+$")) {
           continue;
         }
-        List<RangeData<PatternHolder>> chrList = ranges.get(rec.getSequenceName());
-        if (chrList == null) {
-          chrList = new ArrayList<>();
-          ranges.put(rec.getSequenceName(), chrList);
-        }
+        final List<RangeData<PatternHolder>> chrList = ranges.computeIfAbsent(rec.getSequenceName(), k -> new ArrayList<>());
         final int start = rec.getStart();
         int end = rec.getEnd();
         if (end == start) {
@@ -130,7 +126,7 @@ public class SegregationCheckerCli extends AbstractCli {
         chrList.add(new RangeData<>(start, end, PatternHolder.fromPatternStrings(rec.getAnnotations()[0], rec.getAnnotations()[1], rec.getAnnotations()[2])));
       }
     }
-    final Map<String, RangeList<PatternHolder>> patterns = new HashMap<>();
+    final Map<String, RangeList<PatternHolder>> patterns = new HashMap<>(ranges.size());
     for (final Map.Entry<String, List<RangeData<PatternHolder>>> chrEntry : ranges.entrySet()) {
       final RangeList<PatternHolder> rangeList = new RangeList<>(chrEntry.getValue());
       patterns.put(chrEntry.getKey(), rangeList);

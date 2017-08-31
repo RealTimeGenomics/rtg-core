@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -95,12 +96,14 @@ public class VcfValidatorCli extends AbstractCli {
     int mismatchedHeaders = 0;
     try (final VcfReader reader = VcfReader.openVcfReader(vcfFile)) {
       final VcfHeader header = reader.getHeader();
-      final Map<String, FilterField> filters = new HashMap<>();
-      for (FilterField field : header.getFilterLines()) {
+      final List<FilterField> filterLines = header.getFilterLines();
+      final Map<String, FilterField> filters = new HashMap<>(filterLines.size());
+      for (final FilterField field : filterLines) {
         filters.put(field.getId(), field);
       }
-      final Map<String, InfoField> infos = new HashMap<>();
-      for (InfoField field : header.getInfoLines()) {
+      final List<InfoField> infoLines = header.getInfoLines();
+      final Map<String, InfoField> infos = new HashMap<>(infoLines.size());
+      for (final InfoField field : infoLines) {
         infos.put(field.getId(), field);
         final RuleSet<?> rule = mInfoRules.get(field.getId());
         if (rule == null) {
@@ -117,8 +120,9 @@ public class VcfValidatorCli extends AbstractCli {
           }
         }
       }
-      final Map<String, FormatField> formats = new HashMap<>();
-      for (FormatField field : header.getFormatLines()) {
+      final List<FormatField> formatLines = header.getFormatLines();
+      final Map<String, FormatField> formats = new HashMap<>(formatLines.size());
+      for (final FormatField field : formatLines) {
         formats.put(field.getId(), field);
         final RuleSet<?> rule = mFormatRules.get(field.getId());
         if (rule == null) {

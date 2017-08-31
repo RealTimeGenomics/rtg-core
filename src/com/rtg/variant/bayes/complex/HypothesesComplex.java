@@ -14,7 +14,6 @@ package com.rtg.variant.bayes.complex;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -22,8 +21,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.VariantParams;
@@ -344,11 +343,11 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
       return new ArrayList<>();
     }
 
-    final List<MatchCount> sorted = new ArrayList<>();
+    final List<MatchCount> sorted = new ArrayList<>(matchMap.size());
     for (Entry<Match, Integer> entry : matchMap.entrySet()) {
       sorted.add(new MatchCount(entry.getKey(), entry.getValue()));
     }
-    Collections.sort(sorted, new MatchCountComparator());
+    sorted.sort(new MatchCountComparator());
 
     final int size = sorted.size();
     final int biggestVal = sorted.get(size - 1).count();

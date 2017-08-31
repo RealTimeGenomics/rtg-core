@@ -35,7 +35,7 @@ public class AsyncReadPool implements Closeable {
   public AsyncReadPool(String name, List<ReadPairSource> sources) {
     if (sources.size() > 0) {
       mPool = new SimpleThreadPool(sources.size(), name, true);
-      mSources = new ArrayList<>();
+      mSources = new ArrayList<>(sources.size());
       int id = 0;
       for (ReadPairSource source : sources) {
         final AsyncReadSource async = new AsyncReadSource(source, name + "-" + id++);

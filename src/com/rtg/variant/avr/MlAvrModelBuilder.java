@@ -185,7 +185,7 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
 
   // Create a new set of annotation according to current configuration.
   protected Annotation[] createAnnotations() {
-    final List<Annotation> annotations = new ArrayList<>();
+    final List<Annotation> annotations = new ArrayList<>(mInfoAttributes.length + mFormatAttributes.length + mDerivedAttributes.length);
     if (mUseQualAttribute) {
       annotations.add(new QualAnnotation());
     }

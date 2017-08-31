@@ -56,8 +56,8 @@ public final class MutatedSampleOffsets {
    */
   public static MutatedSampleOffsets[] getOffsets(File phasedMutations, RegionRestriction region, String... samples) throws IOException {
     try (VcfReader reader = VcfReader.openVcfReader(phasedMutations, region)) {
-      final Map<String, Integer> sampleIndexMap = new HashMap<>();
       final List<String> sampleNames = reader.getHeader().getSampleNames();
+      final Map<String, Integer> sampleIndexMap = new HashMap<>(sampleNames.size());
       for (int i = 0; i < sampleNames.size(); ++i) {
         sampleIndexMap.put(sampleNames.get(i), i);
       }

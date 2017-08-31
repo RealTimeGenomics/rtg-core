@@ -41,7 +41,7 @@ class ReadPairSource implements AutoCloseable {
     }
     mReaders = new ArrayList<>();
     mReaders.addAll(Arrays.asList(readers));
-    mIterators = new ArrayList<>();
+    mIterators = new ArrayList<>(mReaders.size());
     for (SequencesReader current : mReaders) {
       mIterators.add(current.iterator());
     }
@@ -54,7 +54,7 @@ class ReadPairSource implements AutoCloseable {
   }
   synchronized List<byte[]> nextFragments() throws IOException {
     //System.out.println(Thread.currentThread());
-    final List<byte[]> result = new ArrayList<>();
+    final List<byte[]> result = new ArrayList<>(mIterators.size());
     for (SequencesIterator reader : mIterators) {
       if (!reader.nextSequence()) {
         return null;

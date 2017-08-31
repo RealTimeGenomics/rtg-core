@@ -321,7 +321,7 @@ public class VariantSample {
   }
 
   private Map<Set<String>, Double> computeGenotypeLikelihoodsHaploid(Set<String> alleles) {
-    final Map<Set<String>, Double> result = new HashMap<>();
+    final Map<Set<String>, Double> result = new HashMap<>(alleles.size());
     final Hypotheses<?> h = mMeasure.hypotheses();
     for (String allele : alleles) {
       final int index = h.description().indexOf(allele);

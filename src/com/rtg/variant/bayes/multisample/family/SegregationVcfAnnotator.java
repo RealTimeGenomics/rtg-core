@@ -72,7 +72,7 @@ public class SegregationVcfAnnotator implements VcfAnnotator {
     final Integer fatherIndex = header.getSampleIndex(family.getFather());
     final Integer motherIndex = header.getSampleIndex(family.getMother());
     boolean ret = fatherIndex != null && motherIndex != null && !fatherIndex.equals(motherIndex);
-    final Set<Integer> indexes = new HashSet<>();
+    final Set<Integer> indexes = new HashSet<>(family.size());
     indexes.add(fatherIndex);
     indexes.add(motherIndex);
     for (final String child : family.getChildren()) {
@@ -87,10 +87,11 @@ public class SegregationVcfAnnotator implements VcfAnnotator {
   public void updateHeader(VcfHeader header) {
     assert checkHeader(header, mFamily);
     if (mChildrenIndexes == null) {
-      mChildrenIndexes = new ArrayList<>();
+      final String[] children = mFamily.getChildren();
+      mChildrenIndexes = new ArrayList<>(children.length);
       mFatherIndex = header.getSampleIndex(mFamily.getFather());
       mMotherIndex = header.getSampleIndex(mFamily.getMother());
-      for (final String child : mFamily.getChildren()) {
+      for (final String child : children) {
         final Integer childIndex = header.getSampleIndex(child);
         if (childIndex == null) {
           throw new NullPointerException(child);
@@ -105,11 +106,7 @@ public class SegregationVcfAnnotator implements VcfAnnotator {
   public void annotate(VcfRecord rec) {
     assert mChildrenIndexes != null && mFatherIndex >= 0 && mMotherIndex >= 0 && mFatherIndex != mMotherIndex;
     final int codeSize = rec.getAltCalls().size() + 1;
-    Code code = mCodes.get(codeSize);
-    if (code == null) {
-      code = new CodeDiploid(codeSize);
-      mCodes.put(codeSize, code);
-    }
+    final Code code = mCodes.computeIfAbsent(codeSize, CodeDiploid::new);
     final List<String> calls = rec.getFormat(VcfUtils.FORMAT_GENOTYPE);
     final int father = getCode(code, calls.get(mFatherIndex));
     final int mother = getCode(code, calls.get(mMotherIndex));

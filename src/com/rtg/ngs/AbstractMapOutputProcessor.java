@@ -221,12 +221,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
             endPos = r.getEndClipPosition() != HashingRegion.MISSING ? (int) r.getEndClipPosition() : searchParams.reader().length(seq);
           }
           final RangeList.RangeData<UnmappedSamAlignmentWriter> rr = new RangeList.RangeData<>(startPos, endPos, outputWriters[rangeIndex]);
-          List<RangeList.RangeData<UnmappedSamAlignmentWriter>> tmp = temp.get(seq);
-          if (tmp == null) {
-            tmp = new ArrayList<>();
-            temp.put(seq, tmp);
-          }
-          tmp.add(rr);
+          temp.computeIfAbsent(seq, k -> new ArrayList<>()).add(rr);
         }
       }
     }

@@ -67,7 +67,7 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
       final List<String> mappedGenomes = Arrays.asList(SamUtils.getSampleNames(params.uberHeader()));
       final GenomeRelationships genomeRelationships = params.genomeRelationships();
       final List<String> pedGenomes = Arrays.asList(genomeRelationships.genomes());
-      final List<String> outputGenomes = new ArrayList<>();
+      final List<String> outputGenomes = new ArrayList<>(mappedGenomes.size() + params.imputedSamples().size());
 
       // Validate supplied names against what we're using from the relationships
       if (mappedGenomes.isEmpty()) {
@@ -160,7 +160,7 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
         throw new NoTalkbackSlimException("There was a problem with the supplied pedigree: " + e.getMessage());
       }
       final PopulationCaller popCaller = new PopulationCaller(newParams, familyCaller);
-      final List<IndividualSampleFactory<?>> individualFactories = new ArrayList<>();
+      final List<IndividualSampleFactory<?>> individualFactories = new ArrayList<>(calledGenomes.size());
       final SexMemo sexMemo = Utils.createSexMemo(newParams);
       for (String genome : calledGenomes) {
         Diagnostic.userLog("Sample: " + genome + " sex: " + genomeRelationships.getSex(genome) + " output: " + outputGenomes.contains(genome));

@@ -81,7 +81,7 @@ public class SegregationChecker {
     mReader = reader;
     mWriter = writer;
     mPatterns = patterns;
-    mLinkedPatterns = new HashMap<>();
+    mLinkedPatterns = new HashMap<>(mPatterns.size());
     for (final Entry<String, RangeList<PatternHolder>> el : mPatterns.entrySet()) {
       final LinkedSet<PatternHolder> ls = new LinkedSet<>();
       for (final RangeList.RangeData<PatternHolder> range : el.getValue().getRangeList()) {
@@ -94,8 +94,8 @@ public class SegregationChecker {
     mPloidyMap = ploidyMap;
     mRepairSimple = repairSimple;
     final VcfHeader header = reader.getHeader();
-    final Map<String, Integer> sampleIndexMap = new HashMap<>();
     mSampleNames = header.getSampleNames();
+    final Map<String, Integer> sampleIndexMap = new HashMap<>(mSampleNames.size());
     for (int i = 0; i < mSampleNames.size(); ++i) {
       sampleIndexMap.put(mSampleNames.get(i), i);
     }

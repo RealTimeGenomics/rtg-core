@@ -223,11 +223,12 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
     mSamHeader = header;
     int maxMaxGap = 0;
 
-    final Set<String> sampleNames = new HashSet<>();
-    if (header.getReadGroups() == null || header.getReadGroups().isEmpty()) {
+    final List<SAMReadGroupRecord> readGroups = header.getReadGroups();
+    if (readGroups == null || readGroups.isEmpty()) {
       throw new NoTalkbackSlimException("SAM input does not contain read groups");
     }
-    for (final SAMReadGroupRecord srgr : header.getReadGroups()) {
+    final Set<String> sampleNames = new HashSet<>(readGroups.size());
+    for (final SAMReadGroupRecord srgr : readGroups) {
       if (srgr.getPlatform() == null) {
         throw new NoTalkbackSlimException("Read group does not contain a platform field: " + srgr.getSAMString());
       }

@@ -80,7 +80,7 @@ public class DiseasedFamilyPosterior {
     mMother = models.get(ids[Family.MOTHER_INDEX]);
     assert mMother.hypotheses() == mHypotheses;
     assert mFather.hypotheses() == mHypotheses;
-    mChildren = new ArrayList<>();
+    mChildren = new ArrayList<>(ids.length - Family.FIRST_CHILD_INDEX);
     for (int i = Family.FIRST_CHILD_INDEX; i < ids.length; ++i) {
       final ModelInterface<?> model = models.get(ids[i]);
       mChildren.add(model);

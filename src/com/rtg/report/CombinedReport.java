@@ -316,14 +316,13 @@ public class CombinedReport {
    * @throws IOException at will
    */
   public static void  main(String[] args) throws IOException {
-    final List<File> reports = new ArrayList<>();
     final File output = new File(args[0]);
     if (output.exists()) {
       throw new NoTalkbackSlimException("output dir exists");
     } else {
       makeOrThrow(output);
-
     }
+    final List<File> reports = new ArrayList<>(Math.max(0, args.length - 1));
     for (int i = 1; i < args.length; ++i) {
       reports.add(new File(args[i]));
     }

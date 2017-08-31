@@ -137,7 +137,7 @@ public class GraphIndex {
    * @throws IOException if an I/O error occurs
    */
   List<List<ContigPosition>> hits(byte[] read, Graph graph, ExactHashFunction searchFunction) throws IOException {
-    final List<List<ContigPosition>> positions = new ArrayList<>();
+    final List<List<ContigPosition>> positions = new ArrayList<>(read.length);
     searchFunction.reset();
     for (byte base : read) {
       final byte code = (byte) (base - 1);

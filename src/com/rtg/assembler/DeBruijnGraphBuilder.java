@@ -178,7 +178,11 @@ public class DeBruijnGraphBuilder {
         ++id;
       }
     }
-    final Map<Kmer, Long> contigEnds = new HashMap<>();
+    final long size = 2L * mContigGraph.numberContigs();
+    if (size > Integer.MAX_VALUE) {
+      throw new UnsupportedOperationException();
+    }
+    final Map<Kmer, Long> contigEnds = new HashMap<>((int) size);
     for (long i = 1; i <= mContigGraph.numberContigs(); ++i) {
       final Kmer startKmer = startKmer(mContigGraph.contig(i));
       contigEnds.put(startKmer, i);

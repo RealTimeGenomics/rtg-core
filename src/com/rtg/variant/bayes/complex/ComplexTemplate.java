@@ -185,9 +185,10 @@ public class ComplexTemplate extends SequenceNameLocusSimple {
     final int e0Hx = getEnd() - hypExtension;
 
     // Build up all alignment environments that we will need
-    final List<AlignmentEnvironment> envs = new ArrayList<>(); // All alleles to which we will perform alignment (description first,
-    final List<Integer> lengths = new ArrayList<>();
-    for (int i = 0; i < description().size(); ++i) {
+    final int n = description().size();
+    final List<AlignmentEnvironment> envs = new ArrayList<>(n); // All alleles to which we will perform alignment (description first,
+    final List<Integer> lengths = new ArrayList<>(n);
+    for (int i = 0; i < n; ++i) {
       final AlignmentEnvironment env;
       final int len;
       if (i == refHyp()) {
@@ -213,11 +214,11 @@ public class ComplexTemplate extends SequenceNameLocusSimple {
     mRefTransitionIndex = refAllele;
 
     // Compute all-paths transition matrix
-    final double[][] transitionProbsLn = new double[envs.size()][description().size()];
+    final double[][] transitionProbsLn = new double[envs.size()][n];
     for (int i = 0; i < envs.size(); ++i) {
       final AlignmentEnvironment aei = envs.get(i);
       final int iLen = lengths.get(i);
-      for (int j = 0; j < description().size(); ++j) {
+      for (int j = 0; j < n; ++j) {
         final AlignmentEnvironment aej = envs.get(j);
         final int jLen = lengths.get(j);
         final int alignStart = e0Hx - (jLen + iLen) / 2;

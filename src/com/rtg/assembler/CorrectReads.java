@@ -123,7 +123,7 @@ public final class CorrectReads {
         outputNames.add("" + i);
       }
     }
-    final List<SdfWriter> outputs = new ArrayList<>();
+    final List<SdfWriter> outputs = new ArrayList<>(source.numberFragments());
     for (int i = 0; i < source.numberFragments(); ++i) {
       final SdfWriter writer = new SdfWriter(new File(output, outputNames.get(i)), Constants.MAX_FILE_SIZE, PrereadType.UNKNOWN, false, true, true, SequenceType.DNA);
       outputs.add(writer);

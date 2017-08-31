@@ -63,7 +63,7 @@ public class VariantOutputVcfFormatter {
     if (sampleNames.length > 1 && params.genomeRelationships() == null) {
       throw new IllegalArgumentException("Too many sample names");
     }
-    mSampleColumns = new HashMap<>();
+    mSampleColumns = new HashMap<>(mSampleNames.length);
     for (int i = 0; i < mSampleNames.length; ++i) {
       mSampleNames[i] = sampleNames[i];
       mSampleColumns.put(mSampleNames[i], i);

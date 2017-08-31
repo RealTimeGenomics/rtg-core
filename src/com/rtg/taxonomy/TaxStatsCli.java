@@ -97,12 +97,16 @@ public final class TaxStatsCli extends AbstractCli {
       mLookupIdsCount = lookupIds.size();
       mLookupSeqsCount = sequenceLookupMap.keySet().size();
       final Set<String> lookupSequences = sequenceLookupMap.keySet();
-      final Set<String> sdfSequences = new HashSet<>();
       if (!reader.hasNames()) {
         throw new NoTalkbackSlimException("SDF does not have sequence names");
       }
       final NamesInterface names = reader.names();
-      for (long i = 0; i < reader.numberSequences(); ++i) {
+      final long numSequences = reader.numberSequences();
+      if (numSequences > Integer.MAX_VALUE) {
+        throw new UnsupportedOperationException();
+      }
+      final Set<String> sdfSequences = new HashSet<>((int) numSequences);
+      for (long i = 0; i < numSequences; ++i) {
         sdfSequences.add(names.name(i));
       }
       mTaxonomy = TaxonomyUtils.loadTaxonomy(reader);
