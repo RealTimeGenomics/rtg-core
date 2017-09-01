@@ -40,10 +40,6 @@ public class IntMemo extends IntegralAbstract implements IntFunction {
     }
   }
 
-  private static int[] makeArray(final int length) {
-    return new int[length];
-  }
-
   private final IntFunction mFunction;
 
   private Pair mSynchPair = null;
@@ -69,7 +65,7 @@ public class IntMemo extends IntegralAbstract implements IntFunction {
     synchronized (this) {
       final int ix;
       if (mSynchPair == null) {
-        final int[] memArray = makeArray(1);
+        final int[] memArray = new int[1];
         memArray[0] = mFunction.fn(i);
         mSynchPair = new Pair(i, memArray);
         ix = 0;
@@ -77,7 +73,7 @@ public class IntMemo extends IntegralAbstract implements IntFunction {
         final int index = i - mSynchPair.mLo;
         if (index < 0) {
           final int newLength = mSynchPair.mMemo.length - index;
-          final int[] newArray = makeArray(newLength);
+          final int[] newArray = new int[newLength];
           System.arraycopy(mSynchPair.mMemo, 0, newArray, -index, mSynchPair.mMemo.length);
           for (int j = 0; j < -index; ++j) {
             newArray[j] = mFunction.fn(j + i);
@@ -86,7 +82,7 @@ public class IntMemo extends IntegralAbstract implements IntFunction {
           ix = 0;
         } else if (index >= mSynchPair.mMemo.length) {
           final int newLength = index + 1;
-          final int[] newArray = makeArray(newLength);
+          final int[] newArray = new int[newLength];
           System.arraycopy(mSynchPair.mMemo, 0, newArray, 0, mSynchPair.mMemo.length);
           for (int j = mSynchPair.mMemo.length; j <= index; ++j) {
             newArray[j] = mFunction.fn(j + mSynchPair.mLo);

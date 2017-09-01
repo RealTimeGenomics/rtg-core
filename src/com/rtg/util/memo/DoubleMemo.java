@@ -40,10 +40,6 @@ public class DoubleMemo extends IntegralAbstract implements DoubleFunction {
     }
   }
 
-  private static double[] makeArray(final int length) {
-    return new double[length];
-  }
-
   private final DoubleFunction mFunction;
 
   private Pair mSynchPair = null;
@@ -69,7 +65,7 @@ public class DoubleMemo extends IntegralAbstract implements DoubleFunction {
     synchronized (this) {
       final int ix;
       if (mSynchPair == null) {
-        final double[] memArray = makeArray(1);
+        final double[] memArray = new double[1];
         memArray[0] = mFunction.fn(i);
         mSynchPair = new Pair(i, memArray);
         ix = 0;
@@ -77,7 +73,7 @@ public class DoubleMemo extends IntegralAbstract implements DoubleFunction {
         final int index = i - mSynchPair.mLo;
         if (index < 0) {
           final int newLength = mSynchPair.mMemo.length - index;
-          final double[] newArray = makeArray(newLength);
+          final double[] newArray = new double[newLength];
           System.arraycopy(mSynchPair.mMemo, 0, newArray, -index, mSynchPair.mMemo.length);
           for (int j = 0; j < -index; ++j) {
             newArray[j] = mFunction.fn(j + i);
@@ -86,7 +82,7 @@ public class DoubleMemo extends IntegralAbstract implements DoubleFunction {
           ix = 0;
         } else if (index >= mSynchPair.mMemo.length) {
           final int newLength = index + 1;
-          final double[] newArray = makeArray(newLength);
+          final double[] newArray = new double[newLength];
           System.arraycopy(mSynchPair.mMemo, 0, newArray, 0, mSynchPair.mMemo.length);
           for (int j = mSynchPair.mMemo.length; j <= index; ++j) {
             newArray[j] = mFunction.fn(j + mSynchPair.mLo);
