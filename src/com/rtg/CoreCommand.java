@@ -83,7 +83,7 @@ public final class CoreCommand {
   static final Command SDF2CG = new Command(new Sdf2Cg(), CommandCategory.FORMAT, ReleaseLevel.BETA);
 
   /** Trimming of paired-end reads in FASTQ based on overlap */
-  static final Command PETRIM = new Command(new PairedEndTrimCli(), CommandCategory.FORMAT, ReleaseLevel.BETA);
+  static final Command PETRIM = new Command(new PairedEndTrimCli(), CommandCategory.FORMAT, ReleaseLevel.GA);
 
   /** For converting RtgCore's data format into FASTA/QUALA format */
   static final Command SDF2QUALA = new Command(new Sdf2Quala(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
