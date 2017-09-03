@@ -279,12 +279,14 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     for (int i = 0; i < motherHyp.length; ++i) {
       if (motherHyp[i] == mMotherHypotheses.reference()) {
         motherReferenceIndex = i;
+        break;
       }
     }
     int fatherReferenceIndex = 0;
     for (int i = 0; i < fatherHyp.length; ++i) {
       if (fatherHyp[i] == mFatherHypotheses.reference()) {
         fatherReferenceIndex = i;
+        break;
       }
     }
     int iterations = 0;
