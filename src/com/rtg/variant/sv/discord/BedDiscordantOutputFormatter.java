@@ -19,7 +19,7 @@ import com.rtg.util.Environment;
 import com.rtg.util.cli.CommandLine;
 
 /**
- * Produces simple BED output for break ends
+ * Produces simple BED output for breakends
  */
 public class BedDiscordantOutputFormatter {
 

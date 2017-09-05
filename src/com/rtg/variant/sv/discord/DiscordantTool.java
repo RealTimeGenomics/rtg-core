@@ -53,7 +53,7 @@ import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 
 /**
- * Primary task that process SAM records to identify putative structural variant break ends.
+ * Primary task that process SAM records to identify putative structural variant breakends.
  */
 public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, DiscordantToolStatistics> {
 

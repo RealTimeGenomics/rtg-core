@@ -89,7 +89,7 @@ public final class DiscordantToolParams extends SvParams {
     /**
      * Assume this fraction of the read length may have been erroneously aligned across a breakpoint due to alignment penalties.
      * Actual number varies according to alignment penalties and propensity for soft-clipping the dirty ends of alignments.
-     * @param overlapFraction the fraction of read length to assume may overlap a break end
+     * @param overlapFraction the fraction of read length to assume may overlap a breakend
      * @return this builder, so calls can be chained.
      */
     public DiscordantToolParamsBuilder overlapFraction(double overlapFraction) {

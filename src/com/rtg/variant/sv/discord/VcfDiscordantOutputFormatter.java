@@ -37,7 +37,7 @@ import com.rtg.vcf.header.VcfNumber;
 import htsjdk.samtools.SAMFileHeader;
 
 /**
- * Assumes a calling pattern that presents break ends for each template in groups.
+ * Assumes a calling pattern that presents breakends for each template in groups.
  */
 public class VcfDiscordantOutputFormatter {
 
