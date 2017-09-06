@@ -79,6 +79,8 @@
 <li><a class="reference internal" href="#map">map</a></li>
 <li><a class="reference internal" href="#mapf">mapf</a></li>
 <li><a class="reference internal" href="#cgmap">cgmap</a></li>
+<li><a class="reference internal" href="#coverage">coverage</a></li>
+<li><a class="reference internal" href="#calibrate">calibrate</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#protein-search-commands">Protein Search Commands</a><ul>
@@ -101,7 +103,6 @@
 <li><a class="reference internal" href="#svprep">svprep</a></li>
 <li><a class="reference internal" href="#sv">sv</a></li>
 <li><a class="reference internal" href="#discord">discord</a></li>
-<li><a class="reference internal" href="#coverage">coverage</a></li>
 <li><a class="reference internal" href="#snp">snp</a><ul>
 <li><a class="reference internal" href="#quality-calibration">Quality calibration</a></li>
 <li><a class="reference internal" href="#coverage-filtering">Coverage filtering</a></li>
@@ -116,7 +117,6 @@
 <li><a class="reference internal" href="#avrpredict">avrpredict</a></li>
 <li><a class="reference internal" href="#avrbuild">avrbuild</a></li>
 <li><a class="reference internal" href="#cnv">cnv</a></li>
-<li><a class="reference internal" href="#calibrate">calibrate</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#metagenomics-commands">Metagenomics Commands</a><ul>
@@ -2761,6 +2761,290 @@ approximately equivalent to the mask <code class="docutils literal"><span class=
 <a class="reference internal" href="#mapx"><span class="std std-ref">mapx</span></a></p>
 </div>
 </div>
+<div class="section" id="coverage">
+<h3>coverage<a class="headerlink" href="#coverage" title="Permalink to this headline">¶</a></h3>
+<p><strong>Synopsis:</strong></p>
+<p>The <code class="docutils literal"><span class="pre">coverage</span></code> command measures and reports coverage depth of read
+alignments across a reference.</p>
+<p><strong>Syntax:</strong></p>
+<p>Multi-file input specified from command line:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg coverage [OPTION]... -o FILE+
+</pre></div>
+</div>
+<p>Multi-file input specified in a text file:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg coverage [OPTION]... -o DIR -I FILE
+</pre></div>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg coverage -o h1_coverage alignments.bam
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="4%" />
+<col width="14%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="3">File Input/Output</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--bed-regions=FILE</span></code></td>
+<td>If set, only read SAM records that overlap the ranges contained in the specified BED file.</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--bedgraph</span></code></td>
+<td>If set, output in BEDGRAPH format (suppresses BED file output)</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-I</span></code></td>
+<td><code class="docutils literal"><span class="pre">--input-list-file=FILE</span></code></td>
+<td>File containing a list of SAM/BAM format files (1 per line) containing mapped reads.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-o</span></code></td>
+<td><code class="docutils literal"><span class="pre">--output=DIR</span></code></td>
+<td>Directory for output.</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--per-base</span></code></td>
+<td>If set, output per-base counts in TSV format (suppresses BED file output)</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--per-region</span></code></td>
+<td>If set, output BED/BEDGRAPH entries per-region rather than every coverage level change.</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--region=STRING</span></code></td>
+<td>If set, only process SAM records within the specified range. The format is one of &lt;sequence_name&gt;, &lt;sequence_name&gt;:start-end or &lt;sequence_name&gt;:start+length.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-t</span></code></td>
+<td><code class="docutils literal"><span class="pre">--template=SDF</span></code></td>
+<td>SDF containing the reference genome.</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">FILE+</span></code></td>
+<td>SAM/BAM format files containing mapped reads. May be specified 0 or more times.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="20%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="3">Sensitivity Tuning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--exclude-mated</span></code></td>
+<td>Exclude all mated SAM records.</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--exclude-unmated</span></code></td>
+<td>Exclude all unmated SAM records.</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--keep-duplicates</span></code></td>
+<td>Don&#8217;t detect and filter duplicate reads based on mapping position.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-m</span></code></td>
+<td><code class="docutils literal"><span class="pre">--max-as-mated=INT</span></code></td>
+<td>If set, ignore mated SAM records with an alignment score (AS attribute) that exceeds this value.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-u</span></code></td>
+<td><code class="docutils literal"><span class="pre">--max-as-unmated=INT</span></code></td>
+<td>If set, ignore unmated SAM records with an alignment score (AS attribute) that exceeds this value.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-c</span></code></td>
+<td><code class="docutils literal"><span class="pre">--max-hits=INT</span></code></td>
+<td>If set, ignore SAM records with an alignment count that exceeds this value.</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--min-mapq=INT</span></code></td>
+<td>If set, ignore SAM records with MAPQ less than this value.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-s</span></code></td>
+<td><code class="docutils literal"><span class="pre">--smoothing=INT</span></code></td>
+<td>Smooth with this number of neighboring values (0 means no smoothing) (Default is 50)</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="20%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="3">Utility</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-h</span></code></td>
+<td><code class="docutils literal"><span class="pre">--help</span></code></td>
+<td>Print help on command-line flag usage.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-Z</span></code></td>
+<td><code class="docutils literal"><span class="pre">--no-gzip</span></code></td>
+<td>Do not gzip the output.</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--no-index</span></code></td>
+<td>Do not produce indexes for output files.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-T</span></code></td>
+<td><code class="docutils literal"><span class="pre">--threads=INT</span></code></td>
+<td>Number of threads (Default is the number of available cores)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Usage:</strong></p>
+<p>The <code class="docutils literal"><span class="pre">coverage</span></code> command calculates coverage depth by counting all
+alignments from input SAM/BAM files against a specified reference
+genome. Sensitivity tuning parameters allow the investigator to test and
+identify the most appropriate set of alignments to use in downstream
+analysis.</p>
+<p>The <code class="docutils literal"><span class="pre">coverage</span></code> command provides insight into sequencing coverage for
+each of the reference sequences. Use to validate mapping results and
+determine how much of the reference is covered with alignments and how
+many times the same location is mapped. Gaps indicate no coverage in a
+specific location.</p>
+<p>The default output of coverage will create a new BED entry whenever the
+coverage level changes. The <code class="docutils literal"><span class="pre">--smoothing</span></code> flag may be supplied to
+smooth over a number of neighboring values in order to reduce noise and
+variation in the output coverage data file. Typical values range from
+0-100 but there is no limit.</p>
+<p>When the average coverage levels over specific regions is of interest,
+specify the <code class="docutils literal"><span class="pre">--per-region</span></code> option. Rather than creating a new coverage
+entry when the coverage level changes, this mode will output one record
+for each region of interest containing the average coverage statistics
+within the region.</p>
+<p>For detailed information on the coverage levels at a per-base resolution
+is available by using the <code class="docutils literal"><span class="pre">--per-base</span></code> option, but be aware that the
+output files can be very large, so this is of most use when focusing on
+particular regions..</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#map"><span class="std std-ref">map</span></a>,
+<a class="reference internal" href="#snp"><span class="std std-ref">snp</span></a>,
+<a class="reference internal" href="#cnv"><span class="std std-ref">cnv</span></a></p>
+</div>
+</div>
+<div class="section" id="calibrate">
+<h3>calibrate<a class="headerlink" href="#calibrate" title="Permalink to this headline">¶</a></h3>
+<p><strong>Synopsis:</strong></p>
+<p>Creates quality calibration files for all supplied SAM/BAM files.</p>
+<p><strong>Syntax:</strong></p>
+<p>Multi-file input specified from command line:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg calibrate [OPTION]... -t SDF FILE+
+</pre></div>
+</div>
+<p>Multi-file input specified in a text file:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg calibrate [OPTION]... -t SDF -I FILE
+</pre></div>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg calibrate -t hs_reference hs_map/alignments.bam
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="20%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="3">File Input/Output</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-I</span></code></td>
+<td><code class="docutils literal"><span class="pre">--input-list-file=FILE</span></code></td>
+<td>File containing a list of SAM/BAM format files (1 per line) containing mapped reads.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-m</span></code></td>
+<td><code class="docutils literal"><span class="pre">--merge=FILE</span></code></td>
+<td>If set, merge records and calibration files to this output file.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-t</span></code></td>
+<td><code class="docutils literal"><span class="pre">--template=SDF</span></code></td>
+<td>SDF containing the reference genome.</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">FILE+</span></code></td>
+<td>SAM/BAM format files containing mapped reads. May be specified 0 or more times.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="20%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="3">Sensitivity Tuning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--bed-regions=FILE</span></code></td>
+<td>Restrict calibration to mappings falling within the supplied BED regions.</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--exclude-bed=FILE</span></code></td>
+<td>BED containing regions to exclude from calibration.</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--exclude-vcf=FILE</span></code></td>
+<td>VCF containing sites of known variants to exclude from calibration.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="20%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="3">Utility</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-f</span></code></td>
+<td><code class="docutils literal"><span class="pre">--force</span></code></td>
+<td>Force overwriting of calibration files.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-h</span></code></td>
+<td><code class="docutils literal"><span class="pre">--help</span></code></td>
+<td>Print help on command-line flag usage.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">-T</span></code></td>
+<td><code class="docutils literal"><span class="pre">--threads=INT</span></code></td>
+<td>Number of threads (Default is the number of available cores)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Usage:</strong></p>
+<p>Use to create quality calibration files for existing SAM/BAM mapping
+files which can be used in later commands to improve results. The
+calibration file will have .calibration appended to the SAM/BAM file
+name. If the <code class="docutils literal"><span class="pre">--merge</span></code> option is used, this command can be used to
+simultaneously merge input files to a single, calibrated output file.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#snp"><span class="std std-ref">snp</span></a>,
+<a class="reference internal" href="#map"><span class="std std-ref">map</span></a>,
+<a class="reference internal" href="#cgmap"><span class="std std-ref">cgmap</span></a></p>
+</div>
+</div>
 </div>
 <div class="section" id="protein-search-commands">
 <h2>Protein Search Commands<a class="headerlink" href="#protein-search-commands" title="Permalink to this headline">¶</a></h2>
@@ -3756,180 +4040,6 @@ likely to be a result of mapping artifacts.</p>
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="#svprep"><span class="std std-ref">svprep</span></a>,
 <a class="reference internal" href="#sv"><span class="std std-ref">sv</span></a></p>
-</div>
-</div>
-<div class="section" id="coverage">
-<h3>coverage<a class="headerlink" href="#coverage" title="Permalink to this headline">¶</a></h3>
-<p><strong>Synopsis:</strong></p>
-<p>The <code class="docutils literal"><span class="pre">coverage</span></code> command measures and reports coverage depth of read
-alignments across a reference.</p>
-<p><strong>Syntax:</strong></p>
-<p>Multi-file input specified from command line:</p>
-<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg coverage [OPTION]... -o FILE+
-</pre></div>
-</div>
-<p>Multi-file input specified in a text file:</p>
-<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg coverage [OPTION]... -o DIR -I FILE
-</pre></div>
-</div>
-<p><strong>Example:</strong></p>
-<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg coverage -o h1_coverage alignments.bam
-</pre></div>
-</div>
-<p><strong>Parameters:</strong></p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="4%" />
-<col width="14%" />
-<col width="82%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head" colspan="3">File Input/Output</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--bed-regions=FILE</span></code></td>
-<td>If set, only read SAM records that overlap the ranges contained in the specified BED file.</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--bedgraph</span></code></td>
-<td>If set, output in BEDGRAPH format (suppresses BED file output)</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">-I</span></code></td>
-<td><code class="docutils literal"><span class="pre">--input-list-file=FILE</span></code></td>
-<td>File containing a list of SAM/BAM format files (1 per line) containing mapped reads.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-o</span></code></td>
-<td><code class="docutils literal"><span class="pre">--output=DIR</span></code></td>
-<td>Directory for output.</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--per-base</span></code></td>
-<td>If set, output per-base counts in TSV format (suppresses BED file output)</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--per-region</span></code></td>
-<td>If set, output BED/BEDGRAPH entries per-region rather than every coverage level change.</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--region=STRING</span></code></td>
-<td>If set, only process SAM records within the specified range. The format is one of &lt;sequence_name&gt;, &lt;sequence_name&gt;:start-end or &lt;sequence_name&gt;:start+length.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-t</span></code></td>
-<td><code class="docutils literal"><span class="pre">--template=SDF</span></code></td>
-<td>SDF containing the reference genome.</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">FILE+</span></code></td>
-<td>SAM/BAM format files containing mapped reads. May be specified 0 or more times.</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="6%" />
-<col width="20%" />
-<col width="74%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head" colspan="3">Sensitivity Tuning</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--exclude-mated</span></code></td>
-<td>Exclude all mated SAM records.</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--exclude-unmated</span></code></td>
-<td>Exclude all unmated SAM records.</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--keep-duplicates</span></code></td>
-<td>Don&#8217;t detect and filter duplicate reads based on mapping position.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-m</span></code></td>
-<td><code class="docutils literal"><span class="pre">--max-as-mated=INT</span></code></td>
-<td>If set, ignore mated SAM records with an alignment score (AS attribute) that exceeds this value.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">-u</span></code></td>
-<td><code class="docutils literal"><span class="pre">--max-as-unmated=INT</span></code></td>
-<td>If set, ignore unmated SAM records with an alignment score (AS attribute) that exceeds this value.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-c</span></code></td>
-<td><code class="docutils literal"><span class="pre">--max-hits=INT</span></code></td>
-<td>If set, ignore SAM records with an alignment count that exceeds this value.</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--min-mapq=INT</span></code></td>
-<td>If set, ignore SAM records with MAPQ less than this value.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-s</span></code></td>
-<td><code class="docutils literal"><span class="pre">--smoothing=INT</span></code></td>
-<td>Smooth with this number of neighboring values (0 means no smoothing) (Default is 50)</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="6%" />
-<col width="20%" />
-<col width="74%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head" colspan="3">Utility</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">-h</span></code></td>
-<td><code class="docutils literal"><span class="pre">--help</span></code></td>
-<td>Print help on command-line flag usage.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-Z</span></code></td>
-<td><code class="docutils literal"><span class="pre">--no-gzip</span></code></td>
-<td>Do not gzip the output.</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--no-index</span></code></td>
-<td>Do not produce indexes for output files.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-T</span></code></td>
-<td><code class="docutils literal"><span class="pre">--threads=INT</span></code></td>
-<td>Number of threads (Default is the number of available cores)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Usage:</strong></p>
-<p>The <code class="docutils literal"><span class="pre">coverage</span></code> command calculates coverage depth by counting all
-alignments from input SAM/BAM files against a specified reference
-genome. Sensitivity tuning parameters allow the investigator to test and
-identify the most appropriate set of alignments to use in downstream
-analysis.</p>
-<p>The <code class="docutils literal"><span class="pre">coverage</span></code> command provides insight into sequencing coverage for
-each of the reference sequences. Use to validate mapping results and
-determine how much of the reference is covered with alignments and how
-many times the same location is mapped. Gaps indicate no coverage in a
-specific location.</p>
-<p>The default output of coverage will create a new BED entry whenever the
-coverage level changes. The <code class="docutils literal"><span class="pre">--smoothing</span></code> flag may be supplied to
-smooth over a number of neighboring values in order to reduce noise and
-variation in the output coverage data file. Typical values range from
-0-100 but there is no limit.</p>
-<p>When the average coverage levels over specific regions is of interest,
-specify the <code class="docutils literal"><span class="pre">--per-region</span></code> option. Rather than creating a new coverage
-entry when the coverage level changes, this mode will output one record
-for each region of interest containing the average coverage statistics
-within the region.</p>
-<p>For detailed information on the coverage levels at a per-base resolution
-is available by using the <code class="docutils literal"><span class="pre">--per-base</span></code> option, but be aware that the
-output files can be very large, so this is of most use when focusing on
-particular regions..</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#map"><span class="std std-ref">map</span></a>,
-<a class="reference internal" href="#snp"><span class="std std-ref">snp</span></a>,
-<a class="reference internal" href="#cnv"><span class="std std-ref">cnv</span></a></p>
 </div>
 </div>
 <div class="section" id="snp">
@@ -5777,116 +5887,6 @@ different analytical comparisons with the same alignments.</p>
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="#snp"><span class="std std-ref">snp</span></a>,
 <a class="reference internal" href="#coverage"><span class="std std-ref">coverage</span></a></p>
-</div>
-</div>
-<div class="section" id="calibrate">
-<h3>calibrate<a class="headerlink" href="#calibrate" title="Permalink to this headline">¶</a></h3>
-<p><strong>Synopsis:</strong></p>
-<p>Creates quality calibration files for all supplied SAM/BAM files.</p>
-<p><strong>Syntax:</strong></p>
-<p>Multi-file input specified from command line:</p>
-<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg calibrate [OPTION]... -t SDF FILE+
-</pre></div>
-</div>
-<p>Multi-file input specified in a text file:</p>
-<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg calibrate [OPTION]... -t SDF -I FILE
-</pre></div>
-</div>
-<p><strong>Example:</strong></p>
-<div class="highlight-text"><div class="highlight"><pre><span></span>$ rtg calibrate -t hs_reference hs_map/alignments.bam
-</pre></div>
-</div>
-<p><strong>Parameters:</strong></p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="6%" />
-<col width="20%" />
-<col width="74%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head" colspan="3">File Input/Output</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">-I</span></code></td>
-<td><code class="docutils literal"><span class="pre">--input-list-file=FILE</span></code></td>
-<td>File containing a list of SAM/BAM format files (1 per line) containing mapped reads.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-m</span></code></td>
-<td><code class="docutils literal"><span class="pre">--merge=FILE</span></code></td>
-<td>If set, merge records and calibration files to this output file.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">-t</span></code></td>
-<td><code class="docutils literal"><span class="pre">--template=SDF</span></code></td>
-<td>SDF containing the reference genome.</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">FILE+</span></code></td>
-<td>SAM/BAM format files containing mapped reads. May be specified 0 or more times.</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="6%" />
-<col width="20%" />
-<col width="74%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head" colspan="3">Sensitivity Tuning</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--bed-regions=FILE</span></code></td>
-<td>Restrict calibration to mappings falling within the supplied BED regions.</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--exclude-bed=FILE</span></code></td>
-<td>BED containing regions to exclude from calibration.</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
-<td><code class="docutils literal"><span class="pre">--exclude-vcf=FILE</span></code></td>
-<td>VCF containing sites of known variants to exclude from calibration.</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="6%" />
-<col width="20%" />
-<col width="74%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head" colspan="3">Utility</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">-f</span></code></td>
-<td><code class="docutils literal"><span class="pre">--force</span></code></td>
-<td>Force overwriting of calibration files.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">-h</span></code></td>
-<td><code class="docutils literal"><span class="pre">--help</span></code></td>
-<td>Print help on command-line flag usage.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">-T</span></code></td>
-<td><code class="docutils literal"><span class="pre">--threads=INT</span></code></td>
-<td>Number of threads (Default is the number of available cores)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Usage:</strong></p>
-<p>Use to create quality calibration files for existing SAM/BAM mapping
-files which can be used in later commands to improve results. The
-calibration file will have .calibration appended to the SAM/BAM file
-name. If the <code class="docutils literal"><span class="pre">--merge</span></code> option is used, this command can be used to
-simultaneously merge input files to a single, calibrated output file.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#snp"><span class="std std-ref">snp</span></a>,
-<a class="reference internal" href="#map"><span class="std std-ref">map</span></a>,
-<a class="reference internal" href="#cgmap"><span class="std std-ref">cgmap</span></a></p>
 </div>
 </div>
 </div>
