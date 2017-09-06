@@ -146,7 +146,7 @@ public class CountParams extends ObjectParams implements OutputDirParams, Integr
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     Exam.assertTrue(mCountDir != null);
     Exam.assertTrue(mTopN >= 1);
     Exam.assertTrue(mMinHits >= 1);

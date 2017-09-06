@@ -22,7 +22,7 @@ import com.rtg.util.integrity.IntegralAbstract;
  * Holds bucket information for GappedOutput.
  * @param <A> type of stored objects.
  */
-public class GapBuckets<A> extends IntegralAbstract {
+public final class GapBuckets<A> extends IntegralAbstract {
 
   private static final int OBJECT_BYTES = 4;
 

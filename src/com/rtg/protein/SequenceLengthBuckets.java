@@ -22,7 +22,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 /**
  * Groups length of reads into sizes that will be treated as equal for purposes of protein mapping
  */
-public class SequenceLengthBuckets {
+public final class SequenceLengthBuckets {
   Map<Long, Long> mLengthCounts = new HashMap<>();
   private final long mMinLength;
 

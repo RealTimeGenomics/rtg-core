@@ -75,7 +75,7 @@ public class Seed extends IntegralAbstract {
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     Exam.assertTrue(mMask < 0);
     Exam.assertTrue(mSize * 4 + 2 <= Integer.SIZE);
     return true;

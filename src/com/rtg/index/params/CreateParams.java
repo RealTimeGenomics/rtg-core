@@ -35,7 +35,7 @@ import com.rtg.util.integrity.Integrity;
  * class. This is required by the need to be able to compute the memory size of
  * <code>IndexImplementation</code> without actually creating it.
  */
-public class CreateParams implements Integrity {
+public final class CreateParams implements Integrity {
 
   private static final int LONG_BITS = 64;
 

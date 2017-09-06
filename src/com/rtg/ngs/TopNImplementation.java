@@ -82,7 +82,7 @@ public class TopNImplementation implements UptoNStore {
     Diagnostic.userLog(toString() + " statistics" + LS + infoString());
   }
 
-  String infoString() {
+  final String infoString() {
     final StringBuilder sb = new StringBuilder();
     sb.append("Memory Usage\tbytes\tlength").append(LS);
     long totalBytes = 0;
@@ -237,7 +237,7 @@ public class TopNImplementation implements UptoNStore {
   }
 
   @Override
-  public String toString() {
+  public final String toString() {
     return "TopNImplementation";
   }
 

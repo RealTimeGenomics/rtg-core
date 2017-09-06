@@ -40,7 +40,7 @@ public class CnvPriorParams extends ObjectParams {
   /**
    * A builder class for <code>CnvPriorParams</code>.
    */
-  public static class CnvPriorParamsBuilder {
+  public static final class CnvPriorParamsBuilder {
 
     protected int[] mCopyRangeEnds = {1, 2, 5, 10, 20, 100};
 

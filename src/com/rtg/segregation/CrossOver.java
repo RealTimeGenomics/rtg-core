@@ -18,7 +18,7 @@ import com.rtg.util.integrity.IntegralAbstract;
 
 /**
  */
-public class CrossOver extends IntegralAbstract {
+public final class CrossOver extends IntegralAbstract {
 
   private final boolean mFather;
 

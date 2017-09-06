@@ -35,7 +35,7 @@ class SurrogateGappedRegion implements SurrogateRegion {
   private int mBuildStart;
   private int mBuildEnd;
 
-  SurrogateRegion initialize(final AbstractGappedRegion<?> region, final int queryId, final Frame queryFrame) {
+  final SurrogateRegion initialize(final AbstractGappedRegion<?> region, final int queryId, final Frame queryFrame) {
     mQueryId = queryId;
     mQueryFrame = queryFrame;
     mQueryStart = region.mQueryStart;

@@ -153,7 +153,7 @@ class SearchContainer extends IntegralAbstract implements Comparable<SearchConta
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     Exam.assertTrue(Double.isFinite(mScore));
     Exam.assertNotNull(mBlock);
     Exam.assertNotNull(mPattern);

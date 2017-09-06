@@ -106,7 +106,7 @@ public class WordOutput extends AbstractPositionOutput {
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     super.integrity();
     Exam.assertTrue(mSharedVars.mUnmapped != null);
     Exam.assertTrue(mSharedVars.mScore >= 0);

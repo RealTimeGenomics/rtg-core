@@ -18,7 +18,7 @@ import com.rtg.mode.DNA;
 
 /**
 */
-class KmerIterator implements Iterator<Kmer> {
+final class KmerIterator implements Iterator<Kmer> {
 
   private final byte[] mRead;
   private int mI = 0;

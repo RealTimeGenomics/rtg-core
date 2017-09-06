@@ -95,7 +95,7 @@ public class SegregationBlock extends IntegralAbstract {
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     Exam.assertTrue(1 <= mStart);
     Exam.assertTrue(mStart <= mEnd);
     Exam.assertNotNull(mPatterns);

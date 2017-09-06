@@ -111,7 +111,7 @@ public class SignalConstantLn extends IntegralAbstract implements Signal {
   }
 
   @Override
-  public boolean globalIntegrity() {
+  public final boolean globalIntegrity() {
     integrity();
     return true;
   }

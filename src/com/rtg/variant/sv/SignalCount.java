@@ -51,7 +51,7 @@ public class SignalCount extends IntegralAbstract implements Signal {
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     Exam.assertNotNull(mRecords);
     Exam.assertTrue(mWindowLo < 0);
     Exam.assertTrue(mWindowHi > 0);

@@ -356,7 +356,7 @@ public class PatternArray extends IntegralAbstract {
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     Exam.assertNotNull(mPatterns);
     if (mSignature != null) {
       Exam.assertEquals(Pattern.NUMBER_FLIPS, mSignature.length);

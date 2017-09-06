@@ -18,8 +18,9 @@ import com.rtg.util.integrity.Exam;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
+ * Default implementation of a weighted lattice.
  */
-public class DefaultWeightedLattice extends WeightedLattice {
+public final class DefaultWeightedLattice extends WeightedLattice {
 
   private final double[] mWeights;
 

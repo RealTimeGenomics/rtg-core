@@ -59,7 +59,7 @@ class PatternDiff extends IntegralAbstract {
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     if (mNoDifference || mNoExplanation) {
       Exam.assertEquals(-1, mChild);
     }

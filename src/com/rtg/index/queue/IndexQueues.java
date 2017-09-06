@@ -61,7 +61,7 @@ public class IndexQueues extends IntegralAbstract {
     }
   }
 
-  int radixBits(final int hashBits, final int ipBits) {
+  final int radixBits(final int hashBits, final int ipBits) {
     return Math.min(hashBits, Math.min(ipBits, DEFAULT_RADIX_BITS));
   }
 

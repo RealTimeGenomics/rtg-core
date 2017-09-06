@@ -29,7 +29,6 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 /**
  * Encapsulates priors and distributions for alignments within a read group.
- *
  */
 public class ReadGroupStats {
 

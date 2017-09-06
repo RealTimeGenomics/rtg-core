@@ -17,7 +17,7 @@ import static com.rtg.util.StringUtils.LS;
 /**
  * Class for calculating means, standard deviations and other simple statistics.
  */
-public class Statistics {
+public final class Statistics {
   private long mSum;
   private long mSumSquares;
   private long mCount;

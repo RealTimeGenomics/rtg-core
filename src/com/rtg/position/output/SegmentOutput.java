@@ -183,7 +183,7 @@ public class SegmentOutput extends AbstractPositionOutput implements SegmentWrit
   }
 
   @Override
-  public boolean globalIntegrity() {
+  public final boolean globalIntegrity() {
     integrity();
     int sum = 0;
     for (int i = 0; i < mCollections.length; ++i) {
@@ -210,7 +210,7 @@ public class SegmentOutput extends AbstractPositionOutput implements SegmentWrit
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     super.integrity();
     Exam.assertTrue(mSubjectFrames != null && mNumberSFrames == mSubjectFrames.length && mNumberSFrames > 0);
     Exam.assertTrue(mOut != null);

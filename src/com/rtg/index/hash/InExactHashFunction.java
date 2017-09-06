@@ -17,8 +17,7 @@ import com.rtg.util.integrity.IntegralAbstract;
 
 /**
  */
-public class InExactHashFunction extends IntegralAbstract implements
-    HashFunction {
+public class InExactHashFunction extends IntegralAbstract implements HashFunction {
 
   /** Randomly generated arrays used to compute <code>irvineHash</code> codes */
   private static final long[] HASH_BLOCKS;
@@ -53,7 +52,7 @@ public class InExactHashFunction extends IntegralAbstract implements
   }
 
   @Override
-  public void reset() {
+  public final void reset() {
     mHash = 0L;
     mI = 0;
   }

@@ -274,7 +274,7 @@ public class IndexQueue extends IntegralAbstract implements Add {
 
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     Exam.assertTrue(mUpperBits + mLowerBits <= 64);
     Exam.assertTrue(mUpperBits < 32);
     Exam.assertEquals(mRadix, 1 << mUpperBits);

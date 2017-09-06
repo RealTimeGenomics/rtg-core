@@ -51,7 +51,7 @@ class WhichParent extends IntegralAbstract {
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     Exam.assertNotNull(mFather);
     Exam.assertNotNull(mMother);
     return true;

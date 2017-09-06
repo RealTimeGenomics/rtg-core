@@ -27,7 +27,7 @@ class SurrogateGappedScoreLongRead implements SurrogateRegion {
   private double mScore;
   private double mScoreThreshold;
 
-  SurrogateRegion initialize(final GappedScoreLongRead region, final int queryId, final Frame queryFrame, final double endCorr) {
+  final SurrogateRegion initialize(final GappedScoreLongRead region, final int queryId, final Frame queryFrame, final double endCorr) {
     mQueryId = queryId;
     final double score = region.score();
     //System.err.println("score=" + score + "  endCorr=" + endCorr);

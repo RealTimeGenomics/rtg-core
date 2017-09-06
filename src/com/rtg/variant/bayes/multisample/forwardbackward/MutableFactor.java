@@ -22,7 +22,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 /**
  * @param <D> description
  */
-public class MutableFactor<D extends Description> extends AbstractFactor<D> {
+public final class MutableFactor<D extends Description> extends AbstractFactor<D> {
 
   private final double[] mValues;
 

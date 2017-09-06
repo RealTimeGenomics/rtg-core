@@ -135,7 +135,7 @@ public class ProteinMask extends ImplementHashFunction {
 
 
   @Override
-  protected void setHashFunction() {
+  protected final void setHashFunction() {
     super.setHashFunction();
     setMasks();
   }
@@ -261,7 +261,7 @@ public class ProteinMask extends ImplementHashFunction {
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     super.integrity();
     Exam.assertTrue(mNumberMasks > 0);
     Exam.assertTrue(mReadMasks != null && mReadMasks.length == mNumberMasks);

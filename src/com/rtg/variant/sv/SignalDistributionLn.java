@@ -88,7 +88,7 @@ public class SignalDistributionLn extends IntegralAbstract implements Signal {
   }
 
   @Override
-  public boolean globalIntegrity() {
+  public final boolean globalIntegrity() {
     integrity();
     mDistributionLn.globalIntegrity();
     return true;

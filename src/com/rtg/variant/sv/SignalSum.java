@@ -85,7 +85,7 @@ public class SignalSum extends IntegralAbstract implements Signal {
   }
 
   @Override
-  public boolean globalIntegrity() {
+  public final boolean globalIntegrity() {
     integrity();
     for (Signal mSignal : mSignals) {
       Exam.globalIntegrity(mSignal);

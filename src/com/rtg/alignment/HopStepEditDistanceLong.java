@@ -536,7 +536,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     Exam.assertTrue(0 <= mNumSeeds && mNumSeeds < mSeeds.length);
     Exam.assertEquals(mRead != null, mNumSeeds > 0);
     if (mNumSeeds > 0) {

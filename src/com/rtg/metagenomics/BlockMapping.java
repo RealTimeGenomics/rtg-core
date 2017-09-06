@@ -213,7 +213,7 @@ public class BlockMapping extends IntegralAbstract {
   }
 
   @Override
-  public boolean globalIntegrity() {
+  public final boolean globalIntegrity() {
     for (int i = 0; i < mA.length; ++i) {
       Exam.assertTrue(mA[i] <= i);
       Exam.assertTrue(mA[i] == -1 || mA[mA[i]] == mA[i]);

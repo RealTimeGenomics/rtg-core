@@ -30,9 +30,8 @@ import com.rtg.vcf.header.VcfHeader;
 /**
  * Generates a rescaled GQ and QUAL scores based on GT value and whether call is simple or complex.
  * This model ignores the field setting as it updates the GQ and QUAL values.
- *
  */
-public class GtQualComplexMultiplierModel extends AbstractPredictModel {
+public final class GtQualComplexMultiplierModel extends AbstractPredictModel {
 
   private static final String PROP_MULTIPLIER_GQ_SIMPLE_HOMOZYGOUS = "multiplier.gq.simple.homozygous";
   private static final String PROP_MULTIPLIER_GQ_SIMPLE_HETEROZYGOUS = "multiplier.gq.simple.heterozygous";
