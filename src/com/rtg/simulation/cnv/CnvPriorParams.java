@@ -42,15 +42,15 @@ public class CnvPriorParams extends ObjectParams {
    */
   public static final class CnvPriorParamsBuilder {
 
-    protected int[] mCopyRangeEnds = {1, 2, 5, 10, 20, 100};
+    private int[] mCopyRangeEnds = {1, 2, 5, 10, 20, 100};
 
-    protected double[][] mCopyNumberDistribution;
+    private double[][] mCopyNumberDistribution;
 
-    protected double[] mPowerLengthDistribution;
+    private double[] mPowerLengthDistribution;
 
-    protected double mProbDeletedOnOneStrand;
+    private double mProbDeletedOnOneStrand;
 
-    protected double mProbDeletedOnBothStrands;
+    private double mProbDeletedOnBothStrands;
     private static final String[] MAGNITUTE_STR = {"1", "2", "3", "4", "5", "6", "7", "8"};
 
     /**
