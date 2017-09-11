@@ -542,9 +542,8 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
 
     @Override
     public int hashCode() {
-      int result = (int) (mChunkStart ^ (mChunkStart >>> 32));
-      result = 31 * result + (int) (mChunkEnd ^ (mChunkEnd >>> 32));
-      return result;
+      final int result = (int) (mChunkStart ^ (mChunkStart >>> 32));
+      return 31 * result + (int) (mChunkEnd ^ (mChunkEnd >>> 32));
     }
 
     @Override

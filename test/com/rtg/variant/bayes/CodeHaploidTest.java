@@ -49,7 +49,7 @@ public class CodeHaploidTest extends TestCase {
       tc.code(-1);
       fail();
     } catch (final IllegalArgumentException e) {
-      assertEquals("-1", e.getMessage());
+      assertEquals("a=-1", e.getMessage());
     }
     try {
       tc.code(1, 2);

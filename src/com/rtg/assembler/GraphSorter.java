@@ -78,9 +78,8 @@ final class GraphSorter {
 
     @Override
     public int hashCode() {
-      int result = (int) (mOriginalId ^ (mOriginalId >>> 32));
-      result = 31 * result + (mContig != null ? mContig.hashCode() : 0);
-      return result;
+      final int result = (int) (mOriginalId ^ (mOriginalId >>> 32));
+      return 31 * result + (mContig != null ? mContig.hashCode() : 0);
     }
 
     @Override

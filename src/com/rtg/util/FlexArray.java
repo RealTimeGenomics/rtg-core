@@ -74,11 +74,10 @@ public class FlexArray<T> {
    * @param a array of same type to place the value in, if not the right length then a new one will be used instead
    * @return the array the values were copied to.
    */
+  @SuppressWarnings("unchecked")
   public T[] toArray(T[] a) {
     if (a.length != mSize) {
-      @SuppressWarnings("unchecked")
-      final T[] copy = (T[]) Arrays.copyOf(mList, mSize, a.getClass());
-      return copy;
+      return (T[]) Arrays.copyOf(mList, mSize, a.getClass());
     }
     System.arraycopy(mList, 0, a, 0, mSize);
     return a;

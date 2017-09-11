@@ -52,9 +52,6 @@ public abstract class AbstractPredictModel implements VcfAnnotator {
   @Override
   public abstract void updateHeader(VcfHeader header);
 
-  @Override
-  public abstract String toString();
-
   /**
    * Returns a summary report about the predictions that have been made.
    * @return a report

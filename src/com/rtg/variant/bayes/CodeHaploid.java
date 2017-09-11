@@ -63,7 +63,7 @@ public class CodeHaploid implements Code {
   @Override
   public int code(int a) {
     if (!valid(a)) {
-      throw new IllegalArgumentException("" + a);
+      throw new IllegalArgumentException("a=" + a);
     }
     return a;
   }
