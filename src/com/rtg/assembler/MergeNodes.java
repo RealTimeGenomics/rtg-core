@@ -65,7 +65,7 @@ public class MergeNodes {
           }
         }
         if (total > 0) {
-          graph.setContigAttribute(newId, attr, "" + total);
+          graph.setContigAttribute(newId, attr, String.valueOf(total));
         }
       } else if (graph.contigAttribute(newId, attr) == null) {
         for (long existingId : mergedIds) {
@@ -108,7 +108,7 @@ public class MergeNodes {
             } else if (graph.pathAttributes().containsKey(GraphKmerAttribute.READ_COUNT)) {
               final int newCount = GraphMap.existingReadCount(graph, matchingPath) + GraphMap.existingReadCount(graph, pathId);
               if (newCount > 0) {
-                graph.setPathAttribute(matchingPath, GraphKmerAttribute.READ_COUNT, "" + newCount);
+                graph.setPathAttribute(matchingPath, GraphKmerAttribute.READ_COUNT, String.valueOf(newCount));
 
               }
             }

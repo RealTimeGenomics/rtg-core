@@ -77,7 +77,7 @@ public final class RecoverLinks {
       }
       final long newContig = graph.addContig(new ContigByte(contigBytes));
       final long newPath = graph.addPath(new PathArray(constraint.mContigA, newContig, -constraint.mContigB));
-      final String readCount = "" + constraint.mConstraint.size();
+      final String readCount = String.valueOf(constraint.mConstraint.size());
       if (graph.pathAttributes().containsKey(GraphKmerAttribute.READ_COUNT)) {
         graph.setPathAttribute(newPath, GraphKmerAttribute.READ_COUNT, readCount);
       }

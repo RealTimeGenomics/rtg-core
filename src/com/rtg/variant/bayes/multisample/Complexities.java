@@ -450,7 +450,7 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
       final ComplexRegion cr0 = it.next();
       Exam.assertFalse(cr0.type() == ComplexRegion.RegionType.INTERESTING);
       int lastEndPosition = cr0.getEnd();
-      Exam.assertTrue("" + lastEndPosition + ":" + mStartOfChunk, lastEndPosition == mStartOfChunk || cr0.getStart() >= mStartOfChunk);
+      Exam.assertTrue(lastEndPosition + ":" + mStartOfChunk, lastEndPosition == mStartOfChunk || cr0.getStart() >= mStartOfChunk);
       while (it.hasNext()) {
         final ComplexRegion cr = it.next();
         Exam.assertTrue(cr.getStart() >= lastEndPosition + mInterestingSeparation);

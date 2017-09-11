@@ -314,14 +314,14 @@ public class MetaSnpCli extends LoggedCli {
         }
         final VcfRecord record = new VcfRecord(line.getSequence(), line.getPosition(), line.getReferenceAllele());
         final double phred = PosteriorUtils.phredIfy(arith.poss2Ln(res.mAssignments.get(i).mLikelihood));
-        record.setInfo("LIKE", "" + Utils.realFormat(phred, 3));
+        record.setInfo("LIKE", Utils.realFormat(phred, 3));
         record.setNumberOfSamples(assignments.length);
         for (int alt = 1; alt < alts.size(); ++alt) {
           record.addAltCall(line.mAlleles[alts.get(alt)]);
         }
         final StringBuilder syndrome = new StringBuilder();
         for (int assignment : assignments) {
-          record.addFormatAndSample(VcfUtils.FORMAT_GENOTYPE, "" + alts.indexOf(assignment));
+          record.addFormatAndSample(VcfUtils.FORMAT_GENOTYPE, String.valueOf(alts.indexOf(assignment)));
           syndrome.append(alts.indexOf(assignment) == 0 ? '0' : '1');
         }
         record.setInfo("SYNDROME", syndrome.toString());

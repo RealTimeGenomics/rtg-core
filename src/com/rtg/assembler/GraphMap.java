@@ -312,7 +312,7 @@ public class GraphMap {
         }
       }
       if (count > 0) {
-        graph.setContigAttribute(i, GraphKmerAttribute.READ_COUNT, "" + count);
+        graph.setContigAttribute(i, GraphKmerAttribute.READ_COUNT, String.valueOf(count));
       }
     }
     for (long i = 1; i < graph.numberPaths() + 1; ++i) {
@@ -329,7 +329,7 @@ public class GraphMap {
         }
       }
       if (count > 0) {
-        graph.setPathAttribute(i, GraphKmerAttribute.READ_COUNT, "" + count);
+        graph.setPathAttribute(i, GraphKmerAttribute.READ_COUNT, String.valueOf(count));
       }
     }
   }

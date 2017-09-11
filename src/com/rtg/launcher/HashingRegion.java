@@ -549,7 +549,7 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
     if (this.equals(HashingRegion.NONE)) {
       final long maxLength = reader.maxLength();
       if (maxLength >= Integer.MAX_VALUE) {
-        Diagnostic.error(ErrorType.SEQUENCE_TOO_LONG, maxLength + "");
+        Diagnostic.error(ErrorType.SEQUENCE_TOO_LONG, String.valueOf(maxLength));
         throw new SlimException();
       }
       return maxLength;

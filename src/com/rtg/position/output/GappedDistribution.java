@@ -294,15 +294,15 @@ public class GappedDistribution extends IntegralAbstract {
   public static void main(final String[] args) {
     final int step = Integer.parseInt(args[0]);
     if (step < 1) {
-      throw new IllegalArgumentException(step + "");
+      throw new IllegalArgumentException("step=" + step);
     }
     final int word = Integer.parseInt(args[1]);
     if (word < 1) {
-      throw new IllegalArgumentException(word + "");
+      throw new IllegalArgumentException("word=" + word);
     }
     final int mult = Integer.parseInt(args[2]);
     if (mult < 1) {
-      throw new IllegalArgumentException(mult + "");
+      throw new IllegalArgumentException("mult=" + mult);
     }
     final GappedDistribution gd = new GappedDistribution(step, word, distrParams(mult));
     System.out.print(gd.toString());

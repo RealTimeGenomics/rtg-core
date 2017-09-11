@@ -131,24 +131,24 @@ public class SegmentVcfOutputFormatter {
       }
     }
 
-    rec.setInfo(INFO_END, "" + (current.getEnd() + 1));
+    rec.setInfo(INFO_END, String.valueOf(current.getEnd() + 1));
     rec.setInfo(INFO_IMPRECISE);
     // For CIPOS and CIEND, we extend outward to the closest neighboring segment boundary (or the edge of the reference sequence)
     // For the inward side, we go to half of the bin length
     // Thus the extended CI span of one segment will overlap that of the next.
     final int pend = prev == null ? 0 : prev.getEnd();
-    final String cipos = "" + (pend - current.getStart())
+    final String cipos = (pend - current.getStart())
       + ","
       + (current.firstBinLength() / 2);
     rec.setInfo(INFO_CIPOS, cipos);
 
     final int nstart = next == null ? mCurrentSequenceLength : next.getStart();
-    final String ciend = "" + (-current.lastBinLength() / 2)
+    final String ciend = (-current.lastBinLength() / 2)
       + ","
       + (nstart - current.getEnd());
     rec.setInfo(INFO_CIEND, ciend);
 
-    rec.setInfo(INFO_BC, "" + current.bins());
+    rec.setInfo(INFO_BC, String.valueOf(current.bins()));
 
     rec.setNumberOfSamples(1);
     rec.addFormatAndSample(FORMAT_GENOTYPE, altered ? "1" : "0");

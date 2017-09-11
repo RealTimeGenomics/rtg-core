@@ -99,7 +99,7 @@ public final class SpeciesSdfSubset extends LoggedCli {
 
   private void getSequence(long seqid) throws IOException {
     if ((seqid < 0) || (seqid >= mReader.numberSequences())) {
-      warnInvalidId("" + seqid);
+      warnInvalidId(String.valueOf(seqid));
       return;
     }
     final int length = mReader.maxLength();

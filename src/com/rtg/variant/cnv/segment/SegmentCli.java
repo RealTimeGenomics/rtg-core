@@ -402,9 +402,9 @@ public class SegmentCli extends LoggedCli {
     final TextTable summary = new TextTable(1, 0, TextTable.Align.RIGHT);
 
     summary.setAlignment(TextTable.Align.LEFT);
-    summary.addRow("Total Segments:", "" + mStatusCounts.totalCount());
-    summary.addRow("Deletions:", "" + mStatusCounts.get(CnaType.DEL));
-    summary.addRow("Duplications:", "" + mStatusCounts.get(CnaType.DUP));
+    summary.addRow("Total Segments:", String.valueOf(mStatusCounts.totalCount()));
+    summary.addRow("Deletions:", String.valueOf(mStatusCounts.get(CnaType.DEL)));
+    summary.addRow("Duplications:", String.valueOf(mStatusCounts.get(CnaType.DUP)));
 
     Diagnostic.userLog("SEGMENTATION SUMMARY");
     Diagnostic.userLog(summary.toString());

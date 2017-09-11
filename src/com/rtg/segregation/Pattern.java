@@ -135,7 +135,7 @@ public class Pattern extends IntegralAbstract {
       case 'X':
         return null;
       default:
-        throw new RuntimeException("" + mo);
+        throw new RuntimeException("mo=" + mo);
     }
     final int fai;
     switch (fa) {
@@ -151,7 +151,7 @@ public class Pattern extends IntegralAbstract {
       case 'X':
         return null;
       default:
-        throw new RuntimeException("" + fa);
+        throw new RuntimeException("fa=" + fa);
     }
     return pattern(moi & fai);
   }

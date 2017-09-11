@@ -56,7 +56,7 @@ public final class CorrectReads {
             }
 //            System.err.println(DnaUtils.bytesToSequenceIncCG(fragment) + " -> " + DnaUtils.bytesToSequenceIncCG(result));
             final SdfWriter writer = outputs.get(i);
-            writer.startSequence("" + readId);
+            writer.startSequence(String.valueOf(readId));
             writer.write(result, null, result.length);
             writer.endSequence();
           }
@@ -120,7 +120,7 @@ public final class CorrectReads {
       outputNames.add("right");
     } else {
       for (int i = 0; i < source.numberFragments(); ++i) {
-        outputNames.add("" + i);
+        outputNames.add(String.valueOf(i));
       }
     }
     final List<SdfWriter> outputs = new ArrayList<>(source.numberFragments());

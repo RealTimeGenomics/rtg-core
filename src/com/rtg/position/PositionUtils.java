@@ -141,7 +141,7 @@ public final class PositionUtils {
    */
   public static byte[] makeBuffer(final long maxSequence) {
     if (maxSequence > Integer.MAX_VALUE) {
-      Diagnostic.error(ErrorType.SEQUENCE_TOO_LONG, maxSequence + "");
+      Diagnostic.error(ErrorType.SEQUENCE_TOO_LONG, String.valueOf(maxSequence));
       throw new SlimException();
     }
     return new byte[(int) maxSequence];

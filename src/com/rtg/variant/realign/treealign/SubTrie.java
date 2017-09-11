@@ -101,7 +101,7 @@ class SubTrie extends IntegralAbstract {
     if (!mFrozen) {
       Exam.assertTrue(Double.isNaN(mStopProbability));
     } else {
-      Exam.assertTrue("" + mStopProbability, 0.0 < mStopProbability && mStopProbability <= 1.0 && !Double.isNaN(mStopProbability));
+      Exam.assertTrue(0.0 < mStopProbability && mStopProbability <= 1.0 && !Double.isNaN(mStopProbability));
     }
     return true;
   }

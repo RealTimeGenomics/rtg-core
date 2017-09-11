@@ -279,7 +279,7 @@ public final class Skeleton extends IntegralAbstract {
     Exam.assertTrue(mIndels >= 0 && mIndels <= mSubstitutions);
     Exam.assertTrue(mIndelLength >= 1);
 
-    Exam.assertTrue("" + mWindowLengthActual + this.toString(), mWindowLengthActual > 0 && mWindowLengthActual <= 32);
+    Exam.assertTrue(mWindowLengthActual + this.toString(), mWindowLengthActual > 0 && mWindowLengthActual <= 32);
     Exam.assertTrue(mWindowLengthActual <= mReadLength);
     Exam.assertTrue(mWindowLengthActual >= mWindowLength);
     Exam.assertTrue(mChunkLength > 0);

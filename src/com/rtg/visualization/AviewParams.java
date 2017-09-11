@@ -147,7 +147,7 @@ class AviewParams {
         }
         final int variance = (Integer) flags.getValue(XMAPPING_TOLERANCE);
         if (variance < 0) {
-          Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + XMAPPING_TOLERANCE, variance + "", "0");
+          Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + XMAPPING_TOLERANCE, String.valueOf(variance), "0");
           return false;
         }
         return true;

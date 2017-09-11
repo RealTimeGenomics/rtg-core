@@ -153,7 +153,7 @@ public class DwgsimReadNameParser implements SimulatedReadNameParser {
 
   @Override
   public String readName() {
-    return "" + mReadNum;
+    return String.valueOf(mReadNum);
   }
 
   @Override

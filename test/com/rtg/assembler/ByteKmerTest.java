@@ -92,13 +92,13 @@ public class ByteKmerTest extends AbstractKmerTest {
       ByteKmer.getPos(bs, -1);
       fail();
     } catch (final Exception e) {
-      assertEquals("-1", e.getMessage());
+      assertEquals("pos=-1", e.getMessage());
     }
     try {
       ByteKmer.getPos(bs, 12);
       fail();
     } catch (final Exception e) {
-      assertEquals("12", e.getMessage());
+      assertEquals("pos=12", e.getMessage());
     }
   }
 
@@ -108,13 +108,13 @@ public class ByteKmerTest extends AbstractKmerTest {
       ByteKmer.setPos(bs, -1, 0);
       fail();
     } catch (final Exception e) {
-      assertEquals("-1", e.getMessage());
+      assertEquals("pos=-1", e.getMessage());
     }
     try {
       ByteKmer.setPos(bs, 12, 0);
       fail();
     } catch (final Exception e) {
-      assertEquals("12", e.getMessage());
+      assertEquals("pos=12", e.getMessage());
     }
   }
 }

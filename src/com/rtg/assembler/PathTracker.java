@@ -114,16 +114,12 @@ public class PathTracker {
       for (Map.Entry<List<Long>, Integer> entry : tracker.mPathCounts.entrySet()) {
         final List<Long> path = entry.getKey();
         final Integer count = entry.getValue();
-        final Integer existing = sorted.get(path);
-        if (existing == null) {
-          sorted.put(path, count);
-        } else {
-          sorted.put(path, count + existing);
-        }
+        sorted.merge(path, count, (a, b) -> b + a);
       }
     }
     return sorted;
   }
+
   static int apply(SortedMap<List<Long>, Integer> merged, MutableGraph graph) {
     int totalReadsAdded = 0;
     for (Map.Entry<List<Long>, Integer> entry: merged.entrySet()) {
@@ -138,7 +134,7 @@ public class PathTracker {
       }
       final int trackedReads = entry.getValue();
       count += trackedReads;
-      graph.setPathAttribute(absId, GraphKmerAttribute.READ_COUNT, "" + count);
+      graph.setPathAttribute(absId, GraphKmerAttribute.READ_COUNT, String.valueOf(count));
       totalReadsAdded += trackedReads;
     }
     return totalReadsAdded;

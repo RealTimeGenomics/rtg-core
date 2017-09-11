@@ -148,7 +148,7 @@ class RegionIterator extends IntegralAbstract {
       return;
     }
     //bed is zero based and vcf is 1 based
-    mBed.write(new BedRecord(mSeq, mStart, end, mPa.faString(), mPa.moString(), mStartType.bedCode(), "" + mFaLevel, "" + mMoLevel));
+    mBed.write(new BedRecord(mSeq, mStart, end, mPa.faString(), mPa.moString(), mStartType.bedCode(), String.valueOf(mFaLevel), String.valueOf(mMoLevel)));
   }
 
   private boolean isXLike() {

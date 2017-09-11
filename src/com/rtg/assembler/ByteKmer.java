@@ -103,7 +103,7 @@ public class ByteKmer extends AbstractKmer {
    */
   static void setPos(byte[] b, int pos, int val) {
     if (pos < 0 || b.length * CHARS_PER_BYTE <= pos) {
-      throw new RuntimeException("" + pos);
+      throw new RuntimeException("pos=" + pos);
     }
     final int byteIndex = pos / CHARS_PER_BYTE;
     final int bitPos = pos % CHARS_PER_BYTE;
@@ -136,7 +136,7 @@ public class ByteKmer extends AbstractKmer {
    */
   static int getPos(byte[] b, int pos) {
     if (pos < 0 || b.length * CHARS_PER_BYTE <= pos) {
-      throw new RuntimeException("" + pos);
+      throw new RuntimeException("pos=" + pos);
     }
     final int byteIndex = pos / CHARS_PER_BYTE;
     final int bitPos = pos % CHARS_PER_BYTE;

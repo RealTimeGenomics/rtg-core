@@ -71,7 +71,7 @@ public class DefaultWeightedLatticeTest extends TestCase {
       new DefaultWeightedLattice(arith, new BitSet(names), longTest);
       fail();
     } catch (final IllegalArgumentException e) {
-      assertEquals("32", e.getMessage());
+      assertEquals("length=32", e.getMessage());
     }
   }
 }

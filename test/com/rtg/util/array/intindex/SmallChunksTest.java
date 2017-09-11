@@ -11,8 +11,6 @@
  */
 package com.rtg.util.array.intindex;
 
-
-
 /**
  * Test Chunks
  */

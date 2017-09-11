@@ -166,7 +166,7 @@ public class CombinedReport {
        resultsFile = new File(mapx, ProteinOutputProcessor.TABULAR_ALIGNMENTS + FileUtils.GZ_SUFFIX);
       }
 
-      final String fileNameCounter = mapxDirs.size() > 1 ? "" + resultId : "";
+      final String fileNameCounter = mapxDirs.size() > 1 ? String.valueOf(resultId) : "";
       final String fileNameSuffix = fileNameCounter + ".tsv" + (isGzip ? ".gz" : "");
       if (!resultsFile.exists()) {
         sb.append(reportSummary(mapx, "Translated search report", "mapxReport" + fileNameCounter, "Mapping summary", null, null, null));

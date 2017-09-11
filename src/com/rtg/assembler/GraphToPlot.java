@@ -85,7 +85,7 @@ public final class GraphToPlot extends LoggedCli {
 
     public String output(long id) {
       final StringBuilder sb = new StringBuilder();
-      final String coverageString = mCoverage == -1 ? "" : "" + mCoverage;
+      final String coverageString = mCoverage == -1 ? "" : String.valueOf(mCoverage);
       final String label = String.format("%s%,d\\n%,d   %s", mContigId > 0 ? "+" : "", mContigId, mLength, coverageString);
       //final String label = (nodeId > 0 ? "+" : "") + nodeId + "\\n" + String.format("%,d", length) + "   " + coverage;
       sb.append("node").append(id).append(" [label=\"").append(label).append("\"");

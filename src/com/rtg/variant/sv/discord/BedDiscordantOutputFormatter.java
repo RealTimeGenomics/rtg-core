@@ -36,7 +36,7 @@ public class BedDiscordantOutputFormatter {
     //Use Math.max(x, 0) to truncate records that go before the start of the reference
     final DiscordBedRecord record = new DiscordBedRecord(readset.getSequenceName(), Math.max(pos.lo(), 0), Math.max(pos.hi(), 0),
         "remote:" + geo.getYName() + ":" + Math.max(pos2.lo(), 0) + "-" + Math.max(pos2.hi(), 0), // Name
-        "" + readset.getCounts()); // Score
+        String.valueOf(readset.getCounts())); // Score
     if (readset.getIntersection() == null) {
       record.setFiltered();
     }

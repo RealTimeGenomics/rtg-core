@@ -427,7 +427,7 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
       Exam.assertTrue(mSRBits >= 0);
       Exam.assertTrue(mHashCount1 <= mBucketCount1); //bucket counts are made before compaction
       Exam.assertTrue(0 <= mHashCount0 && mHashCount0 <= mHashCount1 && mHashCount1 <= mHashCount2);
-      Exam.assertTrue("" + mBucketCount0 + ":" + mBucketCount1 + ":" + mBucketCount2, 0 <= mBucketCount0 && mBucketCount0 <= mBucketCount1 && mBucketCount1 <= mBucketCount2);
+      Exam.assertTrue(mBucketCount0 + ":" + mBucketCount1 + ":" + mBucketCount2, 0 <= mBucketCount0 && mBucketCount0 <= mBucketCount1 && mBucketCount1 <= mBucketCount2);
       return true;
     } else {
       //testing before freezing, hash array will be unsorted

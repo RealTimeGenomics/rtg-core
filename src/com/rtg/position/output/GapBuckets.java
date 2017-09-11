@@ -175,7 +175,7 @@ public final class GapBuckets<A> extends IntegralAbstract {
     Exam.assertNotNull(mBuckets);
     if (mBuckets != null) {
       if (mInfo.numberSeqIds() == 0) {
-        Exam.assertTrue("" + mBuckets.length(), mBuckets.length() == 1);
+        Exam.assertTrue("length=" + mBuckets.length(), mBuckets.length() == 1);
       } else {
         final boolean check = mInfo.lastBucket(numberSeqIds() - 1) == mInfo.total() - 1;
         Exam.assertTrue(this.toString(), check);

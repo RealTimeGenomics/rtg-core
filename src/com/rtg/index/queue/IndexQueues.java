@@ -48,7 +48,7 @@ public class IndexQueues extends IntegralAbstract {
    */
   public IndexQueues(final int numberThreads, final int hashBits, final long size, final int valueBits, final int ipBits) {
     if (numberThreads < 1) {
-      throw new IllegalArgumentException("" + numberThreads);
+      throw new IllegalArgumentException("threads=" + numberThreads);
     }
     mNumberThreads = numberThreads;
     mRadixSize = (size + numberThreads - 1) / numberThreads;

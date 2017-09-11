@@ -374,14 +374,14 @@ public final class Aview extends AbstractCli {
     final int digits = (int) (Math.log(ref.length()) / Math.log(10)) + 1;
     final StringBuffer[] posStrs = new StringBuffer[digits];
     final char[] lastCol = new char[digits];
-    final String initPos = "" + (mModel.oneBasedStart() - 1);
+    final String initPos = String.valueOf(mModel.oneBasedStart() - 1);
     for (int i = 0; i < digits; ++i) {
       posStrs[i] = new StringBuffer();
       final int j = initPos.length() - i - 1;
       lastCol[i] = (j >= 0) ? initPos.charAt(j) : ' ';
     }
     for (int i = mModel.oneBasedStart(); i < mModel.oneBasedStart() + ref.length(); ++i) {
-      final String pos = "" + i;
+      final String pos = String.valueOf(i);
       for (int d = 0; d < digits; ++d) {
         final int j = pos.length() - d - 1;
         final char c = (j >= 0) ? pos.charAt(j) : ' ';

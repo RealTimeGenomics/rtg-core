@@ -248,7 +248,7 @@ public class HomoPolymerParams extends IntegralAbstract {
         }
         if (mTransitions[nt][t].length > 0) {
           final double tp = mArithmetic.poss2Prob(total);
-          Exam.assertTrue("" + tp, MathUtils.approxEquals(tp, 1.0, 0.000001));
+          Exam.assertTrue("tp=" + tp, MathUtils.approxEquals(tp, 1.0, 0.000001));
         }
       }
     }

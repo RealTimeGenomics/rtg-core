@@ -333,7 +333,7 @@ public final class CreateParams implements Integrity {
    * calling the overridden integrity method in the child classes.
    */
   private boolean localIntegrity() {
-    Exam.assertTrue("" + size(), size() >= 0);
+    Exam.assertTrue(size() >= 0);
     Exam.assertTrue(hashBits() >= 1); // && hashBits() <= LONG_BITS);
     //Exam.assertTrue(hashCompressedBits() <= LONG_BITS);
     if (windowBits() <= LONG_BITS) {

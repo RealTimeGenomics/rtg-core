@@ -89,7 +89,7 @@ public class GraphMapStatistics extends AbstractStatistics {
   protected String getStatistics() {
     int formatLength = 0;
     for (Stat s : Stat.values()) {
-      formatLength = Math.max(formatLength, (mMap.get(s).getCount() + "").length());
+      formatLength = Math.max(formatLength, String.valueOf(mMap.get(s).getCount()).length());
     }
     final StringBuilder sb = new StringBuilder();
     for (Stat s : Stat.values()) {

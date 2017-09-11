@@ -72,7 +72,7 @@ public enum VcfFormatField {
             }
           } else if (ploidy == Ploidy.HAPLOID) {
             final int gtnum = addAltAllele(name, ref, previousNt, rec);
-            rec.addFormatAndSample(name(), "" + gtnum);
+            rec.addFormatAndSample(name(), String.valueOf(gtnum));
           } else {
             final String[] cats = StringUtils.split(name, VariantUtils.COLON);
             assert cats.length == 2 : "Unexpected number of cats: " + cats.length + " " + name;
@@ -112,7 +112,7 @@ public enum VcfFormatField {
           final String ref = call.getLocus().getRefNts();
           final Character previousNt = includePrevNt ? call.getLocus().getPreviousRefNt() : null;
           final int gtnum = addAltAllele(name, ref, previousNt, rec);
-          rec.addFormatAndSample(name(), "" + gtnum);
+          rec.addFormatAndSample(name(), String.valueOf(gtnum));
         }
       }
     }
@@ -129,7 +129,7 @@ public enum VcfFormatField {
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      rec.addFormatAndSample(name(), "" + sample.getCoverage());
+      rec.addFormatAndSample(name(), String.valueOf(sample.getCoverage()));
     }
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {

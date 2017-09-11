@@ -580,7 +580,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
     for (long l = 0; l < pathLength - 1; ++l) {
       final long path = mPath.get(l);
       final long back = absContig(mPathIndex.get(path));
-      Exam.assertEquals("" + l, l + 1, back);
+      Exam.assertEquals(l + 1, back);
       final long offset = mPathIndexOffset.get(path);
       Exam.assertEquals(0, offset);
     }

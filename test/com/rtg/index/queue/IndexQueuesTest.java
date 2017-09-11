@@ -105,7 +105,7 @@ public class IndexQueuesTest extends TestCase {
     try {
       new IndexQueues(0, 13, 10, 0, 2);
     } catch (final RuntimeException e) {
-      assertEquals("0", e.getMessage());
+      assertEquals("threads=0", e.getMessage());
     }
   }
 

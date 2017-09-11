@@ -94,8 +94,7 @@ public abstract class Distribution extends IntegralAbstract {
 
   @Override
   public boolean integrity() {
-    //System.err.println(mLo + ":" + mHi);
-    Exam.assertTrue("" + mLo, mLo < 0);
+    Exam.assertTrue(mLo < 0);
     Exam.assertTrue(mHi > 0);
     return true;
   }
@@ -105,7 +104,7 @@ public abstract class Distribution extends IntegralAbstract {
     integrity();
     for (int i = lo(); i < hi(); ++i) {
       final double v = getValue(i);
-      Exam.assertTrue("" + v, Double.isFinite(v));
+      Exam.assertTrue(Double.isFinite(v));
     }
     return true;
   }

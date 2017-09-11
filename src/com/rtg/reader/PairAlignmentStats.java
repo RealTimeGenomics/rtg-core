@@ -72,6 +72,6 @@ class PairAlignmentStats {
   }
 
   private String perc(int num, int total) {
-    return "" + Utils.realFormat(100.0 * num / total, 2) + "%";
+    return Utils.realFormat(100.0 * num / total, 2) + "%";
   }
 }

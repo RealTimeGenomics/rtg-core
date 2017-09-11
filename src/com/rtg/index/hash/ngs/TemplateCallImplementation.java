@@ -135,11 +135,9 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
     Exam.assertTrue(mTemplateId >= 0);
     Exam.assertTrue(mTemplateLength >= 0);
     Exam.assertTrue(mEndPosition >= 0);
-    //assertTrue(mHashFunction != null);
     Exam.assertTrue(mNumberReads >= 0);
     Exam.assertTrue(mIndexes != null && mIndexes.size() > 0);
-    Exam.assertTrue(mErrorLimit + "", mErrorLimit >= 0);
-//    Assert.assertTrue(mOutputProcessor != null);
+    Exam.assertTrue(mErrorLimit >= 0);
     Exam.assertTrue(mHit != null);
     return true;
   }
@@ -166,7 +164,6 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
   @Override
   public void setHashFunction(final NgsHashFunction hashFunction) {
     mHashFunction = hashFunction;
-    //System.err.println(mHashFunction);
     mIS = null;
   }
 

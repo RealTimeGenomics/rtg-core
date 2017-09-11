@@ -252,7 +252,7 @@ public final class TaxStatsCli extends AbstractCli {
       total += count;
       final int lCount = mRankLeafCounts.get(rank);
       totalLeaf += lCount;
-      rtable.addRow("" + rank, String.valueOf(count - lCount), String.valueOf(lCount), "" + count);
+      rtable.addRow(String.valueOf(rank), String.valueOf(count - lCount), String.valueOf(lCount), String.valueOf(count));
     }
     rtable.addRow("TOTAL", String.valueOf(total - totalLeaf), String.valueOf(totalLeaf), String.valueOf(total));
     out.println(rtable.toString());

@@ -39,7 +39,7 @@ public final class DefaultWeightedLattice extends WeightedLattice {
 
     final int length = bitSet.length();
     if (length > 31) {
-      throw new IllegalArgumentException("" + length);
+      throw new IllegalArgumentException("length=" + length);
     }
     mWeights = new double[1 << length];
     Arrays.fill(mWeights, arith.zero());

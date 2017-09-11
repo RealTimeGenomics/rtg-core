@@ -144,7 +144,7 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
       }
       final IntegerOrPercentage maxMatedScore = (IntegerOrPercentage) flags.getValue(MISMATCHES);
       if (maxMatedScore.getValue(100) < 0) {
-        Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + MISMATCHES, maxMatedScore + "", "0");
+        Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + MISMATCHES, String.valueOf(maxMatedScore), "0");
         return false;
       }
       if (flags.isSet(MAX_INSERT) ^ flags.isSet(MIN_INSERT)) {

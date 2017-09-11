@@ -143,7 +143,7 @@ public abstract class HashLoop {
   public static byte[] makeBuffer(SequencesReader reader) {
     final long maxLength = reader.maxLength();
     if (maxLength >= Integer.MAX_VALUE) {
-      Diagnostic.error(ErrorType.SEQUENCE_TOO_LONG, maxLength + "");
+      Diagnostic.error(ErrorType.SEQUENCE_TOO_LONG, String.valueOf(maxLength));
       throw new SlimException();
     }
     return new byte[(int) maxLength];

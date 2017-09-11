@@ -114,7 +114,7 @@ public class SamAssistanceCgLegacy implements SamAssistance {
       }
 
       sb.append("1");
-      final String ov = "" + gs.charAt(i + overLapLength);
+      final String ov = String.valueOf(gs.charAt(i + overLapLength));
       if (ov.equals(te)) {
         sb.append(SamUtils.CIGAR_SAME);
       } else {
