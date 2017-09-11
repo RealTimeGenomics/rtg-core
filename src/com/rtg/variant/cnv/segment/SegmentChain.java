@@ -27,7 +27,7 @@ public class SegmentChain extends ArrayList<Segment> {
     mBeta = beta;
   }
 
-  private final TreeSet<AdjacentSegments> mPriorityQueue = new TreeSet<>((a, b) -> {
+  private final TreeSet<AdjacentSegments> mPriority = new TreeSet<>((a, b) -> {
     final int c = Double.compare(a.getScore(), b.getScore()); // Make first entry smallest
     if (c != 0) {
       return c;
@@ -47,7 +47,7 @@ public class SegmentChain extends ArrayList<Segment> {
     if (!isEmpty()) {
       // Compute score to previous block
       final Segment prev = get(size() - 1);
-      mPriorityQueue.add(new AdjacentSegments(mScorer.score(prev, segment), prev, segment));
+      mPriority.add(new AdjacentSegments(mScorer.score(prev, segment), prev, segment));
     }
     return super.add(segment);
   }
@@ -68,8 +68,8 @@ public class SegmentChain extends ArrayList<Segment> {
   void collapse(final int limit) {
     final double sensitivityLimit = mBeta * nu();
     double prevLambda = 0;
-    while (!mPriorityQueue.isEmpty() && size() > limit) {
-      final AdjacentSegments mergeMe = mPriorityQueue.pollFirst();
+    while (!mPriority.isEmpty() && size() > limit) {
+      final AdjacentSegments mergeMe = mPriority.pollFirst();
       final double lambda = mergeMe.getScore();
       if (lambda - prevLambda > sensitivityLimit) {
         //System.out.println("Terminating " + lambda + " - " + prevLambda + " > " + sensitivityLimit);
@@ -91,11 +91,11 @@ public class SegmentChain extends ArrayList<Segment> {
       set(pos, mergedSegment);
       if (pos > 0) {
         final Segment prev = get(pos - 1);
-        mPriorityQueue.add(new AdjacentSegments(mScorer.score(prev, mergedSegment), prev, mergedSegment));
+        mPriority.add(new AdjacentSegments(mScorer.score(prev, mergedSegment), prev, mergedSegment));
       }
       if (pos < size() - 1) {
         final Segment next = get(pos + 1);
-        mPriorityQueue.add(new AdjacentSegments(mScorer.score(mergedSegment, next), mergedSegment, next));
+        mPriority.add(new AdjacentSegments(mScorer.score(mergedSegment, next), mergedSegment, next));
       }
       //System.out.println("[" + pos + "](" + a.bins() + ")(" + b.bins() + ")[" + (size() - 1) + "]  gain " + mScorer.score(a, b));
     }
@@ -104,6 +104,6 @@ public class SegmentChain extends ArrayList<Segment> {
   @Override
   public void clear() {
     super.clear();
-    mPriorityQueue.clear();
+    mPriority.clear();
   }
 }

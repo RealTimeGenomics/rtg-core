@@ -20,6 +20,7 @@ import com.rtg.reader.Arm;
 import com.rtg.ngs.MapStatisticsField;
 import com.rtg.reader.NamesInterface;
 import com.rtg.util.StringUtils;
+import com.rtg.util.io.IOUtils;
 
 /**
  * This class stores the status of individual reads,
@@ -106,7 +107,7 @@ public class SharedStatusCollector {
         continue;
       }
       if (readsNames == null) {
-        unmapped.write(String.valueOf(readIdOffset + i).getBytes()); //we know its not written so write it in unmapped
+        IOUtils.writeLong(unmapped, readIdOffset + i); //we know its not written so write it in unmapped
       } else {
         unmapped.write(readsNames.name(i).getBytes());
       }

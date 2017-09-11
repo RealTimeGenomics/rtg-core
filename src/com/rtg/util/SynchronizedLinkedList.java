@@ -23,267 +23,267 @@ import java.util.LinkedList;
  */
 public class SynchronizedLinkedList<E> implements Deque<E> {
 
-  private final LinkedList<E> mList;
+  private final LinkedList<E> mLinkedList;
   private final Object mMutex;
 
   /**
    * Create a synchronized linked list
-   * @param list the linked list to wrap
+   * @param linkedList the linked list to wrap
    */
-  public SynchronizedLinkedList(LinkedList<E> list) {
-    mList = list;
+  public SynchronizedLinkedList(LinkedList<E> linkedList) {
+    mLinkedList = linkedList;
     mMutex = this;
   }
 
   @Override
   public boolean isEmpty() {
     synchronized (mMutex) {
-      return mList.isEmpty();
+      return mLinkedList.isEmpty();
     }
   }
 
   @Override
   public Object[] toArray() {
     synchronized (mMutex) {
-      return mList.toArray();
+      return mLinkedList.toArray();
     }
   }
 
   @Override
   public <T> T[] toArray(T[] a) {
     synchronized (mMutex) {
-      return mList.toArray(a);
+      return mLinkedList.toArray(a);
     }
   }
 
   @Override
   public boolean containsAll(Collection<?> c) {
     synchronized (mMutex) {
-      return mList.containsAll(c);
+      return mLinkedList.containsAll(c);
     }
   }
 
   @Override
   public boolean addAll(Collection<? extends E> c) {
     synchronized (mMutex) {
-      return mList.addAll(c);
+      return mLinkedList.addAll(c);
     }
   }
 
   @Override
   public boolean removeAll(Collection<?> c) {
     synchronized (mMutex) {
-      return mList.removeAll(c);
+      return mLinkedList.removeAll(c);
     }
   }
 
   @Override
   public boolean retainAll(Collection<?> c) {
     synchronized (mMutex) {
-      return mList.retainAll(c);
+      return mLinkedList.retainAll(c);
     }
   }
 
   @Override
   public void clear() {
     synchronized (mMutex) {
-      mList.clear();
+      mLinkedList.clear();
     }
   }
 
   @Override
   public void addFirst(E e) {
     synchronized (mMutex) {
-      mList.addFirst(e);
+      mLinkedList.addFirst(e);
     }
   }
 
   @Override
   public void addLast(E e) {
     synchronized (mMutex) {
-      mList.addLast(e);
+      mLinkedList.addLast(e);
     }
   }
 
   @Override
   public boolean offerFirst(E e) {
     synchronized (mMutex) {
-      return mList.offerFirst(e);
+      return mLinkedList.offerFirst(e);
     }
   }
 
   @Override
   public boolean offerLast(E e) {
     synchronized (mMutex) {
-      return mList.offerLast(e);
+      return mLinkedList.offerLast(e);
     }
   }
 
   @Override
   public E removeFirst() {
     synchronized (mMutex) {
-      return mList.removeFirst();
+      return mLinkedList.removeFirst();
     }
   }
 
   @Override
   public E removeLast() {
     synchronized (mMutex) {
-      return mList.removeLast();
+      return mLinkedList.removeLast();
     }
   }
 
   @Override
   public E pollFirst() {
     synchronized (mMutex) {
-      return mList.pollFirst();
+      return mLinkedList.pollFirst();
     }
   }
 
   @Override
   public E pollLast() {
     synchronized (mMutex) {
-      return mList.pollLast();
+      return mLinkedList.pollLast();
     }
   }
 
   @Override
   public E getFirst() {
     synchronized (mMutex) {
-      return mList.getFirst();
+      return mLinkedList.getFirst();
     }
   }
 
   @Override
   public E getLast() {
     synchronized (mMutex) {
-      return mList.getLast();
+      return mLinkedList.getLast();
     }
   }
 
   @Override
   public E peekFirst() {
     synchronized (mMutex) {
-      return mList.peekFirst();
+      return mLinkedList.peekFirst();
     }
   }
 
   @Override
   public E peekLast() {
     synchronized (mMutex) {
-      return mList.peekLast();
+      return mLinkedList.peekLast();
     }
   }
 
   @Override
   public boolean removeFirstOccurrence(Object o) {
     synchronized (mMutex) {
-      return mList.removeFirstOccurrence(o);
+      return mLinkedList.removeFirstOccurrence(o);
     }
   }
 
   @Override
   public boolean removeLastOccurrence(Object o) {
     synchronized (mMutex) {
-      return mList.removeLastOccurrence(o);
+      return mLinkedList.removeLastOccurrence(o);
     }
   }
 
   @Override
   public boolean add(E e) {
     synchronized (mMutex) {
-      return mList.add(e);
+      return mLinkedList.add(e);
     }
   }
 
   @Override
   public boolean offer(E e) {
     synchronized (mMutex) {
-      return mList.offer(e);
+      return mLinkedList.offer(e);
     }
   }
 
   @Override
   public E remove() {
     synchronized (mMutex) {
-      return mList.remove();
+      return mLinkedList.remove();
     }
   }
 
   @Override
   public E poll() {
     synchronized (mMutex) {
-      return mList.poll();
+      return mLinkedList.poll();
     }
   }
 
   @Override
   public E element() {
     synchronized (mMutex) {
-      return mList.element();
+      return mLinkedList.element();
     }
   }
 
   @Override
   public E peek() {
     synchronized (mMutex) {
-      return mList.peek();
+      return mLinkedList.peek();
     }
   }
 
   @Override
   public void push(E e) {
     synchronized (mMutex) {
-      mList.push(e);
+      mLinkedList.push(e);
     }
   }
 
   @Override
   public E pop() {
     synchronized (mMutex) {
-      return mList.pop();
+      return mLinkedList.pop();
     }
   }
 
   @Override
   public boolean remove(Object o) {
     synchronized (mMutex) {
-      return mList.remove(o);
+      return mLinkedList.remove(o);
     }
   }
 
   @Override
   public boolean contains(Object o) {
     synchronized (mMutex) {
-      return mList.contains(o);
+      return mLinkedList.contains(o);
     }
   }
 
   @Override
   public int size() {
     synchronized (mMutex) {
-      return mList.size();
+      return mLinkedList.size();
     }
   }
 
   @Override
   public Iterator<E> iterator() {
     synchronized (mMutex) {
-      return mList.iterator();
+      return mLinkedList.iterator();
     }
   }
 
   @Override
   public Iterator<E> descendingIterator() {
     synchronized (mMutex) {
-      return mList.descendingIterator();
+      return mLinkedList.descendingIterator();
     }
   }
 
   @Override
   public String toString() {
     synchronized (mMutex) {
-      return mList.toString();
+      return mLinkedList.toString();
     }
   }
 }

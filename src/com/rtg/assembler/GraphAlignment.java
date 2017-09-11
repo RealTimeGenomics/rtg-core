@@ -159,12 +159,11 @@ public class GraphAlignment {
 
   @Override
   public int hashCode() {
-    int result =  Utils.pairHashContinuous(mScore, startPosition(), endPosition());
+    final int result =  Utils.pairHashContinuous(mScore, startPosition(), endPosition());
     long  contigSum = 0;
     for (long contig : contigs()) {
       contigSum += Math.abs(contig);
     }
-    result = Utils.pairHash(result, LongUtils.hashCode(contigSum));
-    return result;
+    return Utils.pairHash(result, LongUtils.hashCode(contigSum));
   }
 }

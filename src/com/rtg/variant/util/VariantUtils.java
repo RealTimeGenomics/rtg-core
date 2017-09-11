@@ -161,7 +161,7 @@ public final class VariantUtils {
   public static String formatPosterior(double q) {
     final double ql = q / MathUtils.LOG_10;
     //System.err.println("fpos: " + ql);
-    if (Double.isInfinite(ql) && ql > 0.0) {
+    if (ql > 0.0 && Double.isInfinite(ql)) {
       return MAX_POSTERIOR;
     } else {
       return Utils.realFormat(ql, 1);

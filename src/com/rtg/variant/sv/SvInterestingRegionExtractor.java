@@ -29,6 +29,7 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.IOUtils;
 
 
 /**
@@ -153,11 +154,11 @@ public class SvInterestingRegionExtractor implements Closeable {
       //Bed is 0-based positions, so convert start/end positions
       mOutputStream.write(mTemplateName.getBytes());
       mOutputStream.write(TAB_BYTES);
-      mOutputStream.write(("" + (mStartPos - 1)).getBytes());
+      IOUtils.writeInt(mOutputStream, mStartPos - 1);
       mOutputStream.write(TAB_BYTES);
-      mOutputStream.write(("" + Math.max(0, mEndPos - 1)).getBytes());
+      IOUtils.writeInt(mOutputStream, Math.max(0, mEndPos - 1));
       mOutputStream.write(TAB_BYTES);
-      mOutputStream.write(("" + (mChanges + 1)).getBytes());
+      IOUtils.writeInt(mOutputStream, mChanges + 1);
       mOutputStream.write(TAB_BYTES);
       mOutputStream.write(Utils.realFormat(mMaxScore, 4).getBytes());
       mOutputStream.write(TAB_BYTES);

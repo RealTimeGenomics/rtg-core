@@ -202,10 +202,9 @@ public final class Attribute {
     }
 
     @Override
+    @SuppressWarnings(value = {"unchecked", "rawtypes"})
     public int compare(double a1, double a2) {
-      @SuppressWarnings(value = {"unchecked", "rawtypes"})
-      final int result = ((Comparable) decode(a1)).compareTo(decode(a2));
-      return result;
+      return ((Comparable) decode(a1)).compareTo(decode(a2));
     }
   }
   private static final class BooleanEncoder implements ValueEncoder {

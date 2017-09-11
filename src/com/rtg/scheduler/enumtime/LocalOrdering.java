@@ -42,10 +42,9 @@ public class LocalOrdering<E extends Enum<E>> extends IntegralAbstract {
   private final boolean[][] mBefore;
   private boolean mFrozen = false;
 
+  @SuppressWarnings("unchecked")
   private Set<EnumTimeId<E>>[] getArray(int len) {
-    @SuppressWarnings("unchecked")
-    final Set<EnumTimeId<E>>[] sets = (Set<EnumTimeId<E>>[]) new Set<?>[len];
-    return sets;
+    return (Set<EnumTimeId<E>>[]) new Set<?>[len];
   }
 
   /**

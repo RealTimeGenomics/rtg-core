@@ -41,7 +41,7 @@ public final class MismatchPositionFormatter {
     int templatePosition = Math.max(0, zeroBasedStart);
     boolean inDeletion = false;
     int matchCount = 0;
-    while (iter.hasNext() && templatePosition < template.length) {
+    while (templatePosition < template.length && iter.hasNext()) {
       final int action = iter.next();
       switch (action) {
         case ActionsHelper.SAME:

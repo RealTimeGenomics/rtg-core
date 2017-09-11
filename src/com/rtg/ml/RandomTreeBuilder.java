@@ -435,6 +435,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
     }
 
     @Override
+    @SuppressWarnings(value = {"unchecked", "rawtypes"})
     public int compare(Instance o1, Instance o2) {
       final double a1 = o1.instance()[mAttributeIndex];
       final double a2 = o2.instance()[mAttributeIndex];
@@ -446,9 +447,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
       } else if (Attribute.isMissingValue(a2)) {
         return 1;
       }
-      @SuppressWarnings(value = {"unchecked", "rawtypes"})
-      final int result = ((Comparable) a1).compareTo(a2);
-      return result;
+      return ((Comparable) a1).compareTo(a2);
     }
   }
 }

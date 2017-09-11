@@ -334,10 +334,7 @@ public class Frag extends IntegralAbstract {
 
   @JumbleIgnore
   boolean identical(Frag that) {
-    return this.equals(that)
-        && this.mTotalCount == that.mTotalCount
-        && this.mN == that.mN
-        && this.mMultiplicity == that.mMultiplicity;
+    return mN == that.mN && mTotalCount == that.mTotalCount && mMultiplicity == that.mMultiplicity && equals(that);
   }
 
   @Override

@@ -415,8 +415,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
 
         final SequenceLengthBuckets buckets = new SequenceLengthBuckets(params.buildFirstParams().reader(), params.mapXMinReadLength());
         final CreateParams.CreateParamsBuilder builder = new CreateParams.CreateParamsBuilder();
-        builder.valueBits(bitValues)
-                .compressHashes(params.compressHashes());
+        builder.valueBits(bitValues).compressHashes(params.compressHashes());
 
         mUsageMetric.setMetric(ProteinReadIndexer.indexThenSearchProteinReads(params, outProcessor, builder, buckets, numValues));
 

@@ -412,7 +412,7 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
 
   private static String format(final double x, final int fw) {
     //be careful about outputting -0.0
-    final String fst = Double.isInfinite(x) && x < 0.0 ? "" : x == 0.0 ? Utils.realFormat(0.0, FIELD_DP) : Utils.realFormat(-x, FIELD_DP);
+    final String fst = x < 0.0 && Double.isInfinite(x) ? "" : x == 0.0 ? Utils.realFormat(0.0, FIELD_DP) : Utils.realFormat(-x, FIELD_DP);
     return StringUtils.padLeft(fst, fw);
   }
 

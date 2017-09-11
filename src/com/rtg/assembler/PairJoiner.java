@@ -83,9 +83,9 @@ public class PairJoiner {
       if (matchMap.containsKey(key)) {
         matchMap.get(key).add(alignment);
       } else {
-        final Set<GraphAlignment> list = new HashSet<>();
-        list.add(alignment);
-        matchMap.put(key, list);
+        final Set<GraphAlignment> graphAlignments = new HashSet<>();
+        graphAlignments.add(alignment);
+        matchMap.put(key, graphAlignments);
       }
     }
     final List<Long> palindromes = new ArrayList<>();

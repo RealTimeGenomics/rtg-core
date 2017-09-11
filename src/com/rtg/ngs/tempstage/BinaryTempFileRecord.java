@@ -372,7 +372,7 @@ public class BinaryTempFileRecord {
   static void readMore(ByteBuffer in, ReadableByteChannel ch) throws IOException {
     in.compact();
     int rr = 0;
-    while (in.remaining() != 0 && rr >= 0) {
+    while (rr >= 0 && in.remaining() != 0) {
       rr = ch.read(in);
     }
     in.flip();

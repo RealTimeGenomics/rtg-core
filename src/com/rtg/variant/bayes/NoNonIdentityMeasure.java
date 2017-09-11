@@ -70,9 +70,6 @@ public class NoNonIdentityMeasure implements GenotypeMeasure {
 
   @Override
   public String toString() {
-    final StringBuffer sb = new StringBuffer("NoNonIdentityMeasure{");
-    sb.append("mInternal=").append(mInternal);
-    sb.append('}');
-    return sb.toString();
+    return "NoNonIdentityMeasure{" + "mInternal=" + mInternal + '}';
   }
 }

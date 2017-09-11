@@ -70,7 +70,7 @@ public class SpecializedIncrementalHashLoop extends SearchIncrementalHashLoop {
 
     final long maxSequenceEver = reader.numberSequences();
     long totalLength = 0;
-    for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; ++seq) {
+    for (long seq = startSequence; seq < maxSequenceEver && region.isInRange(seq); ++seq) {
       ProgramState.checkAbort();
       //System.err.println("seq=" + seq + " " +  reader.currentSequenceId() + " " + reader.getClass());
       final int fullLength = reader.length(seq);

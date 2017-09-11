@@ -180,7 +180,7 @@ public class NgsParams extends ModuleParams implements Integrity {
    */
   @ParamsNoField
   public boolean blockCompressed() {
-    return mOutputParams.isCompressOutput() && GzipAsynchOutputStream.BGZIP;
+    return GzipAsynchOutputStream.BGZIP && mOutputParams.isCompressOutput();
   }
 
   /**

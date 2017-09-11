@@ -208,7 +208,7 @@ public class ApplyReference {
         return Collections.singletonList(nextState);
       } else {
         final List<AlignmentState> nextStates = new ArrayList<>();
-        for (Long nextContig : traversions.get(contigId).next()) {
+        for (final Long nextContig : traversions.get(contigId).next()) {
           final AlignmentState state = new AlignmentState(nextRefPos, new ReferenceChain(nextContig, mChain), graph.contigOverlap(), mReferenceOrigin, mMismatchCount);
           state.addMismatches(mMismatches);
           state.addMismatches(nextMismatches);

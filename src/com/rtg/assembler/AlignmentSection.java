@@ -57,7 +57,6 @@ public class AlignmentSection {
   public int hashCode() {
     int result = (int) (mContig ^ (mContig >>> 32));
     result = 31 * result + mStartPosition;
-    result = 31 * result + mEndPosition;
-    return result;
+    return 31 * result + mEndPosition;
   }
 }

@@ -169,9 +169,7 @@ public final class BinarySplitter {
       return Direction.MISSING;
     } else if (mNumeric) { // Numeric
       try {
-        @SuppressWarnings(value = {"unchecked", "rawtypes"})
-        final Direction retVal = ((Comparable) mSplitValue).compareTo(splitValue) >= 0 ? Direction.LEFT : Direction.RIGHT;
-        return retVal;
+        return getDirection(splitValue);
       } catch (ClassCastException e) {
         throw new RuntimeException("Illegal value type for attribute " + mName + ".", e);
       }
@@ -181,6 +179,11 @@ public final class BinarySplitter {
     }
   }
 
+  @SuppressWarnings(value = {"unchecked", "rawtypes"})
+  private Direction getDirection(double splitValue) {
+    return ((Comparable) mSplitValue).compareTo(splitValue) >= 0 ? Direction.LEFT : Direction.RIGHT;
+  }
+
   @Override
   public int hashCode() {
     return Utils.pairHashContinuous(mName.hashCode(), mAttributeIndex, mSplitMissing ? 42 : Double.valueOf(mSplitValue).hashCode(), mSplitValueDataType.hashCode(), Boolean.valueOf(mNumeric).hashCode());
@@ -188,7 +191,7 @@ public final class BinarySplitter {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj == null || !(obj instanceof  BinarySplitter)) {
+    if (!(obj instanceof  BinarySplitter)) {
       return false;
     }
     final BinarySplitter obj1 = (BinarySplitter) obj;

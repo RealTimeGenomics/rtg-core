@@ -84,23 +84,20 @@ public class PairAligner {
             r2Pos++;
             break;
           case MISMATCH:
-            if (r1Pos >= 0 && r1Pos < r1.length()
-              && r2Pos >= 0 && r2Pos < r2.length()) {
+            if (r1Pos >= 0 && r2Pos >= 0 && r1Pos < r1.length() && r2Pos < r2.length()) {
               doMismatch(r1, r2, r1Pos, r2Pos);
             }
             r1Pos++;
             r2Pos++;
             break;
           case INSERTION_INTO_REFERENCE:
-            if (r1Pos >= 0 && r1Pos < r1.length()
-              && r2Pos >= 0 && r2Pos < r2.length()) {
+            if (r1Pos >= 0 && r2Pos >= 0 && r1Pos < r1.length() && r2Pos < r2.length()) {
               doIndel(r2, r2Pos);
             }
             r2Pos++;
             break;
           case DELETION_FROM_REFERENCE:
-            if (r1Pos >= 0 && r1Pos < r1.length()
-              && r2Pos >= 0 && r2Pos < r2.length()) {
+            if (r1Pos >= 0 && r2Pos >= 0 && r1Pos < r1.length() && r2Pos < r2.length()) {
               doIndel(r1, r1Pos);
             }
             r1Pos++;

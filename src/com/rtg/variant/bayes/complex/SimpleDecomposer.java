@@ -65,8 +65,9 @@ public class SimpleDecomposer extends AbstractDecomposer {
     if (originalLikelihoods != null) {
       final Map<Set<String>, Double> newMap = new HashMap<>(originalLikelihoods.size());
       for (final Map.Entry<Set<String>, Double> entry : originalLikelihoods.entrySet()) {
-        final Set<String> newSet = new HashSet<>();
-        for (final String s : entry.getKey()) {
+        final Set<String> key = entry.getKey();
+        final Set<String> newSet = new HashSet<>(key.size());
+        for (final String s : key) {
           newSet.add(StringUtils.clip(s, leftClip, rightClip)); // XXX assumptions about all alleles same length ??
         }
         final Double v = newMap.get(newSet);

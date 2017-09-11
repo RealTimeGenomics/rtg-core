@@ -97,7 +97,7 @@ public class SoftClipperOmni implements EditDistance {
     boolean extend = false;
     int anchor = 0;
     final int maxScan = Math.max(mClipIndelsXFromEnd, mClipMismatchesXFromEnd);
-    while (it.hasNext() && pos < maxScan) {
+    while (pos < maxScan && it.hasNext()) {
       final int command = it.next();
       switch (command) {
         case ActionsHelper.INSERTION_INTO_REFERENCE:
@@ -125,6 +125,7 @@ public class SoftClipperOmni implements EditDistance {
             softClipPos = pos;
             extend = true;
           }
+          break;
       }
       ++pos;
     }

@@ -353,9 +353,8 @@ public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecor
     //mIterator.close();
   }
 
+  @SuppressWarnings("unchecked")
   private ReaderRecord<T>[] createArray(final int size) {
-    @SuppressWarnings("unchecked")
-    final ReaderRecord<T>[] ts = (ReaderRecord<T>[]) new ReaderRecord<?>[size];
-    return ts;
+    return (ReaderRecord<T>[]) new ReaderRecord<?>[size];
   }
 }

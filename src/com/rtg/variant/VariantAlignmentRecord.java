@@ -189,7 +189,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     }
 
     mOverlapQuality = new byte[overlapQuality.length()];
-    for (int i = 0; i < overlapQuality.length() && qualityPosition < mRecalibratedQuality.length; ++i) {
+    for (int i = 0; qualityPosition < mRecalibratedQuality.length && i < overlapQuality.length(); ++i) {
       final byte scoreChar = (byte) (overlapQuality.charAt(i) - FastaUtils.PHRED_LOWER_LIMIT_CHAR);
       // Be careful to invoke the me.getScaledPhred that takes a char. It will correct for ascii encoding
       final int recalibrated = me == null ? scoreChar : me.getScaledPhred(scoreChar, machineCycle, arm);

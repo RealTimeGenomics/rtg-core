@@ -407,10 +407,9 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
         return super.toString() + " " + mRefName + ":" + start + "-" + end;
       }
 
+      @SuppressWarnings("unchecked")
       protected List<Variant> getList(Object o) {
-        @SuppressWarnings("unchecked")
-        final List<Variant> ret = (List<Variant>) o;
-        return ret;
+        return (List<Variant>) o;
       }
     }
 

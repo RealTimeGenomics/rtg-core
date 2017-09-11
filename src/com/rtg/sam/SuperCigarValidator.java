@@ -160,7 +160,7 @@ public class SuperCigarValidator extends SuperCigarParser {
       if (mIsValid) {
         checkOverlap();
       }
-      assert getReadLength() != 0 || mReadDeltaPos == mReadDelta.length : "readDelta.len=" + mReadDelta.length + " but should be " + mReadDeltaPos;
+      assert mReadDeltaPos == mReadDelta.length || getReadLength() != 0 : "readDelta.len=" + mReadDelta.length + " but should be " + mReadDeltaPos;
     }
   }
 

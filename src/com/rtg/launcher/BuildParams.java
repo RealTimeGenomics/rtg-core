@@ -252,14 +252,14 @@ public final class BuildParams implements Params {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
+    if (!(obj instanceof BuildParams)) {
       return false;
     }
     final BuildParams that = (BuildParams) obj;
-    return this.mSequenceParams.equals(that.mSequenceParams)
-    && this.mTypeBits == that.mTypeBits
-    && this.mWindowSize == that.mWindowSize
-    && this.mStepSize == that.mStepSize;
+    return mTypeBits == that.mTypeBits
+      && mWindowSize == that.mWindowSize
+      && mStepSize == that.mStepSize
+      && mSequenceParams.equals(that.mSequenceParams);
   }
 
   @Override

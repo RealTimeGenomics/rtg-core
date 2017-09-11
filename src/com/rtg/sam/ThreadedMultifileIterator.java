@@ -22,7 +22,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Vector;
 
-import com.rtg.util.IORunnable;
 import com.rtg.util.Populator;
 import com.rtg.util.PopulatorFactory;
 import com.rtg.util.ProgramState;
@@ -52,7 +51,7 @@ public final class ThreadedMultifileIterator<T> implements RecordIterator<T> {
 
   private SimpleThreadPool mPool;
   /** Every member has a valid current record and its position is after the current position.  WARNING: never mutate a member of the set.  Instead, remove and re-add. */
-  private final PriorityQueue<MultifileIteratorRunner<T>> mLeftmostRecordIteratorSet = new PriorityQueue<>();
+  private final PriorityQueue<MultifileIteratorRunner<T>> mLeftmostRecordIteratorPriority = new PriorityQueue<>();
 
   /** All the runners.  Queue used for sharpen reasons */
   private final Queue<MultifileIteratorRunner<T>> mOriginals = new LinkedList<>();
@@ -109,12 +108,7 @@ public final class ThreadedMultifileIterator<T> implements RecordIterator<T> {
         final SamReadingContext subcontext = new SamReadingContext(subFiles, 1, context.filterParams(), context.header(), context.reference(), context.referenceRanges());
         final Populator<T> populator = populatorFactory.populator();
 
-        stp.execute(new IORunnable() {
-          @Override
-          public void run() throws IOException {
-            runners.add(new MultifileIteratorRunner<>(subcontext, populator, runnerId, DEFAULT_PACKET_SIZE));
-          }
-        });
+        stp.execute(() -> runners.add(new MultifileIteratorRunner<>(subcontext, populator, runnerId, DEFAULT_PACKET_SIZE)));
       }
       stp.terminate();
       for (final MultifileIteratorRunner<T> runner : runners) {
@@ -124,7 +118,7 @@ public final class ThreadedMultifileIterator<T> implements RecordIterator<T> {
 
       for (final MultifileIteratorRunner<T> runner : mOriginals) {
         if (runner.hasNext()) {
-          mLeftmostRecordIteratorSet.add(runner);
+          mLeftmostRecordIteratorPriority.add(runner);
         }
       }
     } catch (final RuntimeException | IOException e) {
@@ -148,16 +142,16 @@ public final class ThreadedMultifileIterator<T> implements RecordIterator<T> {
 
   @Override
   public boolean hasNext() {
-    return !mLeftmostRecordIteratorSet.isEmpty();
+    return !mLeftmostRecordIteratorPriority.isEmpty();
   }
 
   @Override
   public T next() {
-    final MultifileIteratorRunner<T> first = mLeftmostRecordIteratorSet.poll();
+    final MultifileIteratorRunner<T> first = mLeftmostRecordIteratorPriority.poll();
     try {
       final T next = first.next();
       if (first.hasNext()) {
-        mLeftmostRecordIteratorSet.add(first);
+        mLeftmostRecordIteratorPriority.add(first);
       }
       return next;
     } catch (ProgramState.SlimAbortException e) {

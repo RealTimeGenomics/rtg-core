@@ -48,10 +48,9 @@ public class ReferenceBasedBuffer<D> extends IntegralAbstract {
     mCurrent = 0;
   }
 
+  @SuppressWarnings("unchecked")
   protected final D[] makeArray(int length) {
-    @SuppressWarnings("unchecked")
-    final D[] theArray = (D[]) new Object[length];
-    return theArray;
+    return (D[]) new Object[length];
   }
 
   /**

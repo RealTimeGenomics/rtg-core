@@ -42,9 +42,7 @@ public class ConstraintCache {
 
   static ConstraintCollector reverse(ConstraintCollector forward) {
     final ConstraintCollector reverse = new ConstraintCollector(forward.mContigB, forward.mContigA);
-    for (int i = 0; i < forward.mConstraint.size(); ++i) {
-      reverse.mConstraint.add(forward.mConstraint.get(i));
-    }
+    reverse.mConstraint.addAll(forward.mConstraint);
     return reverse;
   }
 

@@ -17,6 +17,7 @@ import java.io.OutputStream;
 
 import com.rtg.alignment.ActionsHelper;
 import com.rtg.reader.NamesInterface;
+import com.rtg.util.io.IOUtils;
 
 /**
  * Hold a single protein alignment result.
@@ -156,7 +157,7 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
       x = sc;
     }
     x += 0.05;
-    os.write(String.valueOf((int) x).getBytes());
+    IOUtils.writeInt(os, (int) x);
     os.write('.');
     os.write((int) (x * 10) % 10 + '0');
   }
@@ -181,7 +182,7 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
       os.write('.');
       os.write((int) x + '0');
       os.write('e');
-      os.write(String.valueOf(exponent).getBytes());
+      IOUtils.writeInt(os, exponent);
     }
   }
 
@@ -199,7 +200,7 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
     if (rnames != null) {
       rnames.writeName(os, readId);
     } else {
-      os.write(String.valueOf(readId + mReadIdOffset).getBytes());
+      IOUtils.writeLong(os, readId + mReadIdOffset);
     }
   }
 
@@ -224,20 +225,20 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
     os.write('\t');
     writeReadName(os, readId);
     os.write('\t');
-    os.write(String.valueOf(templateStart + 1).getBytes());
+    IOUtils.writeInt(os, templateStart + 1);
     os.write('\t');
-    os.write(String.valueOf(templateEnd()).getBytes());
+    IOUtils.writeInt(os, templateEnd());
     os.write('\t');
-    os.write(String.valueOf(mResources.templateLength(mTemplateId)).getBytes());
+    IOUtils.writeInt(os, mResources.templateLength(mTemplateId));
     os.write('\t');
     //    final int readStart = readStart(frame, mResources.queryLength(readId), length * NUCLEOTIDES_PER_CODON);
     final int ntLength = mResources.queryLength(readId);
     final int readStart = readNtStart(frame, ntLength);
-    os.write(String.valueOf(readStart).getBytes());
+    IOUtils.writeInt(os, readStart);
     os.write('\t');
-    os.write(String.valueOf(readNtEnd(readStart, ntLength)).getBytes());
+    IOUtils.writeInt(os, readNtEnd(readStart, ntLength));
     os.write('\t');
-    os.write(String.valueOf(mResources.queryLength(readId)).getBytes());
+    IOUtils.writeInt(os, mResources.queryLength(readId));
 
     final int positive;
     if (mOutputProteinSequences) {

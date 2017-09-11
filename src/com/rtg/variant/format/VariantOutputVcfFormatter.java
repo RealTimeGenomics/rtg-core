@@ -13,9 +13,8 @@ package com.rtg.variant.format;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.rtg.relation.VcfPedigreeParser;
 import com.rtg.util.MathUtils;
@@ -34,14 +33,13 @@ import htsjdk.samtools.SAMFileHeader;
  * Handles the construction of an appropriate VcfHeader object, and conversion from a
  * Variant object into a VcfRecord object.
  *
- * Note: not multi thread safe.
+ * Note: not thread safe.
  */
 public class VariantOutputVcfFormatter {
 
   /** The default sample name */
   public static final String DEFAULT_SAMPLE = "SAMPLE";
 
-  private final Map<String, Integer> mSampleColumns;
   private final String[] mSampleNames;
 
   private final VariantParams mParams;
@@ -59,15 +57,10 @@ public class VariantOutputVcfFormatter {
     if (sampleNames.length == 0) {
       throw new IllegalArgumentException("No sample names");
     }
-    mSampleNames = new String[sampleNames.length];
     if (sampleNames.length > 1 && params.genomeRelationships() == null) {
       throw new IllegalArgumentException("Too many sample names");
     }
-    mSampleColumns = new HashMap<>(mSampleNames.length);
-    for (int i = 0; i < mSampleNames.length; ++i) {
-      mSampleNames[i] = sampleNames[i];
-      mSampleColumns.put(mSampleNames[i], i);
-    }
+    mSampleNames = Arrays.copyOf(sampleNames, sampleNames.length);
     mParams = params;
     initFields();
   }
@@ -78,7 +71,6 @@ public class VariantOutputVcfFormatter {
    */
   public VariantOutputVcfFormatter(String... sampleNames) {
     mSampleNames = sampleNames.length > 0 ? sampleNames : new String[] {DEFAULT_SAMPLE};
-    mSampleColumns = null;
     mParams = null;
     initFields();
   }
