@@ -10,6 +10,7 @@
   <property name="build.dir" location="${public.core.basedir}/build"/>
 
   <property name="product" value="RTG Core Non-Commercial" />
+  <property name="product.repo" value="RealTimeGenomics/rtg-core" />
   <property name="resources" value="core" />
 
   <!-- Location of RTG Tools source, here we assume the repo is parallel to rtg-core -->
