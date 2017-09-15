@@ -116,9 +116,6 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     return mHypotheses.haploid();
   }
 
-  /**
-   * @return the possibility arithmetic used in this model.
-   */
   @Override
   public final PossibilityArithmetic arithmetic() {
     return mHypotheses.arithmetic();
@@ -233,7 +230,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     assert mHypotheses.valid(hyp);
     sb.append(SPACES4);
     sb.append(mHypotheses.reference() == hyp ? '*' : ' ');
-    mHypotheses.writeName(sb, hyp);
+    sb.append(name(hyp));
     sb.append(SPACES3);
     sb.append(Utils.realFormat(posteriorLn0(hyp), 3));
     sb.append(SPACES3);

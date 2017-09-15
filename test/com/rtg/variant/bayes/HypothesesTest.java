@@ -30,9 +30,6 @@ public class HypothesesTest extends TestCase {
 
   private void checkName(final Hypotheses<?> hy, final String exp, final int n) {
     assertEquals(exp, hy.name(n));
-    final StringBuilder sb = new StringBuilder();
-    hy.writeName(sb, n);
-    assertEquals(exp, sb.toString());
   }
 
   public void testDiploid() {

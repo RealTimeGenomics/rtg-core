@@ -96,23 +96,6 @@ public abstract class Hypotheses<D extends Description> {
     return mDescription.name(b) + VariantUtils.COLON + mDescription.name(a);
   }
 
-  // Example when we come to implement RTG output
-  /**
-   * Writes the name of the hypothesis as a sequence of bytes.
-   * This is intended as a default representation used for example in statistics output.
-   * @param sb string builder where the name is to be written.
-   * @param hyp select hypothesis (0 based).
-   */
-  public void writeName(StringBuilder sb, int hyp) {
-    final int a = code().a(hyp);
-    if (!haploid()) {
-      final int b = code().b(hyp);
-      mDescription.writeName(sb, b);
-      sb.append(VariantUtils.COLON);
-    }
-    mDescription.writeName(sb, a);
-  }
-
   /**
    * @return integer coder for hypotheses.
    */
