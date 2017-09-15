@@ -34,16 +34,22 @@ class ReadMappingRoc {
   private final Histogram mTpHistogram = new Histogram();
   private final Histogram mFpHistogram = new Histogram();
   private final boolean mAscending;
+  private final String mLabel;
 
-  ReadMappingRoc() {
-    this(true);
+  /**
+   * @param label name of the attribute used for scoring
+   */
+  ReadMappingRoc(String label) {
+    this(label, true);
   }
 
   /**
+   * @param label name of the attribute used for scoring
    * @param ascending set this to true if low scores are good, otherwise set to false
    */
-  ReadMappingRoc(boolean ascending) {
+  ReadMappingRoc(String label, boolean ascending) {
     mAscending = ascending;
+    mLabel = label;
   }
 
   private void add(Histogram hist, int score, double weight) {
@@ -99,7 +105,7 @@ class ReadMappingRoc {
   public String getRoc(int total) {
     final StringBuilder sb = new StringBuilder();
     sb.append("#total baseline variants: ").append(total).append(StringUtils.LS);
-    sb.append("#score field: MAPQ").append(StringUtils.LS);
+    sb.append("#score field: ").append(mLabel).append(StringUtils.LS);
     sb.append("#");
     sb.append(String.join("\t", Arrays.asList(SCORE, TRUE_POSITIVES, FALSE_POSITIVES)));
     sb.append(StringUtils.LS);

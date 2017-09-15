@@ -102,9 +102,9 @@ public class ReadSimEvalCli extends LoggedCli {
 
   ReadSimEvalStatistics mLeftStats;
   private ReadSimEvalStatistics mRightStats;
-  private final ReadMappingRoc mRocAs = new ReadMappingRoc();
-  private final ReadMappingRoc mRocGs = new ReadMappingRoc();
-  private final ReadMappingRoc mRocMapq = new ReadMappingRoc(false);
+  private final ReadMappingRoc mRocAs = new ReadMappingRoc("AS");
+  private final ReadMappingRoc mRocGs = new ReadMappingRoc("GS");
+  private final ReadMappingRoc mRocMapq = new ReadMappingRoc("MAPQ", false);
 
   private int mChimeras = 0;
   private int mDupes = 0;
@@ -131,22 +131,15 @@ public class ReadSimEvalCli extends LoggedCli {
 
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
-    int exitCode = 0;
-    final PrintStream psOut = new PrintStream(out);
-    try {
+    try (final PrintStream psOut = new PrintStream(out)) {
       process(psOut);
+      return 0;
     } catch (final InvalidParamsException e) {
       //treat this as an error in the arguments passed to the process
       mFlags.error(mFlags.getInvalidFlagMsg());
       cleanDirectory();
       return 1;
-    } catch (final IllegalArgumentException ex) {
-      Diagnostic.error(ex.getMessage());
-      exitCode = 1;
-    } finally {
-      psOut.flush();
     }
-    return exitCode;
   }
 
   private void setParser(String readName) throws IOException {
@@ -265,14 +258,16 @@ public class ReadSimEvalCli extends LoggedCli {
     final String currentTemplateName = rec.getReferenceName();
     final long originalLocation = mParser.templatePosition();
     final long currentLocation = determineAlignmentStart(rec, originalLocation);
-    final Integer as = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE);
-    final int generatedScore = generatedScore(mParams.misMatchPenalty(), mParams.gapOpeningPenalty());
     if (currentTemplateName.equals(mParser.templateName()) && Math.abs(currentLocation - originalLocation) <= mParams.variance()) {
       // This record mapped the read to the correct location
       currentStats.found(id);
-      if (as != null && mParams.scoreHistograms()) {
-        mRocAs.addTp(as, weight);
+      if (mParams.scoreHistograms()) {
+        final int generatedScore = generatedScore(mParams.misMatchPenalty(), mParams.gapOpeningPenalty());
         mRocGs.addTp(generatedScore, weight);
+        final Integer as = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE);
+        if (as != null) {
+          mRocAs.addTp(as, weight);
+        }
       }
       if (mParams.mapQHistogram() || mParams.mapQRoc()) {
         mRocMapq.addTp(rec.getMappingQuality(), weight);
@@ -281,18 +276,12 @@ public class ReadSimEvalCli extends LoggedCli {
         recordsOut.writeln(rec.getSAMString().trim() + "\t" + SamUtils.ATTRIBUTE_READ_ACCURACY_STATUS + ":Z:Correct");
       }
     } else { // The mapping was incorrect
-      final Integer nm = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES);
-      if (as != null) {
-        if (mParams.scoreHistograms()) {
+      if (mParams.scoreHistograms()) {
+        final int generatedScore = generatedScore(mParams.misMatchPenalty(), mParams.gapOpeningPenalty());
+        mRocGs.addFp(generatedScore, weight);
+        final Integer as = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE);
+        if (as != null) {
           mRocAs.addFp(as, weight);
-          mRocGs.addFp(generatedScore, weight);
-        }
-        if (as < generatedScore) {
-          currentStats.better(id);
-        }
-      } else if (nm != null) {
-        if (nm < mParser.numMismatches()) {
-          currentStats.better(id);
         }
       }
       if (mParams.mapQHistogram() || mParams.mapQRoc()) {
@@ -375,9 +364,11 @@ public class ReadSimEvalCli extends LoggedCli {
     final File summary = new File(outputDirectory(), CommonFlags.SUMMARY_FILE);
     try (LineWriter summaryout = new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(summary)))) {
       final FormatReal formatter = new FormatReal(3, 2);
+
       summaryout.writeln("Total SAM records = " + totalRecords);
       summaryout.writeln("Unmapped records = " + unmappedRecords);
       summaryout.writeln("Filtered records = " + skippedRecords);
+
       if (mParams.isPaired()) {
         printPairedEndStats(summaryout, formatter);
       } else {
@@ -404,6 +395,12 @@ public class ReadSimEvalCli extends LoggedCli {
           scoreout.write("Generated Score Distribution" + StringUtils.LS);
           scoreout.write(mRocGs.getDistribution());
         }
+      }
+      try (Writer rocout = new BufferedWriter(new OutputStreamWriter(FileUtils.createOutputStream(new File(outputDirectory(), "as_roc.tsv"))))) {
+        rocout.write(mRocAs.getRoc(mLeftStats.length() * (mParams.isPaired() ? 2 : 1)));
+      }
+      try (Writer rocout = new BufferedWriter(new OutputStreamWriter(FileUtils.createOutputStream(new File(outputDirectory(), "gs_roc.tsv"))))) {
+        rocout.write(mRocGs.getRoc(mLeftStats.length() * (mParams.isPaired() ? 2 : 1)));
       }
     }
     if (mParams.mapQHistogram()) {
@@ -434,7 +431,6 @@ public class ReadSimEvalCli extends LoggedCli {
     private final String mLabel;
     private final SummaryStats2 mCorrect = new SummaryStats2("correctly");
     private final SummaryStats2 mIncorrect = new SummaryStats2("incorrectly");
-    private final SummaryStats2 mBetter = new SummaryStats2("incorrectly with lower alignment score");
     SummaryStats(String label) {
       mLabel = label;
     }
@@ -454,15 +450,12 @@ public class ReadSimEvalCli extends LoggedCli {
       updateStats(readStats, i, stats.mCorrect);
     } else if (readStats.isMapped(i)) {
       updateStats(readStats, i, stats.mIncorrect);
-      if (readStats.isBetter(i)) {
-        updateStats(readStats, i, stats.mBetter);
-      }
     } // Else unmapped
   }
 
   private void printSingleEndStats(LineWriter summaryout, final FormatReal formatter) throws IOException {
     final long totalReads = mLeftStats.length();
-    final SummaryStats stats = new SummaryStats("reads");
+    final SummaryStats stats = new SummaryStats("Reads");
     long mappedReads = 0;
     long unmappedReads = 0;
 
@@ -477,23 +470,23 @@ public class ReadSimEvalCli extends LoggedCli {
     if (mIgnoredAbsentTemplate > 0) {
       summaryout.writeln("Records ignored due to simulation/mapping template mismatch = " + mIgnoredAbsentTemplate);
     }
-    summaryout.writeln("Total reads = " + totalReads);
-    summaryout.writeln("mapped reads = " + mappedReads);
-    assert unmappedReads == (totalReads - mappedReads);
-    summaryout.writeln("unmapped reads = " + unmappedReads);
 
-    for (final SummaryStats2 stats2 : new SummaryStats2[] {stats.mCorrect, stats.mIncorrect, stats.mBetter}) {
+    summaryout.writeln("Total reads = " + totalReads);
+    summaryout.writeln("Mapped reads = " + mappedReads);
+    assert unmappedReads == (totalReads - mappedReads);
+    summaryout.writeln("Unmapped reads = " + unmappedReads);
+
+    for (final SummaryStats2 stats2 : new SummaryStats2[] {stats.mCorrect, stats.mIncorrect}) {
       summaryout.writeln(stats.mLabel + " mapped " + stats2.mLabel + " = " + stats2.mTotal);
     }
 
     final double totalCorrect = stats.mCorrect.mTotal;
     final double totalIncorrect = stats.mIncorrect.mTotal; // Includes better
-    final double totalBetter = stats.mBetter.mTotal;
     final double totalMapped = totalCorrect + totalIncorrect;
-    printAccuracy(summaryout, formatter, totalReads, totalCorrect, totalBetter, totalMapped);
+    printAccuracy(summaryout, formatter, totalReads, totalCorrect, totalMapped);
 
     if (mParams.verbose()) {
-      for (final SummaryStats2 stats2 : new SummaryStats2[] {stats.mCorrect, stats.mIncorrect, stats.mBetter}) {
+      for (final SummaryStats2 stats2 : new SummaryStats2[] {stats.mCorrect, stats.mIncorrect}) {
         summaryout.writeln(stats.mLabel + " mapped " + stats2.mLabel + " and unique = " + stats2.mAndUnique);
         summaryout.writeln(stats.mLabel + " mapped " + stats2.mLabel + " and multiple = " + stats2.mAndMultiple);
       }
@@ -502,8 +495,8 @@ public class ReadSimEvalCli extends LoggedCli {
 
   private void printPairedEndStats(LineWriter summaryout, final FormatReal formatter) throws IOException {
     final long total = mLeftStats.length();
-    final SummaryStats leftStats = new SummaryStats("left reads");
-    final SummaryStats rightStats = new SummaryStats("right reads");
+    final SummaryStats leftStats = new SummaryStats("Left reads");
+    final SummaryStats rightStats = new SummaryStats("Right reads");
     long mated = 0;
     long unmated = 0;
 
@@ -522,44 +515,35 @@ public class ReadSimEvalCli extends LoggedCli {
       summaryout.writeln("Records ignored due to simulation/mapping template mismatch = " + mIgnoredAbsentTemplate);
     }
     summaryout.writeln("Total pairs = " + total);
-    summaryout.writeln("mated pairs = " + mated);
-    summaryout.writeln("unmated pairs = " + unmated);
+    summaryout.writeln("Mated pairs = " + mated);
+    summaryout.writeln("Unmated pairs = " + unmated);
 
     for (final SummaryStats stats : new SummaryStats[] {leftStats, rightStats}) {
-      for (final SummaryStats2 stats2 : new SummaryStats2[] {stats.mCorrect, stats.mIncorrect, stats.mBetter}) {
-        if (mParams.verbose() || stats2 != stats.mBetter) { // Only output "better" stuff if verbose, it's probably broken across different mapping tools
-          summaryout.writeln(stats.mLabel + " mapped " + stats2.mLabel + " = " + stats2.mTotal);
-        }
+      for (final SummaryStats2 stats2 : new SummaryStats2[] {stats.mCorrect, stats.mIncorrect}) {
+        summaryout.writeln(stats.mLabel + " mapped " + stats2.mLabel + " = " + stats2.mTotal);
       }
     }
 
     final double totalCorrect = leftStats.mCorrect.mTotal + rightStats.mCorrect.mTotal;
     final double totalIncorrect = leftStats.mIncorrect.mTotal + rightStats.mIncorrect.mTotal;
-    final double totalBetter = leftStats.mBetter.mTotal + rightStats.mBetter.mTotal;
     final double totalMapped = totalCorrect + totalIncorrect; // better is included in incorrect
-    printAccuracy(summaryout, formatter, total * 2, totalCorrect, totalBetter, totalMapped);
+    printAccuracy(summaryout, formatter, total * 2, totalCorrect, totalMapped);
 
     if (mParams.verbose()) {
       for (final SummaryStats stats : new SummaryStats[] {leftStats, rightStats}) {
-        for (final SummaryStats2 stats2 : new SummaryStats2[] {stats.mCorrect, stats.mIncorrect, stats.mBetter}) {
-          if (mParams.verbose() || stats2 != stats.mBetter) { // Only output "better" stuff if verbose, it's probably broken across different mapping tools
-            summaryout.writeln(stats.mLabel + " mapped " + stats2.mLabel + " and unique = " + stats2.mAndUnique);
-            summaryout.writeln(stats.mLabel + " mapped " + stats2.mLabel + " and multiple = " + stats2.mAndMultiple);
-          }
+        for (final SummaryStats2 stats2 : new SummaryStats2[] {stats.mCorrect, stats.mIncorrect}) {
+          summaryout.writeln(stats.mLabel + " mapped " + stats2.mLabel + " and unique = " + stats2.mAndUnique);
+          summaryout.writeln(stats.mLabel + " mapped " + stats2.mLabel + " and multiple = " + stats2.mAndMultiple);
         }
       }
     }
   }
 
-  private void printAccuracy(LineWriter summaryout, final FormatReal formatter, final long total, final double totalCorrect, final double totalBetter, final double totalMapped) throws IOException {
-    if (mParams.verbose()) {
-      final double lenientAccuracy = (totalCorrect + totalBetter) / totalMapped * 100;
-      final double lenientSensitivity = (totalCorrect + totalBetter) / total * 100;
-      summaryout.writeln("Lenient Accuracy (Precision) = (correct + mapped incorrectly with lower alignment score) / total mapped reads = " + formatter.format(lenientAccuracy));
-      summaryout.writeln("Lenient Sensitivity (Recall) = (correct + mapped incorrectly with lower alignment score) / total reads = " + formatter.format(lenientSensitivity));
-    }
+  private void printAccuracy(LineWriter summaryout, final FormatReal formatter, final long total, final double totalCorrect, final double totalMapped) throws IOException {
     final double accuracy = 100.0 * totalCorrect / totalMapped;
     final double sensitivity = 100.0 * totalCorrect / total;
+    summaryout.writeln("Mapped % = total mapped reads / total reads = " + formatter.format(100.0 * totalMapped / total));
+    summaryout.writeln("Unmapped % = unmapped reads / total reads = " + formatter.format(100.0 * (total - totalMapped) / total));
     summaryout.writeln("Accuracy (Precision) = correct / total mapped reads = " + formatter.format(accuracy));
     summaryout.writeln("Sensitivity (Recall) = correct / total reads = " + formatter.format(sensitivity));
   }

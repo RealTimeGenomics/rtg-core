@@ -21,8 +21,7 @@ class ReadSimEvalStatistics {
   private static final byte UNMATED = 0x04;
   private static final byte UNMAPPED = 0x08;
   private static final byte MULTIPLE = 0x10;
-  private static final byte BETTER = 0x20;
-  private static final byte MAPPED = 0x40;
+  private static final byte MAPPED = 0x20;
 
   private final int mLen;
   private final byte[] mData;
@@ -82,14 +81,6 @@ class ReadSimEvalStatistics {
 
   boolean isMultiple(int i) {
     return get(i, MULTIPLE);
-  }
-
-  void better(int i) {
-    set(i, BETTER);
-  }
-
-  boolean isBetter(int i) {
-    return get(i, BETTER);
   }
 
   private boolean get(int readId, byte flag) {

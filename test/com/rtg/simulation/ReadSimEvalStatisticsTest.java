@@ -27,8 +27,6 @@ public class ReadSimEvalStatisticsTest extends TestCase {
 
     assertTrue(s.isMated(0));
 
-    s.better(1);
-    assertTrue(s.isBetter(1));
     assertFalse(s.isFound(1));
     //assertFalse(s.isBetter(1));
     assertFalse(s.isMultiple(1));

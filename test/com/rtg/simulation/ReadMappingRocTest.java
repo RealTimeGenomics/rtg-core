@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 public class ReadMappingRocTest extends TestCase {
 
   public void testROC() {
-    final ReadMappingRoc roc = new ReadMappingRoc();
+    final ReadMappingRoc roc = new ReadMappingRoc("test");
     assertEquals(0, roc.getTp(20), 0.001);
     assertEquals(0, roc.getMaxScore());
 
