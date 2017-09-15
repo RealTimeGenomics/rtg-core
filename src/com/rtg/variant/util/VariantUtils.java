@@ -416,7 +416,7 @@ public final class VariantUtils {
 
     final HypothesesSnp h = new HypothesesSnp(SimplePossibility.SINGLETON, p, false, -1);
     for (int i = 0; i < h.size(); ++i) {
-      final String call = h.code().homozygous(i) ? h.description().name(i) : h.name(i);
+      final String call = h.homozygous(i) ? h.description().name(i) : h.name(i);
       final String call2 = call.toLowerCase(Locale.ROOT).replace(VariantUtils.COLON, '_');
       final double[] dist = p.getPriorDistr(call);
       for (int b = 0; b < 4; ++b) {

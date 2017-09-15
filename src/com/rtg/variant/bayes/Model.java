@@ -67,7 +67,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   public Model(final Hypotheses<D> hyp, final Statistics<?> statistics, AlleleBalanceProbability alleleBalance) {
     mHypotheses = hyp;
     mStatistics = statistics;
-    final int size = hyp.code().size();
+    final int size = hyp.size();
     mPosteriors = new double[size];
     Arrays.fill(mPosteriors, arithmetic().one());
     mAlleleBalance = alleleBalance;
@@ -98,7 +98,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
 
   @Override
   public final int size() {
-    return mHypotheses.code().size();
+    return mHypotheses.size();
   }
 
   @Override
@@ -222,7 +222,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
 
   @Override
   public void statistics(StringBuilder sb, final HypothesesPrior<?> hypotheses) {
-    final int size = hypotheses().code().size();
+    final int size = hypotheses().size();
     for (int i = 0; i < size; ++i) {
       statistics(sb, i, hypotheses);
       sb.append(StringUtils.LS);
@@ -230,7 +230,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   }
 
   void statistics(StringBuilder sb, final int hyp, final HypothesesPrior<?> hypotheses) {
-    assert mHypotheses.code().valid(hyp);
+    assert mHypotheses.valid(hyp);
     sb.append(SPACES4);
     sb.append(mHypotheses.reference() == hyp ? '*' : ' ');
     mHypotheses.writeName(sb, hyp);
