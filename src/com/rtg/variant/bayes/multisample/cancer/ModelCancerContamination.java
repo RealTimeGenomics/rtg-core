@@ -115,7 +115,7 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
     final FormatReal fmt = new FormatReal(4, 3);
     sb.append(" contamination=").append(fmt.format(mContamination));
     sb.append(LS);
-    final int pad = hypotheses().nameLength();
+    final int pad = hypotheses().maxNameLength();
     final int size = ((HypothesesCancer<?>) hypotheses()).subHypotheses().size();
     for (int i = 0; i < size; ++i) {
       sb.append(StringUtils.padLeft(hypotheses().name(i), pad));

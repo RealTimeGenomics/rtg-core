@@ -101,7 +101,7 @@ public class HypothesesTest extends TestCase {
         }
       }
     };
-    assertEquals(5, hy.nameLength());
+    assertEquals(5, hy.maxNameLength());
     final String exp = ""
         + "Hypotheses" + LS
         + "   X:X  -0.693" + LS
@@ -125,7 +125,7 @@ public class HypothesesTest extends TestCase {
         }
       }
     };
-    assertEquals(2, hy.nameLength());
+    assertEquals(2, hy.maxNameLength());
     final String exp = ""
         + "Hypotheses" + LS
         + "  X  -0.693" + LS

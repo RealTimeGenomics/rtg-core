@@ -257,7 +257,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     sb.append("Model");
     //mStatistics.toString(sb);
     sb.append(LS);
-    final int hypPad = mHypotheses.nameLength();
+    final int hypPad = mHypotheses.maxNameLength();
     for (int i = 0; i < size(); ++i) {
       sb.append(StringUtils.padLeft(mHypotheses.name(i), hypPad));
       sb.append(" ").append(StringUtils.padLeft(Utils.realFormat(posteriorLn0(i), 3), 7));

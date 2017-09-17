@@ -138,7 +138,7 @@ public abstract class AbstractSomaticPosterior {
   public String toString() {
     final StringBuilder sb = new StringBuilder();
     final FormatReal fmt = new FormatReal(4, 3);
-    final int pad = mHypotheses.nameLength();
+    final int pad = mHypotheses.maxNameLength();
     for (int i = 0; i < mLength; ++i) {
       sb.append(StringUtils.padLeft(mHypotheses.name(i), pad));
       for (int j = 0; j < mLength; ++j) {

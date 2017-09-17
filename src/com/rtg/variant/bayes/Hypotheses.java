@@ -116,7 +116,7 @@ public abstract class Hypotheses<D extends Description> {
    * @return true iff index is in range.
    */
   public boolean valid(int index) {
-    return 0 <= index && index < size();
+    return mCode.valid(index);
   }
 
   /**
@@ -150,7 +150,7 @@ public abstract class Hypotheses<D extends Description> {
   /**
    * @return the maximum length of names.
    */
-  public int nameLength() {
+  public int maxNameLength() {
     final int haploidLen = mDescription.maxLength();
     final int hypPad;
     if (haploid()) {

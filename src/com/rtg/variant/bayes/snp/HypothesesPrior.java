@@ -94,7 +94,7 @@ public class HypothesesPrior<D extends Description> extends Hypotheses<D> implem
 
   @Override
   public String toString() {
-    final int hypPad = nameLength() + 1;
+    final int hypPad = maxNameLength() + 1;
     final StringBuilder sb = new StringBuilder();
     sb.append("Hypotheses").append(StringUtils.LS);
     for (int i = 0; i < size(); ++i) {
