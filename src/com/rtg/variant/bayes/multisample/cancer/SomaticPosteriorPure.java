@@ -22,24 +22,24 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 class SomaticPosteriorPure extends AbstractSomaticPosterior {
 
   /**
-   * @param qa The Q matrix of cancer mutation probabilities.
+   * @param q The Q matrix of cancer mutation probabilities.
    * @param normal array of normal hypotheses
    * @param cancer array of cancer hypotheses
    * @param hypotheses the hypotheses containing priors
    * @param phi probability of seeing contrary evidence in the original
    * @param psi probability of seeing contrary evidence in the derived
    */
-  SomaticPosteriorPure(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi) {
+  SomaticPosteriorPure(final double[][] q, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi) {
     super(hypotheses, phi, psi);
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
-    for (int i = 0; i < mLength; ++i) {
-      final double pi = hypotheses.arithmetic().poss2Ln(hypotheses.p(i)) + normal.posteriorLn0(i);
-      for (int j = 0; j < mLength; ++j) {
-        final double pj = cancer.posteriorLn0(j);
-        final double q = MathUtils.log(qa[i][j]);
-        final double t = q + pi + pj;
-        mPosterior[i][j] = t;
+    for (int normalHyp = 0; normalHyp < q.length; ++normalHyp) {
+      final double pNormal = hypotheses.arithmetic().poss2Ln(hypotheses.p(normalHyp)) + normal.posteriorLn0(normalHyp);
+      for (int cancerHyp = 0; cancerHyp < q[normalHyp].length; ++cancerHyp) {
+        final double pCancer = cancer.posteriorLn0(cancerHyp);
+        final double qv = MathUtils.log(q[normalHyp][cancerHyp]);
+        final double t = qv + pNormal + pCancer;
+        mPosterior[normalHyp][cancerHyp] = t;
       }
     }
     contraryEvidenceAdjustment(normal.statistics(), cancer.statistics());

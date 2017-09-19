@@ -37,16 +37,16 @@ class CachedSomaticPriorsFactory<D extends Description> extends SomaticPriorsFac
   }
 
   @Override
-  double[][] somaticQ(final double mutation) {
+  double[][] somaticQ(final double mu) {
     // Binning based on powers of 2, could be precomputed to avoid synchronized
-    final int exponent = Math.getExponent(mutation);
+    final int exponent = Math.getExponent(mu);
     assert exponent <= 1;
     final int index = -exponent;
     assert index >= 0 && index < mCache.length : String.valueOf(index);
     synchronized (mCache) {
       if (mCache[index] == null) {
         final double binnedMutation = Math.scalb(1, exponent);
-        assert binnedMutation <= mutation && binnedMutation >= 0.5 * mutation;
+        assert binnedMutation <= mu && binnedMutation >= 0.5 * mu;
         mCache[index] = super.somaticQ(binnedMutation);
       }
       return mCache[index];

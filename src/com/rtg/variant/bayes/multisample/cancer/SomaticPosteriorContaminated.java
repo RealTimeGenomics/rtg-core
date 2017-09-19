@@ -90,7 +90,7 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
   }
 
   /**
-   * @param qa The Q matrix of cancer mutation probabilities.
+   * @param q The Q matrix of cancer mutation probabilities.
    * @param normal model.
    * @param cancer model, has cross product hypotheses to allow for contamination.
    * @param hypotheses the hypotheses containing priors
@@ -99,30 +99,30 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
    * @param alpha contamination
    * @param useSomaticAlleleBalance true if the expected somatic allelic fraction correction is to be applied
    */
-  SomaticPosteriorContaminated(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi, double alpha, boolean useSomaticAlleleBalance) {
+  SomaticPosteriorContaminated(final double[][] q, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi, double alpha, boolean useSomaticAlleleBalance) {
     super(normal.hypotheses(), phi, psi);
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
     assert cancer instanceof ModelCancerContamination;
     assert !cancer.haploid(); // The cancer model is a cross-product of normal x cancer hypotheses
     final Code code = cancer.hypotheses().code();
-    for (int i = 0; i < mPosterior.length; ++i) {
-      final double pi = hypotheses.arithmetic().poss2Ln(hypotheses.p(i)) + normal.posteriorLn0(i);
-      for (int j = 0; j < mPosterior.length; ++j) {
-        final int k = code.code(i, j); // code point for normal(i) x cancer(j)
+    for (int normalHyp = 0; normalHyp < q.length; ++normalHyp) {
+      final double pNormal = hypotheses.arithmetic().poss2Ln(hypotheses.p(normalHyp)) + normal.posteriorLn0(normalHyp);
+      for (int cancerHyp = 0; cancerHyp < q[normalHyp].length; ++cancerHyp) {
+        final int k = code.code(normalHyp, cancerHyp); // code point for normal(normalHyp) x cancer(cancerHyp)
         assert k >= 0 && k < code.size() : k + " " + code.size();
-        final double pj = cancer.posteriorLn0(k);
-        final double q = MathUtils.log(qa[i][j]);
-        double t = q + pi + pj;
+        final double pCancer = cancer.posteriorLn0(k);
+        final double qv = MathUtils.log(q[normalHyp][cancerHyp]);
+        double t = qv + pNormal + pCancer;
         if (useSomaticAlleleBalance) {
           final String abType = GlobalFlags.getStringValue(CoreGlobalFlags.TUMOR_ALLELE_BALANCE);
           if (DIRICHLET.equals(abType)) {
-            t += alleleBalanceDirichletProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
+            t += alleleBalanceDirichletProbabilityLn(normal.hypotheses(), cancer.statistics(), normalHyp, cancerHyp, alpha);
           } else if (BINOMIAL.equals(abType)) {
-            t += alleleBalanceMultinomialProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
+            t += alleleBalanceMultinomialProbabilityLn(normal.hypotheses(), cancer.statistics(), normalHyp, cancerHyp, alpha);
           }
         }
-        mPosterior[i][j] = t;
+        mPosterior[normalHyp][cancerHyp] = t;
       }
     }
     // After this point the special code for contamination no longer plays any part, mPosterior

@@ -60,13 +60,13 @@ class SomaticPriorsFactory<D extends Description> {
 
   /**
    * Compute the somatic Q prior matrix for the specified mutation rate.
-   * @param mutation probability of a somatic mutation.
+   * @param mu probability of a somatic mutation.
    * @return probabilities of somatic transitions between possibly diploid hypotheses.
    */
-  double[][] somaticQ(final double mutation) {
+  double[][] somaticQ(final double mu) {
     final int length = mHypotheses.size();
     final double[][] q = new double[length][length];
-    new SomaticPriors<D>(mHypotheses, mutation, mLoh, mInitialPriors) {
+    new SomaticPriors<D>(mHypotheses, mu, mLoh, mInitialPriors) {
       @Override
       void update(final int k, final int j, final double probability) {
         q[k][j] += probability;

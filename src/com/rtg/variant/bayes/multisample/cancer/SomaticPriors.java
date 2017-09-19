@@ -26,18 +26,18 @@ import com.rtg.variant.bayes.Hypotheses;
 abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
 
   /**
-   * @param mutation probability of a somatic mutation.
+   * @param mu probability of a somatic mutation.
    * @param ref the reference hypothesis.
    * @param priors unnormalized probabilities of transitions.
    * @return normalized transitions including 1-mutation for the reference.
    */
-  static double[] mutationNormalize(final double mutation, final int ref, final double[] priors) {
+  static double[] mutationNormalize(final double mu, final int ref, final double[] priors) {
     assert Exam.assertDistribution(priors);
     final double[] norm = new double[priors.length];
     double sum = 0.0;
     for (int k = 0; k < priors.length; ++k) {
       if (k != ref) {
-        final double d = priors[k] * mutation;
+        final double d = priors[k] * mu;
         norm[k] = d;
         sum += d;
       }
@@ -58,17 +58,17 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
   }
 
   /**
-   * @param mutation probability of a somatic mutation.
+   * @param mu probability of a somatic mutation.
    * @param loh probability that there will be a loss of heterozygosity.
    * @param hypotheses the set of current hypotheses.
    * @param initialPriors probabilities of transitions between haploid hypotheses (assumed to be normalized).
    * @return probabilities of somatic transitions between possibly diploid hypotheses.
    * @param <D> description type
    */
-  static <D extends Description> double[][] makeQ(final double mutation, double loh, final Hypotheses<D> hypotheses, double[][] initialPriors) {
+  static <D extends Description> double[][] makeQ(final double mu, double loh, final Hypotheses<D> hypotheses, double[][] initialPriors) {
     final int length = hypotheses.size();
     final double[][] q = new double[length][length];
-    new SomaticPriors<D>(hypotheses, mutation, loh, initialPriors) {
+    new SomaticPriors<D>(hypotheses, mu, loh, initialPriors) {
       @Override
       void update(final int k, final int j, final double probability) {
         q[k][j] += probability;
@@ -84,14 +84,14 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
 
   /**
    * @param hypotheses to be mutated.
-   * @param mutation probability of a single mutation.
+   * @param mu probability of a single mutation.
    * @param loh probability of loss of heterozygosity.
    * @param initialPriors initial unnormalized haploid transition probabilities.
    */
-  SomaticPriors(Hypotheses<D> hypotheses, double mutation, double loh, double[][] initialPriors) {
+  SomaticPriors(Hypotheses<D> hypotheses, double mu, double loh, double[][] initialPriors) {
     mHypotheses = hypotheses;
     mLoh = loh;
-    mMutation = mutation;
+    mMutation = mu;
     mInitialPriors = initialPriors;
     assert integrity();
     assert globalIntegrity();
@@ -180,7 +180,7 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
   abstract void update(final int key1, final int key2, final double probability);
 
   /**
-   * Compute the transition probability from k to each of the allowed codes.
+   * Compute the transition probability from k to each of the allowed hypotheses.
    * @param k the original hypothesis
    * @return the transition probabilities.
    */
@@ -197,7 +197,7 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
       Exam.assertEquals(size, pr.length);
       for (int j = 0; j < size; ++j) {
         final double pv = pr[j];
-        Exam.assertTrue(0.0 <= pv && pv <= 1.0 && !Double.isNaN(pv));
+        Exam.assertTrue(0.0 <= pv && pv <= 1.0);
       }
     }
     return true;
@@ -205,7 +205,7 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
 
   @Override
   public final boolean integrity() {
-    Exam.assertTrue(0.0 <= mMutation && mMutation <= 1.0 && !Double.isNaN(mMutation));
+    Exam.assertTrue(0.0 <= mMutation && mMutation <= 1.0);
     final int size = mHypotheses.description().size();
     Exam.assertEquals(size, mInitialPriors.length);
     return true;
