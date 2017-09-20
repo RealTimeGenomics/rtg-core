@@ -124,7 +124,7 @@ public abstract class AbstractSomaticPosterior {
   private int findBest(double[] marginals) {
     double bestScore = Double.NEGATIVE_INFINITY;
     int besti = -1;
-    for (int i = 0; i < mLength; ++i) {
+    for (int i = 0; i < marginals.length; ++i) {
       final double p = marginals[i];
       if (p > bestScore) {
         bestScore = p;
@@ -178,11 +178,10 @@ public abstract class AbstractSomaticPosterior {
   protected double posteriorScore() {
     final double best = mPosterior[mBestNormal][mBestCancer];
     double others = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < mLength; ++i) {
-      for (int j = 0; j < mLength; ++j) {
-        if (i != mBestNormal || j != mBestCancer) {
-          final double pij = mPosterior[i][j];
-          others = logSum(others, pij);
+    for (int normalHyp = 0; normalHyp < mPosterior.length; ++normalHyp) {
+      for (int cancerHyp = 0; cancerHyp < mPosterior[normalHyp].length; ++cancerHyp) {
+        if (normalHyp != mBestNormal || cancerHyp != mBestCancer) {
+          others = logSum(others, mPosterior[normalHyp][cancerHyp]);
         }
       }
     }
