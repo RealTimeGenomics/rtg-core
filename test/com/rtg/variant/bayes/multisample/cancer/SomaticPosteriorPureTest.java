@@ -38,7 +38,7 @@ public class SomaticPosteriorPureTest extends TestCase {
       ;
 
   @SuppressWarnings("unchecked")
-  public static <D extends Description> void testPosteriorAllDifferent() {
+  public <D extends Description> void testPosteriorAllDifferent() {
     final ModelInterface<Description> model = PureSomaticCallerTest.SEEN_3_C.get(0);
     final HypothesesPrior<D> hypotheses = (HypothesesPrior<D>) model.hypotheses();
     final VariantParams params = VariantParams.builder().somaticParams(getSomaticRateParams(0.001)).create();
@@ -46,15 +46,15 @@ public class SomaticPosteriorPureTest extends TestCase {
     ccs.integrity();
 
     final int length = hypotheses.size();
-    final double[][] mQ = new double[length][length];
+    final double[][] q = new double[length][length];
     new SomaticPriors<D>(hypotheses, 0.001, 0.0, SomaticPriors.defaultUniformPriors(hypotheses.description().size())) {
       @Override
       void update(int i1, int i2, double probability) {
-        mQ[i1][i2] += probability;
+        q[i1][i2] += probability;
       }
     }.update();
 
-    final AbstractSomaticPosterior post = new SomaticPosteriorPure(mQ, model, PureSomaticCallerTest.SEEN_3_G.get(0), hypotheses, 1, 1);
+    final AbstractSomaticPosterior post = new SomaticPosteriorPure(q, model, PureSomaticCallerTest.SEEN_3_G.get(0), hypotheses, 1, 1);
     assertEquals(EXPECT_ALL_DIFFERENT, post.toString());
     assertEquals(1, post.bestNormal());
     assertEquals(2, post.bestCancer());
