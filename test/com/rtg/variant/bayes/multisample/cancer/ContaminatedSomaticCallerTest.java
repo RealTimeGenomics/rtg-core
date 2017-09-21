@@ -38,7 +38,7 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
 
   @Override
   protected AbstractSomaticCaller getSomaticCaller(Hypotheses<Description> hypotheses, VariantParams params, double phi, double psi) {
-    return new ContaminatedSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0.0), new SomaticPriorsFactory<>(hypotheses, 0.0), params, phi, psi, 0.5);
+    return new ContaminatedSomaticCaller(new DefaultSomaticPriorsFactory<>(hypotheses, 0.0), new DefaultSomaticPriorsFactory<>(hypotheses, 0.0), params, phi, psi, 0.5);
   }
 
   @Override

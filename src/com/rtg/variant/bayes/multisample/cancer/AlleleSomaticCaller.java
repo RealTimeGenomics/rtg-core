@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Real Time Genomics Limited.
+ * Copyright (c) 2017. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -13,27 +13,27 @@
 package com.rtg.variant.bayes.multisample.cancer;
 
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.bayes.HypothesesPowerSet;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 
 /**
- * A simple cancer caller that assumes no contamination.
+ * An allele based somatic caller.
  */
-public class PureSomaticCaller extends AbstractSomaticCaller {
+public class AlleleSomaticCaller extends AbstractSomaticCaller {
 
   /**
-   * @param qHaploidFactory haploid Q matrix factory
-   * @param qDiploidFactory diploid Q matrix factory
+   * @param qFactory Q matrix factory
    * @param params variant params
    * @param phi probability of seeing contrary evidence in the original
    * @param psi probability of seeing contrary evidence in the derived
    */
-  public PureSomaticCaller(SomaticPriorsFactory qHaploidFactory, SomaticPriorsFactory qDiploidFactory, VariantParams params, double phi, double psi) {
-    super(qHaploidFactory, qDiploidFactory, params, phi, psi);
+  public AlleleSomaticCaller(AlleleSomaticPriorsFactory<?> qFactory, VariantParams params, double phi, double psi) {
+    super(qFactory, qFactory, params, phi, psi);
   }
 
   @Override
   protected AbstractSomaticPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double mu) {
-    return new SomaticPosteriorPure((normal.haploid() ? mQHaploidFactory : mQDiploidFactory).somaticQ(mu), normal, cancer, hypotheses, mPhi, mPsi);
+    return new SomaticPosteriorAllele(normal.hypotheses(), (HypothesesPowerSet<?>) cancer.hypotheses(), mPhi, mPsi);
   }
 }

@@ -42,7 +42,7 @@ public class SomaticPosteriorPureTest extends TestCase {
     final ModelInterface<Description> model = PureSomaticCallerTest.SEEN_3_C.get(0);
     final HypothesesPrior<D> hypotheses = (HypothesesPrior<D>) model.hypotheses();
     final VariantParams params = VariantParams.builder().somaticParams(getSomaticRateParams(0.001)).create();
-    final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
+    final AbstractSomaticCaller ccs = new PureSomaticCaller(new DefaultSomaticPriorsFactory<>(hypotheses, 0), new DefaultSomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
     ccs.integrity();
 
     final int length = hypotheses.size();
@@ -78,7 +78,7 @@ public class SomaticPosteriorPureTest extends TestCase {
   public void testPosteriorAllSame() {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
     final VariantParams params = VariantParams.builder().somaticParams(getSomaticRateParams(0.001)).create();
-    final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
+    final AbstractSomaticCaller ccs = new PureSomaticCaller(new DefaultSomaticPriorsFactory<>(hypotheses, 0), new DefaultSomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
     ccs.integrity();
 
     AbstractSomaticPosterior post = null;

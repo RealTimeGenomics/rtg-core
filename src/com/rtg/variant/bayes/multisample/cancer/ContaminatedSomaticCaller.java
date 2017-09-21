@@ -32,7 +32,7 @@ public class ContaminatedSomaticCaller extends AbstractSomaticCaller {
    * @param psi probability of seeing contrary evidence in the derived
    * @param contamination contamination of tumor with normal
    */
-  public ContaminatedSomaticCaller(SomaticPriorsFactory<?> qHaploidFactory, SomaticPriorsFactory<?> qDiploidFactory, VariantParams params, double phi, double psi, double contamination) {
+  public ContaminatedSomaticCaller(DefaultSomaticPriorsFactory<?> qHaploidFactory, DefaultSomaticPriorsFactory<?> qDiploidFactory, VariantParams params, double phi, double psi, double contamination) {
     super(qHaploidFactory, qDiploidFactory, params, phi, psi);
     mContamination = contamination;
     mUseAlleleBalanceCorrection = params.somaticParams().somaticAlleleBalance();

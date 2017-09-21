@@ -51,7 +51,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
   private AbstractSomaticPosterior getContaminatedPosterior(double contamination) {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.SEEN_3_C.get(0).hypotheses();
     final VariantParams params = VariantParams.builder().somaticParams(new SomaticParamsBuilder().somaticRate(0.001).create()).create();
-    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1, contamination);
+    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(new DefaultSomaticPriorsFactory<>(hypotheses, 0), new DefaultSomaticPriorsFactory<>(hypotheses, 0), params, 1, 1, contamination);
     cc.integrity();
     // construct a contaminated cancer bayesian.
     final int numReads = 3;
@@ -100,7 +100,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
     final ModelInterface<Description> normal = PureSomaticCallerTest.EQUALS_REF_A.get(0);
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) normal.hypotheses();
     final VariantParams params = VariantParams.builder().somaticParams(new SomaticParamsBuilder().somaticRate(0.001).create()).create();
-    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1, 0.5);
+    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(new DefaultSomaticPriorsFactory<>(hypotheses, 0), new DefaultSomaticPriorsFactory<>(hypotheses, 0), params, 1, 1, 0.5);
     cc.integrity();
     final int numReads = 3;
     final int refNt = DNARange.A;

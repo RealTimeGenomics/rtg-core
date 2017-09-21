@@ -100,7 +100,7 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
    * @param useSomaticAlleleBalance true if the expected somatic allelic fraction correction is to be applied
    */
   SomaticPosteriorContaminated(final double[][] q, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi, double alpha, boolean useSomaticAlleleBalance) {
-    super(normal.hypotheses(), phi, psi);
+    super(normal.hypotheses(), normal.hypotheses(), phi, psi); // using normal.hypotheses() twice here is deliberate
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
     assert cancer instanceof ModelCancerContamination;

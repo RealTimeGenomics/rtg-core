@@ -34,13 +34,9 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 @TestClass(value = "com.rtg.variant.bayes.multisample.cancer.SomaticPosteriorPureTest")
 public abstract class AbstractSomaticPosterior {
 
-  PossibilityArithmetic mArithmetic = LogApproximatePossibility.SINGLETON;
-  protected double logSum(final double x, final double y) {
-    return mArithmetic.add(x, y);
-    //return VariantUtils.logSum(x, y);  // more accurate
-  }
-
-  protected final Hypotheses<?> mHypotheses;
+  protected PossibilityArithmetic mArithmetic = LogApproximatePossibility.SINGLETON;
+  protected final Hypotheses<?> mNormalHypotheses;
+  private final Hypotheses<?> mCancerHypotheses;
   protected final int mLength;
   protected double mEqual = Double.NEGATIVE_INFINITY;
   protected double mNotEqual = Double.NEGATIVE_INFINITY;
@@ -53,26 +49,32 @@ public abstract class AbstractSomaticPosterior {
   private final double mPsi;
 
   /**
-   * @param hypotheses for normal model (cancer is cross-product of this).
+   * @param normalHypotheses for normal model (cancer is cross-product of this).
    * @param phi probability of seeing contrary evidence in the original
    * @param psi probability of seeing contrary evidence in the derived
    */
-  public AbstractSomaticPosterior(final Hypotheses<?> hypotheses, final double phi, final double psi) {
-    mHypotheses = hypotheses;
-    mLength = hypotheses.size();
-    mPosterior = new double[mLength][mLength];
+  public AbstractSomaticPosterior(final Hypotheses<?> normalHypotheses, final Hypotheses<?> cancerHypotheses, final double phi, final double psi) {
+    mNormalHypotheses = normalHypotheses;
+    mCancerHypotheses = cancerHypotheses;
+    mLength = normalHypotheses.size();
+    mPosterior = new double[mLength][cancerHypotheses.size()];
     mNormalMarginal = new double[mLength];
-    mCancerMarginal = new double[mLength];
+    mCancerMarginal = new double[cancerHypotheses.size()];
     Arrays.fill(mNormalMarginal, Double.NEGATIVE_INFINITY);
     Arrays.fill(mCancerMarginal, Double.NEGATIVE_INFINITY);
     mPhi = mArithmetic.prob2Poss(phi);
     mPsi = mArithmetic.prob2Poss(psi);
   }
 
+  protected double logSum(final double x, final double y) {
+    return mArithmetic.add(x, y);
+    //return VariantUtils.logSum(x, y);  // more accurate
+  }
+
   /**
    * Finish the construction after values put into <code>mPosterior</code>
    */
-  protected final void postConstruction() {
+  protected void postConstruction() {
     // now calculate row/column/diagonal/non-diagonal sums.
     for (int normal = 0; normal < mLength; ++normal) {
       assert mPosterior[normal].length == mLength;
@@ -95,12 +97,12 @@ public abstract class AbstractSomaticPosterior {
   protected void contraryEvidenceAdjustment(final Statistics<?> normalStats, final Statistics<?> cancerStats) {
     // Corresponds to R(H_c | H_n, E_c, E_n) in theory document
     for (int normal = 0; normal < mLength; ++normal) {
-      final int normalA = mHypotheses.code().a(normal);
-      final int normalB = mHypotheses.code().bc(normal);
+      final int normalA = mNormalHypotheses.code().a(normal);
+      final int normalB = mNormalHypotheses.code().bc(normal);
       for (int cancer = 0; cancer < mLength; ++cancer) {
         if (normal != cancer) { // No adjustment needed in case where hypotheses are the same
-          final int cancerA = mHypotheses.code().a(cancer);
-          final int cancerB = mHypotheses.code().bc(cancer);
+          final int cancerA = mNormalHypotheses.code().a(cancer);
+          final int cancerB = mNormalHypotheses.code().bc(cancer);
           double contraryNormalCount = 0;
           double contraryCancerCount = 0;
           if (cancerA != normalA && cancerA != normalB) {
@@ -121,7 +123,7 @@ public abstract class AbstractSomaticPosterior {
     }
   }
 
-  private int findBest(double[] marginals) {
+  static int findBest(double[] marginals) {
     double bestScore = Double.NEGATIVE_INFINITY;
     int besti = -1;
     for (int i = 0; i < marginals.length; ++i) {
@@ -138,17 +140,17 @@ public abstract class AbstractSomaticPosterior {
   public String toString() {
     final StringBuilder sb = new StringBuilder();
     final FormatReal fmt = new FormatReal(4, 3);
-    final int pad = mHypotheses.maxNameLength();
-    for (int i = 0; i < mLength; ++i) {
-      sb.append(StringUtils.padLeft(mHypotheses.name(i), pad));
-      for (int j = 0; j < mLength; ++j) {
-        sb.append(fmt.format(mPosterior[i][j]));
+    final int pad = mNormalHypotheses.maxNameLength();
+    for (int normalHyp = 0; normalHyp < mLength; ++normalHyp) {
+      sb.append(StringUtils.padLeft(mNormalHypotheses.name(normalHyp), pad));
+      for (int cancerHyp = 0; cancerHyp < mCancerHypotheses.size(); ++cancerHyp) {
+        sb.append(fmt.format(mPosterior[normalHyp][cancerHyp]));
       }
-      sb.append(fmt.format(mNormalMarginal[i])).append(LS);
+      sb.append(fmt.format(mNormalMarginal[normalHyp])).append(LS);
     }
     sb.append(StringUtils.padLeft("", pad));
-    for (int j = 0; j < mLength; ++j) {
-      sb.append(fmt.format(mCancerMarginal[j]));
+    for (int cancerHyp = 0; cancerHyp < mCancerHypotheses.size(); ++cancerHyp) {
+      sb.append(fmt.format(mCancerMarginal[cancerHyp]));
     }
     sb.append(LS);
     sb.append("best[").append(mBestNormal).append(",").append(mBestCancer).append("]=").append(Utils.realFormat(mPosterior[mBestNormal][mBestCancer], 3)).append(LS);
@@ -208,14 +210,14 @@ public abstract class AbstractSomaticPosterior {
    * @return <code>ln(P / (1-P))</code> where P is the posterior for the most likely normal call.
    */
   protected GenotypeMeasure normalMeasure() {
-    return new NoNonIdentityMeasure(new ArrayGenotypeMeasure(mArithmetic, mNormalMarginal, mHypotheses));
+    return new NoNonIdentityMeasure(new ArrayGenotypeMeasure(mArithmetic, mNormalMarginal, mNormalHypotheses));
   }
 
   /**
    * @return <code>ln(P / (1-P))</code> where P is the posterior for the most likely cancer call.
    */
   protected GenotypeMeasure cancerMeasure() {
-    return new NoNonIdentityMeasure(new ArrayGenotypeMeasure(mArithmetic, mCancerMarginal, mHypotheses));
+    return new NoNonIdentityMeasure(new ArrayGenotypeMeasure(mArithmetic, mCancerMarginal, mCancerHypotheses));
   }
 
 }

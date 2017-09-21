@@ -25,31 +25,29 @@ import junit.framework.TestCase;
 
 /**
  */
-public class SomaticPriorsFactoryTest extends TestCase {
+public class CachedDefaultSomaticPriorsFactoryTest extends TestCase {
 
-  public void testHaploid() throws InvalidParamsException, IOException {
+  public void test() throws InvalidParamsException, IOException {
     final DescriptionCommon desc = new DescriptionCommon("", "A", "AA");
     final Hypotheses<DescriptionCommon> hyp = new MockHypotheses<>(desc, SimplePossibility.SINGLETON, true, new double[] {0.0, 0.0, 0.0}, 0);
-    final double[][] initialPriors = {
-      {0.5, 0.3, 0.2},
-      {0.25, 0.5, 0.25},
-      {0.5 / 3.0, 1.0 / 3.0, 0.5},
-    };
-    final double[][] qf = new SomaticPriorsFactory<>(hyp, 0.0, initialPriors).somaticQ(0.5);
-    final double[][] q = SomaticPriors.makeQ(0.5, 0.0, hyp, initialPriors);
-    assertTrue(Arrays.deepEquals(q, qf));
+    final CachedDefaultSomaticPriorsFactory<DescriptionCommon> cache = new CachedDefaultSomaticPriorsFactory<>(hyp, 0.0);
+    final double[][] qfc = cache.somaticQ(0.5);
+    final double[][] qf = new DefaultSomaticPriorsFactory<>(hyp, 0.0).somaticQ(0.5); // This value is not binned since it is a power of 2
+    assertTrue(Arrays.deepEquals(qfc, qf));
+    assertTrue(qfc == cache.somaticQ(0.5));
+    assertTrue(qfc == cache.somaticQ(0.5 + Double.MIN_NORMAL));
+    assertFalse(qfc == cache.somaticQ(0.25));
+    // Check that extreme mu doesn't cause an exception
+    cache.somaticQ(1);
+    cache.somaticQ(Double.MIN_VALUE);
+    cache.somaticQ(0.0);
   }
 
-  public void testDiploid() throws InvalidParamsException, IOException {
-    final DescriptionCommon desc = new DescriptionCommon("", "A", "AA");
-    final Hypotheses<DescriptionCommon> hyp = new MockHypotheses<>(desc, SimplePossibility.SINGLETON, false, new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, 0);
-    final double[][] initialPriors = {
-      {0.5, 0.3, 0.2},
-      {0.25, 0.5, 0.25},
-      {0.5 / 3.0, 1.0 / 3.0, 0.5},
-    };
-    final double[][] qf = new SomaticPriorsFactory<>(hyp, 0.0, initialPriors).somaticQ(0.3);
-    final double[][] q = SomaticPriors.makeQ(0.3, 0.0, hyp, initialPriors);
-    assertTrue(Arrays.deepEquals(q, qf));
+  public void testBounds() {
+    assertEquals(-1023, Math.getExponent(0.0));
+    assertEquals(-1023, Math.getExponent(Double.MIN_VALUE));
+    assertEquals(-1022, Math.getExponent(Double.MIN_NORMAL));
+    assertEquals(0, Math.getExponent(1.0));
   }
+
 }

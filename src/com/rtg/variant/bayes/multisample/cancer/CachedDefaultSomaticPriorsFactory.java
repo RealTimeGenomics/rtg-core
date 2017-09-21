@@ -21,7 +21,7 @@ import com.rtg.variant.bayes.Hypotheses;
  * mu next lower power of 2 is used for the actual calculation.  These powers of 2 values
  * are remembered so they can be reused.
  */
-class CachedSomaticPriorsFactory<D extends Description> extends SomaticPriorsFactory<D> {
+class CachedDefaultSomaticPriorsFactory<D extends Description> extends DefaultSomaticPriorsFactory<D> {
 
   // The +2 below is needed to handle mu < Double.MIN_NORMAL (i.e. 0 and subnormal numbers).
   // Cf. Math.exponent()
@@ -32,12 +32,12 @@ class CachedSomaticPriorsFactory<D extends Description> extends SomaticPriorsFac
    * @param hypotheses to be mutated.
    * @param loh probability of loss of heterozygosity.
    */
-  CachedSomaticPriorsFactory(final Hypotheses<D> hypotheses, final double loh) {
+  CachedDefaultSomaticPriorsFactory(final Hypotheses<D> hypotheses, final double loh) {
     super(hypotheses, loh);
   }
 
   @Override
-  double[][] somaticQ(final double mu) {
+  public double[][] somaticQ(final double mu) {
     // Binning based on powers of 2, could be precomputed to avoid synchronized
     final int exponent = Math.getExponent(mu);
     assert exponent <= 1;

@@ -54,8 +54,8 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
   static final int NORMAL = 0;
   static final int CANCER = 1;
 
-  protected final SomaticPriorsFactory<?> mQHaploidFactory;
-  protected final SomaticPriorsFactory<?> mQDiploidFactory;
+  protected final SomaticPriorsFactory mQHaploidFactory;
+  protected final SomaticPriorsFactory mQDiploidFactory;
   private final VariantParams mParams;
   private final ReferenceRanges<Double> mSiteSpecificSomaticPriors;
   private final double mIdentityInterestingThreshold;
@@ -70,7 +70,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
    * @param phi probability of seeing contrary evidence in the original
    * @param psi probability of seeing contrary evidence in the derived
    */
-  public AbstractSomaticCaller(final SomaticPriorsFactory<?> qHaploidFactory, final SomaticPriorsFactory<?> qDiploidFactory, final VariantParams params, final double phi, final double psi) {
+  public AbstractSomaticCaller(final SomaticPriorsFactory qHaploidFactory, final SomaticPriorsFactory qDiploidFactory, final VariantParams params, final double phi, final double psi) {
     mQHaploidFactory = qHaploidFactory;
     mQDiploidFactory = qDiploidFactory;
     mParams = params;

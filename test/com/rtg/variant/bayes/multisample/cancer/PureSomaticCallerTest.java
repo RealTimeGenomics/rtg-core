@@ -63,7 +63,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
 
   @Override
   protected AbstractSomaticCaller getSomaticCaller(final Hypotheses<Description> hypotheses, VariantParams params, double phi, double psi) {
-    return new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0.0), new SomaticPriorsFactory<>(hypotheses, 0), params, phi, psi);
+    return new PureSomaticCaller(new DefaultSomaticPriorsFactory<>(hypotheses, 0.0), new DefaultSomaticPriorsFactory<>(hypotheses, 0), params, phi, psi);
   }
 
   /** The result of 3 A reads, when reference is also A. */
