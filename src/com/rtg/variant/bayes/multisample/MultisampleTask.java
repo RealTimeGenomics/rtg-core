@@ -245,6 +245,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
             for (ModelInterface<?> m : models) {
               if (m.hypotheses().size() > 0) {
                 refHyp = m.reference(); // todo This is still a bit icky. We are assuming that if you have hypotheses all references are the same (maybe not true in cancer)
+                break; // todo this break essential for allele based cancer calling -- check it doesn't break anything else
               }
             }
             if (refHyp != Integer.MIN_VALUE) {

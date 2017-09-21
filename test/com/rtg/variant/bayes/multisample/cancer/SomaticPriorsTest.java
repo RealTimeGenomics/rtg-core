@@ -39,7 +39,7 @@ public class SomaticPriorsTest extends TestCase {
     private double mSum = 0.0;
 
     MockSomaticPriors(Hypotheses<DescriptionCommon> hypotheses, double mutation, double loh) {
-      super(hypotheses, mutation, loh, SomaticPriors.defaultUniformPriors(hypotheses.description().size()));
+      super(hypotheses, mutation, loh, DefaultSomaticPriorsFactory.defaultUniformPriors(hypotheses.description().size()));
       integrity();
     }
 

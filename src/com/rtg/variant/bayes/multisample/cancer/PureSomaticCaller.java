@@ -22,6 +22,7 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 public class PureSomaticCaller extends AbstractSomaticCaller {
 
   /**
+   * A simple cancer caller that assumes no contamination.
    * @param qHaploidFactory haploid Q matrix factory
    * @param qDiploidFactory diploid Q matrix factory
    * @param params variant params

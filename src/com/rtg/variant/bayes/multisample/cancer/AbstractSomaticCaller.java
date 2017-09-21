@@ -56,12 +56,12 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
   protected final SomaticPriorsFactory mQHaploidFactory;
   protected final SomaticPriorsFactory mQDiploidFactory;
-  private final VariantParams mParams;
+  protected final VariantParams mParams;
   private final ReferenceRanges<Double> mSiteSpecificSomaticPriors;
-  private final double mIdentityInterestingThreshold;
+  protected final double mIdentityInterestingThreshold;
   protected final double mPhi;
   protected final double mPsi;
-  private final VariantAlleleTrigger mVariantAlleleTrigger;
+  protected final VariantAlleleTrigger mVariantAlleleTrigger;
 
   /**
    * @param qHaploidFactory haploid Q matrix factory
@@ -91,7 +91,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
    */
   protected abstract AbstractSomaticPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, final HypothesesPrior<?> hypotheses, final double mu);
 
-  private VariantSample setCallValues(GenotypeMeasure posterior, int cat, Hypotheses<?> hypotheses, ModelInterface<?> model, VariantOutputOptions params, Ploidy ploidy, VariantSample.DeNovoStatus dns, Double dnp) {
+  protected VariantSample setCallValues(GenotypeMeasure posterior, int cat, Hypotheses<?> hypotheses, ModelInterface<?> model, VariantOutputOptions params, Ploidy ploidy, VariantSample.DeNovoStatus dns, Double dnp) {
     final VariantSample sample = new VariantSample(ploidy, hypotheses.name(cat), hypotheses.reference() == cat, posterior, dns, dnp);
     model.statistics().addCountsToSample(sample, model, params);
     return sample;
@@ -117,7 +117,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     return mParams.somaticParams().somaticRate();
   }
 
-  private double getSomaticPrior(final String seqName, final int start, final int end) {
+  protected double getSomaticPrior(final String seqName, final int start, final int end) {
     if (end <= start + 1) {
       return getSomaticPrior(seqName, start); // handles zero and one length regions
     }
@@ -292,11 +292,9 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
   }
 
   private void checkQ(double[][] qa) {
-    final int length = qa.length;
-    for (final double[] aQa : qa) {
-      Exam.assertEquals(length, aQa.length);
+    for (final double[] a : qa) {
       double sum = 0.0;
-      for (final double q : aQa) {
+      for (final double q : a) {
         sum += q;
         Exam.assertTrue(q >= 0.0 && q <= 1.0 && !Double.isNaN(q));
       }

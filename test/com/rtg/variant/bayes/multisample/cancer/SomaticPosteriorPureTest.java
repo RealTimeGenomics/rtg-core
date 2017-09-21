@@ -48,7 +48,7 @@ public class SomaticPosteriorPureTest extends TestCase {
 
     final int length = hypotheses.size();
     final double[][] q = new double[length][length];
-    new SomaticPriors<D>(hypotheses, 0.001, 0.0, SomaticPriors.defaultUniformPriors(hypotheses.description().size())) {
+    new SomaticPriors<D>(hypotheses, 0.001, 0.0, DefaultSomaticPriorsFactory.defaultUniformPriors(hypotheses.description().size())) {
       @Override
       void update(int i1, int i2, double probability) {
         q[i1][i2] += probability;

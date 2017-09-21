@@ -100,6 +100,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   public static final String QUALITY_CALIBRATION_COVARIATE_INTERSECTION = "com.rtg.variant.quality-calibration-covariate-intersection";
   /** Use Dirichlet rather than multinomial allele balance calculation. */
   public static final String TUMOR_ALLELE_BALANCE = "com.rtg.variant.bayes.multisample.cancer.allele-balance-type";
+  /** Use allele based somatic caller. */
+  public static final String ALLELE_SOMATIC_CALLER_FLAG = "com.rtg.variant.bayes.multisample.cancer.allele-caller";
 
   /** The percentage of the read length that may have been erroneously aligned across a breakpoint due to alignment penalties. */
   public static final String SV_ALIGNMENT_END_IGNORED_FRACTION = "com.rtg.variant.sv.alignment-ignore-end-fraction";
@@ -177,6 +179,7 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     registerFlag(QUALITY_CALIBRATION_MIN_EVIDENCE, Integer.class, 10);
     registerFlag(QUALITY_CALIBRATION_COVARIATE_INTERSECTION, Boolean.class, Boolean.FALSE);
     registerFlag(TUMOR_ALLELE_BALANCE, String.class, "binomial");
+    registerFlag(ALLELE_SOMATIC_CALLER_FLAG, Boolean.class, Boolean.FALSE);
 
     // Structural variation
     registerFlag(SV_ALIGNMENT_END_IGNORED_FRACTION, Integer.class, 8);

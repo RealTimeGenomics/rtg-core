@@ -31,6 +31,7 @@ public class ModelCancerAllele<D extends Description> extends Model<D> {
 
   /** Number of hypotheses containing any specific allele. */
   private final int mChi;
+  private final int mDescriptionSize;
 
   /**
    * @param hyp used to get the probabilities in the various categories for both normal and cancer.
@@ -39,11 +40,13 @@ public class ModelCancerAllele<D extends Description> extends Model<D> {
   public ModelCancerAllele(final HypothesesPowerSet<D> hyp, final Statistics<?> statistics) {
     super(hyp, statistics, new NoAlleleBalance());
     mChi = (hyp.size() + 1) / 2;
+    mDescriptionSize = hyp.description().size();
   }
 
   private ModelCancerAllele(ModelCancerAllele<D> original) {
     super(original);
     mChi = original.mChi;
+    mDescriptionSize = original.mDescriptionSize;
   }
 
   @Override
@@ -64,25 +67,24 @@ public class ModelCancerAllele<D extends Description> extends Model<D> {
     if (rc <= 0.0) {
       return; // Avoid case where mapq is 0 which gives a NaN
     }
-    // todo I'm ignoring evidence.probability(), is that right?
+    // todo I'm ignoring evidence.probability(), is that right?  -- probably, error() is the same thing but not divvied up
     // todo but less clear this is right thing to do with complex alleles ...
     final double pEr = r * evidence.pe();
     final double error = evidence.error();
     final int a = evidence.read();
+    final double norm = mDescriptionSize / ((1 << mDescriptionSize) - 1 + mDescriptionSize * error);
     for (int hyp = 0; hyp < size(); ++hyp) {
-      final boolean matches = ((hyp + 1) & (1 << a)) != 0;
-      final double prob = matches ? (1 - error) / mChi : error / (mChi - 1);
+      final int code = hyp + 1;
+      final boolean matches = (code & (1 << a)) != 0;
+      final double prob = matches ? norm / Integer.bitCount(code) : norm * error / (mChi - 1);
       if (prob <= 0.0) {
-        return; // Phred scores of 0 can result in 0 probabilty, just skip them
+        return; // Phred scores of 0 can result in 0 probability, just skip them
       }
       // Adjust for mapQ
       final double pr = prob * rc + pEr;
       mPosteriors[hyp] = arithmetic().multiply(mPosteriors[hyp], arithmetic().prob2Poss(pr));
     }
   }
-
-  // xxx todo probably need to override best() since hypothesis number is non-standard
-
 
   @Override
   public HypothesisScore best(HypothesesPrior<?> hypotheses) {
@@ -91,10 +93,10 @@ public class ModelCancerAllele<D extends Description> extends Model<D> {
 
   @Override
   public void toString(final StringBuilder sb) {
-    sb.append("Allele Cancer Model");
+    sb.append("Allele Cancer Model").append(LS);
     final FormatReal fmt = new FormatReal(4, 3);
     final int pad = hypotheses().maxNameLength();
-    for (int hyp = 1; hyp <= hypotheses().size(); ++hyp) {
+    for (int hyp = 0; hyp < hypotheses().size(); ++hyp) {
       sb.append(StringUtils.padLeft(hypotheses().name(hyp), pad));
       sb.append(fmt.format(arithmetic().poss2Ln(mPosteriors[hyp])));
       sb.append(LS);

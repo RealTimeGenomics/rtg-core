@@ -12,9 +12,9 @@
 
 package com.rtg.variant.bayes.multisample.cancer;
 
-import com.rtg.variant.bayes.Hypotheses;
-import com.rtg.variant.bayes.HypothesesPowerSet;
-import com.rtg.variant.bayes.Statistics;
+import com.rtg.util.MathUtils;
+import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.snp.HypothesesPrior;
 
 /**
  * Posterior calculations for allele based cancer calling.
@@ -22,63 +22,35 @@ import com.rtg.variant.bayes.Statistics;
 public class SomaticPosteriorAllele extends AbstractSomaticPosterior {
 
   /**
-   * @param normalHypotheses hypotheses for normal model
-   * @param cancerHypotheses hypotheses for cancer model
-   * @param phi probability of seeing contrary evidence in the original
-   * @param psi probability of seeing contrary evidence in the derived
+   * Posterior for the allele based cancer caller.
+   * @param q The Q matrix of cancer mutation probabilities.
+   * @param normal normal sample model
+   * @param cancer cancer sample model
+   * @param normalPrior priors for normal sample
+   * @param phi probability of seeing contrary evidence in the normal
+   * @param psi probability of seeing contrary evidence in the cancer
    */
-  public SomaticPosteriorAllele(final Hypotheses<?> normalHypotheses, final HypothesesPowerSet<?> cancerHypotheses, final double phi, final double psi) {
-    super(normalHypotheses, cancerHypotheses, phi, psi);
-  }
-
-  @Override
-  protected void postConstruction() {
-    assert mPosterior.length == mNormalHypotheses.size();
-    for (int normal = 0; normal < mPosterior.length; ++normal) {
-      for (int cancer = 0; cancer < mPosterior[normal].length; ++cancer) {
-        final double p = mPosterior[normal][cancer];
-        if ((1 << normal) == cancer) {
-          mEqual = logSum(mEqual, p);
-        } else {
-          mNotEqual = logSum(mNotEqual, p);
-        }
-        mNormalMarginal[normal] = logSum(mNormalMarginal[normal], p);
-        mCancerMarginal[cancer] = logSum(mCancerMarginal[cancer], p);
+  public SomaticPosteriorAllele(final double[][] q, final ModelInterface<?> normal, final ModelInterface<?> cancer, final HypothesesPrior<?> normalPrior, final double phi, final double psi) {
+    super(normal.hypotheses(), cancer.hypotheses(), phi, psi);
+    for (int normalHyp = 0; normalHyp < normal.size(); ++normalHyp) {
+      final double pNormal = normal.arithmetic().poss2Ln(normalPrior.p(normalHyp)) + normal.posteriorLn0(normalHyp);
+      for (int cancerHyp = 0; cancerHyp < cancer.size(); ++cancerHyp) {
+        final double pCancer = cancer.posteriorLn0(cancerHyp);
+        final double qv = MathUtils.log(q[normalHyp][cancerHyp]);
+        mPosterior[normalHyp][cancerHyp] = qv + pNormal + pCancer;
       }
     }
-    mBestNormal = AbstractSomaticPosterior.findBest(mNormalMarginal);
-    mBestCancer = AbstractSomaticPosterior.findBest(mCancerMarginal);
+    contraryEvidenceAdjustment(normal.statistics(), cancer.statistics());
+    postConstruction();
   }
 
   @Override
-  protected void contraryEvidenceAdjustment(final Statistics<?> normalStats, final Statistics<?> cancerStats) {
-    // todo, parent implementation is wrong for these cancer hyp
-    // todo for the moment this is making no adjustment
-//    // Corresponds to R(H_c | H_n, E_c, E_n) in theory document
-//    for (int normal = 0; normal < mLength; ++normal) {
-//      final int normalA = mNormalHypotheses.code().a(normal);
-//      final int normalB = mNormalHypotheses.code().bc(normal);
-//      for (int cancer = 0; cancer < mLength; ++cancer) {
-//        if (normal != cancer) { // No adjustment needed in case where hypotheses are the same
-//          final int cancerA = mNormalHypotheses.code().a(cancer);
-//          final int cancerB = mNormalHypotheses.code().bc(cancer);
-//          double contraryNormalCount = 0;
-//          double contraryCancerCount = 0;
-//          if (cancerA != normalA && cancerA != normalB) {
-//            contraryNormalCount += normalStats.counts().count(cancerA);
-//          }
-//          if (cancerB != cancerA && cancerB != normalA && cancerB != normalB) { // Only for heterozygous
-//            contraryNormalCount += normalStats.counts().count(cancerB);
-//          }
-//          if (normalA != cancerA && normalA != cancerB) {
-//            contraryCancerCount += cancerStats.counts().count(normalA);
-//          }
-//          if (normalB != normalA && normalB != cancerA && normalB != cancerB) { // Only for heterozygous
-//            contraryCancerCount += cancerStats.counts().count(normalB);
-//          }
-//          mPosterior[normal][cancer] += mPhi * contraryNormalCount + mPsi * contraryCancerCount;
-//        }
-//      }
-//    }
+  protected boolean isSame(final int normalHyp, final int cancerHyp) {
+    return normalHypToAlleleBits(normalHyp) == cancerHypToAlleleBits(cancerHyp);
+  }
+
+  @Override
+  protected int cancerHypToAlleleBits(final int cancerHyp) {
+    return cancerHyp + 1;
   }
 }

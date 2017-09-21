@@ -36,8 +36,7 @@ public abstract class AbstractSomaticPosterior {
 
   protected final PossibilityArithmetic mArithmetic = LogApproximatePossibility.SINGLETON;
   protected final Hypotheses<?> mNormalHypotheses;
-  private final Hypotheses<?> mCancerHypotheses;
-  protected final int mLength;
+  protected final Hypotheses<?> mCancerHypotheses;
   protected double mEqual = Double.NEGATIVE_INFINITY;
   protected double mNotEqual = Double.NEGATIVE_INFINITY;
   protected final double[][] mPosterior;
@@ -49,16 +48,16 @@ public abstract class AbstractSomaticPosterior {
   private final double mPsi;
 
   /**
-   * @param normalHypotheses for normal model (cancer is cross-product of this).
+   * @param normalHypotheses for normal sample hypotheses
+   * @param cancerHypotheses the cancer sample hypotheses
    * @param phi probability of seeing contrary evidence in the original
    * @param psi probability of seeing contrary evidence in the derived
    */
   public AbstractSomaticPosterior(final Hypotheses<?> normalHypotheses, final Hypotheses<?> cancerHypotheses, final double phi, final double psi) {
     mNormalHypotheses = normalHypotheses;
     mCancerHypotheses = cancerHypotheses;
-    mLength = normalHypotheses.size();
-    mPosterior = new double[mLength][cancerHypotheses.size()];
-    mNormalMarginal = new double[mLength];
+    mPosterior = new double[normalHypotheses.size()][cancerHypotheses.size()];
+    mNormalMarginal = new double[normalHypotheses.size()];
     mCancerMarginal = new double[cancerHypotheses.size()];
     Arrays.fill(mNormalMarginal, Double.NEGATIVE_INFINITY);
     Arrays.fill(mCancerMarginal, Double.NEGATIVE_INFINITY);
@@ -71,16 +70,20 @@ public abstract class AbstractSomaticPosterior {
     //return VariantUtils.logSum(x, y);  // more accurate
   }
 
+  protected boolean isSame(final int normalHyp, final int cancerHyp) {
+    return normalHyp == cancerHyp;
+  }
+
   /**
    * Finish the construction after values put into <code>mPosterior</code>
    */
   protected void postConstruction() {
-    // now calculate row/column/diagonal/non-diagonal sums.
-    for (int normal = 0; normal < mLength; ++normal) {
-      assert mPosterior[normal].length == mLength;
-      for (int cancer = 0; cancer < mLength; ++cancer) {
+    // Calculation marginals and equal/not-equal probabilities
+    for (int normal = 0; normal < mNormalHypotheses.size(); ++normal) {
+      assert mPosterior[normal].length == mCancerHypotheses.size();
+      for (int cancer = 0; cancer < mCancerHypotheses.size(); ++cancer) {
         final double p = mPosterior[normal][cancer];
-        if (normal == cancer) {
+        if (isSame(normal, cancer)) {
           mEqual = logSum(mEqual, p);
         } else {
           mNotEqual = logSum(mNotEqual, p);
@@ -98,31 +101,34 @@ public abstract class AbstractSomaticPosterior {
     mPosterior[normal][cancer] = mArithmetic.multiply(mPosterior[normal][cancer], mArithmetic.pow(contraryProb, count));
   }
 
-  protected void contraryEvidenceAdjustment(final Statistics<?> normalStats, final Statistics<?> cancerStats) {
+  protected int normalHypToAlleleBits(final int normalHyp) {
+    final int normalA = mNormalHypotheses.code().a(normalHyp);
+    final int normalB = mNormalHypotheses.code().bc(normalHyp);
+    return (1 << normalA) | (1 << normalB);
+  }
+
+  protected int cancerHypToAlleleBits(final int cancerHyp) {
+    return normalHypToAlleleBits(cancerHyp); // By default they have the same hypotheses as the normal
+  }
+
+  protected final void contraryEvidenceAdjustment(final Statistics<?> normalStats, final Statistics<?> cancerStats) {
     // Corresponds to R(H_c | H_n, E_c, E_n) in theory document
-    for (int normal = 0; normal < mLength; ++normal) {
-      final int normalA = mNormalHypotheses.code().a(normal);
-      final int normalB = mNormalHypotheses.code().bc(normal);
-      for (int cancer = 0; cancer < mLength; ++cancer) {
-        if (normal != cancer) { // No adjustment needed in case where hypotheses are the same
-          final int cancerA = mNormalHypotheses.code().a(cancer);
-          final int cancerB = mNormalHypotheses.code().bc(cancer);
-          double contraryNormalCount = 0;
-          double contraryCancerCount = 0;
-          if (cancerA != normalA && cancerA != normalB) {
-            contraryNormalCount += normalStats.counts().count(cancerA);
+    for (int normal = 0; normal < mNormalHypotheses.size(); ++normal) {
+      final int normalAlleles = normalHypToAlleleBits(normal);
+      for (int cancer = 0; cancer < mCancerHypotheses.size(); ++cancer) {
+        final int cancerAlleles = cancerHypToAlleleBits(cancer);
+        for (int alleleBit = 1, allele = 0; alleleBit < mCancerHypotheses.size(); ++allele, alleleBit <<= 1) {
+          if ((cancerAlleles & alleleBit) != 0) {
+            if ((normalAlleles & alleleBit) == 0) {
+              // allele present in cancer but not normal, any normal evidence is contrary
+              adjustPosterior(normal, cancer, mPhi, normalStats.counts().count(allele));
+            }
+          } else {
+            if ((normalAlleles & alleleBit) != 0) {
+              // allele present in normal but not in cancer, any cancer evidence is contrary
+              adjustPosterior(normal, cancer, mPsi, cancerStats.counts().count(allele));
+            }
           }
-          if (cancerB != cancerA && cancerB != normalA && cancerB != normalB) { // Only for heterozygous
-            contraryNormalCount += normalStats.counts().count(cancerB);
-          }
-          if (normalA != cancerA && normalA != cancerB) {
-            contraryCancerCount += cancerStats.counts().count(normalA);
-          }
-          if (normalB != normalA && normalB != cancerA && normalB != cancerB) { // Only for heterozygous
-            contraryCancerCount += cancerStats.counts().count(normalB);
-          }
-          adjustPosterior(normal, cancer, mPhi, contraryNormalCount);
-          adjustPosterior(normal, cancer, mPsi, contraryCancerCount);
         }
       }
     }
@@ -152,7 +158,7 @@ public abstract class AbstractSomaticPosterior {
       sb.append(StringUtils.padLeft(mCancerHypotheses.name(cancerHyp), col));
     }
     sb.append(LS);
-    for (int normalHyp = 0; normalHyp < mLength; ++normalHyp) {
+    for (int normalHyp = 0; normalHyp < mNormalHypotheses.size(); ++normalHyp) {
       sb.append(StringUtils.padLeft(mNormalHypotheses.name(normalHyp), pad));
       for (int cancerHyp = 0; cancerHyp < mCancerHypotheses.size(); ++cancerHyp) {
         sb.append(StringUtils.padLeft(fmt.format(mPosterior[normalHyp][cancerHyp]), col));

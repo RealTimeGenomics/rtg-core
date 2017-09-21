@@ -13,6 +13,7 @@
 package com.rtg.variant.bayes;
 
 import com.rtg.reference.Ploidy;
+import com.rtg.variant.bayes.snp.HypothesesNone;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
@@ -51,7 +52,7 @@ public class HypothesesPowerSet<D extends Description> extends Hypotheses<D> {
   // Reference in the hypotheses
   @Override
   public int reference() {
-    return (1 << mRef) - 1;
+    return mRef == HypothesesNone.NO_HYPOTHESIS ? HypothesesNone.NO_HYPOTHESIS : (1 << mRef) - 1;
   }
 
   @Override

@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.reference.Ploidy;
 import com.rtg.reference.SexMemo;
 import com.rtg.relation.LineageLookup;
@@ -104,7 +106,17 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
       final List<IndividualSampleFactory<?>> individualFactories = new ArrayList<>();
       final SexMemo sexMemo = Utils.createSexMemo(params);
       final AbstractSomaticCaller jointCaller;
-      if (contamination == 0.0) {
+      if (GlobalFlags.getBooleanValue(CoreGlobalFlags.ALLELE_SOMATIC_CALLER_FLAG)) {
+        Diagnostic.userLog("Using allele based cancer caller");
+        individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, params.sex(), sexMemo));
+        final ModelCancerAlleleFactory alleleHaploid = new ModelCancerAlleleFactory(params.genomePriors(), true, params.alleleBalance());
+        final ModelCancerAlleleFactory alleleDiploid = new ModelCancerAlleleFactory(params.genomePriors(), false, params.alleleBalance());
+        individualFactories.add(new IndividualSampleFactory<>(params, chooser, alleleHaploid, alleleDiploid, none, params.sex(), sexMemo));
+        jointCaller = new AlleleSomaticCaller(
+          new AlleleSomaticPriorsFactory<>(haploid.defaultHypotheses(0)),
+          new AlleleSomaticPriorsFactory<>(diploid.defaultHypotheses(0)),
+          params, phi, psi);
+      } else if (contamination == 0.0) {
         Diagnostic.userLog("Using no contamination cancer caller");
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, params.sex(), sexMemo));
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, params.sex(), sexMemo));

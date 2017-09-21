@@ -120,15 +120,15 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
    * @param readNt the nucleotide in the read at the current position.
    * @return the Bayesian after the reads.
    */
-  protected final List<ModelInterface<D>> doReads(final int numReads, final int readNt) {
+  protected final List<ModelInterface<D>> doCancerReads(final int numReads, final int readNt) {
     final double[] qualities = new double[numReads];
     for (int i = 0; i < numReads; ++i) {
       qualities[i] = 0.05;
     }
-    return doReads(readNt, qualities);
+    return doCancerReads(readNt, qualities);
   }
 
-  protected final List<ModelInterface<D>> doReads(final int readNt, double... qualities) {
+  protected final List<ModelInterface<D>> doCancerReads(final int readNt, double... qualities) {
     return getIncrementer(Ploidy.HAPLOID, 0.0, 0.99).doReads(readNt, qualities).freeze();
   }
 
@@ -169,57 +169,77 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
         , dump(doNormalReads(3, DNARangeAT.G)));
   }
 
-  protected static final String EXPECT_ALL_SAME = "chr1\t14\t.\tA\t.\t.\tPASS\tDP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SS\t0:3:0.293:0.000:100:0.00:6.51:0.00:30.330:0.00:A,3,0.293:3\t0:3:0.293:0.000:75:0.00:6.51:0.00:30.330:0.00:A,3,0.293:3:0\n";
+  private static final String EXPECT_ALL_SAME = "chr1\t14\t.\tA\t.\t.\tPASS\tDP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SS\t0:3:0.293:0.000:100:0.00:6.51:0.00:30.330:0.00:A,3,0.293:3\t0:3:0.293:0.000:75:0.00:6.51:0.00:30.330:0.00:A,3,0.293:3:0\n";
+
+  protected String expectAllSame() {
+    return EXPECT_ALL_SAME;
+  }
 
   public void testAllSame() throws InvalidParamsException, IOException {
     checkCancer(
       doNormalReads(3, DNARangeAT.A),
-      doReads(3, DNARangeAT.A),
-      EXPECT_ALL_SAME
+      doCancerReads(3, DNARangeAT.A),
+      expectAllSame()
     );
   }
 
-  protected static final String EXPECT_NORMAL_EQ_REF = "chr1\t14\t.\tA\tC\t.\tPASS\tNCS=10.864;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SSC:SS\t0:3:0.293:0.000:36:0.00:6.51:0.00:30.330,0.000:0.00:A,3,0.293:3,0\t1:3:0.293:0.000:11:0.00:6.51:0.00:0.000,30.330:0.00:C,3,0.293:0,3:1.0:2\n";
+  private static final String EXPECT_NORMAL_EQ_REF = "chr1\t14\t.\tA\tC\t.\tPASS\tNCS=40.675;DP=10\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SSC:SS\t0:5:0.488:0.000:65:0.00:10.86:0.00:50.550,0.000:0.00:A,5,0.488:5,0\t1:5:0.488:0.000:41:0.00:10.86:0.00:0.000,50.550:0.00:C,5,0.488:0,5:4.1:2\n";
+
+  protected String getExpectNormalEqRef() {
+    return EXPECT_NORMAL_EQ_REF;
+  }
 
   public void testNormalEqualsRef() throws InvalidParamsException, IOException {
     checkCancer(
-      doNormalReads(3, DNARangeAT.A),
-      doReads(3, DNARangeAT.C),
-      EXPECT_NORMAL_EQ_REF
+      doNormalReads(5, DNARangeAT.A),
+      doCancerReads(5, DNARangeAT.C),
+      getExpectNormalEqRef()
     );
   }
 
-  protected static final String EXPECT_CANCER_EQ_REF = "chr1\t14\t.\tA\t.\t.\tPASS\tDP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SS\t0:3:0.293:0.000:14:26.06:.:0.00:0.000:0.00:C,3,0.293:0\t0:3:0.293:0.000:25:0.00:6.51:0.00:30.330:0.00:A,3,0.293:3:0\n";
+  private static final String EXPECT_CANCER_EQ_REF = "chr1\t14\t.\tA\t.\t.\tPASS\tDP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SS\t0:3:0.293:0.000:14:26.06:.:0.00:0.000:0.00:C,3,0.293:0\t0:3:0.293:0.000:25:0.00:6.51:0.00:30.330:0.00:A,3,0.293:3:0\n";
+
+  protected String getExpectCancerEqRef() {
+    return EXPECT_CANCER_EQ_REF;
+  }
 
   public void testCancerEqualsRef() throws InvalidParamsException, IOException {
     checkCancer(
       doNormalReads(3, DNARangeAT.C),
-      doReads(3, DNARangeAT.A),
-      EXPECT_CANCER_EQ_REF
+      doCancerReads(3, DNARangeAT.A),
+      getExpectCancerEqRef()
     );
   }
 
-  protected static final String EXPECT_CANCER_EQ_NORMAL = "chr1\t14\t.\tA\tC\t.\tPASS\tDP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SS\t1:3:0.293:0.000:55:0.00:6.51:0.00:0.000,30.330:0.00:C,3,0.293:0,3\t1:3:0.293:0.000:65:0.00:6.51:0.00:0.000,30.330:0.00:C,3,0.293:0,3:1\n";
+  private static final String EXPECT_CANCER_EQ_NORMAL = "chr1\t14\t.\tA\tC\t.\tPASS\tDP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SS\t1:3:0.293:0.000:55:0.00:6.51:0.00:0.000,30.330:0.00:C,3,0.293:0,3\t1:3:0.293:0.000:65:0.00:6.51:0.00:0.000,30.330:0.00:C,3,0.293:0,3:1\n";
+
+  protected String getExpectCancerEqNormal() {
+    return EXPECT_CANCER_EQ_NORMAL;
+  }
 
   public void testCancerEqualsNormal() throws InvalidParamsException, IOException {
     checkCancer(
       doNormalReads(3, DNARangeAT.C),
-      doReads(3, DNARangeAT.C),
-      EXPECT_CANCER_EQ_NORMAL
+      doCancerReads(3, DNARangeAT.C),
+      getExpectCancerEqNormal()
     );
   }
 
-  protected static final String EXPECT_ALL_DIFFERENT = "chr1\t14\t.\tA\tC,G\t.\tPASS\tNCS=8.224;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SSC:SS\t1:3:0.293:0.000:11:0.00:6.51:0.00:0.000,30.330,0.000:0.00:C,3,0.293:0,3,0\t2:3:0.293:0.000:11:0.00:6.51:0.00:0.000,0.000,30.330:0.00:G,3,0.293:0,0,3:0.7:2\n";
+  private static final String EXPECT_ALL_DIFFERENT = "chr1\t14\t.\tA\tC,G\t.\tPASS\tNCS=37.680;DP=10\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SSC:SS\t1:5:0.488:0.000:40:0.00:10.86:0.00:0.000,50.550,0.000:0.00:C,5,0.488:0,5,0\t2:5:0.488:0.000:41:0.00:10.86:0.00:0.000,0.000,50.550:0.00:G,5,0.488:0,0,5:3.7:2\n";
+
+  protected String getExpectAllDifferent() {
+    return EXPECT_ALL_DIFFERENT;
+  }
 
   public void testAllDifferent() throws InvalidParamsException, IOException {
     checkCancer(
-      doNormalReads(3, DNARangeAT.C),
-      doReads(3, DNARangeAT.G),
-      EXPECT_ALL_DIFFERENT
+      doNormalReads(5, DNARangeAT.C),
+      doCancerReads(5, DNARangeAT.G),
+      getExpectAllDifferent()
     );
   }
 
-  private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect) throws InvalidParamsException, IOException {
+  protected void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect) throws InvalidParamsException, IOException {
     checkCancer(normal, cancer, expect, getDefaultParams());
   }
 
@@ -286,7 +306,12 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     return String.format("%.3e", value);
   }
 
-  protected static final String EXPECT_VAF = "chr1\t14\t.\tA\tG\t.\tPASS\tDP=3\tGT:VA:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:ADE:AD:SS:VAF\t1:.:0:0.000:.:10:.:.:.:0.000,0.000:.:.:0.0,0.0:0,0\t1:1:3:0.293:0.000:21:0.00:6.51:0.00:0.000,30.330:0.00:G,3,0.293:0.0,2.7:0,3:1:1.000\n";
+  private static final String EXPECT_VAF = "chr1\t14\t.\tA\tG\t.\tPASS\tDP=3\tGT:VA:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:ADE:AD:SS:VAF\t1:.:0:0.000:.:10:.:.:.:0.000,0.000:.:.:0.0,0.0:0,0\t1:1:3:0.293:0.000:21:0.00:6.51:0.00:0.000,30.330:0.00:G,3,0.293:0.0,2.7:0,3:1:1.000\n";
+
+  protected String getExpectVaf() {
+    return EXPECT_VAF;
+  }
+
   public void testVariantAllele() throws InvalidParamsException, IOException {
 
     final VariantParams params = new VariantParamsBuilder()
@@ -298,8 +323,8 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
       .create();
     checkCancer(
       doNormalReads(0, DNARangeAT.C),
-      doReads(3, DNARangeAT.G),
-      EXPECT_VAF,
+      doCancerReads(3, DNARangeAT.G),
+      getExpectVaf(),
       params
     );
   }

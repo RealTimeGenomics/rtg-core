@@ -21,24 +21,18 @@ import com.rtg.variant.bayes.HypothesesPowerSet;
  */
 class AlleleSomaticPriorsFactory<D extends Description> implements SomaticPriorsFactory {
 
-  private final double[][] mQ;
-  private final double mMu;
+  private final Hypotheses<D> mNormalHypotheses;
 
   /**
    * Construct a new factory for the specified hypotheses.
-   * @param normalHypotheses to be mutated.
-   * @param mu somatic mutation probability
+   * @param normalHypotheses normal hypotheses
    */
-  AlleleSomaticPriorsFactory(final Hypotheses<D> normalHypotheses, final HypothesesPowerSet<D> cancerHypotheses, final double mu) {
-    mMu = mu;
-    mQ = SomaticPriorsAllele.makeQ(mu, normalHypotheses, cancerHypotheses);
+  AlleleSomaticPriorsFactory(final Hypotheses<D> normalHypotheses) {
+    mNormalHypotheses = normalHypotheses;
   }
 
   @Override
   public double[][] somaticQ(final double mu) {
-    if (mu != mMu) {
-      throw new UnsupportedOperationException("Dynamic mu not supported");
-    }
-    return mQ;
+    return SomaticPriorsAllele.makeQ(mu, mNormalHypotheses, new HypothesesPowerSet<>(mNormalHypotheses.description(), mNormalHypotheses.arithmetic(), mNormalHypotheses.reference()));
   }
 }

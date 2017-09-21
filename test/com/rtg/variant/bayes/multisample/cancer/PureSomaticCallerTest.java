@@ -63,20 +63,20 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
 
   @Override
   protected AbstractSomaticCaller getSomaticCaller(final Hypotheses<Description> hypotheses, VariantParams params, double phi, double psi) {
-    return new PureSomaticCaller(new DefaultSomaticPriorsFactory<>(hypotheses, 0.0), new DefaultSomaticPriorsFactory<>(hypotheses, 0), params, phi, psi);
+    return new PureSomaticCaller(new DefaultSomaticPriorsFactory<>(hypotheses, 0), new DefaultSomaticPriorsFactory<>(hypotheses, 0), params, phi, psi);
   }
 
   /** The result of 3 A reads, when reference is also A. */
   static final List<ModelInterface<Description>> EQUALS_REF_A =
-      new PureSomaticCallerTest().doReads(3, DNARangeAT.A);
+      new PureSomaticCallerTest().doCancerReads(3, DNARangeAT.A);
 
   /** The result of 3 C reads, when reference is A. */
   static final List<ModelInterface<Description>> SEEN_3_C =
-      new PureSomaticCallerTest().doReads(3, DNARangeAT.C);
+      new PureSomaticCallerTest().doCancerReads(3, DNARangeAT.C);
 
   /** The result of 3 G reads, when reference is A. */
   static final List<ModelInterface<Description>> SEEN_3_G =
-      new PureSomaticCallerTest().doReads(3, DNARangeAT.G);
+      new PureSomaticCallerTest().doCancerReads(3, DNARangeAT.G);
 
   protected static final String EXPECT_IDENTICAL = "chr1\t14\t.\tG\tA\t.\tPASS\tDP=2\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SS\t1:1:0.020:0.000:21:0.00:2.17:0.00:0.000,17.011:0.00:A,1,0.020:0,1\t1:1:0.020:0.000:25:0.00:2.17:0.00:0.000,17.011:0.00:A,1,0.020:0,1:1\n";
 

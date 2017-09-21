@@ -12,13 +12,13 @@
 
 package com.rtg.variant;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.rtg.util.StringUtils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
-import com.rtg.variant.bayes.Code;
-import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.NoNonIdentityMeasure;
 import com.rtg.variant.util.VariantUtils;
 
@@ -147,10 +147,8 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
           alleles.add(sample.getVariantAllele());
         }
         final int best = sample.getMeasure().best();
-        final Description desc = sample.getMeasure().hypotheses().description();
-        final Code code = sample.getMeasure().hypotheses().code();
-        alleles.add(desc.name(code.a(best)));
-        alleles.add(desc.name(code.bc(best)));
+        final String hypName = sample.getMeasure().hypotheses().name(best);
+        Collections.addAll(alleles, StringUtils.split(hypName, VariantUtils.COLON));
       }
     }
     return alleles;
