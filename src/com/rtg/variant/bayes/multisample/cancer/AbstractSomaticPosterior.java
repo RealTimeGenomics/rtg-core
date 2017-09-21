@@ -34,7 +34,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 @TestClass(value = "com.rtg.variant.bayes.multisample.cancer.SomaticPosteriorPureTest")
 public abstract class AbstractSomaticPosterior {
 
-  protected PossibilityArithmetic mArithmetic = LogApproximatePossibility.SINGLETON;
+  protected final PossibilityArithmetic mArithmetic = LogApproximatePossibility.SINGLETON;
   protected final Hypotheses<?> mNormalHypotheses;
   private final Hypotheses<?> mCancerHypotheses;
   protected final int mLength;
@@ -94,6 +94,10 @@ public abstract class AbstractSomaticPosterior {
     mBestCancer = findBest(mCancerMarginal);
   }
 
+  protected void adjustPosterior(final int normal, final int cancer, final double contraryProb, final double count) {
+    mPosterior[normal][cancer] = mArithmetic.multiply(mPosterior[normal][cancer], mArithmetic.pow(contraryProb, count));
+  }
+
   protected void contraryEvidenceAdjustment(final Statistics<?> normalStats, final Statistics<?> cancerStats) {
     // Corresponds to R(H_c | H_n, E_c, E_n) in theory document
     for (int normal = 0; normal < mLength; ++normal) {
@@ -117,18 +121,19 @@ public abstract class AbstractSomaticPosterior {
           if (normalB != normalA && normalB != cancerA && normalB != cancerB) { // Only for heterozygous
             contraryCancerCount += cancerStats.counts().count(normalB);
           }
-          mPosterior[normal][cancer] += mPhi * contraryNormalCount + mPsi * contraryCancerCount;
+          adjustPosterior(normal, cancer, mPhi, contraryNormalCount);
+          adjustPosterior(normal, cancer, mPsi, contraryCancerCount);
         }
       }
     }
   }
 
-  static int findBest(double[] marginals) {
-    double bestScore = Double.NEGATIVE_INFINITY;
+  int findBest(double[] marginals) {
+    double bestScore = mArithmetic.zero();
     int besti = -1;
     for (int i = 0; i < marginals.length; ++i) {
       final double p = marginals[i];
-      if (p > bestScore) {
+      if (mArithmetic.gt(p, bestScore)) {
         bestScore = p;
         besti = i;
       }
