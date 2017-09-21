@@ -69,8 +69,8 @@ public class ModelCancerAllele<D extends Description> extends Model<D> {
     final double pEr = r * evidence.pe();
     final double error = evidence.error();
     final int a = evidence.read();
-    for (int hyp = 1; hyp <= size(); ++hyp) {
-      final boolean matches = (hyp & (1 << a)) != 0;
+    for (int hyp = 0; hyp < size(); ++hyp) {
+      final boolean matches = ((hyp + 1) & (1 << a)) != 0;
       final double prob = matches ? (1 - error) / mChi : error / (mChi - 1);
       if (prob <= 0.0) {
         return; // Phred scores of 0 can result in 0 probabilty, just skip them

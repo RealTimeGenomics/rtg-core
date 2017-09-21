@@ -27,11 +27,11 @@ public class HypothesesPowerSetTest extends TestCase {
     final DescriptionCommon desc = new DescriptionCommon("A", "C", "G", "T");
     final HypothesesPowerSet<DescriptionCommon> hyp = new HypothesesPowerSet<>(desc, LogPossibility.SINGLETON, 2);
     assertEquals(15, hyp.size());
-    assertFalse(hyp.valid(0));
-    assertTrue(hyp.valid(1));
-    assertTrue(hyp.valid(15));
-    assertFalse(hyp.valid(16));
-    assertEquals("A:C:G:T", hyp.name(15));
+    assertFalse(hyp.valid(-1));
+    assertTrue(hyp.valid(0));
+    assertTrue(hyp.valid(14));
+    assertFalse(hyp.valid(15));
+    assertEquals("A:C:G:T", hyp.name(14));
     assertEquals("G", hyp.name(hyp.reference()));
     assertEquals(LogPossibility.SINGLETON, hyp.arithmetic());
     assertEquals(7, hyp.maxNameLength());

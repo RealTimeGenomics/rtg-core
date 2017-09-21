@@ -28,9 +28,12 @@ public class HypothesesPowerSet<D extends Description> extends Hypotheses<D> {
 
   // Represents a set of hypotheses comprising the power set of the description with
   // the empty set omitted.  Thus, there are 2^{|D|}-1 hypotheses in general and
-  // these are denoted by the numbers 1, 2, ..., 2^{|D|}-1. If h is hypothesis, then
-  // the bits of h indicate which alleles are present, e.g. h=2^{|D|}-1 has every
-  // allele of the description, h=1, h=2, h=4, h=8, etc. has only one allele.
+  // these are denoted internally by the numbers 1, 2, ..., 2^{|D|}-1.  If h is
+  // hypothesis, then the bits of h indicate which alleles are present, e.g.
+  // h=2^{|D|}-1 has every allele of the description, h=1, h=2, h=4, h=8, etc. has
+  // only one allele.  However, for consistency with our other Hypotheses classes
+  // externally these hypotheses are numbered 0, ..., 2^{|D|}-2; that means quite
+  // a few +/- 1 in this class, but less fiddling outside this class.
 
   private final int mRef;
 
@@ -48,14 +51,15 @@ public class HypothesesPowerSet<D extends Description> extends Hypotheses<D> {
   // Reference in the hypotheses
   @Override
   public int reference() {
-    return 1 << mRef;
+    return (1 << mRef) - 1;
   }
 
   @Override
   public String name(final int hyp) {
+    final int code = hyp + 1;
     final StringBuilder sb = new StringBuilder();
     for (int k = 0, v = 1; k < mDescription.size(); ++k, v <<= 1) {
-      if ((hyp & v) != 0) {
+      if ((code & v) != 0) {
         if (sb.length() != 0) {
           sb.append(VariantUtils.COLON);
         }

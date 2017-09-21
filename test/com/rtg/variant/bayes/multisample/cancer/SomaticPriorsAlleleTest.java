@@ -32,13 +32,12 @@ public class SomaticPriorsAlleleTest extends TestCase {
     final double[][] q = SomaticPriorsAllele.makeQ(0.1, normalHyp, cancerHyp);
     // System.out.println(Arrays.deepToString(q));
     assertEquals(normalHyp.size(), q.length);
-    assertEquals(cancerHyp.size(), q[0].length - 1); // unused column 0
+    assertEquals(cancerHyp.size(), q[0].length);
     // 0th column should be unused
     // q[k][1 << k] is the identity
     // q[k][15] means every allele selected, should be small
     for (int k = 0; k < q.length; ++k) {
-      assertEquals(0.0, q[k][0]);
-      assertEquals(0.733, q[k][1 << k], 1e-3);
+      assertEquals(0.733, q[k][(1 << k) - 1], 1e-3);
       assertEquals(7.33E-4, q[k][q[k].length - 1], 1e-7);
     }
   }
@@ -50,15 +49,14 @@ public class SomaticPriorsAlleleTest extends TestCase {
     final double[][] q = SomaticPriorsAllele.makeQ(0.1, normalHyp, cancerHyp);
     //System.out.println(Arrays.deepToString(q));
     assertEquals(normalHyp.size(), q.length);
-    assertEquals(cancerHyp.size(), q[0].length - 1); // unused column 0
+    assertEquals(cancerHyp.size(), q[0].length);
     // 0th column should be unused
     // q[k][(1 << ka) | (1 << kb)] is the identity, results depends on number of normal alleles
     // q[k][15] means every allele selected, should be small but result depends on number of normal alleles
     final Code code = normalHyp.code();
     for (int k = 0; k < q.length; ++k) {
-      assertEquals(0.0, q[k][0]);
       final int alleleBits = (1 << code.a(k)) | (1 << code.bc(k));
-      assertEquals(Integer.bitCount(alleleBits) == 1 ? 0.733 : 0.6877, q[k][alleleBits], 1e-3);
+      assertEquals(Integer.bitCount(alleleBits) == 1 ? 0.733 : 0.6877, q[k][alleleBits - 1], 1e-3);
       assertEquals(Integer.bitCount(alleleBits) == 1 ? 7.33E-4 : 6.877E-3, q[k][q[k].length - 1], 1e-6);
     }
   }

@@ -22,10 +22,10 @@ public class CodePowerSetTest extends TestCase {
   public void test() {
     final CodePowerSet code = new CodePowerSet(4);
     assertEquals(15, code.size());
-    assertFalse(code.valid(0));
-    assertTrue(code.valid(1));
-    assertTrue(code.valid(15));
-    assertFalse(code.valid(16));
+    assertFalse(code.valid(-1));
+    assertTrue(code.valid(0));
+    assertTrue(code.valid(14));
+    assertFalse(code.valid(15));
 
   }
 }

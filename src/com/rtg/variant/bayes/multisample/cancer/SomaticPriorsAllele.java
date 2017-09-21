@@ -50,16 +50,16 @@ final class SomaticPriorsAllele {
     }
     // Matrix orientation is q[normal][cancer]
     final Code normalCode = normalHyp.code();
-    final int nSize = normalHyp.size(); // range is 0..nSize-1 inclusive
-    final int cSize = cancerHyp.size(); // range is 1..cSize inclusive
-    final double[][] q = new double[nSize][cSize + 1];
+    final int nSize = normalHyp.size();
+    final int cSize = cancerHyp.size();
+    final double[][] q = new double[nSize][cSize];
     for (int nh = 0; nh < nSize; ++nh) {
       final int a = normalCode.a(nh);
       final int b = normalCode.bc(nh);
       final int normalAlleleBits = (1 << a) | (1 << b); // for homozygous, only 1 bit gets set
-      for (int ch = 1; ch <= cSize; ++ch) {
+      for (int ch = 0; ch < cSize; ++ch) {
         // mu^(number of alleles different between normal hyp and cancer hyp)
-        q[nh][ch] = muPowers[Integer.bitCount(normalAlleleBits ^ ch)];
+        q[nh][ch] = muPowers[Integer.bitCount(normalAlleleBits ^ (ch + 1))]; // ch + 1 to get bit coding
       }
       q[nh] = MathUtils.renormalize(q[nh]);
     }

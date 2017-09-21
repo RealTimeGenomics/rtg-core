@@ -44,13 +44,12 @@ public class CodePowerSet implements Code {
 
   @Override
   public boolean homozygous(final int n) {
-    return (n & (n - 1)) == 0;
+    return ((n + 1) & n) == 0;
   }
 
   @Override
   public boolean valid(final int hyp) {
-    // code 0 corresponds to empty set, which is not considered valid
-    return 0 < hyp && hyp <= mSize;
+    return 0 <= hyp && hyp < mSize;
   }
 
   @Override
