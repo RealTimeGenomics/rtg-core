@@ -141,16 +141,22 @@ public abstract class AbstractSomaticPosterior {
     final StringBuilder sb = new StringBuilder();
     final FormatReal fmt = new FormatReal(4, 3);
     final int pad = mNormalHypotheses.maxNameLength();
+    final int col = Math.max(8, mCancerHypotheses.maxNameLength() + 1);
+    sb.append(StringUtils.padLeft("", pad));
+    for (int cancerHyp = 0; cancerHyp < mCancerHypotheses.size(); ++cancerHyp) {
+      sb.append(StringUtils.padLeft(mCancerHypotheses.name(cancerHyp), col));
+    }
+    sb.append(LS);
     for (int normalHyp = 0; normalHyp < mLength; ++normalHyp) {
       sb.append(StringUtils.padLeft(mNormalHypotheses.name(normalHyp), pad));
       for (int cancerHyp = 0; cancerHyp < mCancerHypotheses.size(); ++cancerHyp) {
-        sb.append(fmt.format(mPosterior[normalHyp][cancerHyp]));
+        sb.append(StringUtils.padLeft(fmt.format(mPosterior[normalHyp][cancerHyp]), col));
       }
       sb.append(fmt.format(mNormalMarginal[normalHyp])).append(LS);
     }
     sb.append(StringUtils.padLeft("", pad));
     for (int cancerHyp = 0; cancerHyp < mCancerHypotheses.size(); ++cancerHyp) {
-      sb.append(fmt.format(mCancerMarginal[cancerHyp]));
+      sb.append(StringUtils.padLeft(fmt.format(mCancerMarginal[cancerHyp]), col));
     }
     sb.append(LS);
     sb.append("best[").append(mBestNormal).append(",").append(mBestCancer).append("]=").append(Utils.realFormat(mPosterior[mBestNormal][mBestCancer], 3)).append(LS);

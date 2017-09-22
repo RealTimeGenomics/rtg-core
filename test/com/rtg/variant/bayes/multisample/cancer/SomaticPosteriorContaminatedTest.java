@@ -75,6 +75,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
   }
 
   private static final String EXPECT_ALL_DIFFERENT_20 = ""
+      + "        A       C       G       T" + LS
       + "A -21.393 -29.399 -19.620 -29.399 -19.463" + LS
       + "C -24.668 -16.662 -14.889 -24.668 -14.732" + LS
       + "G -29.146 -29.146 -16.662 -29.146 -16.662" + LS

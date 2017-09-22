@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 public class SomaticPosteriorPureTest extends TestCase {
 
   protected static final String EXPECT_ALL_DIFFERENT = ""
+    + "        A       C       G       T" + LS
       + "A -21.393 -29.399 -18.974 -29.399 -18.889" + LS
       + "C -24.668 -16.662 -14.243 -24.668 -14.158" + LS
       + "G -35.092 -35.092 -16.662 -35.092 -16.662" + LS
@@ -66,6 +67,7 @@ public class SomaticPosteriorPureTest extends TestCase {
   }
 
   protected static final String EXPECT_ALL_SAME = ""
+      + "        A       C       G       T" + LS
       + "A  -0.544 -18.974 -18.974 -18.974  -0.544" + LS
       + "C -24.668 -27.087 -35.092 -35.092 -24.583" + LS
       + "G -24.668 -35.092 -27.087 -35.092 -24.583" + LS

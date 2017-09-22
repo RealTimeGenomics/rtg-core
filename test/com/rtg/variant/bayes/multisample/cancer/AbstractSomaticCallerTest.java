@@ -76,9 +76,11 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   ModelIncrementer<Description> getNormalIncremeter(Ploidy ploidy) {
     return getNormalIncremeter(ploidy, 0.99);
   }
+
   ModelIncrementer<Description> getNormalIncremeter(Ploidy ploidy, double same) {
     return new ModelIncrementer<>(getNormalModel(ploidy, same));
   }
+  
   ModelIncrementer<D> getIncrementer(Ploidy ploidy, double contamination, double same) {
     return new ModelIncrementer<>(getModel(ploidy, contamination, same));
   }
