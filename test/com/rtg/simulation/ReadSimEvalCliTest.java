@@ -24,7 +24,6 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.TestUtils;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LineWriter;
 import com.rtg.util.io.LogStream;
@@ -49,11 +48,11 @@ public class ReadSimEvalCliTest extends AbstractCliTest {
   private static final String SAM_ENDLINE = "\n";
 
   private static final String SAM = "@HD\tVN:1.0\tSO:coordinate" + SAM_ENDLINE + "@SQ\tSN:1\tLN:247249719" + SAM_ENDLINE
-      + "read0:1:1234:S1:I0:D0\t16\t1\t1234\t255\t22=1X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:1\tNM:i:0\tIH:i:1"
+      + "read0:1:1234:S1:I0:D0\t16\t1\t1234\t255\t13=1X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:1\tNM:i:0\tIH:i:1"
       + SAM_ENDLINE
-      + "read1:1:2345R:S0:I1:D0\t16\t1\t23400\t255\t22=1X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:2\tNM:i:0\tIH:i:1"
+      + "read1:1:2345R:S0:I1:D0\t16\t1\t23400\t255\t13=1X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:2\tNM:i:0\tIH:i:1"
       + SAM_ENDLINE
-      + "read2:1:56785:S4:I0:D0\t16\t1\t501889\t255\t22=2X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:2\tNM:i:0\tIH:i:1"
+     + "read2:1:56785:S4:I0:D0\t16\t1\t501889\t255\t12=2X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:2\tNM:i:0\tIH:i:1"
       + SAM_ENDLINE;
 
   public final void testSingleEnd() throws IOException {
@@ -110,9 +109,9 @@ public class ReadSimEvalCliTest extends AbstractCliTest {
   private static final String SAM_PAIRED = "@HD\tVN:1.0\tSO:coordinate" + SAM_ENDLINE
       + "@SQ\tSN:1\tLN:247249719" + SAM_ENDLINE
       //                                                             0123456789012345678901234567890123456789012
-      + "read0:1:1234:S1:I0:D0\t89\t1\t1234\t255\t22=1X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:1\tNM:i:0\tIH:i:1" + SAM_ENDLINE
-      + "read1:1:2345R:S0:I1:D0\t89\t1\t23400\t255\t22=1X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:2\tNM:i:0\tIH:i:1" + SAM_ENDLINE
-      + "read2:1:56785:S4:I0:D0\t89\t1\t501889\t255\t22=2N29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:2\tNM:i:0\tIH:i:1" + SAM_ENDLINE
+      + "read0:1:1234:S1:I0:D0\t89\t1\t1234\t255\t13=1X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:1\tNM:i:0\tIH:i:1" + SAM_ENDLINE
+      + "read1:1:2345R:S0:I1:D0\t89\t1\t23400\t255\t13=1X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:2\tNM:i:0\tIH:i:1" + SAM_ENDLINE
+      + "read2:1:56785:S4:I0:D0\t89\t1\t501889\t255\t14=2N29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:2\tNM:i:0\tIH:i:1" + SAM_ENDLINE
       ;
 
   /**
@@ -237,7 +236,7 @@ public class ReadSimEvalCliTest extends AbstractCliTest {
 
   private static final String SAM_NO_NAME = "@HD\tVN:1.0\tSO:coordinate" + SAM_ENDLINE + "@SQ\tSN:1\tLN:247249719" + SAM_ENDLINE
   //                                             0123456789012345678901234567890123456789012
-      + "read0\t89\t1\t1234\t255\t22=1X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:1\tNM:i:0\tIH:i:1" + SAM_ENDLINE;
+      + "read0\t89\t1\t1234\t255\t22=1X20=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:1\tNM:i:0\tIH:i:1" + SAM_ENDLINE;
 
   public void testErr() throws IOException {
     try (final TestDirectory topLevel = new TestDirectory("readmappingaccuracy")) {
@@ -255,7 +254,7 @@ public class ReadSimEvalCliTest extends AbstractCliTest {
 
   private static final String SAM_BROKEN_READNAME = "@HD\tVN:1.0\tSO:coordinate" + SAM_ENDLINE
   + "@SQ\tSN:1\tLN:247249719" + SAM_ENDLINE
-  + "stupid_read_name\t16\t1\t1234\t255\t22=1X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:1\tNM:i:0\tIH:i:1"
+  + "stupid_read_name\t16\t1\t1234\t255\t22=1X20=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:1\tNM:i:0\tIH:i:1"
   + SAM_ENDLINE;
 
   public void testWarning() throws IOException {
@@ -309,51 +308,4 @@ public class ReadSimEvalCliTest extends AbstractCliTest {
     }
   }
 
-  public void testBadSoftClipCigar() throws Exception {
-    final ReadSimEvalCli rma = new ReadSimEvalCli() {
-      @Override
-      protected int mainExec(OutputStream out, LogStream log) {
-        return 0;
-      }
-    };
-
-    try (final TestDirectory topLevel = new TestDirectory("readmappingaccuracy")) {
-      final File reads = new File(topLevel, "reads");
-      ReaderTestUtils.getReaderDNA(">read0/0/1/chr1/4730076/R/4.1D8.1D55.1D27.1D6." + LS
-          + "TTCCATGGTTTTCTGAGCCTCAGTTTTCTCATCTGAAAAACGGGGATGTCACTCAGCCCTGCACAGGCTGGAAGGATGGTGACCCCCTACCATTACAGGT" + LS, reads, null).close();
-
-      final MemoryPrintStream recordsMps = new MemoryPrintStream();
-      try (LineWriter recordslw = new LineWriter(new OutputStreamWriter(recordsMps.outputStream()))) {
-        final MemoryPrintStream mps = new MemoryPrintStream();
-        final File f = FileHelper.createTempFile(topLevel);
-        rma.mainInit(new String[]{"--reads", reads.getPath(), "-o", new File(topLevel, "out").getPath(), f.getPath()}, mps.outputStream(), mps.printStream());
-        rma.init();
-
-        final SAMFileHeader sfh = new SAMFileHeader();
-
-        final SAMRecord rec = new SAMRecord(sfh);
-        rec.setAlignmentStart(4730086);
-        rec.setCigarString("999999999999999S2=2X");
-        rec.setFlags(16);
-        rec.setReferenceName("chr1");
-
-        final MemoryPrintStream diag = new MemoryPrintStream();
-        Diagnostic.setLogStream(diag.printStream());
-        try {
-          for (int i = 0; i < 12; ++i) {
-            rec.setReadName("read0/" + i + "/1/chr1/4730076/R/4.");
-            rma.processRecord(rec, recordslw);
-          }
-
-          for (int i = 0; i < 10; ++i) {
-            assertTrue(diag.toString().contains("Unable to parse soft clip length in cigar: 999999999999999S2=2X of read read0/" + i + "/1/chr1/4730076/R/4."));
-          }
-          assertTrue(diag.toString().contains("Further messages about soft clip length parsing errors will be suppressed."));
-          assertFalse(diag.toString().contains("Unable to parse soft clip length in cigar: 999999999999999S2=2X of read read0/10/1/chr1/4730076/R/4."));
-        } finally {
-          Diagnostic.setLogStream();
-        }
-      }
-    }
-  }
 }

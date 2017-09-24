@@ -81,7 +81,7 @@ public class CoverageTaskTest extends AbstractCliTest {
 
   private static final String SAM_CIGAR1 = SAMHEADER1
   + "0" + TAB + "0" + TAB + "g1" + TAB +  "3" + TAB + "255" + TAB + "2M2D6M" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "ATCGACTG" + TAB + "````````" + TAB + "AS:i:0" + LS
-  + "0" + TAB + "0" + TAB + "g1" + TAB + "11" + TAB + "255" + TAB + "1S1=2I5N2="   + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "ATCGACTG" + TAB + "````````" + TAB + "AS:i:0" + LS
+  + "0" + TAB + "0" + TAB + "g1" + TAB + "11" + TAB + "255" + TAB + "1S1=2I5N2="   + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "ATCGAC" + TAB + "``````" + TAB + "AS:i:0" + LS
   + "";
 
   /** Test some fancy cigars. */

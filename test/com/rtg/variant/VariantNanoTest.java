@@ -1499,9 +1499,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final File output = new File(dir, "variant_out");
       final MainResult r = MainResult.run(new SingletonCli(), "-Z", "-t", genome.getPath(), "-o", output.getPath(), sam.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
       assertEquals(r.err(), 0, r.rc());
-      final String expectedErr = "SAM record is invalid. 48 90=3I7=  " + LS
-          + "1 records skipped because of SAM format problems." + LS;
-      assertEquals(expectedErr, r.err());
+      TestUtils.containsAll(r.err(), "SAM record is invalid", "1 records skipped because of SAM format problems");
       mNano.check("bug1524.txt", r.out());
       final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
       final String actualFixed = TestUtils.sanitizeVcfHeader(result);
