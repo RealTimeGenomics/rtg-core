@@ -56,36 +56,29 @@ public enum VcfFormatField {
     public void updateHeader(VcfHeader header) {
       header.addFormatField(name(), MetaType.STRING, VcfNumber.ONE, "Genotype");
     }
+
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       if (sample != null) {
         final String name = sample.getName();
         final Ploidy ploidy = sample.getPloidy();
         final Character previousNt = includePrevNt ? call.getLocus().getPreviousRefNt() : null;
+        final int[] gts;
         if (name != null && !call.isFiltered(VariantFilter.FAILED_COMPLEX)) {
           final String ref = call.getLocus().getRefNts();
           if (sample.isIdentity()) {
-            if (ploidy == Ploidy.HAPLOID) {
-              rec.addFormatAndSample(name(), "0");
-            } else {
-              rec.addFormatAndSample(name(), "0" + VcfUtils.UNPHASED_SEPARATOR + "0");
-            }
-          } else if (ploidy == Ploidy.HAPLOID) {
-            final int gtnum = addAltAllele(name, ref, previousNt, rec);
-            rec.addFormatAndSample(name(), String.valueOf(gtnum));
+            gts = ploidy == Ploidy.HAPLOID ? HAPLOID_REF_GT : DIPLOID_REF_GT;
           } else {
             final String[] cats = StringUtils.split(name, VariantUtils.COLON);
-            assert cats.length == 2 : "Unexpected number of cats: " + cats.length + " " + name;
-
-            rec.addFormatAndSample(name(), String.valueOf(addAltAllele(cats[0], ref, previousNt, rec)) + VcfUtils.UNPHASED_SEPARATOR + addAltAllele(cats[1], ref, previousNt, rec));
+            gts = new int[cats.length];
+            for (int k = 0; k < cats.length; ++k) {
+              gts[k] = addAltAllele(cats[k], ref, previousNt, rec);
+            }
           }
         } else {
-          if (ploidy == Ploidy.HAPLOID) {
-            rec.addFormatAndSample(name(), VcfRecord.MISSING);
-          } else {
-            rec.addFormatAndSample(name(), VcfRecord.MISSING + VcfUtils.UNPHASED_SEPARATOR + VcfRecord.MISSING);
-          }
+          gts = ploidy == Ploidy.HAPLOID ? HAPLOID_MISSING_GT : DIPLOID_MISSING_GT;
         }
+        rec.addFormatAndSample(name(), VcfUtils.joinGt(false, gts));
       } else {
         rec.addFormatAndSample(name(), VcfRecord.MISSING);
       }
@@ -155,7 +148,9 @@ public enum VcfFormatField {
     }
   },
   /** RTG Error */
-  RE {
+  RE
+
+  {
     @Override
     public void updateHeader(VcfHeader header) {
       header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "RTG Total Error");
@@ -729,6 +724,10 @@ public enum VcfFormatField {
   }
   ;
 
+  private static final int[] HAPLOID_REF_GT = {0};
+  private static final int[] DIPLOID_REF_GT = {0, 0};
+  private static final int[] HAPLOID_MISSING_GT = {VcfUtils.MISSING_GT};
+  private static final int[] DIPLOID_MISSING_GT = {VcfUtils.MISSING_GT, VcfUtils.MISSING_GT};
   private static final VcfAnnotator GQD_ANNOTATOR = DerivedAnnotations.GQD.getAnnotation();
   private static final VcfAnnotator ZY_ANNOTATOR = DerivedAnnotations.ZY.getAnnotation();
   private static final VcfAnnotator PD_ANNOTATOR = DerivedAnnotations.PD.getAnnotation();
@@ -736,7 +735,6 @@ public enum VcfFormatField {
   private static final VcfAnnotator MEANQAD_ANNOTATOR = DerivedAnnotations.MEANQAD.getAnnotation();
   private static final VcfAnnotator QA_ANNOTATOR = DerivedAnnotations.QA.getAnnotation();
   private static final VcfAnnotator SCONT_ANNOTATOR = new SplitContraryObservationAnnotator();
-
 
   /**
    * Update the VCF header with the field description.

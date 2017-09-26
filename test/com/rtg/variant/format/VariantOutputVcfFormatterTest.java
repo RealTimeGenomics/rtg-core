@@ -565,7 +565,7 @@ public class VariantOutputVcfFormatterTest extends AbstractNanoTest {
     mother.setAmbiguityRatio(3.0);
     mother.setCoverage(5, 0.2587);
 
-    final VariantSample son = createSample(Ploidy.HAPLOID, "G:T", false, null, VariantSample.DeNovoStatus.IS_DE_NOVO, 10.0, 0.05);
+    final VariantSample son = createSample(Ploidy.HAPLOID, "T", false, null, VariantSample.DeNovoStatus.IS_DE_NOVO, 10.0, 0.05);
     son.setAmbiguityRatio(3.0);
     son.setCoverage(5, 0.2587);
 
@@ -575,7 +575,7 @@ public class VariantOutputVcfFormatterTest extends AbstractNanoTest {
     //0:5:0.259:3.000:0.200:3.1:3:0.0:N
     //1:5:0.259:3.000:0.200:3.1:3:0.0:N
     //2:5:0.259:3.000:0.200:3.1:3:0.0:Y
-    assertEquals("chr1" + TAB + "82350" + TAB + "." + TAB + "C" + TAB + "G,G:T" + TAB + "." + TAB + "PASS" + TAB + "DP=15" + TAB + "GT:DP:RE:AR:GQ:RP:DN:DNP" + TAB
+    assertEquals("chr1" + TAB + "82350" + TAB + "." + TAB + "C" + TAB + "G,T" + TAB + "." + TAB + "PASS" + TAB + "DP=15" + TAB + "GT:DP:RE:AR:GQ:RP:DN:DNP" + TAB
         + "0:5:0.259:3.000:3:0.0:N:3" + TAB + "1:5:0.259:3.000:3:0.0:N:3"
         + TAB + "2:5:0.259:3.000:3:0.0:Y:43\n", actual);
   }
