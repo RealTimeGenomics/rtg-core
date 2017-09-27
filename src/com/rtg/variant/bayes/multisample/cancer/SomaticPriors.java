@@ -12,8 +12,6 @@
 
 package com.rtg.variant.bayes.multisample.cancer;
 
-import java.util.Arrays;
-
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.variant.bayes.Code;
@@ -44,17 +42,6 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
     }
     norm[ref] = 1.0 - sum;
     return norm;
-  }
-
-  static double[][] defaultUniformPriors(final int size) {
-    // Each row is normalized
-    final double uniform = 1.0 / (size - 1);
-    final double[][] initialPriors = new double[size][size];
-    for (int k = 0; k < size; ++k) {
-      Arrays.fill(initialPriors[k], uniform);
-      initialPriors[k][k] = 0;
-    }
-    return initialPriors;
   }
 
   /**
