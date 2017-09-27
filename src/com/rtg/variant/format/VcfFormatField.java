@@ -148,9 +148,7 @@ public enum VcfFormatField {
     }
   },
   /** RTG Error */
-  RE
-
-  {
+  RE {
     @Override
     public void updateHeader(VcfHeader header) {
       header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "RTG Total Error");
