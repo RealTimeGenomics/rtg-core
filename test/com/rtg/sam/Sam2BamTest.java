@@ -151,7 +151,7 @@ public class Sam2BamTest extends AbstractCliTest {
 
       final MemoryPrintStream mps = new MemoryPrintStream();
       assertEquals(1, bc.mainInit(new String[]{"-o", tmpDir.getPath() + StringUtils.FS + "out.bam", in.getPath()}, TestUtils.getNullOutputStream(), mps.printStream()));
-      assertTrue(mps.toString().contains("Alignments added out of order in " + tmpDir.getPath() + StringUtils.FS + "out.bam. Sort order is coordinate. Offending records are at [gi0:10] and [gi0:9]"));
+      TestUtils.containsAll(mps.toString(), "Alignments added out of order in ", "out.bam", "Sort order is coordinate.", "Offending records are at [gi0:10] and [gi0:9]");
     }
   }
   /**
