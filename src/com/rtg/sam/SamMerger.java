@@ -77,8 +77,14 @@ public class SamMerger {
    */
   public void mergeSamFiles(Collection<File> samFiles, Collection<File> calibrationFiles, File output, OutputStream out, SequencesReader reference, SAMFileHeader header, boolean writeHeader, boolean terminateBlockedGzip) throws IOException {
     final boolean isStdio = FileUtils.isStdio(output);
-    if (!isStdio && calibrationFiles.size() > 0 && calibrationFiles.size() != samFiles.size()) {
-      Diagnostic.warning("Number of calibration files does not match number of SAM files, will not merge calibration files.");
+    if (!isStdio) {
+      if (calibrationFiles.size() > 0) {
+        if (calibrationFiles.size() != samFiles.size()) {
+          Diagnostic.warning("Number of calibration files does not match number of SAM files, will not merge calibration files.");
+        } else if (mFilterParams.isFiltering()) {
+          Diagnostic.warning("Depending on filter criteria, output calibration data may be inaccurate. Consider recalibrating output file.");
+        }
+      }
     }
     final File alignmentOutputFile;
     final long recordsIn;

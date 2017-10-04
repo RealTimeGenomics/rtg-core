@@ -91,6 +91,7 @@ public class SamMergeCli extends AbstractCli {
     mFlags.registerOptional(LEGACY_CIGARS, "if set, produce legacy cigars (using M rather than X or =) in output").setCategory(UTILITY);
     mFlags.registerOptional(NO_HEADER, "prevent SAM/BAM header from being written").setCategory(UTILITY);
     mFlags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, FILE, "treat all SAM records as having the supplied header").setCategory(UTILITY);
+    SamFilterOptions.registerInvertCriteriaFlag(mFlags);
     SamFilterOptions.registerSubsampleFlags(mFlags);
     SamFilterOptions.registerMaskFlags(mFlags);
     SamFilterOptions.registerMinMapQFlag(mFlags);
