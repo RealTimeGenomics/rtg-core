@@ -117,7 +117,7 @@ public abstract class AbstractSomaticPosterior {
       final int normalAlleles = normalHypToAlleleBits(normal);
       for (int cancer = 0; cancer < mCancerHypotheses.size(); ++cancer) {
         final int cancerAlleles = cancerHypToAlleleBits(cancer);
-        for (int alleleBit = 1, allele = 0; alleleBit < mCancerHypotheses.size(); ++allele, alleleBit <<= 1) {
+        for (int alleleBit = 1, allele = 0; allele < mNormalHypotheses.description().size(); ++allele, alleleBit <<= 1) {
           if ((cancerAlleles & alleleBit) != 0) {
             if ((normalAlleles & alleleBit) == 0) {
               // allele present in cancer but not normal, any normal evidence is contrary

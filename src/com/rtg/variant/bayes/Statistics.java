@@ -261,9 +261,6 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
         }
       }
     }
-//    if (alleleIndexes[0] == -1 || alleleIndexes[1] == -1) {
-//      System.out.println(names);
-//    }
   }
 
   /**
