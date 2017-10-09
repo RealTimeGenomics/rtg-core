@@ -177,8 +177,7 @@ public class AligningDecomposer extends AbstractDecomposer {
         final Pair<String[], int[]> alleleMap = getAlleleMap(oldDescription, originalAlleles, extraDescriptionAlleles, partitions, slice, leftClip);
         final Description d = newSamples[k].getStats().counts().getDescription() instanceof DescriptionNone ? DescriptionNone.SINGLETON : new DescriptionCommon(alleleMap.getA());
         newSamples[k].getStats().remapAlleleStatistics(d, alleleMap.getB());
-        final String va = findVariantAllele(newSamples[k], part.getB()[0], mVariantAlleleTrigger);
-        newSamples[k].setVariantAllele(va == null ? null : va.substring(leftClip));
+        newSamples[k].setVariantAllele(findVariantAllele(newSamples[k], part.getB()[0].substring(leftClip), mVariantAlleleTrigger));
         newSamples[k].setGenotypeLikelihoods(newGenotypeLikelihoods(sample, splitter, part.getB(), leftClip));
       }
     }
