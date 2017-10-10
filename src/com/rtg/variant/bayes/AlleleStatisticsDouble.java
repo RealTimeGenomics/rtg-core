@@ -131,13 +131,15 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
     final AlleleStatisticsDouble newCounts = new AlleleStatisticsDouble(newDescription);
     for (int oldI = 0; oldI < mapping.length; ++oldI) {
       final int newI = mapping[oldI];
-      //System.out.println("remap " + oldI + " (" + count(oldI) + ") -> " + newDescription.name(newI));
-      newCounts.mCountsForwards[newI] += mCountsForwards[oldI];
-      newCounts.mCountsBackwards[newI] += mCountsBackwards[oldI];
-      newCounts.mCountsMated[newI] += mCountsMated[oldI];
-      newCounts.mCountsUnmated[newI] += mCountsUnmated[oldI];
-      newCounts.mErrors[newI] += mErrors[oldI];
-      newCounts.mQualityProduct[newI] += mQualityProduct[oldI];
+      if (newI >= 0) {
+        //System.out.println("remap " + oldI + " (" + count(oldI) + ") -> " + newDescription.name(newI));
+        newCounts.mCountsForwards[newI] += mCountsForwards[oldI];
+        newCounts.mCountsBackwards[newI] += mCountsBackwards[oldI];
+        newCounts.mCountsMated[newI] += mCountsMated[oldI];
+        newCounts.mCountsUnmated[newI] += mCountsUnmated[oldI];
+        newCounts.mErrors[newI] += mErrors[oldI];
+        newCounts.mQualityProduct[newI] += mQualityProduct[oldI];
+      }
     }
     return newCounts;
   }

@@ -151,8 +151,8 @@ public class AligningDecomposer extends AbstractDecomposer {
           }
         }
         if (!found) {
-          // Retain as is without any kind of splitting
-          alleleMap[k] = uniqueAlleles.computeIfAbsent(a, k1 -> uniqueAlleles.size());
+          // Failed to partition this particular allele, so disregard it for accumulating counts etc.
+          alleleMap[k] = -1;
         }
       }
     }
