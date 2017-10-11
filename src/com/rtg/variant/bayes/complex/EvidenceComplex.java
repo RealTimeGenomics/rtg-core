@@ -193,17 +193,20 @@ public class EvidenceComplex extends Evidence {
     double maxProb = -1;
     for (int i = 0; i < size; ++i) {
       final double poss = mArithmetic.divide(logScore[i], sum);
-      if (PRINT_EVIDENCE_DETAILS) {
-        Diagnostic.developerLog("Match: " + (match.isFixedLeft() ? "" : "~") + match.readString() + (match.isFixedRight() ? "" : "~")
-          + " hyp: " + (i == mReference ? "*" : " ") + i + " " + hypotheses.description().name(i)
-          + " score: " + mArithmetic.poss2Prob(poss)
-          + (match.alignmentRecord().getReadGroup() == null ? "" : " sample: " + match.alignmentRecord().getReadGroup().getSample())
-          + " cigar: " + match.alignmentRecord().getCigar());
-      }
       set(i, poss);
       if (mProb[i] > maxProb) {
         readHyp = i;
         maxProb = mProb[i];
+      }
+    }
+    if (PRINT_EVIDENCE_DETAILS) {
+      for (int i = 0; i < size; ++i) {
+        final double poss = mArithmetic.divide(logScore[i], sum);
+        Diagnostic.developerLog("Match: " + (match.isFixedLeft() ? "" : "~") + match.readString() + (match.isFixedRight() ? "" : "~")
+          + " hyp: " + (i == readHyp ? "*" : " ") + (i == mReference ? "= " : "X ") + i + " " + hypotheses.description().name(i)
+          + " score: " + mArithmetic.poss2Prob(poss)
+          + (match.alignmentRecord().getReadGroup() == null ? "" : " sample: " + match.alignmentRecord().getReadGroup().getSample())
+          + " cigar: " + match.alignmentRecord().getCigar());
       }
     }
 

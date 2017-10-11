@@ -92,7 +92,6 @@ public class PredictCli extends AbstractCli {
 
     try (final VcfReader posReader = VcfReader.openVcfReader(vcf)) {
       final VcfHeader header = posReader.getHeader();
-      header.addRunInfo();
       model.updateHeader(header);
 
       final List<?> samplesList = mFlags.getValues(SAMPLE_FLAG);
@@ -109,7 +108,7 @@ public class PredictCli extends AbstractCli {
       final boolean stdout = FileUtils.isStdio(o);
       final boolean gzip = !mFlags.isSet(NO_GZIP);
       final File vcfFile = stdout ? null : VcfUtils.getZippedVcfFileName(gzip, o);
-      try (VcfWriter writer = new VcfWriterFactory(mFlags).make(header, vcfFile, out)) {
+      try (VcfWriter writer = new VcfWriterFactory(mFlags).addRunInfo(true).make(header, vcfFile, out)) {
         while (posReader.hasNext()) {
           final VcfRecord current = posReader.next();
           if (samples.length > 0) {

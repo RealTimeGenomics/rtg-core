@@ -128,7 +128,6 @@ public class FusionFilter extends AbstractCli {
 
     try (VcfIterator reader = new VcfFilterIterator(VcfReader.openVcfReader(inputFile), filters)) {
       final VcfHeader header = reader.getHeader();
-      header.addRunInfo();
       filters.forEach(filter -> filter.setHeader(header));
       annotators.forEach(ann -> ann.updateHeader(header));
       final File vcfFile = stdout ? null : VcfUtils.getZippedVcfFileName(gzip, output);
