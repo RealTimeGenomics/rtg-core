@@ -292,10 +292,6 @@ public final class AlleleCountsFileReader implements Closeable {
     }
   }
 
-  /**
-   * Close the underlying reader
-   * @throws IOException if bad things occur
-   */
   @Override
   public void close() throws IOException {
     if (mVcfReader != null) {

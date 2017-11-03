@@ -33,9 +33,6 @@ public final class LogApproximatePossibility implements PossibilityArithmetic {
   }
 
   static double internalLog(double x) {
-    if (x == 0.0) {
-      return Double.NEGATIVE_INFINITY;
-    }
     if (Double.isInfinite(x)) {
       if (x > 0) {
         return Double.POSITIVE_INFINITY;
