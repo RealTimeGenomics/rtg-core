@@ -183,4 +183,23 @@ public class HwEstimatorTest extends AbstractEstimatorTest {
     assertEquals(0.209, diploid.p(1), delta);
     assertEquals(0.415, diploid.p(2), delta);
   }
+
+  public void testOverflow() {
+    final HwEstimator hw = new HwEstimator();
+    final DescriptionCommon d = new DescriptionCommon("A", "C", "G", "T");
+    final HypothesesCommon<DescriptionCommon> hap = new HypothesesCommon<DescriptionCommon>(d, SimplePossibility.SINGLETON, true, 0) {
+      @Override
+      public double p(int hyp) {
+        return 0.25;
+      }
+    };
+    final HypothesesCommon<DescriptionCommon> dip = new HypothesesCommon<DescriptionCommon>(d, SimplePossibility.SINGLETON, false, 0) {
+      @Override
+      public double p(int hyp) {
+        return 0.25;
+      }
+    };
+    final HaploidDiploidHypotheses<HypothesesCommon<DescriptionCommon>> hdh = new HaploidDiploidHypotheses<>(null, hap, dip);
+    hw.computeNewPriors(hdh, new int[] {0, 1, 111581, 0}, 111583);
+  }
 }

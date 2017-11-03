@@ -121,16 +121,16 @@ public class HwEstimator implements Estimator {
 
     //Compute new diploid priors.
     final int n = haploidTotal + 1;
-    final int n2 = n * n;
+    final double n2 = n * (double) n;
     final double[] diploidProb = new double[diploid.size()];
     for (int i = 0; i < diploidProb.length; ++i) {
       final int a = code.a(i);
       final int b = code.bc(i);
 
       final double haploidCorr = (a == b ? 1.0 : 2.0)
-          * (haploidCounts[a] * haploidCounts[b]
+          * (haploidCounts[a] * (double) haploidCounts[b]
              + haploidCounts[a] * arith.poss2Prob(haploid.p(b))
-             + arith.poss2Prob(haploid.p(a)) * haploidCounts[b]);
+             + haploidCounts[b] * arith.poss2Prob(haploid.p(a)));
       diploidProb[i] = (haploidCorr + arith.poss2Prob(diploid.p(i))) / n2;
     }
     final double[] diploidPoss = VariantUtils.prob2Poss(diploidProb, arith);
