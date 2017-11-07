@@ -1,10 +1,13 @@
 # RTG Core Non-commercial
 
-Copyright (c) 2017 Real Time Genomics Ltd
+Copyright (c) 2018 Real Time Genomics Ltd
 
 This software is provided under the Real Time Genomics Ltd Software
 Licence Agreement for Academic Non-commercial Research Purposes
 only. See [LICENSE.txt](LICENSE.txt)
+
+If you require a license for commercial use or wish to purchase
+commercial support contact us via info@realtimegenomics.com.
 
 ## Introduction
 
