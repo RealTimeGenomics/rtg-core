@@ -56,8 +56,40 @@ public class SplitAlleles {
     this(ref, alts.toArray(new String[alts.size()]));
   }
 
-  SplitAlleles(final VcfRecord rec) {
-    this(rec.getRefCall(), rec.getAltCalls());
+  private static boolean isAnchored(final String ref, final List<String> alts) {
+    final int refLen = ref.length();
+    for (final String a : alts) {
+      if (refLen != a.length()) {
+        // Different lengths detected, check first base is common
+        final char anchor = ref.charAt(0);
+        for (final String b : alts) {
+          if (b.isEmpty() || b.charAt(0) != anchor) {
+            return false; // For whatever reason there is no consistent anchor
+          }
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Construct a splitter for the specified VCF record.
+   * @param rec VCF record
+   * @return splitter
+   */
+  public static SplitAlleles create(final VcfRecord rec) {
+    final String ref = rec.getRefCall();
+    final List<String> alts = rec.getAltCalls();
+    if (isAnchored(ref, alts)) {
+      final ArrayList<String> trim = new ArrayList<>(alts.size());
+      for (final String a : alts) {
+        trim.add(a.substring(1));
+      }
+      return new SplitAlleles(ref.substring(1), trim);
+    } else {
+      return new SplitAlleles(ref, alts);
+    }
   }
 
   /**
