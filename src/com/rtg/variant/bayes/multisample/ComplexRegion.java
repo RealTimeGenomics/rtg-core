@@ -11,8 +11,8 @@
  */
 package com.rtg.variant.bayes.multisample;
 
-import com.rtg.util.intervals.SequenceNameLocusSimple;
 import com.rtg.util.integrity.Exam;
+import com.rtg.util.intervals.SequenceNameLocusSimple;
 
 /**
  * Identifies a complex region
@@ -61,6 +61,8 @@ public class ComplexRegion extends SequenceNameLocusSimple {
   }
 
   private RegionType mType;
+  private final int mIndelStart;
+  private final int mIndelEnd;
 
   /**
    * create a regular complex region (i.e. not dangling)
@@ -70,8 +72,23 @@ public class ComplexRegion extends SequenceNameLocusSimple {
    * @param type the type of the region
    */
   public ComplexRegion(String refName, int start, int end, RegionType type) {
+    this(refName, start, end, type, 0, 0);
+  }
+
+  /**
+   * create a regular complex region (i.e. not dangling)
+   * @param refName name of the sequence
+   * @param start start position (0 based, inclusive)
+   * @param end end position (0 based, exclusive)
+   * @param type the type of the region
+   * @param indelStart the length of indel associated with the region start
+   * @param indelEnd the length of indel associated with the region end
+   */
+  public ComplexRegion(String refName, int start, int end, RegionType type, int indelStart, int indelEnd) {
     super(refName, start, end);
     mType = type;
+    mIndelStart = indelStart;
+    mIndelEnd = indelEnd;
   }
 
   /**
@@ -79,6 +96,16 @@ public class ComplexRegion extends SequenceNameLocusSimple {
    */
   public RegionType type() {
     return mType;
+  }
+
+  /** @return length of indel at start of region */
+  int getIndelStart() {
+    return mIndelStart;
+  }
+
+  /** @return length of indel at end of region */
+  int getIndelEnd() {
+    return mIndelEnd;
   }
 
   @Override

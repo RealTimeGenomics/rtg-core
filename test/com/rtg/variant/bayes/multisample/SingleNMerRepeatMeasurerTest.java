@@ -20,6 +20,15 @@ import junit.framework.TestCase;
  */
 public class SingleNMerRepeatMeasurerTest extends TestCase {
 
+  static byte[] makeRepeat(String repeat, int length) {
+    final byte[] result = new byte[length];
+    final byte[] rbytes = DnaUtils.encodeString(repeat);
+    for (int i = 0; i < result.length; ++i) {
+      result[i] = rbytes[i % rbytes.length];
+    }
+    return result;
+  }
+
   public RepeatMeasurer getMeasurer(byte[] template) {
     return new SingleNMerRepeatMeasurer(template);
   }
@@ -129,41 +138,41 @@ public class SingleNMerRepeatMeasurerTest extends TestCase {
   */
 
   public void test3Mer() {
-    final byte[] template = SimpleRepeatMeasurerTest.makeRepeat("taa", 30);
+    final byte[] template = makeRepeat("taa", 30);
     final RepeatMeasurer regionsA = getMeasurer(template, 3);
     assertEquals(template.length - 1, regionsA.measureRepeats(0, template.length - 1));
     assertEquals(template.length - 1, regionsA.measureRepeats(1, template.length));
 
     // Similarly...
-    assertEquals(getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("taa", 30)).measureRepeats(0, 30), getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("ata", 30)).measureRepeats(0, 30));
-    assertEquals(getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("taa", 30)).measureRepeats(0, 30), getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("atc", 30)).measureRepeats(0, 30));
-    assertEquals(getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("aaa", 30)).measureRepeats(0, 30), getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("atc", 30)).measureRepeats(0, 30));
-    assertEquals(getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("taa", 30)).measureRepeats(0, 30), getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("aat", 30)).measureRepeats(0, 30));
+    assertEquals(getMeasurer(makeRepeat("taa", 30)).measureRepeats(0, 30), getMeasurer(makeRepeat("ata", 30)).measureRepeats(0, 30));
+    assertEquals(getMeasurer(makeRepeat("taa", 30)).measureRepeats(0, 30), getMeasurer(makeRepeat("atc", 30)).measureRepeats(0, 30));
+    assertEquals(getMeasurer(makeRepeat("aaa", 30)).measureRepeats(0, 30), getMeasurer(makeRepeat("atc", 30)).measureRepeats(0, 30));
+    assertEquals(getMeasurer(makeRepeat("taa", 30)).measureRepeats(0, 30), getMeasurer(makeRepeat("aat", 30)).measureRepeats(0, 30));
   }
 
   public void test4Mer() {
-    byte[] template = SimpleRepeatMeasurerTest.makeRepeat("taaa", 30);
+    byte[] template = makeRepeat("taaa", 30);
     RepeatMeasurer regionsA = getMeasurer(template, 4);
     assertEquals(template.length - 1, regionsA.measureRepeats(0, template.length - 1));
     assertEquals(template.length - 1, regionsA.measureRepeats(1, template.length));
 
-    template = SimpleRepeatMeasurerTest.makeRepeat("ttaa", 30);
+    template = makeRepeat("ttaa", 30);
     regionsA = getMeasurer(template, 4);
     assertEquals(template.length - 1, regionsA.measureRepeats(0, template.length - 1));
     assertEquals(template.length - 1, regionsA.measureRepeats(1, template.length));
 
-    template = SimpleRepeatMeasurerTest.makeRepeat("atta", 30);
+    template = makeRepeat("atta", 30);
     regionsA = getMeasurer(template, 4);
     assertEquals(template.length - 1, regionsA.measureRepeats(0, template.length - 1));
     assertEquals(template.length - 1, regionsA.measureRepeats(1, template.length));
   }
 
   public void test4Mer2() {
-    assertEquals(getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("atgc", 30), 4).measureRepeats(0, 30), getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("taaa", 30), 4).measureRepeats(0, 30));
-    assertEquals(getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("atgc", 30), 4).measureRepeats(0, 30), getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("ataa", 30), 4).measureRepeats(0, 30));
-    assertEquals(getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("atgc", 30), 4).measureRepeats(0, 30), getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("aata", 30), 4).measureRepeats(0, 30));
-    assertEquals(getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("atgc", 30), 4).measureRepeats(0, 30), getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("aaat", 30), 4).measureRepeats(0, 30));
-    assertEquals(getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("atgc", 30), 4).measureRepeats(0, 30), getMeasurer(SimpleRepeatMeasurerTest.makeRepeat("ttaa", 30), 4).measureRepeats(0, 30));
+    assertEquals(getMeasurer(makeRepeat("atgc", 30), 4).measureRepeats(0, 30), getMeasurer(makeRepeat("taaa", 30), 4).measureRepeats(0, 30));
+    assertEquals(getMeasurer(makeRepeat("atgc", 30), 4).measureRepeats(0, 30), getMeasurer(makeRepeat("ataa", 30), 4).measureRepeats(0, 30));
+    assertEquals(getMeasurer(makeRepeat("atgc", 30), 4).measureRepeats(0, 30), getMeasurer(makeRepeat("aata", 30), 4).measureRepeats(0, 30));
+    assertEquals(getMeasurer(makeRepeat("atgc", 30), 4).measureRepeats(0, 30), getMeasurer(makeRepeat("aaat", 30), 4).measureRepeats(0, 30));
+    assertEquals(getMeasurer(makeRepeat("atgc", 30), 4).measureRepeats(0, 30), getMeasurer(makeRepeat("ttaa", 30), 4).measureRepeats(0, 30));
   }
 
 

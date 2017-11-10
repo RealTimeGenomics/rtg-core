@@ -116,9 +116,6 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
         case "single-nmer":
           measurer = new SingleNMerRepeatMeasurer(refNts);
           break;
-        case "multi-nmer":
-          measurer = new SimpleRepeatMeasurer(refNts);
-          break;
         default:
           throw new RuntimeException("Invalid repeat measurer: " + MER_FINDER_IMPL);
       }
@@ -167,17 +164,20 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
 
     // These vars store state of current "in-construction" region
     int firstInteresting = -1;
+    int firstIndelLength = -1;
     int lastInteresting = -1;
+    int lastIndelLength = -1;
     boolean forceComplex = false;
 
-    int lastInterestingShadow = -1;
     for (final Variant c : chunk) {
       if (c.isOverflow()) {
         // Want to write an overflow region, but need to output any current complex region first
-        addRegion(regions, firstInteresting, lastInteresting, forceComplex);
-        firstInteresting = -1;   // Reset state of "in-construction" region
+        addRegion(regions, firstInteresting, lastInteresting, forceComplex, firstIndelLength, lastIndelLength);
+        // Reset state of "in-construction" region
+        firstInteresting = -1;
+        firstIndelLength = -1;
         lastInteresting = -1;
-        lastInterestingShadow = -1;
+        lastIndelLength = -1;
         forceComplex = false;
         addOverflowRegion(regions, c.getLocus());
       } else if (c.isInteresting()) {
@@ -188,29 +188,35 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
         assert firstInteresting > -1 || (lastInteresting == -1 && !forceComplex);
         assert firstInteresting == -1 || (firstInteresting >= mStartOfChunk && lastInteresting >= firstInteresting && lastInteresting <= mEndOfChunk);
         final int outputPosition = c.getLocus().getStart();
-
         final int indelLength = !c.isSoftClip() ? c.getIndelLength() : 0;
+
         // See whether the current variant is var enough away that we need to close out the "in-construction" region
-        if (lastInteresting > 0 && !joinInteresting(lastInterestingShadow - 1, outputPosition - indelLength)) {
-          // Can't joint current variant to in-construction complex region, so finish the complex region and add it
-          addRegion(regions, firstInteresting, lastInteresting, forceComplex);
-          firstInteresting = -1;   // Reset state of "in-construction" region
-          lastInteresting = -1;
-          lastInterestingShadow = -1;
-          forceComplex = false;
+        if (lastInteresting > 0) {
+          if (!joinInteresting(lastInteresting - 1, outputPosition, lastIndelLength, indelLength)) {
+            // Can't joint current variant to in-construction complex region, so finish the complex region and add it
+            addRegion(regions, firstInteresting, lastInteresting, forceComplex, firstIndelLength, lastIndelLength);
+            // Reset state of "in-construction" region
+            firstInteresting = -1;
+            firstIndelLength = -1;
+            lastInteresting = -1;
+            lastIndelLength = -1;
+            forceComplex = false;
+          }
         }
 
         // Add current variant info into "in-construction" state
         if (firstInteresting == -1) {
           firstInteresting = outputPosition;
+          firstIndelLength = indelLength;
         }
+        final int lastInterestingShadow = lastInteresting + lastIndelLength; // Where did previous indel cast to
         lastInteresting = Math.max(lastInteresting, c.getLocus().getEnd());
-        lastInterestingShadow = Math.max(lastInterestingShadow, lastInteresting + indelLength);
+        lastIndelLength = Math.max(lastInterestingShadow - lastInteresting, indelLength);
         forceComplex |= c.isForceComplex();
         //System.err.println("getComplexRegions: " + outputPosition + " : " + c.getLocus().getEnd() + " : " + firstInteresting + " : " + lastInteresting);
       }
     }
-    addRegion(regions, firstInteresting, lastInteresting, forceComplex);
+    addRegion(regions, firstInteresting, lastInteresting, forceComplex, firstIndelLength, lastIndelLength);
     return regions;
   }
 
@@ -226,8 +232,15 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
   }
 
   boolean joinInteresting(int positionA, int positionB) {
-    final int repeatTotal = mRepeatMeasurer.measureRepeats(positionA, positionB);
-    return positionA + mInterestingSeparation + repeatTotal >= positionB;
+    return joinInteresting(positionA, positionB, 0, 0);
+  }
+
+  boolean joinInteresting(int positionA, int positionB, int indelA, int indelB) {
+    final int indelHint = Math.max(indelA, indelB);
+    final int posA = positionA + indelA / 2;
+    final int posB = positionB - indelB / 2;
+    final int repeatTotal = mRepeatMeasurer.measureRepeats(posA, posB, indelHint);
+    return posA + mInterestingSeparation + repeatTotal >= posB;
   }
 
 
@@ -239,13 +252,18 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
     return regions.peekLast();
   }
 
-  void addRegion(final Deque<ComplexRegion> regions, int firstInteresting, int endInteresting, boolean forceComplex) {
+  void addRegion(final Deque<ComplexRegion> regions, int firstInteresting, int endInteresting, boolean forceComplex, int firstIndel, int endIndel) {
     if (firstInteresting != -1) {
       assert endInteresting >= firstInteresting : endInteresting + ":" + firstInteresting;
-      final boolean simpleInteresting = (endInteresting - firstInteresting) == 1 && !forceComplex;
-      final boolean hyper = !simpleInteresting && endInteresting - firstInteresting > mHyperComplexLength;
-      final ComplexRegion.RegionType regionType = hyper ? ComplexRegion.RegionType.HYPER : (simpleInteresting ? ComplexRegion.RegionType.INTERESTING : ComplexRegion.RegionType.COMPLEX);
-      final ComplexRegion com = new ComplexRegion(mReferenceName, firstInteresting, endInteresting, regionType);
+      final ComplexRegion.RegionType regionType;
+      if ((endInteresting - firstInteresting) == 1 && !forceComplex) {
+        regionType = ComplexRegion.RegionType.INTERESTING;
+      } else if (endInteresting - firstInteresting > mHyperComplexLength) {
+        regionType = ComplexRegion.RegionType.HYPER;
+      } else {
+        regionType = ComplexRegion.RegionType.COMPLEX;
+      }
+      final ComplexRegion com = new ComplexRegion(mReferenceName, firstInteresting, endInteresting, regionType, firstIndel, endIndel);
       regions.add(com);
     }
   }
@@ -276,7 +294,7 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
     } else {
       type = RegionType.COMPLEX;
     }
-    return new ComplexRegion(regionA.getSequenceName(), start, end, type);
+    return new ComplexRegion(regionA.getSequenceName(), start, end, type, regionA.getIndelStart(), regionB.getIndelEnd());
   }
 
   /**
@@ -309,10 +327,8 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
       regionB.mStartDangling = null;
       return;
     }
-    final int aLastPosition = aLast.getEnd() - 1;
-    final int bFirstPosition = bFirst.getStart();
 
-    if (!regionA.joinInteresting(aLastPosition, bFirstPosition)) {
+    if (!regionA.joinInteresting(aLast.getEnd() - 1, bFirst.getStart(), aLast.getIndelEnd(), bFirst.getIndelStart())) {
       regionA.mEndDangling = null;
       regionB.mStartDangling = null;
       return;
@@ -471,7 +487,7 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
       Exam.assertTrue(mStartDangling == null || mStartDangling.type() == ComplexRegion.RegionType.HYPER);
     }
     if (mStartDangling != null && mEndDangling != null) {
-      Exam.assertTrue(mStartDangling == mEndDangling || !joinInteresting(mStartDangling.getEnd() - 1, mEndDangling.getStart()));
+      Exam.assertTrue(mStartDangling == mEndDangling || !joinInteresting(mStartDangling.getEnd() - 1, mEndDangling.getStart(), mStartDangling.getIndelEnd(), mEndDangling.getIndelStart()));
     }
     if (mEndFixed) {
       Exam.assertTrue(mEndDangling == null || mEndDangling.type() == ComplexRegion.RegionType.HYPER);

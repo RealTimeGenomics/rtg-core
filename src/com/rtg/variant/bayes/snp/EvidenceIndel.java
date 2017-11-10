@@ -37,17 +37,17 @@ public final class EvidenceIndel implements EvidenceInterface {
   private final double mMapError;
   private final int mRead;
 
-  private final int mMaxOperationLength;
+  private final int mOperationLength;
 
   /**
    * @param mapError probability that the read doesn't map to this position.
    * @param indel 0 = insert, 1 = delete, 2 = soft clip left, 3 = soft clip right
-   * @param maxOperationLength maximum length of an insert or delete as specified by cigar
+   * @param operationLength maximum length of an insert or delete as specified by cigar
    */
-  public EvidenceIndel(final double mapError, int indel, int maxOperationLength) {
+  public EvidenceIndel(final double mapError, int indel, int operationLength) {
     mMapError = mapError;
     mRead = indel;
-    mMaxOperationLength = maxOperationLength;
+    mOperationLength = operationLength;
     assert mRead == INSERT || mRead == DELETE || mRead == SOFT_CLIP_LEFT || mRead == SOFT_CLIP_RIGHT;
   }
 
@@ -120,8 +120,8 @@ public final class EvidenceIndel implements EvidenceInterface {
   /**
    * @return maximum length of an insert or delete as specified by cigar
    */
-  public int maxOperationLength() {
-    return mMaxOperationLength;
+  public int operationLength() {
+    return mOperationLength;
   }
 
 }

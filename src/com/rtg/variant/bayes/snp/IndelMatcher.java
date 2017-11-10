@@ -59,14 +59,14 @@ public class IndelMatcher extends EvidenceMatcher<IndelDetector> {
             indelDetector.totalCount(),
             indelDetector.nonTrivialInsertCount(), indelDetector.nonTrivialDeletionCount(),
             indelDetector.softClipLeftCount(), indelDetector.softClipRightCount(),
-            indelDetector.maxIndelLength(), indelDetector.maxSoftClipLength()));
+            indelDetector.indelLength(), indelDetector.maxSoftClipLength()));
         }
       }
       if (indelDetector.nonTrivialInsertCount() >= minIndelCount || indelDetector.nonTrivialDeletionCount() >= minIndelCount) {
         final VariantLocus locus = new VariantLocus(refName, startPos, newEnd);
         final Variant call = new Variant(locus);
         call.setInteresting();
-        call.setIndel(indelDetector.maxIndelLength());
+        call.setIndel(indelDetector.indelLength());
         return call;
       }
       if (indelDetector.softClipLeftCount() >= minIndelCount || indelDetector.softClipRightCount() >= minIndelCount) {

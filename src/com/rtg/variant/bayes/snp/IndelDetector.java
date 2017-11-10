@@ -12,6 +12,8 @@
 
 package com.rtg.variant.bayes.snp;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.variant.bayes.EvidenceAcceptor;
 import com.rtg.variant.bayes.EvidenceInterface;
 import com.rtg.variant.bayes.Model;
@@ -24,6 +26,8 @@ public class IndelDetector implements EvidenceAcceptor {
 
   /** The minimum number of indels to occur at a position before invoking the complex caller */
   public static final int TRIVIAL_INDEL_COUNT = 2; //Integer.parseInt(System.getProperty("rtg.modelindel.trivial-indels", "2"));
+
+  static final int MAX_INDEL_EXTENSION = GlobalFlags.getIntegerValue(CoreGlobalFlags.COMPLEX_REGION_SIMPLE_REPEAT_LIMIT);
 
   private int mNonTrivialInsertCount;
   private int mNonTrivialDeletionCount;
@@ -41,22 +45,23 @@ public class IndelDetector implements EvidenceAcceptor {
     } else {
       assert evidence instanceof EvidenceIndel;
       if (evidence.mapError() < Model.AMBIGUITY_THRESHOLD) {
+        final int opLength = Math.min(((EvidenceIndel) evidence).operationLength(), MAX_INDEL_EXTENSION);
         switch (evidence.read()) {
           case EvidenceIndel.INSERT:
             ++mNonTrivialInsertCount;
-            mIndelLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mIndelLength);
+            mIndelLength += opLength;
             break;
           case EvidenceIndel.DELETE:
             ++mNonTrivialDeletionCount;
-            mIndelLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mIndelLength);
+            mIndelLength += opLength;
             break;
           case EvidenceIndel.SOFT_CLIP_LEFT:
             ++mSoftClipLeftCount;
-            mSoftClipLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mSoftClipLength);
+            mSoftClipLength = Math.max(opLength, mSoftClipLength);
             break;
           case EvidenceIndel.SOFT_CLIP_RIGHT:
             ++mSoftClipRightCount;
-            mSoftClipLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mSoftClipLength);
+            mSoftClipLength = Math.max(opLength, mSoftClipLength);
             break;
           default:
             throw new RuntimeException("Invalid indel code: " + evidence.read());
@@ -71,10 +76,11 @@ public class IndelDetector implements EvidenceAcceptor {
   }
 
   /**
-   * @return maximum length of an insert or delete as specified by cigar
+   * @return typical length of an insert or delete at this position as specified by cigar
    */
-  public int maxIndelLength() {
-    return mIndelLength;
+  public int indelLength() {
+    final int tot = mNonTrivialDeletionCount + mNonTrivialInsertCount;
+    return tot == 0 ? 0 : mIndelLength / tot;
   }
 
   /**

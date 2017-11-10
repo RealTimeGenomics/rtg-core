@@ -18,6 +18,12 @@ public final class RepeatAntiMeasurer implements RepeatMeasurer {
 
   @Override
   public int measureRepeats(int positionA, int positionB) {
+    return measureRepeats(positionA, positionB, 0);
+  }
+
+
+  @Override
+  public int measureRepeats(int positionA, int positionB, int repeatHint) {
     return 0;
   }
 }

@@ -23,4 +23,13 @@ public interface RepeatMeasurer {
    * @return the total length of repeats
    */
   int measureRepeats(int positionA, int positionB);
+
+  /**
+   * Measures the total length of simple repeat regions between two positions.
+   * @param positionA template start position
+   * @param positionB template end position (exclusive)
+   * @param repeatHint hint as to the length of repeat unit that may be present
+   * @return the total length of repeats
+   */
+  int measureRepeats(int positionA, int positionB, int repeatHint);
 }

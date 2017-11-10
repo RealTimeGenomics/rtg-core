@@ -300,17 +300,27 @@ public class ComplexitiesTest extends TestCase {
   }
 
   public void testIndelExtension() {
-    final Complexities complex = new Complexities(Collections.<Variant>emptyList(), "foo", 0, 50, 3, 100, template(30), false, null);
-    complex.globalIntegrity();
-    assertEquals(0, complex.size());
+    final ArrayList<Variant> chunk1 = new ArrayList<>();
+    chunk1.add(TestUtils.createVariant(0));
+    chunk1.add(TestUtils.createVariant(4));
+
+    final ArrayList<Variant> chunk2 = new ArrayList<>();
+    chunk2.add(TestUtils.createVariant(10, 20, true, 6)); // interesting sep + indel length lets it join to previous
+    chunk2.add(TestUtils.createVariant(15));
+    chunk2.add(TestUtils.createVariant(24)); //still in shadow
+    chunk2.add(TestUtils.createVariant(34));
+
     final ArrayList<Variant> chunk = new ArrayList<>();
-    chunk.add(TestUtils.createVariant(0));
-    chunk.add(TestUtils.createVariant(4));
-    chunk.add(TestUtils.createVariant(10, 20, true, 3)); // interesting sep + indel length lets it join to previous
-    chunk.add(TestUtils.createVariant(15));
-    chunk.add(TestUtils.createVariant(24)); //still in shadow
-    chunk.add(TestUtils.createVariant(34));
+    chunk.addAll(chunk1);
+    chunk.addAll(chunk2);
+
+    final Complexities complex = new Complexities(chunk, "foo", 0, 50, 3, 100, template(30), false, null);
+    complex.globalIntegrity();
+    assertEquals(1, complex.size()); // Drops the simple snps on the outside
+
+    // Check the intermediate regions
     final Deque<ComplexRegion> regions = complex.getComplexRegions(chunk);
+    assertEquals(3, regions.size());
     final Iterator<ComplexRegion> it = regions.iterator();
     assertTrue(it.hasNext());
     final ComplexRegion com0 = it.next();
@@ -328,6 +338,17 @@ public class ComplexitiesTest extends TestCase {
     assertEquals(35, com3.getEnd());
     assertEquals(ComplexRegion.RegionType.INTERESTING, com3.type());
     assertFalse(it.hasNext());
+
+    // Check equivalent cross-chunk result
+    final Complexities complex1 = new Complexities(chunk1, "foo", 0, 6, 3, 100, template(30), false, null);
+    assertEquals(0, complex1.size()); // Just had two snps
+    final Complexities complex2 = new Complexities(chunk2, "foo", 6, 50, 3, 100, template(30), false, null);
+    assertEquals(1, complex2.size()); // One XRX region
+    assertEquals(10, complex2.iteratorInternal().next().getStart());
+    Complexities.fixDangling(complex1, complex2);
+    assertEquals(1, complex2.size());
+    assertEquals(4, complex2.iteratorInternal().next().getStart());
+    assertEquals(complex.iteratorInternal().next().toString(), complex2.iteratorInternal().next().toString());
   }
 
   public void testFirstPassHyper() {
@@ -399,11 +420,14 @@ public class ComplexitiesTest extends TestCase {
   }
 
   public void testMerge() {
-    final ComplexRegion a = new ComplexRegion("foo", 4, 7, ComplexRegion.RegionType.INTERESTING);
-    final ComplexRegion b = new ComplexRegion("foo", 9, 15, ComplexRegion.RegionType.INTERESTING);
+    final ComplexRegion a = new ComplexRegion("foo", 4, 7, ComplexRegion.RegionType.INTERESTING, 1, 2);
+    final ComplexRegion b = new ComplexRegion("foo", 9, 15, ComplexRegion.RegionType.INTERESTING, 3, 4);
     final ComplexRegion m = Complexities.mergeRegions(a, b, 15);
     assertEquals(4, m.getStart());
     assertEquals(15, m.getEnd());
+    assertEquals(1, m.getIndelStart());
+    assertEquals(4, m.getIndelEnd());
+
     assertEquals(ComplexRegion.RegionType.COMPLEX, m.type());
     final ComplexRegion m2 = Complexities.mergeRegions(a, b, 10);
     assertEquals(4, m2.getStart());
@@ -1072,7 +1096,7 @@ public class ComplexitiesTest extends TestCase {
   public void testHyperComplexBoundaryCase() {
     final Complexities regions = new Complexities(Collections.<Variant>emptyList(), "foo", 20, 40, 3, 15, template(30), true, null);
     final LinkedList<ComplexRegion> crs = new LinkedList<>();
-    regions.addRegion(crs, 0, 15, true);
+    regions.addRegion(crs, 0, 15, true, 0, 0);
     assertEquals(1, crs.size());
     assertEquals(ComplexRegion.RegionType.COMPLEX, crs.peekFirst().type());
   }
@@ -1080,7 +1104,7 @@ public class ComplexitiesTest extends TestCase {
   public void testHyperComplexBoundaryCase2() {
     final Complexities regions = new Complexities(Collections.<Variant>emptyList(), "foo", 20, 40, 3, 15, template(30), true, null);
     final LinkedList<ComplexRegion> crs = new LinkedList<>();
-    regions.addRegion(crs, 0, 16, true);
+    regions.addRegion(crs, 0, 16, true, 0, 0);
     assertEquals(1, crs.size());
     assertEquals(ComplexRegion.RegionType.HYPER, crs.peekFirst().type());
   }

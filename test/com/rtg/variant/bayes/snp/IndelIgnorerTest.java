@@ -25,7 +25,7 @@ public class IndelIgnorerTest extends TestCase {
 
     assertEquals(0, indelIgnorer.nonTrivialDeletionCount());
     assertEquals(0, indelIgnorer.nonTrivialInsertCount());
-    assertEquals(0, indelIgnorer.maxIndelLength());
+    assertEquals(0, indelIgnorer.indelLength());
   }
 
 }

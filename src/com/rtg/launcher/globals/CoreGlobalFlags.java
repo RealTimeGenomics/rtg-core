@@ -160,7 +160,7 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     // Complex caller
     registerFlag(COMPLEX_CALLER_MAX_HYPOTH_FLAG, Integer.class, 20);
     registerFlag(COMPLEX_REGION_INDEL_EXTENSION);
-    registerFlag(COMPLEX_REGION_SIMPLE_REPEAT_LIMIT, Integer.class, 3);
+    registerFlag(COMPLEX_REGION_SIMPLE_REPEAT_LIMIT, Integer.class, 30);
     registerFlag(COMPLEX_REGION_SIMPLE_REPEAT_IMPL, String.class, "default");
     registerFlag(DUMP_COMPLEX_TRIGGER_SIGNALS, Boolean.class, Boolean.FALSE);
     registerFlag(SOFT_CLIP_COMPLEX_TRIGGER, Boolean.class, Boolean.FALSE);

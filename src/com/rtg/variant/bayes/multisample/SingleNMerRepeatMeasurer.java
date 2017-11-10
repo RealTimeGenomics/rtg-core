@@ -11,14 +11,16 @@
  */
 package com.rtg.variant.bayes.multisample;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+
 /**
  * This version looks for how much of the subsequence can be explained by a single
  * n-mer obtained from the center of the subsequence
- *
  */
 public final class SingleNMerRepeatMeasurer implements RepeatMeasurer {
 
-  private static final int MAX_MER_LENGTH = 30; // This should probably not be higher than about read length / 2
+  private static final int MAX_MER_LENGTH = GlobalFlags.getIntegerValue(CoreGlobalFlags.COMPLEX_REGION_SIMPLE_REPEAT_LIMIT);
 
   private final byte[] mReferenceNts;
 
@@ -44,12 +46,18 @@ public final class SingleNMerRepeatMeasurer implements RepeatMeasurer {
 
   @Override
   public int measureRepeats(int positionA, int positionB) {
+    return measureRepeats(positionA, positionB, 0);
+  }
+
+  @Override
+  public int measureRepeats(int positionA, int positionB, int repeatHint) {
     final int startPos = Math.max(positionA, 0);
     final int endPos = Math.min(positionB, mReferenceNts.length);
     final int gapLength = endPos - startPos;
     final int midpoint = startPos + gapLength / 2;
+    final int maxMerLength = repeatHint == 0 ? mMaxMerLength : repeatHint + 1;
     int repeatTotal = 0;
-    for (int simpleLength = 1; simpleLength <= mMaxMerLength; ++simpleLength) {
+    for (int simpleLength = 1; simpleLength <= maxMerLength; ++simpleLength) {
       if (simpleLength > gapLength) { // Dont try to look for repeat units larger than the gap size
         break;
       }
