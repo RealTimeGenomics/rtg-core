@@ -20,6 +20,7 @@ import java.util.List;
 import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.util.SynchronizedLinkedList;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.variant.Variant;
@@ -33,7 +34,9 @@ import com.rtg.variant.bayes.multisample.population.SiteSpecificPriors;
  */
 public class Complexities extends IntegralAbstract implements Iterable<ComplexRegion> {
 
-  static final String MER_FINDER_IMPL = GlobalFlags.getStringValue(CoreGlobalFlags.COMPLEX_REGION_SIMPLE_REPEAT_IMPL);
+  private static final boolean DUMP_COMPLEXITIES = GlobalFlags.getBooleanValue(CoreGlobalFlags.DUMP_COMPLEX_TRIGGER_SIGNALS);
+
+  private static final String MER_FINDER_IMPL = GlobalFlags.getStringValue(CoreGlobalFlags.COMPLEX_REGION_SIMPLE_REPEAT_IMPL);
 
   private static final boolean USE_CX_SSP = true; //Boolean.parseBoolean(System.getProperty("com.rtg.complexities.ssp", "true"));
 
@@ -178,9 +181,10 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
         forceComplex = false;
         addOverflowRegion(regions, c.getLocus());
       } else if (c.isInteresting()) {
-//        final String desc = c.isIndel() ? "indel" : (c.isSoftClip() ? "soft-clip" : "generic");
-//        Diagnostic.developerLog(String.format("COMPLEX_CHUNK\t%s\t%d\t%d\t%s\t%d", c.getLocus().getSequenceName(), c.getLocus().getStart(), c.getLocus().getEnd(), desc, c.getIndelLength()));
-        //        System.err.println("first: " + firstInteresting + " last: " + lastInteresting + " forced: " + forceComplex + " call: " + c + " SoC: " + mStartOfChunk + " EoC: " + mEndOfChunk);
+        if (DUMP_COMPLEXITIES) {
+          final String desc = c.isIndel() ? "indel" : c.isSoftClip() ? "soft-clip" : "generic";
+          Diagnostic.developerLog(String.format("COMPLEX_CHUNK\t%s\t%d\t%d\t%s\t%d", c.getLocus().getSequenceName(), c.getLocus().getStart(), c.getLocus().getEnd(), desc, c.getIndelLength()));
+        }
         assert firstInteresting > -1 || (lastInteresting == -1 && !forceComplex);
         assert firstInteresting == -1 || (firstInteresting >= mStartOfChunk && lastInteresting >= firstInteresting && lastInteresting <= mEndOfChunk);
         final int outputPosition = c.getLocus().getStart();

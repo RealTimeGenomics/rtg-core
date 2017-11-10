@@ -79,7 +79,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     if (PRINT_HYP_DETAILS) {
       for (int i = 0; i < result.size(); ++i) {
         final String ploidy = haploid ? "haploid" : "diploid";
-        System.err.println(context.getSequenceName() + ":" + context.getStart() + "-" + context.getEnd() + " ploidy=" + ploidy + " hyp=" + result.name(i) + " prior=" + context.arithmetic().poss2Prob(result.p(i)));
+        Diagnostic.developerLog("CX_PRIOR\t" + context.getSequenceName() + "\t" + context.getStart() + "\t" + context.getEnd() + "\t" + ploidy + "\t'" + result.name(i) + "'\t" + context.arithmetic().poss2Prob(result.p(i)));
       }
     }
 
