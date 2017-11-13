@@ -51,7 +51,7 @@ public class DedupifyingIterator<T extends ReaderRecord<T> & MateInfo> implement
     }
 
     int secondPos() {
-      return mMated ? mRec.getFragmentLength() : mRec.getStart() + mRec.getLength();
+      return mMated ? mRec.getStart() + mRec.getFragmentLength() : mRec.getStart() + mRec.getLength();
     }
 
     public X record() {
