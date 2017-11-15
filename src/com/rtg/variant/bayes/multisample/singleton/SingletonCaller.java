@@ -17,7 +17,6 @@ import java.util.List;
 
 import com.rtg.mode.DnaUtils;
 import com.rtg.reference.Ploidy;
-import com.rtg.util.MathUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantOutputLevel;
@@ -49,7 +48,7 @@ public class SingletonCaller implements MultisampleJointCaller {
    */
   public SingletonCaller(VariantParams params) {
     mParams = params;
-    mInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
+    mInterestingThreshold = mParams.interestingThreshold();
     mVariantAlleleTrigger = new VariantAlleleTrigger(params.minVariantAllelicDepth(), params.minVariantAllelicFraction());
   }
 

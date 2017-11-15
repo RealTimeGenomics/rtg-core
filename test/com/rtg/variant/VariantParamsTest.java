@@ -78,7 +78,7 @@ public class VariantParamsTest extends TestCase {
         " hypercomplex_length=21 non_identity_posterior=true" + LS,
         " machine=null vcf_rp=false output_index=true" + LS,
         " call_level=INTERESTING indels=true no_complex_calls=false" + LS,
-        " interesting_threshold=0.4343" + LS,
+        " interesting_threshold=1.0000" + LS,
         " interesting_separation=4" + LS,
         " max_coverage_filter=2147483647:2147483647" + LS,
         " max_coverage_bypass=2147483647:2147483647" + LS,

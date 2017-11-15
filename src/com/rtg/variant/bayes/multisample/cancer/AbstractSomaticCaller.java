@@ -18,7 +18,6 @@ import java.util.List;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reference.Ploidy;
-import com.rtg.util.MathUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
@@ -75,7 +74,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     mQDiploidFactory = qDiploidFactory;
     mParams = params;
     mSiteSpecificSomaticPriors = mParams.somaticParams().siteSpecificSomaticPriors();
-    mIdentityInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
+    mIdentityInterestingThreshold = mParams.interestingThreshold();
     mPhi = phi;
     mPsi = psi;
     mVariantAlleleTrigger = new VariantAlleleTrigger(params.minVariantAllelicDepth(), params.minVariantAllelicFraction());

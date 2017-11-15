@@ -26,7 +26,7 @@ import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.sam.SingleMappedParams.SingleMappedParamsBuilder;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.MathUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.variant.bayes.AlleleBalanceProbability;
@@ -55,7 +55,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   double mMinAvrScore = 0;
   boolean mOutputNonSnps = true;
   GenomePriorParams mGenomePriors = null;
-  double mInterestingThreshold = 1 / MathUtils.LOG_10;
+  double mInterestingThreshold = PosteriorUtils.unphredIfy(5.70342); // I.e. output uncertain ref calls where QUAL < ~5.7
   int mInterestingSeparation = 4;
   int mHyperComplexLength = 21;
   boolean mSimpleRepeatExtension = true;
