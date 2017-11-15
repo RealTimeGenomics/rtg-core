@@ -42,9 +42,8 @@ public class VariantSampleTest extends TestCase {
 
 
     vs.setStatisticsString("ABCD");
-    vs.appendStatisticsString("EF");
     assertEquals("A:C", vs.toString());
-    assertEquals("ABCDEF", vs.getStatisticsString());
+    assertEquals("ABCD", vs.getStatisticsString());
   }
 
   public void testCopy() {

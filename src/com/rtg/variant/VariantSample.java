@@ -293,20 +293,10 @@ public class VariantSample {
   public String getStatisticsString() {
     return mInfo[VariantFormatEnum.STATISTICS.ordinal()] == null ? null : mInfo[VariantFormatEnum.STATISTICS.ordinal()].stringValue();
   }
+
   public void setStatisticsString(String statisticsString) {
     mInfo[VariantFormatEnum.STATISTICS.ordinal()] = new VariantSampleInfo(statisticsString);
 
-  }
-  /**
-   * Append additional statistics to the statistics string
-   * @param string the string to add
-   */
-  public void appendStatisticsString(String string) {
-    if (mInfo[VariantFormatEnum.STATISTICS.ordinal()] == null) {
-      setStatisticsString(string);
-    } else {
-      setStatisticsString(mInfo[VariantFormatEnum.STATISTICS.ordinal()].stringValue() + string);
-    }
   }
 
   private Double getDoubleInfoHelper(VariantFormatEnum info) {
