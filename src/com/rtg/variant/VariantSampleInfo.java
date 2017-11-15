@@ -13,42 +13,41 @@
 package com.rtg.variant;
 
 /**
- * Information relating to a variant sample
+ * Information relating to a variant sample.
  */
 public class VariantSampleInfo {
 
   /**
-   * Enumeration of variant sample format Info possible types
+   * Enumeration of variant sample format Info possible types.
    */
   public enum VariantFormatEnum {
-    /** The coverage for a variant */
+    /** The coverage for a variant. */
     COVERAGE,
-    /** The coverage correction for a variant */
+    /** The coverage correction for a variant. */
     COVERAGE_CORRECTION,
-    /** The ambiguity ratio for a variant */
+    /** The ambiguity ratio for a variant. */
     AMBIGUITY_RATIO,
-    /** The non identity posterior for a variant */
+    /** The non-identity posterior for a variant. */
     NONIDENTITY_POSTERIOR,
-    /** The statistics for a variant */
+    /** The statistics for a variant. */
     STATISTICS,
-    /** Multiplier that was applied to GQ */
-    /** bound on probability that strand bias exists, for allele 1 */
+    /** Bound on probability that strand bias exists, for allele 1. */
     HOEFFDING_STRAND_BIAS_A1,
-    /** bound on probability that strand bias exists, for allele 2 */
+    /** Bound on probability that strand bias exists, for allele 2. */
     HOEFFDING_STRAND_BIAS_A2,
-    /** Hoeffding allele balance for heterozygous calls, bound to probability 0.5 */
+    /** Hoeffding allele balance for heterozygous calls, bound to probability 0.5. */
     HOEFFDING_ALLELE_BALANCE_HET,
-    /** Hoeffding allele balance for homozygous calls, bound to probability 1.0 */
+    /** Hoeffding allele balance for homozygous calls, bound to probability 1.0. */
     HOEFFDING_ALLELE_BALANCE_HOM,
-    /** bound on probability that site isn't covered evenly */
+    /** Bound on probability that site isn't covered evenly. */
     HOEFFDING_READ_POSITION,
-    /** bound on probability from total unmated/mated ratio, for allele 1 */
+    /** Bound on probability from total unmated/mated ratio, for allele 1. */
     HOEFFDING_UNMATED_BIAS_A1,
-    /** bound on probability from total unmated/mated ratio, for allele 2 */
+    /** Bound on probability from total unmated/mated ratio, for allele 2. */
     HOEFFDING_UNMATED_BIAS_A2,
-    /** Ratio of placed unmapped reads to mapped reads */
+    /** Ratio of placed unmapped reads to mapped reads. */
     UNPLACED_RATIO,
-    /** Somatic score */
+    /** Somatic score. */
     SOMATIC_SCORE
   }
 
