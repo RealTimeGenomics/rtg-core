@@ -112,9 +112,10 @@ public class SamMerger {
     final File alignmentOutputFile;
     final long recordsIn;
     final long recordsOut;
-    final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
+    final SingletonPopulatorFactory<SamReaderRecord> pf = new SingletonPopulatorFactory<>(new SamReaderRecord.SamReaderRecordPopulator());
     final SamReadingContext context = new SamReadingContext(samFiles, mNumberThreads, mFilterParams, inHeader, reference);
-    try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, pf)) {
+    try (final ThreadedMultifileIterator<SamReaderRecord> outer = new ThreadedMultifileIterator<>(context, pf)) {
+      final RecordIterator<SamReaderRecord> it = context.filterParams().findAndRemoveDuplicates() ? new DedupifyingRecordIterator<>(outer) : outer;
       if (outHeader != null) {
         outHeader.setSortOrder(SAMFileHeader.SortOrder.coordinate);
         if (mAddProgramRecord) {
@@ -127,7 +128,7 @@ public class SamMerger {
         alignmentOutputFile = so.getOutFile();
         try (SAMFileWriter writer = so.getWriter()) {
           while (it.hasNext()) {
-            final SAMRecord rec = it.next();
+            final SAMRecord rec = it.next().inner();
             if (mLegacy) {
               SamUtils.convertToLegacyCigar(rec);
             }

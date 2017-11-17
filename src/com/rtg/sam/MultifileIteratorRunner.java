@@ -189,6 +189,11 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
       if (samCompare != 0) {
         return samCompare;
       }
+    } else if (thisRecord instanceof SamReaderRecord) {
+      final int samCompare = SamCompareUtils.compareSamRecords(((SamReaderRecord) thisRecord).inner(), ((SamReaderRecord) thatRecord).inner());
+      if (samCompare != 0) {
+        return samCompare;
+      }
 
     } else if (thisRecord instanceof Comparable) {
       @SuppressWarnings("unchecked")

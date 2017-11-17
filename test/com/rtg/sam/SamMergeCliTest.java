@@ -25,7 +25,6 @@ import com.rtg.util.Environment;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CommandLine;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
@@ -97,9 +96,32 @@ public class SamMergeCliTest extends AbstractCliTest {
       assertTrue(TabixIndexer.indexFileName(outFile).exists());
     }
   }
+  public void testRemoveDuplicates() throws Exception {
+    try (final TestDirectory temp = new TestDirectory("unmapped_strip")) {
+      CommandLine.setCommandArgs("test", "arguments");
+      final StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < 4; i++) {
+        // Mixture of single end and paired end. Only the PE will get deduped.
+        final File ffa = FileHelper.stringToGzFile(SharedSamConstants.SAM3, new File(temp, "alignments" + i + ".sam.gz"));
+        new TabixIndexer(ffa, TabixIndexer.indexFileName(ffa)).saveSamIndex();
+        sb.append(ffa.getPath()).append(LS);
+      }
+
+      final File inputFile = FileUtils.stringToFile(sb.toString(), new File(temp, "input.txt"));
+
+      final File outFile = new File(temp, "test.sam.gz");
+      final String stdout = checkMainInitOk("-I", inputFile.getPath(), "-o", outFile.getPath(), "--remove-duplicates");
+      mNano.check("sfm-rmdup-stdout", stdout);
+      assertTrue(outFile.exists());
+      final String output = FileHelper.gzFileToString(outFile);
+      TestUtils.containsAll(output, "SO:coordinate", "@PG\tID:rtg", "VN:" + Environment.getVersion(), "PN:rtg");
+      final String outRecords = TestUtils.stripSAMHeader(output);
+      mNano.check("sfm-rmdup", outRecords, false);
+      assertTrue(TabixIndexer.indexFileName(outFile).exists());
+    }
+  }
 
   public void testSimpleMergeStdOut() throws Exception {
-    Diagnostic.setLogStream();
     try (final TestDirectory temp = new TestDirectory("simplemerge")) {
       final File inputFile = new File(temp, "input.txt");
       final File ffa = new File(temp, "alignmentsA.sam.gz");
@@ -149,7 +171,6 @@ public class SamMergeCliTest extends AbstractCliTest {
   }
 
   public void testUnmappedMerge() throws Exception {
-    Diagnostic.setLogStream();
     try (final TestDirectory temp = new TestDirectory("unmapped_merge")) {
       CommandLine.setCommandArgs("test", "arguments");
       final File inputFile = new File(temp, "input.txt");
@@ -179,18 +200,14 @@ public class SamMergeCliTest extends AbstractCliTest {
   }
 
   public void testUnmappedStrip() throws Exception {
-    Diagnostic.setLogStream();
     try (final TestDirectory temp = new TestDirectory("unmapped_strip")) {
       CommandLine.setCommandArgs("test", "arguments");
       final File inputFile = new File(temp, "input.txt");
-      final File ffa = new File(temp, "alignmentsA.sam.gz");
-      FileHelper.stringToGzFile(SharedSamConstants.SAM1, ffa);
+      final File ffa = FileHelper.stringToGzFile(SharedSamConstants.SAM1, new File(temp, "alignmentsA.sam.gz"));
       new TabixIndexer(ffa, TabixIndexer.indexFileName(ffa)).saveSamIndex();
-      final File ffb = new File(temp, "alignmentsB.sam.gz");
-      FileHelper.stringToGzFile(SharedSamConstants.SAM9 + SharedSamConstants.SAM_UNMAPPED, ffb);
+      final File ffb = FileHelper.stringToGzFile(SharedSamConstants.SAM9 + SharedSamConstants.SAM_UNMAPPED, new File(temp, "alignmentsB.sam.gz"));
       new TabixIndexer(ffb, TabixIndexer.indexFileName(ffb)).saveSamIndex();
-      final File ffc = new File(temp, "alignmentsC.sam.gz");
-      FileHelper.stringToGzFile(SharedSamConstants.SAM9 + SAM_PCR_DUP, ffc);
+      final File ffc = FileHelper.stringToGzFile(SharedSamConstants.SAM9 + SAM_PCR_DUP, new File(temp, "alignmentsC.sam.gz"));
       new TabixIndexer(ffc, TabixIndexer.indexFileName(ffc)).saveSamIndex();
       FileUtils.stringToFile(ffa.getPath() + LS
         + ffb.getPath() + LS

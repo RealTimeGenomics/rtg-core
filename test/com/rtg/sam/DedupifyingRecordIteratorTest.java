@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.rtg.util.SingletonPopulatorFactory;
-import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.DefaultMachineErrorChooser;
 import com.rtg.variant.VariantAlignmentRecord;
@@ -31,8 +31,7 @@ import junit.framework.TestCase;
 public class DedupifyingRecordIteratorTest extends TestCase {
   private static final String SAM_RESOURCE = "com/rtg/variant/cnv/resources/testFilter.sam";
   public void test() throws IOException {
-    final File dir = FileUtils.createTempDir("test", "deduprecord");
-    try {
+    try (TestDirectory dir = new TestDirectory("dedup")) {
       final File sam = FileHelper.resourceToFile(SAM_RESOURCE, new File(dir, "testFilter.sam"));
       final List<File> f = new ArrayList<>();
       f.add(sam);
@@ -57,8 +56,6 @@ public class DedupifyingRecordIteratorTest extends TestCase {
         assertEquals(tmfi.getOutputRecordsCount(), dd.getOutputRecordsCount());
         assertEquals(tmfi.header(), dd.header());
       }
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 }

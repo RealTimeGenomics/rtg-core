@@ -19,6 +19,7 @@ import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.launcher.CommonFlags.TEMPLATE_FLAG;
 import static com.rtg.launcher.CommonFlags.THREADS_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
+import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
 import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
 
 import java.io.File;
@@ -46,6 +47,7 @@ import htsjdk.samtools.SAMFileHeader;
 public class SamMergeCli extends AbstractCli {
 
   private static final String LEGACY_CIGARS = "legacy-cigars";
+  private static final String REMOVE_DUPLICATES = "remove-duplicates";
   private static final String X_ALTERNATE_SAM_HEADER = "Xalternate-sam-header";
   private static final String X_RENAME_WITH_RG = "Xrename-read-with-rg";
 
@@ -95,6 +97,7 @@ public class SamMergeCli extends AbstractCli {
     mFlags.registerOptional(NO_HEADER, "prevent SAM/BAM header from being written").setCategory(UTILITY);
     mFlags.registerOptional(X_RENAME_WITH_RG, "rename reads by prepending with their read group ID").setCategory(UTILITY);
     mFlags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, FILE, "treat all SAM records as having the supplied header").setCategory(UTILITY);
+    mFlags.registerOptional(REMOVE_DUPLICATES, "detect and remove duplicate reads based on mapping position").setCategory(SENSITIVITY_TUNING);
     SamFilterOptions.registerInvertCriteriaFlag(mFlags);
     SamFilterOptions.registerSubsampleFlags(mFlags);
     SamFilterOptions.registerMaskFlags(mFlags);
@@ -127,7 +130,7 @@ public class SamMergeCli extends AbstractCli {
     final boolean gzip = !mFlags.isSet(NO_GZIP);
     final boolean legacy = mFlags.isSet(LEGACY_CIGARS);
     final int numberThreads = CommonFlags.parseThreads((Integer) mFlags.getValue(THREADS_FLAG));
-    final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).create();
+    final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).findAndRemoveDuplicates(mFlags.isSet(REMOVE_DUPLICATES)).create();
     final File output = mFlags.isSet(OUTPUT_FLAG) ? (File) mFlags.getValue(OUTPUT_FLAG) : new File("-");
     final SequencesReader template = (!mFlags.isSet(TEMPLATE_FLAG)) ? null : SequencesReaderFactory.createDefaultSequencesReader((File) mFlags.getValue(TEMPLATE_FLAG));
 
