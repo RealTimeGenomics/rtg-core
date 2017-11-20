@@ -65,8 +65,12 @@ public class DedupifyingIteratorTest extends AbstractTest {
           final VariantAlignmentRecord expRec = new VariantAlignmentRecord(expIt.next());
           assertTrue(expRec.toString() + " cf." + inRec.toString(), expRec.valueCompareTo(inRec) == 0);
         }
-        assertFalse(inIt.hasNext());
-        assertFalse(expIt.hasNext());
+        if (inIt.hasNext()) {
+          fail("Unexpected record: " + inIt.next().toString());
+        }
+        if (expIt.hasNext()) {
+          fail("Filtering stopped before producing expected: " + expIt.next().toString());
+        }
         assertEquals(skipBug ? 9 : 6, inIt.numFiltered());
       }
     }

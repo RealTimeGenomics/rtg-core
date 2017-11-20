@@ -111,6 +111,8 @@ public class DedupifyingIterator<T extends ReaderRecord<T> & MateInfo> implement
   private final Iterator<T> mWrapped;
   private ReadDuplicateAttributes<T> mNext;
   private final DedupifyingList<ReadDuplicateAttributes<T>> mItemsNew;
+
+  // Used when the reference sequence changes to stash the first alignment from the next reference sequence
   private ReadDuplicateAttributes<T> mOverrun;
   protected long mNumDeduped;
 
@@ -149,9 +151,9 @@ public class DedupifyingIterator<T extends ReaderRecord<T> & MateInfo> implement
   private void fillItems() {
     assert mItemsNew.isEmpty();
     ReadDuplicateAttributes<T> first = mOverrun;
-    mOverrun = null;
-    if (first != null) {
-      addRecord(first);
+    if (mOverrun != null) {
+      addRecord(mOverrun);
+      mOverrun = null;
     }
     while (mWrapped.hasNext()) {
       final T rec = mWrapped.next();
@@ -165,8 +167,14 @@ public class DedupifyingIterator<T extends ReaderRecord<T> & MateInfo> implement
       } else if (cmp < 0) {
         mOverrun = current;
         break;
+      } else if (current.firstRef() == -1) {
+        // Always treat unplaced unmapped as overrun.
+        // This means they just get passed through immediately in the order that they are appear.
+        // (We don't need to give them a deterministic ordering since they are not being deduplicated.)
+        mOverrun = current;
+        break;
       } else {
-        throw new NoTalkbackSlimException("SAM file was not in sort order");
+        throw new NoTalkbackSlimException("SAM file was not in sort order:\n" + first.mRec.toString() + "\n" + current.mRec.toString());
       }
     }
   }
