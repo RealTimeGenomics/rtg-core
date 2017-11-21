@@ -694,24 +694,20 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     mUsageMetric.incrementMetric(mWrapper.getTotalNucleotides());
     final long invalidRecords = mInvalidRecords + mWrapper.getInvalidRecordsCount();
 
-    final String invalidRecordsWarning = invalidRecords + " records skipped because of SAM format problems.";
+    Diagnostic.userLog(mWrapper.getTotalRecordsCount() + " total input alignments");
+    final long filteredRecords = mWrapper.getFilteredRecordsCount();
+    Diagnostic.userLog(filteredRecords + " alignments skipped due to input filtering criteria");
+    final String invalidRecordsWarning = invalidRecords + " alignments skipped because of SAM format problems.";
     if (invalidRecords > 0) {
       Diagnostic.warning(invalidRecordsWarning);
     } else {
       Diagnostic.userLog(invalidRecordsWarning);
     }
-    final long filteredRecords = mWrapper.getFilteredRecordsCount();
-    if (filteredRecords > 0) {
-      Diagnostic.userLog(filteredRecords + " records skipped due to input filtering criteria");
-    }
-    if (mTossedRecords > 0) {
-      Diagnostic.userLog(mTossedRecords + " records skipped in extreme coverage regions");
-    }
     final long numDeduped = mWrapper.getDuplicateRecordsCount();
-    if (numDeduped != 0) {
-      Diagnostic.userLog(numDeduped + " records skipped due to duplicate detection");
-    }
-    Diagnostic.userLog(mWrapper.getOutputRecordsCount() + " records processed");
+    Diagnostic.userLog(numDeduped + " alignments skipped due to duplicate detection");
+    Diagnostic.userLog(mTossedRecords + " alignments skipped in extreme coverage regions");
+    final long processed = mWrapper.getTotalRecordsCount() - invalidRecords - filteredRecords - numDeduped - mTossedRecords;
+    Diagnostic.userLog(processed + " alignments processed");
   }
 
 

@@ -53,7 +53,7 @@ public class DedupifyingRecordIterator<T extends ReaderRecord<T> & MateInfo> ext
 
   @Override
   public long getOutputRecordsCount() {
-    return mRecordWrapped.getOutputRecordsCount();
+    return getTotalRecordsCount() - getInvalidRecordsCount() - getDuplicateRecordsCount() - getFilteredRecordsCount();
   }
 
   @Override
