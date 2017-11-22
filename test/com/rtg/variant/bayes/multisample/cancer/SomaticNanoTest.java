@@ -16,16 +16,16 @@ package com.rtg.variant.bayes.multisample.cancer;
 import static com.rtg.util.StringUtils.LS;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import com.rtg.launcher.AbstractNanoTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
@@ -150,9 +150,7 @@ public class SomaticNanoTest extends AbstractNanoTest {
   }
 
   public void check(final String template, final String normalStr, final String cancerStr, final String relation, final String expectedPrefix, String[] extraArgs, long usageExp) throws Exception {
-    //Diagnostic.setLogStream(System.err);
-    final File tmp = FileUtils.createTempDir("somnano", "tests");
-    try {
+    try (TestDirectory tmp = new TestDirectory("somnano")) {
       final File templateDir = new File(tmp, "template");
       ReaderTestUtils.getDNADir(template, templateDir);
       final File relationsFile = new File(tmp, "relations.relations");
@@ -177,24 +175,16 @@ public class SomaticNanoTest extends AbstractNanoTest {
         args = args1;
       }
 
-      final MemoryPrintStream ps = new MemoryPrintStream();
-
       final SomaticCli cli = new SomaticCli();
-      final int code = cli.mainInit(args, new ByteArrayOutputStream(), ps.printStream());
-      assertEquals(ps.toString(), 0, code);
+      final MainResult res = MainResult.run(cli, args);
+      assertEquals(res.err(), 0, res.rc());
 
       final String result = FileUtils.fileToString(new File(out, "snps.vcf"));
       final String actualFixed = TestUtils.stripVcfHeader(result);
 
-      //System.err.println(actualFixed);
-      //final String expectedFinal = FileHelper.resourceToString("com/rtg/variant/bayes/multisample/cancer/resources/somaticnanotest" + expectedPrefix + ".vcf").replaceAll("\r", "");
-      //assertEquals(expectedFinal, actualFixed.replaceAll("\r", ""));
       mNano.check("somaticnanotest" + expectedPrefix + ".vcf", actualFixed, false);
       final String usageLog = cli.usageLog();
-      //System.err.println(usageLog);
       TestUtils.containsAll(usageLog, "[Usage beginning module=somatic runId=", ", Usage end module=somatic runId=", " metric=" + usageExp + " success=true]");
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
     }
   }
 
