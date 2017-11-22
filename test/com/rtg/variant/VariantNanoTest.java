@@ -193,12 +193,12 @@ public class VariantNanoTest extends AbstractNanoTest {
 
   public void testIHFilter() throws Exception {
     final String[] args0 = {"-a", "--" + SamFilterOptions.MAX_HITS_FLAG, "2", };
-    check(REF_SEQS, SAM9, -1, null, "2 records skipped due to input filtering criteria", 0, 10, null, true, SAM9_LENGTH, args0);
+    check(REF_SEQS, SAM9, -1, null, "2 alignments skipped due to input filtering criteria", 0, 10, null, true, SAM9_LENGTH, args0);
   }
 
   public void testASFilter() throws Exception {
     final String[] args0 = {"-a", "--max-as-unmated", "0"};
-    check(REF_SEQS, SAM9, -1, null, "4 records skipped due to input filtering criteria", 0, 10, null, true, SAM9_LENGTH, args0);
+    check(REF_SEQS, SAM9, -1, null, "4 alignments skipped due to input filtering criteria", 0, 10, null, true, SAM9_LENGTH, args0);
   }
 
   private void check(final String refSeq, final String sam, final int expNum, final String errorMsg, final int errCode, final long usageExp, final String... args0) throws Exception {
@@ -429,7 +429,7 @@ public class VariantNanoTest extends AbstractNanoTest {
   }
 
   private String[] makeSkippedWarning(final int num, final int allNum) {
-    final String skipped = " records skipped because of SAM format problems.";
+    final String skipped = " alignments skipped because of SAM format problems.";
     final List<String> list = new ArrayList<>();
     if (num > 0) {
       list.add(num + skipped);
@@ -442,7 +442,7 @@ public class VariantNanoTest extends AbstractNanoTest {
 
   public void testSamFormatBadIH() throws Exception {
     final String sam = SAM_HEAD1 + SAM_REC_OK1 + SAM_REC_BAD1;
-    checkSamFormatNoError(REF_DOESNTMATTER, sam, makeSkippedWarning(0, 0), new String[] {"1 records skipped due to input filtering criteria"});
+    checkSamFormatNoError(REF_DOESNTMATTER, sam, makeSkippedWarning(0, 0), new String[] {"1 alignments skipped due to input filtering criteria"});
   }
 
   public void testSamFormatFirstRecBad() throws Exception {
@@ -472,7 +472,7 @@ public class VariantNanoTest extends AbstractNanoTest {
     final String sam = SAM_HEAD1 + SAM_REC_BAD_CIGAR;
     checkSamFormatNoError(REF_DOESNTMATTER, sam, null, new String[] {}); // makeSkippedWarning(1,
     // 0));
-    // "records skipped in file \"All Files\" because of SAM format problems");
+    // "alignments skipped in file \"All Files\" because of SAM format problems");
   }
 
   public void testSamFormatBadCigarSecond() throws Exception {
@@ -503,7 +503,7 @@ public class VariantNanoTest extends AbstractNanoTest {
 
   public void testNegativePos() throws Exception {
     final String sam = SAM_HEAD1 + SAM_REC_NEGATIVEPOS;
-    checkSamFormatNoError(REF_DOESNTMATTER, sam, makeSkippedWarning(0, 0), new String[] {"1 records skipped due to input filtering criteria"});
+    checkSamFormatNoError(REF_DOESNTMATTER, sam, makeSkippedWarning(0, 0), new String[] {"1 alignments skipped due to input filtering criteria"});
   }
 
   public void testZeroPos() throws Exception {
@@ -1432,7 +1432,7 @@ public class VariantNanoTest extends AbstractNanoTest {
 
   //test duplicate detection and logging
   public void test68() throws Exception {
-    check(REF_SEQS, SAM68, 68, null, "2 records skipped due to duplicate detection", 0, 0, null, true, 9 * 9, "-a");
+    check(REF_SEQS, SAM68, 68, null, "2 alignments skipped due to duplicate detection", 0, 0, null, true, 9 * 9, "-a");
   }
 
   //test AVR and thresholding
@@ -1440,7 +1440,7 @@ public class VariantNanoTest extends AbstractNanoTest {
     try (TestDirectory test = new TestDirectory()) {
       final File avr = new File(test, "avr");
       FileHelper.resourceToFile("com/rtg/variant/avr/resources/default.avr", avr);
-      check(REF_SEQS, SAM68, 69, null, "2 records skipped due to duplicate detection", 0, 0, null, true, 9 * 9, "-a", "--avr-model", avr.getPath(), "--min-avr-score", "0.3");
+      check(REF_SEQS, SAM68, 69, null, "2 alignments skipped due to duplicate detection", 0, 0, null, true, 9 * 9, "-a", "--avr-model", avr.getPath(), "--min-avr-score", "0.3");
     }
   }
 
@@ -1499,7 +1499,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final File output = new File(dir, "variant_out");
       final MainResult r = MainResult.run(new SingletonCli(), "-Z", "-t", genome.getPath(), "-o", output.getPath(), sam.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
       assertEquals(r.err(), 0, r.rc());
-      TestUtils.containsAll(r.err(), "SAM record is invalid", "1 records skipped because of SAM format problems");
+      TestUtils.containsAll(r.err(), "SAM record is invalid", "1 alignments skipped because of SAM format problems");
       mNano.check("bug1524.txt", r.out());
       final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
       final String actualFixed = TestUtils.sanitizeVcfHeader(result);
