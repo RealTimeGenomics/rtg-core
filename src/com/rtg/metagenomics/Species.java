@@ -297,7 +297,7 @@ public class Species extends IntegralAbstract {
           vi += eig.get(j2, i) * r.get(j2);
         }
 
-        final double vi2 = Math.pow(vi, 2);
+        final double vi2 = vi * vi;
         if (vi2 > 0.0) { //ignore cases where dot product is zero - because it is a square cant be negative
           final double t = vi2 / la;
 

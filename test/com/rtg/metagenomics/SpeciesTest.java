@@ -48,8 +48,10 @@ import junit.framework.TestCase;
 public class SpeciesTest extends TestCase {
 
   @Override
-  public void setUp() {
+  public void setUp() throws Exception {
+    super.setUp();
     GlobalFlags.resetAccessedStatus();
+    Diagnostic.setLogStream();
   }
 
   public void test() throws IOException {
