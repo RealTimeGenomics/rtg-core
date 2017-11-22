@@ -380,9 +380,8 @@ public class Frag extends IntegralAbstract {
    * @param counts to be updated.
    */
   public void count(SortedMultiSet<Integer>[] counts) {
-    final int cnt = mN;
     for (int i = 0; i < mN; ++i) {
-      counts[mGenomes[i]].add(cnt, mMultiplicity);
+      counts[mGenomes[i]].add(mN, mMultiplicity);
     }
   }
 }

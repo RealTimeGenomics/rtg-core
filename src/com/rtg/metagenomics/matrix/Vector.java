@@ -11,6 +11,8 @@
  */
 package com.rtg.metagenomics.matrix;
 
+import java.util.Arrays;
+
 import com.rtg.util.Utils;
 
 /**
@@ -31,15 +33,12 @@ public class Vector {
   }
 
   /**
-   * Copy constructor
-   * @param copy the Vector to copy
+   * Copy constructor.
+   * @param vec the Vector to copy
    */
-  public Vector(Vector copy) {
-    mSize = copy.size();
-    mVector = new double[mSize];
-    for (int i = 0; i < mSize; ++i) {
-      mVector[i] = copy.get(i);
-    }
+  public Vector(final Vector vec) {
+    mSize = vec.size();
+    mVector = Arrays.copyOf(vec.mVector, mSize);
   }
 
   /**
