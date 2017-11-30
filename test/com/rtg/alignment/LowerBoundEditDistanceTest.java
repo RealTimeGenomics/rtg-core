@@ -100,7 +100,6 @@ public class LowerBoundEditDistanceTest extends AbstractUnidirectionalEditDistan
     final UnidirectionalEditDistance lo = new LowerBoundEditDistance(4, 1, 1);
     final int[] res = lo.calculateEditDistance(read, read.length, temp, 7, 4, 7, true);
     assertEquals(Integer.MAX_VALUE, res[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
-    assertEquals(7, res[ActionsHelper.TEMPLATE_START_INDEX]);
   }
 
 

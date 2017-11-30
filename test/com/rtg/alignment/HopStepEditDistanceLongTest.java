@@ -363,7 +363,7 @@ public class HopStepEditDistanceLongTest extends AbstractUnidirectionalEditDista
     // (the problem was that the start position was so wrong that Gotoh tried to shift too far)
 
     final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(0).create();
-    final UnidirectionalEditDistance ed = new GotohEditDistance(params);
+    final UnidirectionalEditDistance ed = new GotohEditDistance(params.gapOpenPenalty(), params.gapExtendPenalty(), params.substitutionPenalty(), params.unknownsPenalty(), false);
     final byte[] readDNA = DnaUtils.encodeString(read.replaceAll(" ", ""));
     final byte[] tmplDNA = DnaUtils.encodeString(tmpl.replaceAll(" ", ""));
     final int[] edSays = ed.calculateEditDistance(readDNA, readDNA.length, tmplDNA, 14, 50, MaxShiftUtils.calculateDefaultMaxShift(readDNA.length), true);
@@ -542,7 +542,7 @@ public class HopStepEditDistanceLongTest extends AbstractUnidirectionalEditDista
     //System.err.println(actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
 
     final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(0).create();
-    final GotohEditDistance ged = new GotohEditDistance(params);
+    final GotohEditDistance ged = new GotohEditDistance(params.gapOpenPenalty(), params.gapExtendPenalty(), params.substitutionPenalty(), params.unknownsPenalty(), false);
     final int[] actions2 = ged.calculateEditDistance(r, r.length, t, 2, 10, 8, false);
     assertEquals(10, actions2[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
     assertEquals(2, actions2[ActionsHelper.TEMPLATE_START_INDEX]);

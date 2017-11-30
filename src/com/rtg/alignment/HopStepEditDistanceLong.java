@@ -89,7 +89,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
     mGapExtend = params.gapExtendPenalty();
     mSubstitionPenalty = params.substitutionPenalty();
     mUnknownsPenalty = params.unknownsPenalty();
-    mEd = new GotohEditDistance(params);
+    mEd = new GotohEditDistance(params.gapOpenPenalty(), params.gapExtendPenalty(), params.substitutionPenalty(), params.unknownsPenalty(), false);
     integrity();
   }
 

@@ -102,7 +102,7 @@ public class SegregationCheckerCli extends AbstractCli {
     try (final VcfReader reader = VcfReader.openVcfReader((File) mFlags.getValue(VCF_FLAG))) {
       final VcfHeader header = SegregationChecker.modifyHeader(reader.getHeader(), mFlags.isSet(REPAIR_FLAG));
       final File vcfFile = stdout ? null : VcfUtils.getZippedVcfFileName(gzip, vcfOut);
-      try (VcfWriter writer = new VcfWriterFactory(mFlags).make(header, vcfFile, out)) {
+      try (VcfWriter writer = new VcfWriterFactory(mFlags).addRunInfo(true).make(header, vcfFile, out)) {
         new SegregationChecker((String) mFlags.getValue(FATHER_FLAG), (String) mFlags.getValue(MOTHER_FLAG), reader, writer, patterns, ploidyMap, mFlags.isSet(REPAIR_FLAG)).run();
       }
     }

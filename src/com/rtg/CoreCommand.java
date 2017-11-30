@@ -306,7 +306,8 @@ public final class CoreCommand {
     CHRSTATS, SAM2FASTQ,
     ToolsCommand.MENDELIAN,
     ToolsCommand.VCFSTATS, ToolsCommand.VCFMERGE,                       // VCF related
-    ToolsCommand.VCFFILTER, ToolsCommand.VCFANNOTATE, ToolsCommand.VCFSUBSET, ToolsCommand.VCFEVAL, SNPINTERSECT,
+    ToolsCommand.VCFFILTER, ToolsCommand.VCFANNOTATE, ToolsCommand.VCFSUBSET,
+    ToolsCommand.VCFDECOMPOSE, ToolsCommand.VCFEVAL, SNPINTERSECT,
     ToolsCommand.PEDFILTER, ToolsCommand.PEDSTATS,
     AVRSTATS, ToolsCommand.ROCPLOT,
     HASHDIST,

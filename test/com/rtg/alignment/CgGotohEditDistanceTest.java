@@ -52,7 +52,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
     super.tearDown();
   }
 
-  protected EditDistance getEditDistanceInstance(int unknownsPenalty, String errorsFile, boolean v2) {
+  protected BidirectionalEditDistance getEditDistanceInstance(int unknownsPenalty, String errorsFile, boolean v2) {
     try {
       mParams = new RealignParamsImplementation(new MachineErrorParamsBuilder().errors(errorsFile).create());
     } catch (final InvalidParamsException | IOException e) {
@@ -62,7 +62,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
     return new RcEditDistance(mCgGotoh);
   }
 
-  protected EditDistance getEditDistanceInstance(int unknownsPenalty) {
+  protected BidirectionalEditDistance getEditDistanceInstance(int unknownsPenalty) {
     return getEditDistanceInstance(unknownsPenalty, "cg_test_errors-080412", false);
   }
 
@@ -81,7 +81,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
     final byte[] s2 = DnaUtils.encodeString(template.replaceAll(" ", "").toLowerCase(Locale.ROOT));
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     Diagnostic.setLogStream(new PrintStream(bos));
-    final EditDistance f = getEditDistanceInstance(unknownsPenalty, "cg_test_errors-080412", v2);
+    final BidirectionalEditDistance f = getEditDistanceInstance(unknownsPenalty, "cg_test_errors-080412", v2);
     final int[] v = f.calculateEditDistance(s1, s1.length, s2, start, rc, Integer.MAX_VALUE, 7, left);
     f.logStats();
         //System.out.println(mCgGotoh.toString());
@@ -116,7 +116,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
       final byte[] s2R = DnaUtils.encodeString(StringUtils.reverse(template).replaceAll(" ", "").toLowerCase(Locale.ROOT));
       assertEquals(s1.length, s1R.length);
       assertEquals(s2.length, s2R.length);
-      final EditDistance fR = getEditDistanceInstance(unknownsPenalty, "cg_test_errors-080412", v2); // because f.logStats() kills it!
+      final BidirectionalEditDistance fR = getEditDistanceInstance(unknownsPenalty, "cg_test_errors-080412", v2); // because f.logStats() kills it!
       final int startR = s2.length - (start + s1.length) - CgGotohEditDistance.CG_INSERT_REGION_DEFAULT_SIZE;
       final int[] vR = fR.calculateEditDistance(s1R, s1R.length, s2R, startR, rc, Integer.MAX_VALUE, 7, !left);
 //      System.out.println(mCgGotoh.toString());

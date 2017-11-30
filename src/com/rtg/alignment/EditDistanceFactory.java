@@ -80,7 +80,7 @@ public final class EditDistanceFactory {
    * @param reader2 another sequences reader containing reads (may be null)
    * @return an edit distance implementation
    */
-  public static EditDistance createEditDistance(NgsParams ngsParams, SequencesReader reader1, SequencesReader reader2) {
+  public static BidirectionalEditDistance createEditDistance(NgsParams ngsParams, SequencesReader reader1, SequencesReader reader2) {
     if (reader1 == null) {
       throw new IllegalArgumentException("reader1 cannot be null");
     }
@@ -111,7 +111,7 @@ public final class EditDistanceFactory {
    * @param maxReadLength maximum read length
    * @return an edit distance implementation
    */
-  static EditDistance createEditDistance(NgsParams ngsParams, PrereadType prereadType, int minReadLength, int maxReadLength) {
+  static BidirectionalEditDistance createEditDistance(NgsParams ngsParams, PrereadType prereadType, int minReadLength, int maxReadLength) {
 
     final NgsOutputParams ngsOutputParams = ngsParams.outputParams();
     final SAMReadGroupRecord samReadGroupRecord = ngsOutputParams == null ? null : ngsOutputParams.readGroup();
@@ -129,13 +129,13 @@ public final class EditDistanceFactory {
     }
     if (USE_SINGLE_INDEL_SEEDED_ONLY) {
       Diagnostic.developerLog("Using SingleIndelSeededEditDistance: maxReadLength=" + maxReadLength);
-      return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(new SingleIndelSeededEditDistance(ngsParams, maxReadLength))), ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches());
+      return new RcEditDistance(new SoftClipper(new UnidirectionalPrioritisedEditDistance(new SingleIndelSeededEditDistance(ngsParams, maxReadLength)), ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches()));
     } else if (USE_GOTOH_ONLY) {
       Diagnostic.developerLog("Using Gotoh only");
-      return new SoftClipperOmni(new RcEditDistance(new GotohEditDistance(ngsParams)), ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches());
+      return new RcEditDistance(new SoftClipper(new GotohEditDistance(ngsParams.gapOpenPenalty(), ngsParams.gapExtendPenalty(), ngsParams.substitutionPenalty(), ngsParams.unknownsPenalty(), false), ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches()));
     } else if (effectiveChain == AlignerMode.TABLE) {
       Diagnostic.developerLog("Using SingleIndelEditDistance (TABLE): maxReadLength=" + maxReadLength);
-      return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(new SingleIndelEditDistance(ngsParams, maxReadLength))), ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches());
+      return new RcEditDistance(new SoftClipper(new UnidirectionalPrioritisedEditDistance(new SingleIndelEditDistance(ngsParams, maxReadLength)), ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches()));
     }
     // General case
 
@@ -147,7 +147,7 @@ public final class EditDistanceFactory {
       }
       if ((minReadLength == CgUtils.CG_RAW_READ_LENGTH) || (minReadLength == CgUtils.CG2_RAW_READ_LENGTH)) {
         Diagnostic.developerLog("Using Gotoh CG aligner");
-        return new RcEditDistance(createCgGotohEditDistance(ngsParams.unknownsPenalty(), minReadLength));
+        return new RcCgEditDistance(createCgGotohEditDistance(ngsParams.unknownsPenalty(), minReadLength));
       }
       throw new IllegalArgumentException("CG data does not support read length of " + minReadLength);
     } else if (useSeededAligner) {
@@ -176,19 +176,20 @@ public final class EditDistanceFactory {
       fwd.add(new SeededAligner(ngsParams, !ENABLE_HEURISTIC_ALIGNING));
       rev.add(new SeededAligner(ngsParams, !ENABLE_HEURISTIC_ALIGNING));
       Diagnostic.developerLog("GotohEditDistance");
-      fwd.add(new GotohEditDistance(ngsParams));
-      rev.add(new GotohEditDistance(ngsParams));
+      fwd.add(new GotohEditDistance(ngsParams.gapOpenPenalty(), ngsParams.gapExtendPenalty(), ngsParams.substitutionPenalty(), ngsParams.unknownsPenalty(), false));
+      rev.add(new GotohEditDistance(ngsParams.gapOpenPenalty(), ngsParams.gapExtendPenalty(), ngsParams.substitutionPenalty(), ngsParams.unknownsPenalty(), false));
 
-      return new SoftClipperOmni(new RcEditDistance(
-          new UnidirectionalPrioritisedEditDistance(fwd.toArray(new UnidirectionalEditDistance[fwd.size()])),
-          new UnidirectionalPrioritisedEditDistance(rev.toArray(new UnidirectionalEditDistance[rev.size()]))),
-        ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches());
+      return new RcEditDistance(
+        new SoftClipper(new UnidirectionalPrioritisedEditDistance(fwd.toArray(new UnidirectionalEditDistance[fwd.size()])),
+          ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches()),
+        new SoftClipper(new UnidirectionalPrioritisedEditDistance(rev.toArray(new UnidirectionalEditDistance[rev.size()])),
+          ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches()));
     }
 
-    return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(
+    return new RcEditDistance(new SoftClipper(new UnidirectionalPrioritisedEditDistance(
       new NoIndelsEditDistance(ngsParams),
-      new GotohEditDistance(ngsParams))),
-      ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches());
+      new GotohEditDistance(ngsParams.gapOpenPenalty(), ngsParams.gapExtendPenalty(), ngsParams.substitutionPenalty(), ngsParams.unknownsPenalty(), false)),
+      ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches()));
   }
 
   private static CgGotohEditDistance createCgGotohEditDistance(int unknownsPenalty, int readLength) {
@@ -247,7 +248,7 @@ public final class EditDistanceFactory {
    * @param matrix one of the protein scoring matrices.
    * @return a GotohProteinEditDistance.
    */
-  public static EditDistance createProteinEditDistance(final ProteinScoringMatrix matrix) {
-    return new GotohProteinEditDistance(matrix);
+  public static BidirectionalEditDistance createProteinEditDistance(final ProteinScoringMatrix matrix) {
+    return new UnidirectionalAdaptor(new GotohProteinEditDistance(matrix));
   }
 }

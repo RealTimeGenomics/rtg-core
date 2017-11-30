@@ -11,43 +11,25 @@
  */
 package com.rtg.alignment;
 
-import java.io.IOException;
-
 import com.rtg.mode.DnaUtils;
-import com.rtg.ngs.NgsParams;
-import com.rtg.ngs.NgsParamsBuilder;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.MemoryPrintStream;
-import com.rtg.variant.MachineErrorParamsBuilder;
-import com.rtg.variant.realign.RealignParams;
-import com.rtg.variant.realign.RealignParamsImplementation;
 
 /**
  */
 public class RcEditDistanceTest extends AbstractEditDistanceTest {
 
   @Override
-  protected EditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty) {
-    final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(gapOpenPenalty)
-        .gapExtendPenalty(gapExtendPenalty)
-        .substitutionPenalty(1)
-        .unknownsPenalty(0).create();
-    return new RcEditDistance(new GotohEditDistance(params));
-  }
-
-  public void testAbstract() {
-    final CgGotohEditDistanceTest test = new CgGotohEditDistanceTest();
-    test.testCGOverlap0Rev();
-    test.testCgOverlapRealWorld7();
+  protected BidirectionalEditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty) {
+    return new RcEditDistance(new GotohEditDistance(gapOpenPenalty, gapExtendPenalty, 1, 0, false));
   }
 
   public void testSomeLogging() {
     try (MemoryPrintStream mps = new MemoryPrintStream()) {
       Diagnostic.setLogStream(mps.printStream());
       try {
-        final EditDistance ed = getEditDistanceInstance(1, 1);
+        final BidirectionalEditDistance ed = getEditDistanceInstance(1, 1);
 
         final byte[] read = new byte[]{1};
         final byte[] tmpl = new byte[]{2};
@@ -78,9 +60,8 @@ public class RcEditDistanceTest extends AbstractEditDistanceTest {
     try (MemoryPrintStream mps = new MemoryPrintStream()) {
       Diagnostic.setLogStream(mps.printStream());
       try {
-        final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(0).create();
-        final GotohEditDistance ged = new GotohEditDistance(params);
-        final EditDistance ed = new RcEditDistance(new LoggingOnlyEditDistance(), ged);
+        final GotohEditDistance ged = new GotohEditDistance(1, 1, 1, 0, false);
+        final BidirectionalEditDistance ed = new RcEditDistance(new LoggingOnlyEditDistance(), ged);
 
         final int[] actions = ed.calculateEditDistance(DnaUtils.encodeString("aa"), 2, DnaUtils.encodeString("ttt"), 1, true, 5, 5, true);
         assertEquals(1, actions[ActionsHelper.TEMPLATE_START_INDEX]);
@@ -91,30 +72,5 @@ public class RcEditDistanceTest extends AbstractEditDistanceTest {
         Diagnostic.setLogStream();
       }
     }
-  }
-
-  private static class TestGotohEditDistance extends CgGotohEditDistance {
-    TestGotohEditDistance(int maxShift, RealignParams params) {
-      super(maxShift, params, 0);
-    }
-    @Override
-    public int[] calculateEditDistance(byte[] read, int rlen, byte[] template, int zeroBasedStart, int maxScore, int maxShift, boolean cgLeft) {
-      return ActionsHelper.build("=====B====X===============NNNNNN==========", 0, 2);
-    }
-  }
-
-  public void testCGGotohHandling() {
-    final RealignParamsImplementation mParams;
-    try {
-      mParams = new RealignParamsImplementation(new MachineErrorParamsBuilder().errors("cg_test_errors").create());
-    } catch (final InvalidParamsException | IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    final RcEditDistance rced = new RcEditDistance(new TestGotohEditDistance(7, mParams));
-    final int[] actions = rced.calculateEditDistance(DnaUtils.encodeString("attcttactanccccaactgagccc     agtaggagta".replaceAll(" ", "")), 35, DnaUtils.encodeString("atactcctacttttgctgggctcagttgggggaagtagaat"), 0, true, 25, 7, true);
-
-    assertEquals(1, ActionsHelper.zeroBasedTemplateStart(actions));
-
   }
 }

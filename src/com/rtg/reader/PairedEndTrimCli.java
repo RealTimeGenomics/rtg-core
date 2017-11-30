@@ -36,7 +36,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.rtg.alignment.SingleIndelSeededEditDistance;
-import com.rtg.alignment.UnidirectionalAdaptor;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.ngs.MapFlags;
@@ -218,7 +217,7 @@ public class PairedEndTrimCli extends AbstractCli {
     final int seedLength = 5;
     final NgsParams ngsParams = MapParamsHelper.populateAlignerPenaltiesParams(NgsParams.builder(), mFlags).singleIndelPenalties(null).create();
     return new PairAligner(
-      new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 2, 2, maxReadLength)),
+      new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 2, 2, maxReadLength),
       (Integer) mFlags.getValue(MIN_OVERLAP), (Integer) mFlags.getValue(MIN_IDENTITY),
       (Integer) mFlags.getValue(LEFT_PROBE_LENGTH), (Integer) mFlags.getValue(RIGHT_PROBE_LENGTH),
       (Integer) mFlags.getValue(MIN_READ_LENGTH),

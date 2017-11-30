@@ -303,7 +303,7 @@ public class LowerBoundEstimatorTest extends TestCase {
 
   public int gotohscore(final String s1, final String s2, final int zerostart, int unknownsPenalty) {
     final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(unknownsPenalty).create();
-    final UnidirectionalEditDistance ed = new GotohEditDistance(params);
+    final UnidirectionalEditDistance ed = new GotohEditDistance(params.gapOpenPenalty(), params.gapExtendPenalty(), params.substitutionPenalty(), params.unknownsPenalty(), false);
     final byte[] read = DnaUtils.encodeString(s1);
     final byte[] template = DnaUtils.encodeString(s2);
     final int[] lb = ed.calculateEditDistance(read, read.length, template, zerostart, 9999, MaxShiftUtils.calculateDefaultMaxShift(read.length), true);

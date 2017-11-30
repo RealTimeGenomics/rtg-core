@@ -22,7 +22,7 @@ import static com.rtg.alignment.ActionsHelper.UNKNOWN_TEMPLATE;
 import java.util.List;
 
 import com.rtg.alignment.ActionsHelper;
-import com.rtg.alignment.EditDistance;
+import com.rtg.alignment.UnidirectionalEditDistance;
 import com.rtg.mode.DnaUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -111,7 +111,7 @@ public class PairAligner {
     void doIndel(FastqSequence r, int rPos) { }
   }
 
-  private final EditDistance mEd;
+  private final UnidirectionalEditDistance mEd;
   private final int mMinOverlap;
   private final int mMinIdentity;
   private final ReadTrimmer mLengthTrimmer;
@@ -123,7 +123,7 @@ public class PairAligner {
   private final boolean mMergeMid;
   private final MismatchType mMismatch;
 
-  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength, int minLength, boolean trimMid, boolean mergeMid, MismatchType mismatch, boolean verbose) {
+  PairAligner(UnidirectionalEditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength, int minLength, boolean trimMid, boolean mergeMid, MismatchType mismatch, boolean verbose) {
     mEd = ed;
     mMinOverlap = minOverlap;
     mMinIdentity = minIdentity;
@@ -164,7 +164,7 @@ public class PairAligner {
     // Read is the R2
     mStats.mTotal++;
     final int maxLength = Math.max(r1.length(), r2.length());
-    final int[] actions = mEd.calculateEditDistance(r2.getBases(), r2.length(), r1.getBases(), 0, false, Integer.MAX_VALUE, maxLength + 1, false);
+    final int[] actions = mEd.calculateEditDistance(r2.getBases(), r2.length(), r1.getBases(), 0, Integer.MAX_VALUE, maxLength + 1, false);
     if (actions == null) {
       mStats.mNoAlignment++;
     } else {

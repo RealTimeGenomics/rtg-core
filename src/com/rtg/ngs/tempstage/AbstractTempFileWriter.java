@@ -17,7 +17,7 @@ import java.io.OutputStream;
 import java.util.Comparator;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.alignment.EditDistance;
+import com.rtg.alignment.BidirectionalEditDistance;
 import com.rtg.alignment.EditDistanceFactory;
 import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
@@ -57,7 +57,7 @@ public abstract class AbstractTempFileWriter implements Closeable {
   protected byte[] mTemplate = null;
   protected int mTemplateOffset = 0;
   protected long mTemplateId = -1;
-  protected EditDistance mMrEd;
+  protected BidirectionalEditDistance mMrEd;
   protected final int mTemplatePadding;
   protected final boolean mLegacy;
   protected final int mSubstitutionPenalty;

@@ -15,29 +15,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Locale;
 
+import com.rtg.AbstractTest;
 import com.rtg.alignment.ActionsHelper;
-import com.rtg.alignment.EditDistance;
+import com.rtg.alignment.UnidirectionalEditDistance;
 import com.rtg.mode.Protein;
 import com.rtg.mode.ProteinScoringMatrix;
 import com.rtg.mode.SequenceType;
 import com.rtg.position.output.Blosum62;
 import com.rtg.reader.CompressedMemorySequencesReader;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.diagnostic.Diagnostic;
-
-import junit.framework.TestCase;
 
 /**
  */
-public class GotohProteinEditDistanceTest extends TestCase {
+public class GotohProteinEditDistanceTest extends AbstractTest {
 
-  public EditDistance getED(ProteinScoringMatrix matrix) {
+  public UnidirectionalEditDistance getED(ProteinScoringMatrix matrix) {
     return new GotohProteinEditDistance(matrix);
-  }
-
-  @Override
-  public void setUp() {
-    Diagnostic.setLogStream();
   }
 
   private static String[] writeIgnore(final ProteinAlignmentResult res) throws IOException {
@@ -57,8 +50,8 @@ public class GotohProteinEditDistanceTest extends TestCase {
   private void check(final String a, final String b, final String read, final String template, final String match, final int distance) throws InvalidParamsException, IOException {
     final byte[] s1 = Protein.encodeProteins(a.toUpperCase(Locale.getDefault()));
     final byte[] s2 = Protein.encodeProteins(b.toUpperCase(Locale.getDefault()));
-    final EditDistance f = getED(new ProteinScoringMatrix());
-    final int[] r = f.calculateEditDistance(s1, s1.length, s2, 0, false, Integer.MAX_VALUE, 7, true);
+    final UnidirectionalEditDistance f = getED(new ProteinScoringMatrix());
+    final int[] r = f.calculateEditDistance(s1, s1.length, s2, 0, Integer.MAX_VALUE, 7, true);
     final SharedProteinResources resx = new SharedProteinResources(new ProteinScoringMatrix(), singleSequence(s2), singleSequence(s1), false);
     final ProteinAlignmentResult res = new ProteinAlignmentResult(resx, 0, 1, r, 0);
     final String[] p = writeIgnore(res);
@@ -140,10 +133,10 @@ public class GotohProteinEditDistanceTest extends TestCase {
   }
 
   public void testGoOffRightEndOfTemplate() throws InvalidParamsException, IOException {
-    final EditDistance ped = getED(new ProteinScoringMatrix());
+    final UnidirectionalEditDistance ped = getED(new ProteinScoringMatrix());
     final byte[] read = {1, 2, 3};
     final byte[] template = {1, 2};
-    final int[] alignment = ped.calculateEditDistance(read, read.length, template, 0, false, Integer.MAX_VALUE, 7, true);
+    final int[] alignment = ped.calculateEditDistance(read, read.length, template, 0, Integer.MAX_VALUE, 7, true);
     final SharedProteinResources res = new SharedProteinResources(new ProteinScoringMatrix(), singleSequence(template), singleSequence(read), false);
     final ProteinAlignmentResult r = new ProteinAlignmentResult(res, 0, 0, alignment, 0);
     final String[] p = writeIgnore(r);
@@ -156,10 +149,10 @@ public class GotohProteinEditDistanceTest extends TestCase {
   }
 
   public void testGoOffLeftEndOfTemplate() throws InvalidParamsException, IOException {
-    final EditDistance ped = getED(new ProteinScoringMatrix());
+    final UnidirectionalEditDistance ped = getED(new ProteinScoringMatrix());
     final byte[] read = {19, 20, 21};
     final byte[] template = {20, 21};
-    final int[] alignment = ped.calculateEditDistance(read, read.length, template, -1, false, Integer.MAX_VALUE, 7, true);
+    final int[] alignment = ped.calculateEditDistance(read, read.length, template, -1, Integer.MAX_VALUE, 7, true);
     final SharedProteinResources res = new SharedProteinResources(new ProteinScoringMatrix(), singleSequence(template), singleSequence(read), false);
     final ProteinAlignmentResult r = new ProteinAlignmentResult(res, 0, 0, alignment, 0);
     final String[] p = writeIgnore(r);

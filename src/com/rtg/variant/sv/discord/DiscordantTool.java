@@ -44,6 +44,8 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.sv.ReadGroupStats;
+import com.rtg.vcf.DefaultVcfWriter;
+import com.rtg.vcf.ReorderingVcfWriter;
 import com.rtg.vcf.VcfRecord;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -96,7 +98,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
   private OutputStream mDebugOutput = null;
   private OutputStream mBedOutput = null;
   private SmartBedWriter mBedWriter = null;
-  private SmartVcfWriter mVcfWriter = null;
+  private ReorderingVcfWriter mVcfWriter = null;
 
   private SAMFileHeader mSamHeader = null;
   private long mTotalDiscordantRecords = 0;
@@ -271,7 +273,8 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       mBedOutput.write(mBedFormatter.header().getBytes()); // Maybe move this into the bedwriter
       mBedWriter = new SmartBedWriter(mBedOutput);
     }
-    mVcfWriter = new SmartVcfWriter(mFormatter.header(header, vcfSample, false, false), mOut);
+
+    mVcfWriter = new ReorderingVcfWriter(new DefaultVcfWriter(mFormatter.header(header, vcfSample, false, false), mOut));
   }
 
   @Override

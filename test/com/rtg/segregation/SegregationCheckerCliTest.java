@@ -19,6 +19,7 @@ import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.ReferenceGenome;
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
@@ -38,7 +39,7 @@ public class SegregationCheckerCliTest extends AbstractCliTest {
       final File bed = FileHelper.resourceToFile("com/rtg/segregation/resources/regions.bed", new File(dir, "regions.bed"));
       final File output = new File(dir, "out.vcf");
       checkMainInitOk("--template", template.getPath(), "--bed", bed.getPath(), "--vcf", vcf.getPath(), "--output", output.getPath(), "--father", "Father", "--mother", "Mother", "-Z");
-      final String result = FileUtils.fileToString(output);
+      final String result = TestUtils.sanitizeVcfHeader(FileUtils.fileToString(output));
       mNano.check("crossovers_annotated.vcf", result, true);
     }
   }
@@ -51,7 +52,7 @@ public class SegregationCheckerCliTest extends AbstractCliTest {
       final File bed = FileHelper.resourceToFile("com/rtg/segregation/resources/regions.bed", new File(dir, "regions.bed"));
       final File output = new File(dir, "out.vcf");
       checkMainInitOk("--repair", "--template", template.getPath(), "--bed", bed.getPath(), "--vcf", vcf.getPath(), "--output", output.getPath(), "--father", "Father", "--mother", "Mother", "-Z");
-      final String result = FileUtils.fileToString(output);
+      final String result = TestUtils.sanitizeVcfHeader(FileUtils.fileToString(output));
       mNano.check("crossovers_annotated_repaired.vcf", result, true);
     }
   }

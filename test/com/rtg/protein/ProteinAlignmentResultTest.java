@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.rtg.alignment.ActionsHelper;
-import com.rtg.alignment.EditDistance;
+import com.rtg.alignment.BidirectionalEditDistance;
 import com.rtg.alignment.EditDistanceFactory;
 import com.rtg.mode.Frame;
 import com.rtg.mode.ProteinScoringMatrix;
@@ -54,7 +54,7 @@ public class ProteinAlignmentResultTest extends TestCase {
       final File readsFile = new File(temp, "reads");
       ReaderTestUtils.getReaderDNA(ProteinOutputProcessorTest.READS_FASTA_PERFECT, readsFile, null);
       final SequencesReader reads = SequencesReaderFactory.createMemorySequencesReader(readsFile, true, LongRange.NONE);
-      final EditDistance ed = EditDistanceFactory.createProteinEditDistance(new ProteinScoringMatrix());
+      final BidirectionalEditDistance ed = EditDistanceFactory.createProteinEditDistance(new ProteinScoringMatrix());
 
       final SharedProteinResources resx = new SharedProteinResources(new ProteinScoringMatrix(), tem, reads, false);
       final byte[] t = tem.read(0);

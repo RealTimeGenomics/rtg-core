@@ -81,7 +81,7 @@ public class SmartTempFileWriter extends ReorderingQueue<BinaryTempFileRecord> {
       }
       Diagnostic.developerLog("LastWrittenRecord: " + mLastWrittenRecord);
       Diagnostic.developerLog("Record out of order: " + record);
-      throw new IllegalStateException("smart sam writer buffer distance (" + mBufferDistance + " bases, "
+      throw new IllegalStateException("smart sam writer buffer distance (" + getWindowSize() + " bases, "
           + mRecordSet.size() + " records buffered) too small for record on ref " + record.getReferenceId()
           + " " + record.getStartPosition() + (record.isReverseStrand() ? "R" : "F")
           + " already written " + mLastWrittenRecord.getStartPosition() + (mLastWrittenRecord.isReverseStrand() ? "R" : "F")

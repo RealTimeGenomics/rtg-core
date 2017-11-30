@@ -92,7 +92,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
   public SingleIndelSeededEditDistance(NgsParams ngsParams, boolean useGotoh, int seedSize, int deltaThreshold, int diffThreshold, int maxReadLength) {
     this(ngsParams, seedSize, deltaThreshold, diffThreshold, true, maxReadLength);
     mSied = new SingleIndelEditDistance(ngsParams, maxReadLength);
-    mGotoh = useGotoh ? new GotohEditDistance(ngsParams) : null;
+    mGotoh = useGotoh ? new GotohEditDistance(ngsParams.gapOpenPenalty(), ngsParams.gapExtendPenalty(), ngsParams.substitutionPenalty(), ngsParams.unknownsPenalty(), false) : null;
   }
 
   /**

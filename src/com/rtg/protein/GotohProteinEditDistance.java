@@ -11,7 +11,6 @@
  */
 package com.rtg.protein;
 
-import com.rtg.alignment.EditDistance;
 import com.rtg.alignment.GotohEditDistance;
 import com.rtg.mode.Protein;
 import com.rtg.mode.ProteinScoringMatrix;
@@ -19,7 +18,7 @@ import com.rtg.mode.ProteinScoringMatrix;
 /**
  * This class subclasses the GotohEditDistance to work on protein.
  */
-public class GotohProteinEditDistance extends GotohEditDistance implements EditDistance {
+public class GotohProteinEditDistance extends GotohEditDistance {
 
   private final ProteinScoringMatrix mScoreMatrix;
 
@@ -37,23 +36,6 @@ public class GotohProteinEditDistance extends GotohEditDistance implements EditD
   public boolean supportsEarlyTermination() {
     return false; //since protein can have negative penalties, early termination is problematic.
   }
-
-  @Override
-  public int[] calculateEditDistance(byte[] read, int rlen, byte[] template, int zeroBasedStart, boolean rc, int maxScore, int maxShift, boolean cgLeft) {
-    if (rc) {
-      throw new RuntimeException("Gotoh does not support reverse complement (ProteinEditDistance)");
-    }
-    return calculateEditDistance(read, rlen, template, zeroBasedStart, maxScore, maxShift, cgLeft);
-  }
-
-//  @Override
-//  public int[] calculateEditDistanceFixedStart(byte[] read, int readStartPos, int readEndPos, byte[] template, int templateStartPos, boolean rc,
-//      int maxScore, int maxShift) {
-//    if (rc) {
-//      throw new RuntimeException("Gotoh does not support reverse complement (ProteinEditDistance)");
-//    }
-//    return calculateEditDistanceFixedStart(read, readStartPos, readEndPos, template, templateStartPos, maxScore, maxShift);
-//  }
 
   @Override
   protected int diagonalCost(final int templateResidue, final byte[] read, final int readPos) {

@@ -30,12 +30,14 @@ public final class MaxShiftUtils {
   private static final Integer DEFAULT_INDEL_LENGTH = GlobalFlags.getIntegerValue(CoreGlobalFlags.DEFAULT_INDEL_LENGTH_FLAG);
 
   /**
-   * TODO this is completely insufficent for finding longer indels in reads - it's only considering sequencer error rates.
+   * Compute the maximum distance the start and end of the read are allowed to move along the template after
+   * alignment, compared to original hit location.
+   * This estimate is based on sequencer error rates, and is insufficent for finding longer indels in reads.
    * Should possibly be the maximum number of indels findable based on max score and alignment penalties - although
    * this may have performance implications.
    * @param rlen maximum read length
    * @return the maximum distance the start and end of the read are allowed to
-   *         move along the template.
+   *         move along the template .
    */
   public static int calculateDefaultMaxShift(int rlen) {
     //return new MaxShiftFactor(factor)

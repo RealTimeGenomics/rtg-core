@@ -136,7 +136,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
         new LowerBoundEditDistance(EditDistanceFactory.calculateLowerBoundValue(rlen, maxShiftFactor), 1, params.unknownsPenalty()),
         new HopStepEditDistanceLong(params),
         new SeededAligner(params, false),
-        new GotohEditDistance(params)
+        new GotohEditDistance(params.gapOpenPenalty(), params.gapExtendPenalty(), params.substitutionPenalty(), params.unknownsPenalty(), false)
         );
   }
 

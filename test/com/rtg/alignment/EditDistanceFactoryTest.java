@@ -82,22 +82,12 @@ public class EditDistanceFactoryTest extends TestCase {
       final File leftCGReadsDir = new File(tmpDir, "leftcg");
       final SequencesReader cgreader2 = ReaderTestUtils.getReaderDNAFastqCG("@s1" + LS + "tagacaaatgggattacaagccacaggagtgaata" + "\n+\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", leftCGReadsDir, PrereadArm.LEFT);
 
-      EditDistance e = EditDistanceFactory.createEditDistance(params, cgreader2, cgreader2);
-      assertTrue(e instanceof RcEditDistance);
-      /*
-      assertTrue(e instanceof PrioritisedEditDistance);
-      final PrioritisedEditDistance ee = (PrioritisedEditDistance) e;
-      assertTrue(ee.mEds[0] instanceof CgPatternAligner);
-      assertTrue(ee.mEds[1] instanceof LoopingEditDistance);
-      assertTrue(((LoopingEditDistance) ee.mEds[1]).mEd instanceof CgEditDistance);
-      */
+      BidirectionalEditDistance e = EditDistanceFactory.createEditDistance(params, cgreader2, cgreader2);
+      assertTrue(e instanceof RcCgEditDistance);
 
       e = EditDistanceFactory.createEditDistance(params, shortreader, null);
-      assertTrue(e instanceof SoftClipperOmni);
+      assertTrue(e instanceof RcEditDistance);
 
-      //final SequencesReader longreader = ReaderTestUtils.getReaderDNA(">read1" + LS + "acgtgacgtgacgtgacgtgacgtgacgtgacgtgacgtgacgtgacgtgacgtgacgtgactg" + LS, new File(tmpDir, "long"));
-      //e = EditDistanceFactory.createEditDistance(shortreader, longreader, 1);
-      //assertTrue(e instanceof LongReadEditDistance);
     } finally {
       FileHelper.deleteAll(tmpDir);
     }
@@ -145,7 +135,7 @@ public class EditDistanceFactoryTest extends TestCase {
     final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1)
                                      .outputParams(new NgsOutputParamsBuilder().filterParams(new NgsFilterParams.NgsFilterParamsBuilder().matedMaxMismatches(new IntegerOrPercentage("10%")).create()).create())
                                      .create();
-    final EditDistance e = EditDistanceFactory.createEditDistance(params, null, length, length);
+    final BidirectionalEditDistance e = EditDistanceFactory.createEditDistance(params, null, length, length);
 
     int[] actions = e.calculateEditDistance(read, length, template, startPos, rc, maxScore, maxShift, true);
     final int initialAS = actions[ActionsHelper.ALIGNMENT_SCORE_INDEX];
@@ -174,17 +164,17 @@ public class EditDistanceFactoryTest extends TestCase {
   }
 
   private static final String CHR22_TEMPLATE = "TTCTCAGTGACTTATGGTAAATGACTTAGCAGCTTTTTTTTTTTTTTTTTTTTTTTCTGTGAAGAGTCTTCCTCTGTTGCCCAGGCTGGAGTGCAGTTGGCACAATTTCGGCTCATTGTGACCTCTGCCTCCTGGGCTTAAGTGATCCTCCCACCTCAGCTTCCCAGTAGCTGGGACTACAGGTGCGCACCACCACACGCGGCTTTTTTTTTTCTTCTTTTTTTTGTAGAGATCAAGTTTCACTATATTACCCAGGCTGATCTCCAACTGGGCTCCTCTGCCTCCCAGAGTGCTGGGACAGGGTCTCACTCTGTTGCCCAGGCTGGAGTGCAGTGGCATCGTCCCGGCTCACTGCAGCCTAGACCTCCCAGGCTCAAGTGATCCTCCTGCCTCAGCCTCCTGAGTAGCTGGAACCACATGCGTGCACCACCACACGCAGCGAACTATTTTGTA";
-  private static final String READ_FOO = "CCAACTGCACTCCAGCCTGGGAGCATAAGACCCTGTCAAAAAGGAAAACAAAAAAAAAAATAAAAAAGCCATGTCAAAGCCAAGAAGCAGGATATTCTCT";
-
+  private static final String READ_FOO = //"CCAACTGCACTCCAGCCTGGGAGCATAAGACCCTGTCAAAAAGGAAAACAAAAAAAAAAATAAAAAAGCCATGTCAAAGCCAAGAAGCAGGATATTCTCT";
+    DnaUtils.reverseComplement("AGAGAATATCCTGCTTCTTGGCTTTGACATGGCTTTTTTATTTTTTTTTTTGTTTTCCTTTTTGACAGGGTCTTATGCTCCCAGGCTGGAGTGCAGTTGG");
   public void testMaxShift() {
     final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1)
                                      .outputParams(new NgsOutputParamsBuilder().filterParams(new NgsFilterParams.NgsFilterParamsBuilder().matedMaxMismatches(new IntegerOrPercentage("10%")).create()).create())
                                      .create();
-    final EditDistance ed = EditDistanceFactory.createEditDistance(params, null, 100, 100);
+    final BidirectionalEditDistance ed = EditDistanceFactory.createEditDistance(params, null, 100, 100);
     final byte[] read = DnaUtils.encodeString(READ_FOO);
     final byte[] template = DnaUtils.encodeString(CHR22_TEMPLATE);
     final int[] actions = ed.calculateEditDistance(read, 100, template, 0, true, 10, 8, true);
-    assertEquals(0, actions[ActionsHelper.TEMPLATE_START_INDEX]);
+    assertEquals(Integer.MAX_VALUE, actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
   }
 
 
@@ -192,15 +182,14 @@ public class EditDistanceFactoryTest extends TestCase {
     final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1)
                                      .outputParams(new NgsOutputParamsBuilder().filterParams(new NgsFilterParams.NgsFilterParamsBuilder().matedMaxMismatches(new IntegerOrPercentage("10%")).create()).create())
                                      .create();
-    final EditDistance ed = EditDistanceFactory.createEditDistance(params, null, 100, 100);
+    final BidirectionalEditDistance ed = EditDistanceFactory.createEditDistance(params, null, 100, 100);
     final byte[] read = DnaUtils.encodeString("GCCCAGTTAATTTTTTCTATTTTTAGTTGAGACTGGGTTTCACCACGTTGGCCAGGCTCCTGACCTCAGGTGAGTCACCTGCCTTGGCCTCCCAAAGTGC");
     final byte[] template = DnaUtils.encodeString("GCCCAGTTAATTTTTTCTATTTTTAGTTGAGACTGGGTTTCACCATGTTGGCCAGGCTGGGGAATTCCTGACCTCAGGTGAGTCACCTGCCTTGGCCTCCCAAAGTGCTGGGGTTACAAGCATGAGTCACCGCACCTGGCCACTTCCCACAG");
     int[] actions = ed.calculateEditDistance(read, 100, template, 0, false, 20, 8, true);
-    assertEquals(0, actions[ActionsHelper.TEMPLATE_START_INDEX]);
     assertEquals(10, actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
+    assertEquals(0, actions[ActionsHelper.TEMPLATE_START_INDEX]);
 
     actions = ed.calculateEditDistance(read, 100, template, 0, false, 20, 7, true);
-    assertEquals(0, actions[ActionsHelper.TEMPLATE_START_INDEX]);
     assertEquals(Integer.MAX_VALUE, actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
   }
 
@@ -212,7 +201,7 @@ public class EditDistanceFactoryTest extends TestCase {
     final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1)
                                      .outputParams(new NgsOutputParamsBuilder().filterParams(new NgsFilterParams.NgsFilterParamsBuilder().matedMaxMismatches(new IntegerOrPercentage("10%")).create()).create())
                                      .create();
-    final EditDistance ed = EditDistanceFactory.createEditDistance(params, null, 100, 100);
+    final BidirectionalEditDistance ed = EditDistanceFactory.createEditDistance(params, null, 100, 100);
 
 //    596     83      gi|89161203|ref|NC_000022.9|NC_000022   139     255     95=8I18=8D79=   =       2284146 -206    ATATCCAAGAAAATATTACCAAATCCAGTGTCATAAAGGTATTCCCCTATGTTTTCTTCTAAGAGTTTTATGTTTTATGTTTAGGTCTTTGACCCATTTCAAGATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGAGACGGAGTCTCGCTCTGTCGCCCAGGTCGGACTGCGGACTGCAGTGGCGCAATCCCGGCTCAC        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++        AS:i:18 NM:i:16 MQ:i:255        XA:i:37 IH:i:1
 //    224561  99      gi|89161203|ref|NC_000022.9|NC_000022   147     255     91=5X99=1X4=    =       2284178 218     GAAAATATTACCAAATCCAGTGTCATAAAGGTATTCCCCTATGTTTTCTTCTAAGAGTTTTATGTTTTATGTTTAGGTCTTTGACCCATTTCAAGATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGAGACGGAGTCTCGCTCTGTCGCCCAGGTCGGACTGCGGACTGCAGTGGCGCAATCCCGGCTCACTGCTAGCT        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++        AS:i:6  NM:i:6  MQ:i:255        XA:i:24 IH:i:1
@@ -238,19 +227,18 @@ public class EditDistanceFactoryTest extends TestCase {
     final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1)
                                      .outputParams(new NgsOutputParamsBuilder().filterParams(new NgsFilterParams.NgsFilterParamsBuilder().matedMaxMismatches(new IntegerOrPercentage("10%")).create()).create())
                                      .create();
-    final EditDistance ed = EditDistanceFactory.createEditDistance(params, null, 101, 101);
+    final BidirectionalEditDistance ed = EditDistanceFactory.createEditDistance(params, null, 101, 101);
 
 //    596     83      gi|89161203|ref|NC_000022.9|NC_000022   139     255     95=8I18=8D79=   =       2284146 -206    ATATCCAAGAAAATATTACCAAATCCAGTGTCATAAAGGTATTCCCCTATGTTTTCTTCTAAGAGTTTTATGTTTTATGTTTAGGTCTTTGACCCATTTCAAGATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGAGACGGAGTCTCGCTCTGTCGCCCAGGTCGGACTGCGGACTGCAGTGGCGCAATCCCGGCTCAC        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++        AS:i:18 NM:i:16 MQ:i:255        XA:i:37 IH:i:1
 //    224561  99      gi|89161203|ref|NC_000022.9|NC_000022   147     255     91=5X99=1X4=    =       2284178 218     GAAAATATTACCAAATCCAGTGTCATAAAGGTATTCCCCTATGTTTTCTTCTAAGAGTTTTATGTTTTATGTTTAGGTCTTTGACCCATTTCAAGATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGAGACGGAGTCTCGCTCTGTCGCCCAGGTCGGACTGCGGACTGCAGTGGCGCAATCCCGGCTCACTGCTAGCT        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++        AS:i:6  NM:i:6  MQ:i:255        XA:i:24 IH:i:1
 
-    final String readStr = "AGGTTTTTGGTTTTTTTGGTTTTTATTTTTTTGAGATGGAGTCTTGCACTGTCGCCTGGGCTGGAGTGCAATGGTGCGATCTTGGCTCACTGCAACCTCTG";
-    final byte[] read = DnaUtils.encodeString(readStr);
+    final String readStr  =                        DnaUtils.reverseComplement("CAGAGGTTGCAGTGAGCCAAGATCGCACCATTGCACTCCAGCCCAGGCGACAGTGCAAGACTCCATCTCAAAAAAATAAAAACCAAAAAAACCAAAAACCT");
+    final byte[] read     = DnaUtils.encodeString(readStr);
     final byte[] template = DnaUtils.encodeString("NNNNNNNNNNNNNNNNNNNNCCGGGAGGTGGAGGTTGCAGTGAGCCGAGATCGCACCATTGCACTCCAGCCCAGGCGTCAGGGCAAGACTCCATCTCAAATAAAGAAGAAGAAAATGAAACNNNNNNNNNNNNNNNNNNNN");
 
-    final int[] actions = ed.calculateEditDistance(read, read.length, template, 28, true, 2, 8, false);
+    final int[] actions = ed.calculateEditDistance(read, read.length, template, 28, true, 200, 8, false);
     assertEquals(28, actions[ActionsHelper.TEMPLATE_START_INDEX]);
-    assertEquals(Integer.MAX_VALUE, actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
-
+    assertEquals(22, actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
   }
 
 //  public void testOffTemplateAlignment2() {
@@ -310,7 +298,7 @@ public class EditDistanceFactoryTest extends TestCase {
 
   private int[] alignerChainTestRead(NgsParams params) {
     // Align a read with two inserts with the aligner determined by the params
-    final EditDistance ed = EditDistanceFactory.createEditDistance(params, null, 10, 101);
+    final BidirectionalEditDistance ed = EditDistanceFactory.createEditDistance(params, null, 10, 101);
     final String readStr = "GAGGTTGTTTTCAGTGAGCCGAGATCGCACCATTGCACTCCAGCCCAGGCGTCAGGGCAAGACTCCATCTCATTTTAATAAAGAAGAAG";
     final byte[] read = DnaUtils.encodeString(readStr);
     final byte[] template = DnaUtils.encodeString("CCGGGAGGTGGAGGTTGCAGTGAGCCGAGATCGCACCATTGCACTCCAGCCCAGGCGTCAGGGCAAGACTCCATCTCAAATAAAGAAGAAGAAAATGAAAC");
@@ -322,7 +310,7 @@ public class EditDistanceFactoryTest extends TestCase {
     final NgsParams params = new NgsParamsBuilder().singleIndelPenalties("alignertable").alignerMode(AlignerMode.TABLE)
         .outputParams(new NgsOutputParamsBuilder().filterParams(new NgsFilterParams.NgsFilterParamsBuilder().matedMaxMismatches(new IntegerOrPercentage("10%")).create()).create())
         .create();
-    final EditDistance ed = EditDistanceFactory.createEditDistance(params, null, 101, 101);
+    final BidirectionalEditDistance ed = EditDistanceFactory.createEditDistance(params, null, 101, 101);
 
     final String readStr = "GCATGGACTGGTTTGTAGATGATTCGACTTTAATTGGCCCGAGGTCTATACGCGATGGCTTTTGTACTCCTCTGGCGATGAAGCCGTCTTGGTACCGTATT";
     final byte[] read = DnaUtils.encodeString(readStr);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Real Time Genomics Limited.
+ * Copyright (c) 2017. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -14,6 +14,7 @@ package com.rtg.alignment;
 import com.reeltwo.jumble.annotations.JumbleIgnore;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
+import com.rtg.reader.CgUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 
 /**
@@ -21,10 +22,9 @@ import com.rtg.util.diagnostic.Diagnostic;
  * of the template, and always calls the wrapped unidirectional edit distance
  * implementation(s).
  */
-public class RcEditDistance implements BidirectionalEditDistance {
+public class RcCgEditDistance implements BidirectionalEditDistance {
 
   private UnidirectionalEditDistance mEd;
-  private UnidirectionalEditDistance mEdRC;
   private byte[] mTemplate = null;
   private byte[] mTemplateRC = null;
 
@@ -32,21 +32,8 @@ public class RcEditDistance implements BidirectionalEditDistance {
    * Create a new RcEditDistance
    * @param ed the unidirectional edit distance implementation to wrap
    */
-  public RcEditDistance(final UnidirectionalEditDistance ed) {
+  public RcCgEditDistance(final CgGotohEditDistance ed) {
     mEd = ed;
-    mEdRC = null;
-  }
-
-  /**
-   * Create a new RcEditDistance, with two wrapped implementations, one for
-   * forward and one for reverse. This is useful in the case that the wrapped
-   * implementation caches data based on the template.
-   * @param ed the unidirectional edit distance implementation to wrap for the forward case
-   * @param edRev the unidirectional edit distance implementation to wrap for the reverse case
-   */
-  public RcEditDistance(UnidirectionalEditDistance ed, UnidirectionalEditDistance edRev) {
-    mEd = ed;
-    mEdRC = edRev;
   }
 
   @Override
@@ -60,14 +47,12 @@ public class RcEditDistance implements BidirectionalEditDistance {
       DNA.reverseComplementInPlace(mTemplateRC, 0, mTemplateRC.length);
     }
     final int[] res;
-    if (mEdRC != null && rc) {
-      res = mEdRC.calculateEditDistance(read, rlen, mTemplateRC, mTemplateRC.length - rlen - zeroBasedStart, maxScore, maxShift, cgLeft);
-    } else {
-      res = mEd.calculateEditDistance(read, rlen, rc ? mTemplateRC : template, rc ? mTemplateRC.length - rlen - zeroBasedStart : zeroBasedStart, maxScore, maxShift, cgLeft);
-    }
+    // We have to correct for the default gap in CG v1 reads.
+    final int nastyCGHack = rlen == CgUtils.CG_RAW_READ_LENGTH ? CgGotohEditDistance.CG_INSERT_REGION_DEFAULT_SIZE : 0;
+    res = mEd.calculateEditDistance(read, rlen, rc ? mTemplateRC : template, rc ? mTemplateRC.length - rlen - zeroBasedStart - nastyCGHack : zeroBasedStart, maxScore, maxShift, cgLeft);
     //need to translate the position back in reverse complementation
-    if (rc && res != null && res[ActionsHelper.ALIGNMENT_SCORE_INDEX] != Integer.MAX_VALUE) {
-        res[ActionsHelper.TEMPLATE_START_INDEX] = mTemplateRC.length - ActionsHelper.zeroBasedTemplateEndPos(res);
+    if (res != null && rc) {
+      res[ActionsHelper.TEMPLATE_START_INDEX] = mTemplateRC.length - res[ActionsHelper.TEMPLATE_START_INDEX] - (rlen + ActionsHelper.indelLength(res));
     }
     return res;
   }
@@ -79,13 +64,8 @@ public class RcEditDistance implements BidirectionalEditDistance {
       Diagnostic.developerLog("RcEditDistance: sub ED forward");
       mEd.logStats();
     }
-    if (mEdRC != null) {
-      Diagnostic.developerLog("RcEditDistance: sub ED RC");
-      mEdRC.logStats();
-    }
     mTemplate = null;
     mTemplateRC = null;
     mEd = null;
-    mEdRC = null;
   }
 }

@@ -11,21 +11,20 @@
  */
 package com.rtg.alignment;
 
+import com.rtg.AbstractTest;
 import com.rtg.mode.DnaUtils;
-
-import junit.framework.TestCase;
 
 /**
  */
-public abstract class AbstractEditDistanceTest extends TestCase {
+public abstract class AbstractEditDistanceTest extends AbstractTest {
 
-  protected abstract EditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty);
+  protected abstract BidirectionalEditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty);
 
   public void testStartPositionSet() throws Exception {
     final byte[] read = DnaUtils.encodeString("acgta");
     final byte[] template = DnaUtils.encodeString("tttttacgtatc");
 
-    final EditDistance ed = getEditDistanceInstance(1, 1);
+    final BidirectionalEditDistance ed = getEditDistanceInstance(1, 1);
 
     int[] actions = ed.calculateEditDistance(read, read.length, template, 5, false, 1, 1, false);
 

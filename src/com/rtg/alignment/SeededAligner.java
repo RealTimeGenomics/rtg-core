@@ -85,7 +85,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
     mGapOpenPenalty = ngsParams.gapOpenPenalty();
     mGapExtendPenalty = ngsParams.gapExtendPenalty();
 
-    mED = new GotohEditDistance(ngsParams);
+    mED = new GotohEditDistance(ngsParams.gapOpenPenalty(), ngsParams.gapExtendPenalty(), ngsParams.substitutionPenalty(), ngsParams.unknownsPenalty(), false);
     mFixedStart = mED;
     mFixedEnd = mED;
 //    mCheck = mED;

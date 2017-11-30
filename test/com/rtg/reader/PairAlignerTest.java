@@ -19,7 +19,6 @@ import java.io.IOException;
 import org.junit.Assert;
 
 import com.rtg.alignment.SingleIndelSeededEditDistance;
-import com.rtg.alignment.UnidirectionalAdaptor;
 import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.ngs.MapParamsHelper;
 import com.rtg.ngs.NgsParams;
@@ -181,7 +180,7 @@ public class PairAlignerTest extends AbstractNanoTest {
       .singleIndelPenalties(null)
       .create();
     return new PairAligner(
-      new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 80, 80, maxReadLength)),
+      new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 80, 80, maxReadLength),
       25, 90, probeLength, 0, 0, false, false, t, false);
   }
 

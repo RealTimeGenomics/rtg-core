@@ -15,7 +15,7 @@ package com.rtg.alignment;
  * Adapts a Unidirectional edit distance to an omni directional one, with the understanding that all calls are to be non
  * reverse complement.
  */
-public class UnidirectionalAdaptor implements EditDistance {
+public class UnidirectionalAdaptor implements BidirectionalEditDistance {
 
   final UnidirectionalEditDistance mEd;
 

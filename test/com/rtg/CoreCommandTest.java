@@ -92,6 +92,7 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, ToolsCommand.CHILDSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.DENOVOSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.SAMPLEREPLAY.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.VCFDECOMPOSE.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.VCFEVAL.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SINGLETON.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.READSIM.mainInit(new String[0], baos, ps));

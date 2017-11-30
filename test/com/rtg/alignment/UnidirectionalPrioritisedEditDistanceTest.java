@@ -98,7 +98,6 @@ public class UnidirectionalPrioritisedEditDistanceTest extends AbstractUnidirect
     try {
       int[] actions = ed.calculateEditDistance(s1, s1.length, s2, 0, 5, MaxShiftUtils.calculateDefaultMaxShift(s1.length), true);
       assertEquals(Integer.MAX_VALUE, actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
-      assertEquals(12, actions.length);
 
       ed.logStats();
 
@@ -195,7 +194,7 @@ public class UnidirectionalPrioritisedEditDistanceTest extends AbstractUnidirect
       final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1)
                                        .outputParams(new NgsOutputParamsBuilder().filterParams(new NgsFilterParams.NgsFilterParamsBuilder().matedMaxMismatches(new IntegerOrPercentage("10%")).create()).create())
                                        .create();
-      final EditDistance ed = EditDistanceFactory.createEditDistance(params, PrereadType.UNKNOWN, 100, 100);
+      final BidirectionalEditDistance ed = EditDistanceFactory.createEditDistance(params, PrereadType.UNKNOWN, 100, 100);
 
       //HopStep can find an alignment with score 5 (the large seed at the end of the read ties the position, forcing a del of length 3)
       int[] actions = ed.calculateEditDistance(read, read.length, tmpl, 0, false, 10, 8, false);

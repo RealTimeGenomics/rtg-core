@@ -29,6 +29,7 @@ class LowerBoundEditDistance implements UnidirectionalEditDistance {
   protected LowerBoundEditDistance(int size, int substitutionPenalty, int unknownsPenalty) {
     mLBE = new LowerBoundEstimator(size, substitutionPenalty, unknownsPenalty);
     mNoAlignmentPossible = new int[ActionsHelper.ACTIONS_START_INDEX];
+    mNoAlignmentPossible[ActionsHelper.TEMPLATE_START_INDEX] = Integer.MAX_VALUE;
     mNoAlignmentPossible[ActionsHelper.ALIGNMENT_SCORE_INDEX] = Integer.MAX_VALUE;
   }
 
@@ -47,13 +48,10 @@ class LowerBoundEditDistance implements UnidirectionalEditDistance {
    */
   @Override
   public int[] calculateEditDistance(byte[] read, int rlen, byte[] template, int zeroBasedStart, int maxScore, int maxShift, boolean cgLeft) {
-
     final int lb = mLBE.calcLB(read, rlen, template, zeroBasedStart, maxScore, maxShift);
     if (lb > maxScore) {
-      mNoAlignmentPossible[ActionsHelper.TEMPLATE_START_INDEX] = zeroBasedStart;
       return mNoAlignmentPossible;
     }
-
     return null;
   }
 

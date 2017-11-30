@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Real Time Genomics Limited.
+ * Copyright (c) 2017. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -17,9 +17,9 @@ package com.rtg.alignment;
  * If mismatches occur within M bases of the end of the alignment, it it will be clipped.
  * If the post-clipping alignment has fewer than O matches, return poorest alignment score.
  */
-public class SoftClipperOmni implements EditDistance {
+public class SoftClipper implements UnidirectionalEditDistance {
 
-  private final EditDistance mEd;
+  private final UnidirectionalEditDistance mEd;
   private final int mMinMatches;
   private final int mClipIndelsXFromEnd;
   private final int mClipMismatchesXFromEnd;
@@ -37,7 +37,7 @@ public class SoftClipperOmni implements EditDistance {
    * @param clipIndelsXFromEnd the number of bases from each end of an alignment to check for indels
    * @param clipMismatchesXFromEnd the number of bases from each end of an alignment to check for mismatches to soft-clip
    */
-  public SoftClipperOmni(EditDistance ed, int clipIndelsXFromEnd, int clipMismatchesXFromEnd) {
+  public SoftClipper(UnidirectionalEditDistance ed, int clipIndelsXFromEnd, int clipMismatchesXFromEnd) {
     this(ed, clipIndelsXFromEnd, clipMismatchesXFromEnd, 0);
   }
 
@@ -48,7 +48,7 @@ public class SoftClipperOmni implements EditDistance {
    * @param clipMismatchesXFromEnd the number of bases from each end of an alignment to check for mismatches to soft-clip
    * @param minMatches the minimum number of matches required in a post-clipped alignment for the alignment to be retained
    */
-  public SoftClipperOmni(EditDistance ed, int clipIndelsXFromEnd, int clipMismatchesXFromEnd, int minMatches) {
+  public SoftClipper(UnidirectionalEditDistance ed, int clipIndelsXFromEnd, int clipMismatchesXFromEnd, int minMatches) {
     mEd = ed;
     mClipIndelsXFromEnd = clipIndelsXFromEnd;
     mClipMismatchesXFromEnd = clipMismatchesXFromEnd;
@@ -57,22 +57,24 @@ public class SoftClipperOmni implements EditDistance {
     mReverseIterator = new ActionsHelper.CommandIteratorReverse();
   }
 
-  int[] softClipActions(int[] actions, boolean rc) {
+  int[] softClipActions(boolean start, boolean end, int[] actions) {
+    if (actions == null || actions[ActionsHelper.ALIGNMENT_SCORE_INDEX] == Integer.MAX_VALUE) {
+      return actions;
+    }
     if (mClipIndelsXFromEnd > 0 || mClipMismatchesXFromEnd > 0) {
-      mReverseIterator.setActions(actions);
-      int softClips = numSoftClips(mReverseIterator);
-      if (softClips > 0) {
-        ActionsHelper.softClip(actions, false, softClips - mDels, mDels);
-        if (rc) {
-          ActionsHelper.setZeroBasedTemplateStart(actions, ActionsHelper.zeroBasedTemplateStart(actions) + softClips + mStartPositionOffset);
+      if (end) {
+        mReverseIterator.setActions(actions);
+        final int softClips = numSoftClips(mReverseIterator);
+        if (softClips > 0) {
+          ActionsHelper.softClip(actions, false, softClips - mDels, mDels);
         }
       }
 
-      mForwardIterator.setActions(actions);
-      softClips = numSoftClips(mForwardIterator);
-      if (softClips > 0) {
-        ActionsHelper.softClip(actions, true, softClips - mDels, mDels);
-        if (!rc) {
+      if (start) {
+        mForwardIterator.setActions(actions);
+        final int softClips = numSoftClips(mForwardIterator);
+        if (softClips > 0) {
+          ActionsHelper.softClip(actions, true, softClips - mDels, mDels);
           ActionsHelper.setZeroBasedTemplateStart(actions, ActionsHelper.zeroBasedTemplateStart(actions) + softClips + mStartPositionOffset);
         }
       }
@@ -154,12 +156,23 @@ public class SoftClipperOmni implements EditDistance {
   }
 
   @Override
-  public int[] calculateEditDistance(byte[] read, int rlen, byte[] template, int zeroBasedStart, boolean rc, int maxScore, int maxShift, boolean cgLeft) {
-    final int[] res = mEd.calculateEditDistance(read, rlen, template, zeroBasedStart, rc, maxScore, maxShift, cgLeft);
-    if (res == null || res[ActionsHelper.ALIGNMENT_SCORE_INDEX] == Integer.MAX_VALUE) {
-      return res;
-    }
-    return softClipActions(res, rc);
+  public int[] calculateEditDistance(byte[] read, int rlen, byte[] template, int zeroBasedStart, int maxScore, int maxShift, boolean cgLeft) {
+    return softClipActions(true, true, mEd.calculateEditDistance(read, rlen, template, zeroBasedStart, maxScore, maxShift, cgLeft));
+  }
+
+  @Override
+  public int[] calculateEditDistanceFixedStart(byte[] read, int readStartPos, int readEndPos, byte[] template, int templateStartPos, int maxScore, int maxShift) {
+    return softClipActions(false, true, mEd.calculateEditDistanceFixedStart(read, readStartPos, readEndPos, template, templateStartPos, maxScore, maxShift));
+  }
+
+  @Override
+  public int[] calculateEditDistanceFixedEnd(byte[] read, int readStartPos, int readEndPos, byte[] template, int templateExpectedStartPos, int templateEndPos, int maxScore, int maxShift) {
+    return softClipActions(true, false, mEd.calculateEditDistanceFixedEnd(read, readStartPos, readEndPos, template, templateExpectedStartPos, templateEndPos, maxScore, maxShift));
+  }
+
+  @Override
+  public int[] calculateEditDistanceFixedBoth(byte[] read, int readStartPos, int readEndPos, byte[] template, int templateStartPos, int templateEndPos, int maxScore, int maxShift) {
+    return mEd.calculateEditDistanceFixedBoth(read, readStartPos, readEndPos, template, templateStartPos, templateEndPos, maxScore, maxShift);
   }
 
   @Override

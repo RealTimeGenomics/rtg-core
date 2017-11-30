@@ -52,7 +52,7 @@ class UnidirectionalPrioritisedEditDistance implements UnidirectionalEditDistanc
     mMaxIntReturned = new int[editDistances.length];
     mTotalScore = new long[editDistances.length];
 
-    mMaxIntActions = new int[12];
+    mMaxIntActions = new int[ActionsHelper.ACTIONS_START_INDEX];
     mMaxIntActions[ActionsHelper.ALIGNMENT_SCORE_INDEX] = Integer.MAX_VALUE;
 
     if (LOG_AS_HISTO) {

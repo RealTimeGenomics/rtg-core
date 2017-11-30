@@ -22,7 +22,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.rtg.alignment.SingleIndelSeededEditDistance;
-import com.rtg.alignment.UnidirectionalAdaptor;
 import com.rtg.ngs.NgsParams;
 import com.rtg.ngs.NgsParamsBuilder;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -76,7 +75,7 @@ public class PairAlignmentProcessorTest {
 
     final NgsParams ngsParams = new NgsParamsBuilder().create();
     return new PairAligner(
-      new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 2, 2, maxReadLength)),
+      new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 2, 2, maxReadLength),
       5, 90, 4, 0, 0, false, false, PairAligner.MismatchType.NONE, false);
   }
 }

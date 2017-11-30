@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Real Time Genomics Limited.
+ * Copyright (c) 2017. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -15,7 +15,7 @@ package com.rtg.alignment;
  * Interface for calculating an edit distance measure between two strings
  * in either forward or reverse directions
  */
-public interface EditDistance {
+public interface BidirectionalEditDistance {
 
   /**
    * Calculate a global alignment between an array and a specified portion
@@ -34,22 +34,6 @@ public interface EditDistance {
    * @return packed alignment information
    */
   int[] calculateEditDistance(byte[] read, int rlen, byte[] template, int zeroBasedStart, boolean rc, int maxScore, int maxShift, boolean cgLeft);
-
-  /**
-   * Calculate an edit distance for a portion of a read and template where only
-   * the start position is known.
-   * @param read the read sequence
-   * @param readStartPos the start position along the read (zero based, inclusive)
-   * @param readEndPos the end position along the read (zero based, exclusive)
-   * @param template the template sequence
-   * @param templateStartPos the start position along the template (zero based, inclusive)
-   * @param rc true if a reverse complement alignment should be done
-   * @param maxScore maximum score for an alignment to allow early termination
-   * @param maxShift maximum allowed alignment shift
-   * @return packed alignment information
-   */
-  //int[] calculateEditDistanceFixedStart(byte[] read, int readStartPos, int readEndPos, byte[] template, int templateStartPos, boolean rc, int maxScore, int maxShift);
-
 
   /**
    * Log statistics from the alignment run.

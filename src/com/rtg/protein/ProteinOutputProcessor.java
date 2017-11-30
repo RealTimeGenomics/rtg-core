@@ -17,7 +17,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import com.rtg.alignment.ActionsHelper;
-import com.rtg.alignment.EditDistance;
+import com.rtg.alignment.BidirectionalEditDistance;
 import com.rtg.alignment.EditDistanceFactory;
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.mode.Frame;
@@ -122,7 +122,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
   private final SequencesReader mTemplate;
   private final SequencesReader mRead;
   private final ProteinScoringMatrix mProteinScoringMatrix;
-  private final EditDistance mProteinEditDistance;
+  private final BidirectionalEditDistance mProteinEditDistance;
   private final OutputStream mOut;
   private final IntegerOrPercentage mThreshold;
   protected ArrayList<ProteinOutputProcessor> mChildren;
