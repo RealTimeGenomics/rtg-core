@@ -48,7 +48,7 @@ public class RcCgEditDistanceTest extends AbstractTest {
       throw new RuntimeException(e);
     }
 
-    final RcEditDistance rced = new RcEditDistance(new TestGotohEditDistance(7, mParams));
+    final BidirectionalEditDistance rced = new RcCgEditDistance(new TestGotohEditDistance(7, mParams));
     final int[] actions = rced.calculateEditDistance(DnaUtils.encodeString("attcttactanccccaactgagccc     agtaggagta".replaceAll(" ", "")), 35, DnaUtils.encodeString("atactcctacttttgctgggctcagttgggggaagtagaat"), 0, true, 25, 7, true);
 
     assertEquals(1, ActionsHelper.zeroBasedTemplateStart(actions));
