@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.rtg.alignment.Partition;
+import com.rtg.alignment.Slice;
 import com.rtg.alignment.SplitAlleles;
 import com.rtg.util.Pair;
 import com.rtg.util.StringUtils;
@@ -105,9 +107,9 @@ public class AligningDecomposer extends AbstractDecomposer {
     return -1;
   }
 
-  private Pair<String[], int[]> getAlleleMap(final Description oldDescription, final String[] originalAlleles, final String[] extraDescriptionAlleles, final List<List<Pair<Integer, String[]>>> partitions, final int slice, final int leftClip) {
-    final Pair<Integer, String[]> part = partitions.get(0).get(slice);
-    final String[] alleles = part.getB();
+  private Pair<String[], int[]> getAlleleMap(final Description oldDescription, final String[] originalAlleles, final String[] extraDescriptionAlleles, final List<Partition> partitions, final int slice, final int leftClip) {
+    final Slice part = partitions.get(0).get(slice);
+    final String[] alleles = part.getAlleles();
     assert originalAlleles.length == alleles.length;
     // Incrementally build up mapping of old alleles to new alleles
     final int[] alleleMap = new int[oldDescription.size()]; // Mapping of old allele numbering onto new unique allele numbering
@@ -130,14 +132,14 @@ public class AligningDecomposer extends AbstractDecomposer {
         // Find in original extended alleles
         final int j = findIfPresent(extraDescriptionAlleles, a);
         assert j >= 0; // i.e. we should find it
-        final List<Pair<Integer, String[]>> fullPartition = partitions.get(j + 1); // The partition corresponding to this extra allele
-        final List<Pair<Integer, String[]>> partition = SplitAlleles.removeAllRef(fullPartition);
-        final int offset = part.getA();
+        final Partition fullPartition = partitions.get(j + 1); // The partition corresponding to this extra allele
+        final Partition partition = SplitAlleles.removeAllRef(fullPartition);
+        final int offset = part.getOffset();
         boolean found = false;
-        for (final Pair<Integer, String[]> p : partition) {
-          if (p.getA() == offset) {
+        for (final Slice p : partition) {
+          if (p.getOffset() == offset) {
             // Found a piece of the partition at the same offset as the main partition
-            final String[] b = p.getB();
+            final String[] b = p.getAlleles();
             final String remapPart = b[b.length - 1]; // Extra allele is the last column
             if (remapPart.length() >= leftClip) {
               // Look it up in the output alleles
@@ -160,7 +162,7 @@ public class AligningDecomposer extends AbstractDecomposer {
     return new Pair<>(newUniqueAlleles, alleleMap);
   }
 
-  private VariantSample[] createVariantSamples(final Variant original, final SplitAlleles splitter, final String[] extraDescriptionAlleles, final List<List<Pair<Integer, String[]>>> partitions, final int slice, final int leftClip) {
+  private VariantSample[] createVariantSamples(final Variant original, final SplitAlleles splitter, final String[] extraDescriptionAlleles, final List<Partition> partitions, final int slice, final int leftClip) {
     final VariantSample[] newSamples = new VariantSample[original.getNumberOfSamples()];
     final String[] originalAlleles = extractAlleles(original);
     for (int k = 0; k < newSamples.length; ++k) {
@@ -168,8 +170,8 @@ public class AligningDecomposer extends AbstractDecomposer {
       if (sample == null) {
         newSamples[k] = null;
       } else {
-        final Pair<Integer, String[]> part = partitions.get(0).get(slice);
-        final String newGenotype = createVariantGenotype(splitter, part.getB(), sample.getName(), leftClip);
+        final String[] alleles = partitions.get(0).get(slice).getAlleles();
+        final String newGenotype = createVariantGenotype(splitter, alleles, sample.getName(), leftClip);
         newSamples[k] = new VariantSample(sample.getPloidy(), newGenotype, sample.isIdentity(), sample.getMeasure(), sample.isDeNovo(), sample.getDeNovoPosterior());
         VariantSample.copy(sample, newSamples[k]);
         // Update counts to correspond to the new description
@@ -177,8 +179,8 @@ public class AligningDecomposer extends AbstractDecomposer {
         final Pair<String[], int[]> alleleMap = getAlleleMap(oldDescription, originalAlleles, extraDescriptionAlleles, partitions, slice, leftClip);
         final Description d = newSamples[k].getStats().counts().getDescription() instanceof DescriptionNone ? DescriptionNone.SINGLETON : new DescriptionCommon(alleleMap.getA());
         newSamples[k].getStats().remapAlleleStatistics(d, alleleMap.getB());
-        newSamples[k].setVariantAllele(findVariantAllele(newSamples[k], part.getB()[0].substring(leftClip), mVariantAlleleTrigger));
-        newSamples[k].setGenotypeLikelihoods(newGenotypeLikelihoods(sample, splitter, part.getB(), leftClip));
+        newSamples[k].setVariantAllele(findVariantAllele(newSamples[k], alleles[0].substring(leftClip), mVariantAlleleTrigger));
+        newSamples[k].setGenotypeLikelihoods(newGenotypeLikelihoods(sample, splitter, alleles, leftClip));
       }
     }
     return newSamples;
@@ -189,7 +191,7 @@ public class AligningDecomposer extends AbstractDecomposer {
     result.setPossibleCause(possibleCause == null ? null : alleles[splitter.getColumnIndex(possibleCause)].substring(leftClip));
   }
 
-  private Variant createVariant(final Variant original, final SplitAlleles splitter, final String[] extraDescriptionAlleles, final List<List<Pair<Integer, String[]>>> partitions, final int slice, final int splitId) {
+  private Variant createVariant(final Variant original, final SplitAlleles splitter, final String[] extraDescriptionAlleles, final List<Partition> partitions, final int slice, final int splitId) {
     // Get all the alleles (including reference) that are in this partition.
     // Determine the length of any common prefix (this can happen if they are
     // different lengths and depending on penalties etc. during alignment).
@@ -197,11 +199,11 @@ public class AligningDecomposer extends AbstractDecomposer {
     // Construct new variant samples (i.e. genotypes) for each sample and
     // update the VAF allele (possible cause).  Update the de novo status
     // for each sample.
-    final Pair<Integer, String[]> part = partitions.get(0).get(slice);
-    final String[] alleles = part.getB();
+    final Slice part = partitions.get(0).get(slice);
+    final String[] alleles = part.getAlleles();
     final int leftClip = StringUtils.longestPrefix(alleles);
     final VariantLocus locus = original.getLocus();
-    final int offset = part.getA() + leftClip;
+    final int offset = part.getOffset() + leftClip;
     final int start = locus.getStart() + offset;
     final String newRef = alleles[SplitAlleles.REFERENCE_COLUMN_INDEX].substring(leftClip);
     final int end = start + newRef.length();
@@ -238,7 +240,7 @@ public class AligningDecomposer extends AbstractDecomposer {
     final Set<String> alts = extractAlts(original);
     final String[] extraDescriptionAlleles = getExtraDescriptionAlleles(ref, alts, original);
     final SplitAlleles splitter = new SplitAlleles(ref, alts);
-    final List<List<Pair<Integer, String[]>>> partitions = SplitAlleles.removeAllRefList(splitter.partition(extraDescriptionAlleles));
+    final List<Partition> partitions = SplitAlleles.removeAllRefList(splitter.partition(extraDescriptionAlleles));
     int splitId = 0;
     final int size = partitions.get(0).size();
     final List<Variant> result = new ArrayList<>(size);
