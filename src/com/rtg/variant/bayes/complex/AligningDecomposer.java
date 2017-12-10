@@ -133,7 +133,7 @@ public class AligningDecomposer extends AbstractDecomposer {
         final int j = findIfPresent(extraDescriptionAlleles, a);
         assert j >= 0; // i.e. we should find it
         final Partition fullPartition = partitions.get(j + 1); // The partition corresponding to this extra allele
-        final Partition partition = SplitAlleles.removeAllRef(fullPartition);
+        final Partition partition = Partition.removeAllRef(fullPartition);
         final int offset = part.getOffset();
         boolean found = false;
         for (final Slice p : partition) {
@@ -240,7 +240,7 @@ public class AligningDecomposer extends AbstractDecomposer {
     final Set<String> alts = extractAlts(original);
     final String[] extraDescriptionAlleles = getExtraDescriptionAlleles(ref, alts, original);
     final SplitAlleles splitter = new SplitAlleles(ref, alts);
-    final List<Partition> partitions = SplitAlleles.removeAllRefList(splitter.partition(extraDescriptionAlleles));
+    final List<Partition> partitions = Partition.removeAllRefList(splitter.partition(extraDescriptionAlleles));
     int splitId = 0;
     final int size = partitions.get(0).size();
     final List<Variant> result = new ArrayList<>(size);
