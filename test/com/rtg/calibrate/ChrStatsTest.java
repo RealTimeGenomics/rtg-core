@@ -16,30 +16,25 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.rtg.AbstractTest;
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.MockSequencesReader;
 import com.rtg.reference.ReferenceGenome;
 import com.rtg.reference.Sex;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.CalibratedPerSequenceThresholdTest;
-
-import junit.framework.TestCase;
 
 /**
  * Test the corresponding class.
  */
-public class ChrStatsTest extends TestCase {
+public class ChrStatsTest extends AbstractTest {
 
   public void check(final Sex sex, final String... expected) throws IOException {
-    final MemoryPrintStream mps = new MemoryPrintStream();
-    Diagnostic.setLogStream(mps.printStream());
-
-    final File testDir = FileUtils.createTempDir("junit", "test");
-    try {
+    try (TestDirectory testDir = new TestDirectory("chrstats")) {
       FileHelper.resourceToFile("com/rtg/calibrate/resources/reference.txt", new File(testDir, ReferenceGenome.REFERENCE_FILE));
 
       final HashMap<String, String> readToSample = new HashMap<>();
@@ -51,7 +46,6 @@ public class ChrStatsTest extends TestCase {
         lengths.put("seq" + k, 10000);
       }
       c.setSequenceLengths(lengths);
-      final CalibratedPerSequenceExpectedCoverage calibrator = new CalibratedPerSequenceExpectedCoverage(c, lengths, readToSample, null);
       final MockSequencesReader genomeReader = new MockSequencesReader(SequenceType.DNA, 9) {
         @Override
         public File path() {
@@ -59,16 +53,15 @@ public class ChrStatsTest extends TestCase {
         }
       };
       genomeReader.setLengths(new int[]{10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000});
-      try {
-        final ChrStats cc = new ChrStats(genomeReader);
-        cc.chrStatsCheckAndReport(calibrator, "sample", sex);
-      } finally {
-        Diagnostic.setLogStream();
-      }
+
+      final MemoryPrintStream mps = new MemoryPrintStream();
+      Diagnostic.setLogStream(mps.printStream());
+      final CalibratedPerSequenceExpectedCoverage calibrator = new CalibratedPerSequenceExpectedCoverage(c, lengths, readToSample, null);
+      final ChrStats cc = new ChrStats(genomeReader);
+      cc.chrStatsCheckAndReport(calibrator, "sample", sex);
+
       //System.out.println(mps.toString());
       TestUtils.containsAll(mps.toString(), expected);
-    } finally {
-      assertTrue(FileUtils.deleteFiles(testDir));
     }
   }
 

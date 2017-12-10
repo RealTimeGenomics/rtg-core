@@ -35,6 +35,7 @@ import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogRecord;
 import com.rtg.util.io.LogStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.params.TestParams;
 
@@ -254,8 +255,8 @@ public class VariantParamsTest extends TestCase {
   }
 
   public void testStreams() throws IOException {
-    final File fooFile = new File("foofile");
-    try {
+    try (TestDirectory tmp = new TestDirectory("vpt")) {
+    final File fooFile = new File(tmp, "foofile");
       final OutputParams op = new OutputParams(fooFile, false, false);
       final VariantParams params = VariantParams.builder().outputParams(op).create();
 
@@ -266,8 +267,6 @@ public class VariantParamsTest extends TestCase {
       final OutputStream bs = params.bedStream();
       assertNotNull(bs);
       bs.close();
-    } finally {
-      FileUtils.deleteFiles(fooFile);
     }
   }
 
