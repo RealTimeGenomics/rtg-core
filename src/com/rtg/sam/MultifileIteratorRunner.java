@@ -37,7 +37,6 @@ import htsjdk.samtools.SAMRecord;
 @TestClass(value = {"com.rtg.sam.ThreadedMultifileIteratorTest"})
 final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable, Comparable<MultifileIteratorRunner<T>> {
 
-  private static final int TIMEOUT = 100000; // milliseconds
   private static final int MAX_BUFFER = 2;  // should be at least two
   private final int mPacketSize; // number of SAM records in each buffer entry
 
@@ -51,7 +50,6 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
   private long mInvalidRecords;
 
   private volatile boolean mVolIsClosing = false;
-  private volatile boolean mVolIsFinished = false;
 
   /**
    * A version of the MultifileIterator to be used with a thread
@@ -98,18 +96,10 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
           }
         }
       } catch (final Throwable t) {
-        synchronized (this) {
-          mVolIsFinished = true;
-          notifyAll();
-        }
         mRecords.setHasNext(false);
         //close();
         throw t;
       }
-    }
-    synchronized (this) {
-      mVolIsFinished = true;
-      notifyAll();
     }
   }
 
@@ -142,10 +132,6 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
       if (!mRecords.isEmpty()) {
         final Collection<T> packet = mRecords.poll();
         if (packet == null) {
-          synchronized (this) {
-            mVolIsFinished = true;
-            notifyAll();
-          }
           throw new IllegalStateException("Top packet in queue is null, the worker threads have probably died");
         }
         mPacketIterator = packet.iterator();
@@ -222,17 +208,9 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
   }
 
   @Override
-  public synchronized void close() throws IOException {
+  public void close() throws IOException {
     mVolIsClosing = true;
     mRecords.close();
-    while (!mVolIsFinished) {
-      try {
-        wait(TIMEOUT);
-      } catch (final InterruptedException e) {
-        ProgramState.checkAbort();
-        throw new IllegalStateException("Interrupted but program not aborting?", e);
-      }
-    }
     mIterator.close();
   }
 
