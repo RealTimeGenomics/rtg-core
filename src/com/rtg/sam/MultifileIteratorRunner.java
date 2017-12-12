@@ -13,9 +13,9 @@ package com.rtg.sam;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.IORunnable;
@@ -37,19 +37,28 @@ import htsjdk.samtools.SAMRecord;
 @TestClass(value = {"com.rtg.sam.ThreadedMultifileIteratorTest"})
 final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable, Comparable<MultifileIteratorRunner<T>> {
 
+  private static final class Packet<T> extends ArrayList<T> {
+    private boolean mHasNext = false;
+    private Packet(int size) {
+      super(size);
+    }
+  }
+
+  private static final int TIMEOUT = 2;
   private static final int MAX_BUFFER = 2;  // should be at least two
   private final int mPacketSize; // number of SAM records in each buffer entry
 
   private final MultifileIterator mIterator;
   private final int mId; // used for tie-breaking
-  private final CappedConcurrentLinkedList<Collection<T>> mRecords;
+  private final LinkedBlockingQueue<Packet<T>> mRecords;
   private final Populator<T> mPopulator;
   private Iterator<T> mPacketIterator = new ArrayList<T>().iterator();
+  private boolean mMorePackets = true;
   private T mTopRecord = null;
 
   private long mInvalidRecords;
 
-  private volatile boolean mVolIsClosing = false;
+  private volatile boolean mClosed = false;
 
   /**
    * A version of the MultifileIterator to be used with a thread
@@ -66,16 +75,16 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
     mId = id;
     mPacketSize = packetSize;
     mPopulator = populator;
-    mRecords = new CappedConcurrentLinkedList<>(MAX_BUFFER, mId);
+    mRecords = new LinkedBlockingQueue<>(MAX_BUFFER);
     if (!mIterator.hasNext()) {
-      mRecords.setHasNext(false);
+      mMorePackets = false;
     }
   }
 
   @Override
   public void run() {
-    List<T> packet = new ArrayList<>(mPacketSize);
-    while (!mVolIsClosing && mIterator.hasNext()) {
+    Packet<T> packet = new Packet<>(mPacketSize);
+    while (!mClosed && mIterator.hasNext()) {
       try {
         final SAMRecord next = mIterator.next();
         final boolean hasNext = mIterator.hasNext();
@@ -87,17 +96,21 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
           maybeWarn(next);
         }
         if (packet.size() >= mPacketSize || !hasNext) {
-          mRecords.add(packet, hasNext);
+          packet.mHasNext = hasNext;
+          mRecords.put(packet);
           ProgramState.checkAbort();
           if (hasNext) {
-            packet = new ArrayList<>(mPacketSize);
+            packet = new Packet<>(mPacketSize);
           } else {
             break;
           }
         }
+      } catch (InterruptedException e1) {
+        mClosed = true;
+        ProgramState.checkAbort();
+        throw new IllegalStateException("Interrupted but program not aborting?", e1);
       } catch (final Throwable t) {
-        mRecords.setHasNext(false);
-        //close();
+        mClosed = true;
         throw t;
       }
     }
@@ -128,19 +141,28 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
     if (mTopRecord != null) {
       return;
     }
-    if (!mPacketIterator.hasNext()) {
-      if (!mRecords.isEmpty()) {
-        final Collection<T> packet = mRecords.poll();
-        if (packet == null) {
-          throw new IllegalStateException("Top packet in queue is null, the worker threads have probably died");
+    if (mPacketIterator.hasNext()) {
+      mTopRecord = mPacketIterator.next();
+      return;
+    }
+    while (!mClosed && (mMorePackets || !mRecords.isEmpty())) {
+      try {
+        final Packet<T> packet = mRecords.poll(TIMEOUT, TimeUnit.SECONDS);
+        if (packet != null) {
+          mPacketIterator = packet.iterator();
+          mMorePackets = packet.mHasNext;
+          mTopRecord = mPacketIterator.next();
+          return;
         }
-        mPacketIterator = packet.iterator();
-      } else {
+      } catch (InterruptedException e) {
         ProgramState.checkAbort();
-        return;
+        throw new IllegalStateException("Interrupted but program not aborting?", e);
       }
     }
-    mTopRecord = mPacketIterator.next();
+    if (mClosed) {
+      ProgramState.checkAbort();
+      throw new IllegalStateException("Worker thread has aborted");
+    }
   }
 
   @Override
@@ -209,8 +231,7 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
 
   @Override
   public void close() throws IOException {
-    mVolIsClosing = true;
-    mRecords.close();
+    mClosed = true;
     mIterator.close();
   }
 
