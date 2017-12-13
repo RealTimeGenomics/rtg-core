@@ -232,6 +232,7 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
   @Override
   public void close() throws IOException {
     mClosed = true;
+    mRecords.clear(); // Ensures that if we close before all data is consumed, any pending put() is unblocked
     mIterator.close();
   }
 
