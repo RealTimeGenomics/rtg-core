@@ -20,7 +20,6 @@ import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.PedigreeException;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.test.NanoRegression;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.GenomePriorParamsBuilder;
 import com.rtg.variant.VariantOutputLevel;
@@ -46,17 +45,6 @@ import com.rtg.variant.util.arithmetic.SimplePossibility;
 /**
  */
 public class FamilyCallerFBTest extends FamilyCallerTest {
-
-  @Override
-  public void setUp() {
-    super.setUp();
-    mNano = new NanoRegression(FamilyCallerFBTest.class);
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    super.tearDown();
-  }
 
   @Override
   protected MultisampleJointCaller getFamilyCaller(Family family, VariantParams vParams) {

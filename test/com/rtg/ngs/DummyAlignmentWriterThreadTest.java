@@ -18,9 +18,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.tempstage.AbstractTempFileWriter;
 import com.rtg.ngs.tempstage.SingleEndTempFileWriter;
@@ -33,33 +33,23 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
-
-import junit.framework.TestCase;
 
 /**
  */
-public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutputProcessorTest {
+public class DummyAlignmentWriterThreadTest extends AbstractNanoTest {
 
   protected File mDir = null;
-  protected NanoRegression mNano = null;
 
   @Override
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
+    super.setUp();
     mDir = FileHelper.createTempDirectory();
-    mNano = new NanoRegression(this.getClass());
-    Diagnostic.setLogStream();
   }
 
   @Override
-  public void tearDown() throws Exception {
-    GlobalFlags.resetAccessedStatus();
+  public void tearDown() throws IOException {
+    super.tearDown();
     assertTrue(mDir == null || !mDir.exists() || FileHelper.deleteAll(mDir));
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
     mDir = null;
   }
 

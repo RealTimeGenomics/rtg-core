@@ -14,30 +14,15 @@ package com.rtg.reader;
 
 import java.io.File;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.launcher.MainResult;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
-
-import junit.framework.TestCase;
 
 /**
- *
  */
-public class SamToFastqTest extends TestCase {
-
-  private NanoRegression mNano;
-
-  public void setUp() throws Exception {
-    mNano = new NanoRegression(SamToFastqTest.class);
-  }
-
-  public void tearDown() throws Exception {
-    mNano.finish();
-    mNano = null;
-  }
-
+public class SamToFastqTest extends AbstractNanoTest {
 
   public void test() throws Exception {
     try (TestDirectory dir = new TestDirectory()) {

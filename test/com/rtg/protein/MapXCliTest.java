@@ -44,30 +44,11 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
 
 /**
  * Test for corresponding class
  */
 public class MapXCliTest extends AbstractCliTest {
-
-  private NanoRegression mNano;
-  @Override
-  public void setUp() throws IOException {
-    super.setUp();
-    mNano = new NanoRegression(MapXCliTest.class);
-  }
-
-  @Override
-  public void tearDown() throws IOException {
-    super.tearDown();
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
-
 
   @Override
   protected AbstractCli getCli() {

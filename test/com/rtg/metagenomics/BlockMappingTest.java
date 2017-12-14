@@ -14,31 +14,12 @@ package com.rtg.metagenomics;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.util.integrity.Exam;
-import com.rtg.util.test.NanoRegression;
-
-import junit.framework.TestCase;
 
 /**
  */
-public class BlockMappingTest extends TestCase {
-
-  protected NanoRegression mNano;
-
-  @Override
-  public void setUp() {
-    mNano = new NanoRegression(this.getClass());
-  }
-
-  @Override
-  public void tearDown() throws IOException {
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
-
+public class BlockMappingTest extends AbstractNanoTest {
 
   static Frag frag(final int...f) {
     final ArrayList<Integer> al = new ArrayList<>();
@@ -64,6 +45,7 @@ public class BlockMappingTest extends TestCase {
       assertEquals("" + i, a[i], b[i]);
     }
   }
+
   public void testConstructAComplicated() {
     final Frag[] frags = {
             frag(0, 1, 2),

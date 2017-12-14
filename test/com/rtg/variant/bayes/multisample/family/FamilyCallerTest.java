@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.mode.DNA;
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.PedigreeException;
-import com.rtg.util.test.NanoRegression;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.GenomePriorParamsBuilder;
 import com.rtg.variant.StaticThreshold;
@@ -51,11 +51,9 @@ import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
-import junit.framework.TestCase;
-
 /**
  */
-public class FamilyCallerTest extends TestCase {
+public class FamilyCallerTest extends AbstractNanoTest {
 
   private VariantOutputVcfFormatter makeFormatter(int numSamples) {
     final List<String> names = new ArrayList<>();
@@ -71,22 +69,6 @@ public class FamilyCallerTest extends TestCase {
 
   protected MultisampleJointCaller getFamilyCaller(Family family, VariantParams vParams) {
     return new FamilyCaller(vParams, family);
-  }
-
-  protected NanoRegression mNano = null;
-
-  @Override
-  public void setUp() {
-    mNano = new NanoRegression(FamilyCallerTest.class);
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
   }
 
   static HypothesesPrior<Description> haploidHypotheses(GenomePriorParams params, int ref) {

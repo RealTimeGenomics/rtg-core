@@ -13,30 +13,11 @@ package com.rtg.variant.sv.discord;
 
 import java.io.IOException;
 
-import com.rtg.util.test.NanoRegression;
-
-import junit.framework.TestCase;
-
+import com.rtg.launcher.AbstractNanoTest;
 
 /**
  */
-public class DiscordantToolStatisticsTest extends TestCase {
-
-  private NanoRegression mNano = null;
-
-  @Override
-  public void setUp() {
-    mNano = new NanoRegression(this.getClass());
-  }
-
-  @Override
-  public void tearDown() throws IOException {
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
+public class DiscordantToolStatisticsTest extends AbstractNanoTest {
 
   public void testStatisticsFiltered() throws IOException {
     final DiscordantToolStatistics stats = new DiscordantToolStatistics(null);

@@ -20,34 +20,15 @@ import java.io.StringReader;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.util.StringUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for SimilaritySvd class.
  */
-public class SimilaritySvdTest extends TestCase {
-  private NanoRegression mNano;
-
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    mNano = new NanoRegression(SimilaritySvdTest.class);
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    super.tearDown();
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
+public class SimilaritySvdTest extends AbstractNanoTest {
 
   public void testInit() {
     final SimilaritySvd svd = new SimilaritySvd(5);

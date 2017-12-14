@@ -21,30 +21,10 @@ import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
-import com.rtg.util.test.NanoRegression;
 
 /**
- *
  */
 public class HashDistCliTest extends AbstractCliTest {
-
-  private NanoRegression mNano;
-
-  @Override
-  public void setUp() throws IOException {
-    super.setUp();
-    mNano = new NanoRegression(HashDistCliTest.class);
-  }
-
-  @Override
-  public void tearDown() throws IOException {
-    try {
-      super.tearDown();
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
 
   @Override
   protected AbstractCli getCli() {
