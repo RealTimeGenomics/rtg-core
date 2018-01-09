@@ -81,6 +81,7 @@ import com.rtg.variant.bayes.multisample.multithread.MultisampleStatistics;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.util.VariantUtils;
+import com.rtg.vcf.AnnotatingVcfWriter;
 import com.rtg.vcf.StatisticsVcfWriter;
 import com.rtg.vcf.VariantStatistics;
 import com.rtg.vcf.VcfAnnotator;
@@ -754,11 +755,6 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       mDecomposer = new AligningDecomposer(mConfig.getDenovoChecker(), variantAlleleTrigger);
     }
     mAnnotators.addAll(mConfig.getVcfAnnotators());
-    // AVR annotator comes last because it wants to use other annotations
-    if (mParams.avrModelFile() != null) {
-      Diagnostic.userLog("Loading AVR model: " + mParams.avrModelFile());
-      mAnnotators.add(new ModelFactory(mParams.avrModelFile(), mParams.minAvrScore()).getModel());
-    }
     mFilters.addAll(mConfig.getVcfFilters());
 
     String[] genomeNames = mConfig.getGenomeNames();
@@ -782,6 +778,11 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     }
     mOut = new VcfWriterFactory().async(true).zip(mParams.blockCompressed()).make(mVcfHeader, mParams.vcfFile());
     mOut = new StatisticsVcfWriter<>(mOut, mStatistics);
+    // AVR annotator comes last because it wants to use other annotations
+    if (mParams.avrModelFile() != null) {
+      Diagnostic.userLog("Loading AVR model: " + mParams.avrModelFile());
+      mOut = new AnnotatingVcfWriter(mOut, new ModelFactory(mParams.avrModelFile(), mParams.minAvrScore()).getModel());
+    }
     mBedFilterRegions = (mParams.regionsFilterBedFile() == null) ? null : BedUtils.regions(mParams.regionsFilterBedFile());
 
     Diagnostic.developerLog("Chunk size is " + mParams.chunkSize());
