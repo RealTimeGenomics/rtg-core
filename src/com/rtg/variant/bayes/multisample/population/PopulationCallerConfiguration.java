@@ -104,9 +104,7 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
         newParams = params;
       }
 
-      final List<String> calledGenomes = new ArrayList<>();
-      calledGenomes.addAll(outputGenomes);
-
+      final List<String> calledGenomes = new ArrayList<>(outputGenomes);
       final MachineErrorChooserInterface chooser = MultisampleUtils.chooser(newParams);
       final PopulationHwHypothesesCreator ssp;
       if (params.populationPriorFile() != null) {
