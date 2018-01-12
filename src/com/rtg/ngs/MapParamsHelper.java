@@ -13,8 +13,8 @@ package com.rtg.ngs;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -625,7 +625,7 @@ public final class MapParamsHelper {
 
     @Override
     public SequenceParams call() throws IOException {
-      final SequenceDataSource ds = FormatCli.getDnaDataSource(Arrays.asList(mBuild), mInputDescription, mArm, false, false, null, false);
+      final SequenceDataSource ds = FormatCli.getDnaDataSource(Collections.singletonList(mBuild), mInputDescription, mArm, false, false, null, false);
       final SequencesWriter sw = new SequencesWriter(ds, null, PrereadType.UNKNOWN, true);
       sw.setSdfId(new SdfId(0));
       final SequencesReader reader = sw.processSequencesInMemory(mBuild, mUseQuality, mNames, mSuffixes,  mReaderRestriction);
@@ -658,7 +658,7 @@ public final class MapParamsHelper {
 
     @Override
     public SequenceParams[] call() throws Exception {
-      final SequenceDataSource ds = FormatCli.getDnaDataSource(Arrays.asList(mBuild), mInputFormat, null, mSamParams.unorderedLoad(), mSamParams.flattenPairs(), null, false);
+      final SequenceDataSource ds = FormatCli.getDnaDataSource(Collections.singletonList(mBuild), mInputFormat, null, mSamParams.unorderedLoad(), mSamParams.flattenPairs(), null, false);
       final SequencesReader[] readers;
       if (mInputFormat.isInterleaved()) {
         final AlternatingSequencesWriter asw = new AlternatingSequencesWriter(ds, null, PrereadType.UNKNOWN, true);
