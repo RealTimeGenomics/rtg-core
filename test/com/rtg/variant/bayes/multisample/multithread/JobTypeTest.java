@@ -50,7 +50,7 @@ public class JobTypeTest extends TestCase {
     assertFalse(t.validArguments(new Result[] {getValidIncrementResult(), result, result}));
     assertFalse(t.validArguments(new Result[] {result, getValidIncrementResult(), result}));
     assertFalse(t.validArguments(new Result[] {getValidIncrementResult(), getValidIncrementResult(), result, result}));
-    assertTrue(t.validArguments(new Result[] {getValidIncrementResult(), getValidIncrementResult(), result}));
+    assertTrue(t.validArguments(new Result[] {getValidIncrementResult(), getValidComplexResult()}));
   }
 
   private Complexities getComplexities() {
@@ -97,7 +97,7 @@ public class JobTypeTest extends TestCase {
 
     assertFalse(t.validArguments(new Result[] {new Result()}));
 
-    assertTrue(t.validResult(new Result((Object) null)));
+    assertTrue(t.validResult(new Result(null, null)));
     assertFalse(t.validResult(new Result()));
   }
 
@@ -158,7 +158,7 @@ public class JobTypeTest extends TestCase {
 
   private Result getValidComplexResult() {
     final ArrayList<Variant> list = new ArrayList<>();
-    return new Result(list);
+    return new Result(list, getComplexities());
   }
 
   private Result getValidFilterResult() {

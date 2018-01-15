@@ -54,7 +54,6 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
     ORDERING.setLink(JobType.DANGLING, 0, JobType.COMPLEX); // DANGLING passes the region from the previous timestep to complex
 
     ORDERING.setLink(JobType.INCR, 1, JobType.FLUSH); // Pass through the complexities so we know what region to flush.
-    ORDERING.setLink(JobType.INCR, 0, JobType.FLUSH); // Like COMPLEX we operate 1 time step behind INCR
     ORDERING.setLink(JobType.COMPLEX, 0, JobType.FLUSH); // Ensure DANGLING has adjusted region and COMPLEX has finished calling
 
     ORDERING.setLink(JobType.INCR, 1, JobType.FILTER);   // Only needed to propagate max read length for equivalent filtering limiting
@@ -148,12 +147,7 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
     final Set<JobIdMultisample> res = new HashSet<>();
     final int chunk = id.time();
     final JobType typeFrom = id.type();
-    if (typeFrom == JobType.DANGLING && chunk == 0) {
-      //special case at beggining - see diagram.
-      res.add(new JobIdMultisample(mNumberChunks, 1, JobType.DANGLING));
-      res.add(new JobIdMultisample(mNumberChunks, 0, JobType.COMPLEX));
-      res.add(new JobIdMultisample(mNumberChunks, 0, JobType.BED));
-    } else if (typeFrom == JobType.COMPLEX && chunk == 0) {
+    if (typeFrom == JobType.COMPLEX && chunk == 0) {
       //cut out filter job for timestamp 0
       res.add(new JobIdMultisample(mNumberChunks, 0, JobType.BED));
       res.add(new JobIdMultisample(mNumberChunks, 0, JobType.FLUSH));

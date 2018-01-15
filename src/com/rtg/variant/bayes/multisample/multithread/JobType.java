@@ -24,8 +24,8 @@ public enum JobType {
   /** Increment model counts and do initial calling. */
   INCR {
     @Override
-    public boolean validArguments(Result[] results) {
-      return results.length == 0;
+    public boolean validArguments(Result[] args) {
+      return args.length == 0;
     }
     @Override
     public boolean validResult(Result result) {
@@ -39,17 +39,17 @@ public enum JobType {
   /** Tidy dangling regions at the ends of chunks. */
   DANGLING {
     @Override
-    public boolean validArguments(Result[] results) {
-      if (results.length != 3) {
+    public boolean validArguments(Result[] args) {
+      if (args.length != 3) {
         return false;
       }
-      if (results[0] == null) {
-        return INCR.validResult(results[1]);
+      if (args[0] == null) {
+        return INCR.validResult(args[1]);
       }
-      if (results[1] == null) {
-        return INCR.validResult(results[0]);
+      if (args[1] == null) {
+        return INCR.validResult(args[0]);
       }
-      return INCR.validResult(results[0]) && INCR.validResult(results[1]);
+      return INCR.validResult(args[0]) && INCR.validResult(args[1]);
     }
     @Override
     public boolean validResult(Result result) {
@@ -62,33 +62,34 @@ public enum JobType {
   /** Complex calling. */
   COMPLEX {
     @Override
-    public boolean validArguments(Result[] results) {
-      if (results.length != 1) {
+    public boolean validArguments(Result[] args) {
+      if (args.length != 1) {
         return false;
       }
-      return DANGLING.validResult(results[0]);
+      return DANGLING.validResult(args[0]);
     }
     @Override
     public boolean validResult(Result result) {
-      return result.length() == 1
-          && (result.result(0) == null || result.result(0) instanceof List)
-          ;
+      return result.length() == 2
+        && (result.result(0) == null || result.result(0) instanceof List)
+        && (result.result(1) == null || result.result(1) instanceof Complexities)
+        ;
     }
   },
   /** flushes the circular buffer */
   FLUSH {
     @Override
-    public boolean validArguments(Result[] results) {
-      if (results.length != 3) {
+    public boolean validArguments(Result[] args) {
+      if (args.length != 2) {
         return false;
       }
-      if (results[0] == null) {
-        return INCR.validResult(results[1]);
+      if (args[0] == null) {
+        return COMPLEX.validResult(args[1]);
       }
-      if (results[1] == null) {
-        return INCR.validResult(results[0]);
+      if (args[1] == null) {
+        return INCR.validResult(args[0]);
       }
-      return INCR.validResult(results[0]) && INCR.validResult(results[1]);
+      return INCR.validResult(args[0]) && COMPLEX.validResult(args[1]);
     }
 
     @Override
@@ -99,15 +100,15 @@ public enum JobType {
   /** Merge results from initial calling and complex calling. */
   FILTER {
     @Override
-    public boolean validArguments(Result[] results) {
-      if (results.length != 4) {
+    public boolean validArguments(Result[] args) {
+      if (args.length != 4) {
         return false;
       }
-      if (results[0] == null && results[1] == null) {
+      if (args[0] == null && args[1] == null) {
         //the last one
-        return FILTER.validResult(results[2]);
+        return FILTER.validResult(args[2]);
       }
-      return INCR.validResult(results[0]) && COMPLEX.validResult(results[1]) && (results[2] == null || FILTER.validResult(results[2]));
+      return INCR.validResult(args[0]) && COMPLEX.validResult(args[1]) && (args[2] == null || FILTER.validResult(args[2]));
     }
     @Override
     public boolean validResult(Result result) {
@@ -120,15 +121,15 @@ public enum JobType {
   /** Write regions to <code>regions.bed</code> file. */
   BED {
     @Override
-    public boolean validArguments(Result[] results) {
-      if (results.length != 3) {
+    public boolean validArguments(Result[] args) {
+      if (args.length != 3) {
         return false;
       }
-      if (results[0] == null) {
+      if (args[0] == null) {
         //can happen at time 0
         return true;
       }
-      return BED.validResult(results[0]) && DANGLING.validResult(results[1]) && COMPLEX.validResult(results[2]);
+      return BED.validResult(args[0]) && DANGLING.validResult(args[1]) && COMPLEX.validResult(args[2]);
     }
     @Override
     public boolean validResult(Result result) {
@@ -138,8 +139,8 @@ public enum JobType {
   /** Write called Variants. */
   OUT {
     @Override
-    public boolean validArguments(Result[] results) {
-      return results.length == 2 && OUT.validResult(results[0]) && FILTER.validResult(results[1]);
+    public boolean validArguments(Result[] args) {
+      return args.length == 2 && OUT.validResult(args[0]) && FILTER.validResult(args[1]);
     }
     @Override
     public boolean validResult(Result result) {
@@ -148,10 +149,10 @@ public enum JobType {
   };
 
   /**
-   * @param results to be validated.
+   * @param args to be validated.
    * @return true iff the number and types of the results are correct as arguments for a job with this identifier.
    */
-  public abstract boolean validArguments(Result[] results);
+  public abstract boolean validArguments(Result[] args);
 
   /**
    * @param result to be validated.

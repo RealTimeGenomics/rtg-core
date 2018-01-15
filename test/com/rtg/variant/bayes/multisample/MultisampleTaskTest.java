@@ -263,6 +263,7 @@ public class MultisampleTaskTest extends AbstractNanoTest {
       PopulationNanoTest.check(mNano, template, sam, PopulationNanoTest.FAMILY_PED, testName, new String[]{"--Xsimple-repeat-extension=false", "--filter-bed", bedFile.getPath()}, 1000, false);
     }
   }
+
   public void testRegionPlusBedRegion() throws Exception {
     try (TestDirectory dir = new TestDirectory()) {
       final File bedFile = new File(dir, "testRegion.bed");

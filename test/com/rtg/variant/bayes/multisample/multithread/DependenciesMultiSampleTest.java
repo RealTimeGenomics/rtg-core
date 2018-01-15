@@ -117,12 +117,12 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
   public void testTo0() {
     final Dependencies<JobIdMultisample> dep = getDependencies();
     checkTo(dep, JobType.DANGLING, 0, id(0, JobType.BED), id(1, JobType.DANGLING), id(0, JobType.COMPLEX));
-    checkTo(dep, JobType.INCR, 0, id(0, JobType.DANGLING), id(1, JobType.DANGLING), id(1, JobType.FILTER), id(0, JobType.FLUSH), id(1, JobType.FLUSH));
+    checkTo(dep, JobType.INCR, 0, id(0, JobType.DANGLING), id(1, JobType.DANGLING), id(1, JobType.FILTER), id(1, JobType.FLUSH));
   }
 
   public void testTo1() {
     final Dependencies<JobIdMultisample> dep = getDependencies();
-    checkTo(dep, JobType.INCR, 1, id(1, JobType.DANGLING), id(2, JobType.DANGLING), id(2, JobType.FILTER), id(1, JobType.FLUSH), id(2, JobType.FLUSH));
+    checkTo(dep, JobType.INCR, 1, id(1, JobType.DANGLING), id(2, JobType.DANGLING), id(2, JobType.FILTER), id(2, JobType.FLUSH));
     checkTo(dep, JobType.DANGLING, 1, id(2, JobType.DANGLING), id(1, JobType.BED), id(1, JobType.COMPLEX));
     checkTo(dep, JobType.BED, 1, id(2, JobType.BED));
     checkTo(dep, JobType.COMPLEX, 1, id(1, JobType.FILTER), id(1, JobType.BED), id(1, JobType.FLUSH));
@@ -254,7 +254,7 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
     final DependenciesMultiSample dep = new DependenciesMultiSample(3);
     final JobFactory<JobIdMultisample> factory = (id, arguments) -> new Job<JobIdMultisample>(id) {
       @Override
-      protected Result run() throws IOException {
+      protected Result run() {
 //            System.err.println("id = " + id);
         switch (id.type()) {
           case INCR:
@@ -262,7 +262,7 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
           case DANGLING:
             return new Result(new Complexities(new ArrayList<>(), "foo", 0, 100, 5, 5, new byte[0], true, null));
           case COMPLEX:
-            return new Result((Object) null);
+            return new Result(null, null);
           case FILTER:
             return new Result(null, null);
           case FLUSH:

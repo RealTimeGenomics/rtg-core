@@ -495,9 +495,9 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
             calls = OutputUtils.merge(nonComplexCalls, complexCalls);
             updateCounts(caller);
           }
-          return new Result(calls);
+          return new Result(calls, complexRegions);
         } else {
-          return new Result((Object) null);
+          return new Result(null, complexRegions);
         }
       }
     }
@@ -513,7 +513,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
         //operating 1 time step behind increment job. So operating on 'last'
         if (last != null) {
           if (mParams.expandComplexReadQueries()) {
-            final Complexities current = mArguments[1] == null ? null : (Complexities) mArguments[1].result(0);
+            final Complexities current = mArguments[1] == null ? null : (Complexities) mArguments[1].result(1);
             //complex calls may have are will be made +/- 1 outside of chunk boundaries
             final int flushStart = Math.max(mMinimumPosition, last.startOfChunk() - 1);
             //don't flush last base so it can be used by next complex region
