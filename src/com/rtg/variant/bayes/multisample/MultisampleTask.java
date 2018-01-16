@@ -497,7 +497,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
           }
           return new Result(calls, complexRegions);
         } else {
-          return new Result(null, complexRegions);
+          return new Result(null, null);
         }
       }
     }
