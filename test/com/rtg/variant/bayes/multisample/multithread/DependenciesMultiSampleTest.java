@@ -262,7 +262,6 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
           case DANGLING:
             return new Result(new Complexities(new ArrayList<>(), "foo", 0, 100, 5, 5, new byte[0], true, null));
           case COMPLEX:
-            return new Result(null, null);
           case FILTER:
             return new Result(null, null);
           case FLUSH:
