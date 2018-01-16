@@ -658,11 +658,12 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     final DependenciesMultiSample depen = new DependenciesMultiSample(info.numberChunks());
     try (final JobFactoryMultiSample jobFac = new JobFactoryMultiSample(info, refName, refNts)) {
       final EventList<JobIdMultisample> eventList = new EventListMultiSample<>();
-      final Scheduler<JobIdMultisample> sched = new SchedulerSynchronized<>(depen, jobFac, eventList, null, mJobStatistics, mParams.threadingLookAhead());
+      final SchedulerSynchronized<JobIdMultisample> sched = new SchedulerSynchronized<>(depen, jobFac, eventList, null, mJobStatistics, mParams.threadingLookAhead());
       //final Scheduler<JobIdMultisample> sched = new SchedulerSynchronized<>(depen, jobFac, eventList, System.err, mJobStatistics, mParams.threadingLookAhead());
       final String msg = "Processing " + refName;
       final Executor<JobIdMultisample> exec = createExecutor(sched, msg, mParams);
       exec.run();
+      sched.dumpStarvation();
       assert eventList.next(sched.lookAhead()) == null;
       assert sched.lookAhead().total() == 0;
     }

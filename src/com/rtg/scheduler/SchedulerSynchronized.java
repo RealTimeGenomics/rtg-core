@@ -21,9 +21,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.rtg.util.MathUtils;
+import com.rtg.util.Utils;
+import com.rtg.util.array.ArrayUtils;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.util.integrity.Integrity;
+import com.rtg.variant.bayes.multisample.multithread.JobIdMultisample;
+import com.rtg.variant.bayes.multisample.multithread.JobType;
 
 /**
  * A scheduler for jobs that includes a facility to trace the execution.
@@ -142,6 +148,8 @@ public class SchedulerSynchronized<J extends JobId<J>> implements Scheduler<J>, 
     mLookAhead = new LookAhead(lookAhead, mDependencies.delta());
   }
 
+  private final double[] mStarvationCounts = new double[JobType.values().length];
+
   @Override
   public synchronized Job<J> doneNext(J id, Result result, long nanoTime) {
     if (mStatistics != null && id != null) {
@@ -169,9 +177,28 @@ public class SchedulerSynchronized<J extends JobId<J>> implements Scheduler<J>, 
     final Job<J> runnableJob = getRunnableJob();
     if (runnableJob != null) {
       mRunning.add(runnableJob.id());
+    } else {
+      //System.out.println("Starving: " + mRunning);
+      final double inc = 1.0 / mRunning.size();
+      for (final J job : mRunning) {
+        if (job instanceof JobIdMultisample) {
+          mStarvationCounts[((JobIdMultisample) job).type().ordinal()] += inc;
+        }
+      }
     }
     trace("<", runnableJob == null ? null : runnableJob.id(), "");
     return runnableJob;
+  }
+
+  /** Log statistics relating to starvation. */
+  public void dumpStarvation() {
+    if (ArrayUtils.sum(mStarvationCounts) > 0) {
+      final double[] normalized = MathUtils.renormalize(mStarvationCounts);
+      Diagnostic.developerLog("Starvation statisitcs:");
+      for (final JobType jt : JobType.values()) {
+        Diagnostic.developerLog(jt + " " + Utils.realFormat(100.0 * normalized[jt.ordinal()], 2) + "%");
+      }
+    }
   }
 
   /**
