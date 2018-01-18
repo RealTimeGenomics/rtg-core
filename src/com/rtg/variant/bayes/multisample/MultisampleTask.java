@@ -536,7 +536,6 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       @Override
       public Result run() {
         final List<Variant> prevLastCall = mArguments[2] == null ? null : getList(mArguments[2].result(1));
-
         final List<Variant> equivFiltered;
         final List<Variant> lastCalls;
         if (mArguments[0] == null && mArguments[1] == null) { // Final filter job to flush out previous last call (if present)
@@ -546,13 +545,12 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
           final Integer maxReadLen = (Integer) mArguments[0].result(1);
           final List<Variant> initialCalls = getList(mArguments[1].result(0));
           final List<Variant> split = trimSplit(initialCalls);
+          final List<Variant> filtered = locusAndIonTorrentFilters(split, mRefNts);
           final EquivalentFilter filter = new EquivalentFilter(mRefNts, prevLastCall);
-          equivFiltered = filter.filter(split, maxReadLen);
+          equivFiltered = filter.filter(filtered, maxReadLen);
           lastCalls = filter.lastCall(); // Remember last calls for checking equivalence across chunks
         }
-
-        final List<Variant> filtered = locusAndIonTorrentFilters(equivFiltered, mRefNts);
-        return new Result(filtered, lastCalls);
+        return new Result(equivFiltered, lastCalls);
       }
     }
 
