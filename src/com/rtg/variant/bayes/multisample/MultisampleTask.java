@@ -413,6 +413,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       protected List<Variant> getList(Object o) {
         return (List<Variant>) o;
       }
+
     }
 
     private class IncrJob extends MultisampleJob {
@@ -550,7 +551,19 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
           equivFiltered = filter.filter(filtered, maxReadLen);
           lastCalls = filter.lastCall(); // Remember last calls for checking equivalence across chunks
         }
-        return new Result(equivFiltered, lastCalls);
+        if (equivFiltered != null) {
+          final List<VcfRecord> vcfRecords = new ArrayList<>(equivFiltered.size());
+          for (final Variant v : equivFiltered) {
+            final VcfRecord record = mFormatter.makeVcfRecord(v);
+            for (final VcfAnnotator annot : mAnnotators) {
+              annot.annotate(record);
+            }
+            vcfRecords.add(record);
+          }
+          return new Result(vcfRecords, lastCalls);
+        } else {
+          return new Result(null, lastCalls);
+        }
       }
     }
 
@@ -561,13 +574,9 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
       @Override
       public Result run() throws IOException {
-        final List<Variant> filtered = getList(mArguments[1].result(0));
+        final List<VcfRecord> filtered = getVcfList(mArguments[1].result(0));
         if (filtered != null) {
-          for (final Variant v : filtered) {
-            final VcfRecord record = mFormatter.makeVcfRecord(v);
-            for (final VcfAnnotator annot : mAnnotators) {
-              annot.annotate(record);
-            }
+          for (final VcfRecord record : filtered) {
             boolean keep = true;
             for (final VcfFilter filter : mFilters) {
               if (!filter.accept(record)) {
@@ -829,5 +838,10 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       VcfUtils.createVcfTabixIndex(mParams.vcfFile());
       BedUtils.createBedTabixIndex(mParams.bedFile());
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  private static  List<VcfRecord> getVcfList(final Object o) {
+    return (List<VcfRecord>) o;
   }
 }
