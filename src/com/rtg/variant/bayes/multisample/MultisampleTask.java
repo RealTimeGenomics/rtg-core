@@ -537,33 +537,28 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
       @Override
       public Result run() {
-        final List<Variant> prevLastCall = mArguments[2] == null ? null : getList(mArguments[2].result(1));
-        final List<Variant> equivFiltered;
-        final List<Variant> lastCalls;
+        final List<VcfRecord> prevLastCall = mArguments[2] == null ? null : getVcfList(mArguments[2].result(1));
+        final List<VcfRecord> equivFiltered;
+        final List<VcfRecord> lastCalls;
         if (mArguments[0] == null && mArguments[1] == null) { // Final filter job to flush out previous last call (if present)
-          equivFiltered = prevLastCall;
-          lastCalls = null;
+          return new Result(prevLastCall, null);
         } else {
           final Integer maxReadLen = (Integer) mArguments[0].result(1);
           final List<Variant> initialCalls = getList(mArguments[1].result(0));
           final List<Variant> split = trimSplit(initialCalls);
           final List<Variant> filtered = locusAndIonTorrentFilters(split, mRefNts);
-          final EquivalentFilter filter = new EquivalentFilter(mRefNts, prevLastCall);
-          equivFiltered = filter.filter(filtered, maxReadLen);
-          lastCalls = filter.lastCall(); // Remember last calls for checking equivalence across chunks
-        }
-        if (equivFiltered != null) {
-          final List<VcfRecord> vcfRecords = new ArrayList<>(equivFiltered.size());
-          for (final Variant v : equivFiltered) {
+          final List<VcfRecord> vcfRecords = new ArrayList<>(filtered.size());
+          for (final Variant v : filtered) {
             final VcfRecord record = mFormatter.makeVcfRecord(v);
             for (final VcfAnnotator annot : mAnnotators) {
               annot.annotate(record);
             }
             vcfRecords.add(record);
           }
-          return new Result(vcfRecords, lastCalls);
-        } else {
-          return new Result(null, lastCalls);
+          final VcfEquivalentFilter filter = new VcfEquivalentFilter(mRefNts, prevLastCall);
+          equivFiltered = filter.filter(vcfRecords, maxReadLen);
+          lastCalls = filter.lastCall(); // Remember last calls for checking equivalence across chunks
+          return new Result(equivFiltered, lastCalls);
         }
       }
     }
