@@ -537,29 +537,21 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
       @Override
       public Result run() {
-        final List<VcfRecord> prevLastCall = mArguments[2] == null ? null : getVcfList(mArguments[2].result(1));
-        final List<VcfRecord> equivFiltered;
-        final List<VcfRecord> lastCalls;
-        if (mArguments[0] == null && mArguments[1] == null) { // Final filter job to flush out previous last call (if present)
-          return new Result(prevLastCall, null);
-        } else {
-          final Integer maxReadLen = (Integer) mArguments[0].result(1);
-          final List<Variant> initialCalls = getList(mArguments[1].result(0));
-          final List<Variant> split = trimSplit(initialCalls);
-          final List<Variant> filtered = locusAndIonTorrentFilters(split, mRefNts);
-          final List<VcfRecord> vcfRecords = new ArrayList<>(filtered.size());
-          for (final Variant v : filtered) {
-            final VcfRecord record = mFormatter.makeVcfRecord(v);
-            for (final VcfAnnotator annot : mAnnotators) {
-              annot.annotate(record);
-            }
-            vcfRecords.add(record);
-          }
-          final VcfEquivalentFilter filter = new VcfEquivalentFilter(mRefNts, prevLastCall);
-          equivFiltered = filter.filter(vcfRecords, maxReadLen);
-          lastCalls = filter.lastCall(); // Remember last calls for checking equivalence across chunks
-          return new Result(equivFiltered, lastCalls);
+        final List<Variant> initialCalls = getList(mArguments[1].result(0));
+        if (initialCalls == null) {
+          return new Result(null, 0);
         }
+        final List<Variant> split = trimSplit(initialCalls);
+        final List<Variant> filtered = locusAndIonTorrentFilters(split, mRefNts);
+        final List<VcfRecord> vcfRecords = new ArrayList<>(filtered.size());
+        for (final Variant v : filtered) {
+          final VcfRecord record = mFormatter.makeVcfRecord(v);
+          for (final VcfAnnotator annot : mAnnotators) {
+            annot.annotate(record);
+          }
+          vcfRecords.add(record);
+        }
+        return new Result(vcfRecords, mArguments[0].result(1));
       }
     }
 
@@ -570,9 +562,37 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
       @Override
       public Result run() throws IOException {
-        final List<VcfRecord> filtered = getVcfList(mArguments[1].result(0));
-        if (filtered != null) {
-          for (final VcfRecord record : filtered) {
+        final List<VcfRecord> prevLastCall = mArguments[0] == null ? null : getVcfList(mArguments[0].result(0)); // from previous out
+        final List<VcfRecord> records = mArguments[1] == null ? null : getVcfList(mArguments[1].result(0)); // from filtering
+        final List<VcfRecord> lastCalls;
+        if (records == null) {
+          // Handle very last records
+          filterAndWrite(prevLastCall);
+          lastCalls = null;
+        } else {
+          // RCEQUIV filtering
+          final List<VcfRecord> equivFiltered;
+          if (mArguments[1] == null) {
+            equivFiltered = prevLastCall;
+            lastCalls = null;
+          } else {
+            final VcfEquivalentFilter equivFilter = new VcfEquivalentFilter(mRefNts, prevLastCall);
+            final Integer maxReadLen = (Integer) mArguments[1].result(1);
+            equivFiltered = equivFilter.filter(records, maxReadLen);
+            lastCalls = equivFilter.lastCall(); // Remember last calls for checking equivalence across chunks
+          }
+          filterAndWrite(equivFiltered);
+        }
+        if (mBuffer.finishedTo() < Math.min(id().time() * mInfo.chunkSize() + mInfo.start() - 1, mInfo.end())) { //flushing should be keeping up with output
+          throw new RuntimeException("Failed to flush chunk: " + mBuffer.finishedTo() + " : " + id().time() * mInfo.chunkSize());
+        }
+        return new Result(lastCalls);
+      }
+
+      private void filterAndWrite(List<VcfRecord> equivFiltered) throws IOException {
+        // Other VCF level filtering
+        if (equivFiltered != null) {
+          for (final VcfRecord record : equivFiltered) {
             boolean keep = true;
             for (final VcfFilter filter : mFilters) {
               if (!filter.accept(record)) {
@@ -585,10 +605,6 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
             }
           }
         }
-        if (mBuffer.finishedTo() < Math.min(id().time() * mInfo.chunkSize() + mInfo.start() - 1, mInfo.end())) { //flushing should be keeping up with output
-          throw new RuntimeException("Failed to flush chunk: " + mBuffer.finishedTo() + " : " + id().time() * mInfo.chunkSize());
-        }
-        return null;
       }
     }
   }

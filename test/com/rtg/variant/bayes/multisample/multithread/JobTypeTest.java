@@ -13,6 +13,7 @@
 package com.rtg.variant.bayes.multisample.multithread;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.rtg.scheduler.Result;
 import com.rtg.util.TestUtils;
@@ -107,20 +108,16 @@ public class JobTypeTest extends TestCase {
     assertFalse(t.validArguments(new Result[] {new Result(new Object())}));
 
     final ArrayList<Variant> list = new ArrayList<>();
-    assertTrue(t.validArguments(new Result[] {null, null, new Result(null, list), null}));
-    assertTrue(t.validArguments(new Result[] {null, null, new Result(list, null), null}));
-
+    assertTrue(t.validArguments(new Result[] {null, null, null}));
 
     final Result r = getValidIncrementResult(); //increment
     final Result r2 = getValidComplexResult(); //complex
-    final Result r3 = getValidFilterResult(); //filter
-    assertTrue(t.validArguments(new Result[] {r, r2, r3, new Result()}));
-    assertTrue(t.validArguments(new Result[] {r, r2, null, new Result()}));
-    assertFalse(t.validArguments(new Result[] {new Result(), r2, null, new Result()}));
-    assertFalse(t.validArguments(new Result[] {r, new Result(), null, new Result()}));
+    assertTrue(t.validArguments(new Result[] {r, r2, new Result()}));
+    assertFalse(t.validArguments(new Result[] {new Result(), r2, new Result()}));
+    assertFalse(t.validArguments(new Result[] {r, new Result(), new Result()}));
 
     assertFalse(t.validResult(new Result()));
-    assertTrue(t.validResult(new Result(null, list)));
+    assertTrue(t.validResult(new Result(null, 42)));
     assertTrue(t.validResult(new Result(list, null)));
     assertTrue(t.validResult(new Result(null, null)));
   }
@@ -163,7 +160,7 @@ public class JobTypeTest extends TestCase {
 
   private Result getValidFilterResult() {
     final ArrayList<Variant> list = new ArrayList<>();
-    return new Result(list, list);
+    return new Result(list, 42);
   }
 
   private Result getValidBedResult() {
@@ -176,7 +173,7 @@ public class JobTypeTest extends TestCase {
   }
 
   private Result getValidOutResult() {
-    return null;
+    return new Result(Collections.emptyList());
   }
 
 }

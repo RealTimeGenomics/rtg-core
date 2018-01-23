@@ -101,20 +101,16 @@ public enum JobType {
   FILTER {
     @Override
     public boolean validArguments(Result[] args) {
-      if (args.length != 4) {
+      if (args.length != 3) {
         return false;
       }
-      if (args[0] == null && args[1] == null) {
-        //the last one
-        return FILTER.validResult(args[2]);
-      }
-      return INCR.validResult(args[0]) && COMPLEX.validResult(args[1]) && (args[2] == null || FILTER.validResult(args[2]));
+      return (args[0] == null || INCR.validResult(args[0])) && (args[1] == null || COMPLEX.validResult(args[1]));
     }
     @Override
     public boolean validResult(Result result) {
       return result.length() == 2
           && (result.result(0) == null || result.result(0) instanceof List)
-          && (result.result(1) == null || result.result(1) instanceof List)
+          && (result.result(1) == null || result.result(1) instanceof Integer)
           ;
     }
   },
@@ -140,11 +136,11 @@ public enum JobType {
   OUT {
     @Override
     public boolean validArguments(Result[] args) {
-      return args.length == 2 && OUT.validResult(args[0]) && FILTER.validResult(args[1]);
+      return args.length == 2 && (args[0] == null || OUT.validResult(args[0])) && (args[1] == null || FILTER.validResult(args[1]));
     }
     @Override
     public boolean validResult(Result result) {
-      return result == null;
+      return result == null || (result.length() == 1 && (result.result(0) == null || result.result(0) instanceof List));
     }
   };
 

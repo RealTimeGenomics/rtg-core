@@ -58,12 +58,10 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
 
     ORDERING.setLink(JobType.INCR, 1, JobType.FILTER);   // Only needed to propagate max read length for equivalent filtering limiting
     ORDERING.setLink(JobType.COMPLEX, 0, JobType.FILTER);
-    ORDERING.setLink(JobType.FILTER, 1, JobType.FILTER); // Equivalent filter status propagation, for comparing against last across boundaries
     ORDERING.setLink(JobType.FLUSH, 0, JobType.FILTER);
 
-    ORDERING.setLink(JobType.OUT, 1, JobType.OUT); // Ensure output ordering
+    ORDERING.setLink(JobType.OUT, 1, JobType.OUT); // Ensure output ordering and needed for equivalent filtering across boundaries
     ORDERING.setLink(JobType.FILTER, 0, JobType.OUT);
-
 
     ORDERING.freeze();
   }
@@ -106,33 +104,16 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
         if (chunk == mNumberChunks + 1) {
           switch (type) {
             case FILTER:
-              none = fridType != JobType.FILTER;
+              none = false;
               break;
             case OUT:
-              none = false;
-              break;
-            default:
-              throw new RuntimeException(id.toString());
-          }
-        } else if (fromChunk > 0) {
-          none = false;
-        } else { //fromChunk == 0
-          switch (type) {
-            case DANGLING:
-            case COMPLEX:
-            case FLUSH:
-            case BED:
-              none = false;
-              break;
-            case FILTER:
               none = fridType == JobType.FILTER;
               break;
-            case OUT:
-              none = true;
-              break;
             default:
               throw new RuntimeException(id.toString());
           }
+        } else {
+          none = false;
         }
         from = none ? null : new JobIdMultisample(mNumberChunks, fromChunk, fridType);
       }
@@ -146,34 +127,22 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
   public Collection<JobIdMultisample> to(final JobIdMultisample id) {
     final Set<JobIdMultisample> res = new HashSet<>();
     final int chunk = id.time();
-    final JobType typeFrom = id.type();
-    if (typeFrom == JobType.COMPLEX && chunk == 0) {
-      //cut out filter job for timestamp 0
-      res.add(new JobIdMultisample(mNumberChunks, 0, JobType.BED));
-      res.add(new JobIdMultisample(mNumberChunks, 0, JobType.FLUSH));
-      return res;
-    } else if (typeFrom == JobType.FLUSH && chunk == 0) {
-      //noop
-      //cut out filter job for timestamp 0
-    } else {
-      final Set<EnumTimeId<JobType>> toSet = ORDERING.to(id.type());
-      for (final EnumTimeId<JobType> toid : toSet) {
-        final int toIncr = toid.time();
-        assert toIncr >= 0;
-        final int toChunk = chunk + toIncr;
-        final JobType toType = toid.type();
-        final boolean inRange;
-        if (toChunk <= mNumberChunks) {
-          inRange = true;
-        } else {
-          inRange = toChunk == mNumberChunks + 1 && (toType == JobType.FILTER || toType == JobType.OUT);
-        }
-        if (inRange) {
-          res.add(new JobIdMultisample(mNumberChunks, toChunk, toType));
-        }
+    final Set<EnumTimeId<JobType>> toSet = ORDERING.to(id.type());
+    for (final EnumTimeId<JobType> toid : toSet) {
+      final int toIncr = toid.time();
+      assert toIncr >= 0;
+      final int toChunk = chunk + toIncr;
+      final JobType toType = toid.type();
+      final boolean inRange;
+      if (toChunk <= mNumberChunks) {
+        inRange = true;
+      } else {
+        inRange = toChunk == mNumberChunks + 1 && (toType == JobType.OUT);
+      }
+      if (inRange) {
+        res.add(new JobIdMultisample(mNumberChunks, toChunk, toType));
       }
     }
-    //System.err.println("to id:" + id + " -> " + res);
     return res;
   }
 

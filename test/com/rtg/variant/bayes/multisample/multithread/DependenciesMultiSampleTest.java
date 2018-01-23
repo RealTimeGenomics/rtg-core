@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.rtg.scheduler.AbstractDependenciesTest;
@@ -31,11 +32,11 @@ import com.rtg.scheduler.SchedulerSynchronized;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.variant.bayes.multisample.Complexities;
+import com.rtg.vcf.VcfRecord;
 
 /**
  */
 public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdMultisample> {
-
 
   @Override
   protected Dependencies<JobIdMultisample> getDependencies() {
@@ -64,13 +65,7 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
 
   private void checkAllIds(final int numberChunks, final Set<JobIdMultisample> allIds) {
     final JobType[] values = JobType.values();
-    assertTrue(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.INCR)));
-    assertTrue(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.DANGLING)));
-    assertTrue(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.COMPLEX)));
-    assertTrue(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.BED)));
-    assertFalse(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.FILTER)));
-    assertFalse(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.OUT)));
-    for (int i = 1; i < numberChunks; ++i) {
+    for (int i = 0; i < numberChunks; ++i) {
       for (final JobType ty : values) {
         assertTrue("i=" + i + " ty=" + ty, allIds.contains(new JobIdMultisample(numberChunks, i, ty)));
       }
@@ -90,13 +85,7 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
     final Set<JobIdMultisample> allIds = allIds(getDependencies(), 3);
     //System.err.println(allIds);
     final JobType[] values = JobType.values();
-    assertTrue(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.INCR)));
-    assertTrue(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.DANGLING)));
-    assertTrue(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.COMPLEX)));
-    assertTrue(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.BED)));
-    assertFalse(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.FILTER)));
-    assertFalse(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.OUT)));
-    for (int i = 1; i <= lookAhead; ++i) {
+    for (int i = 0; i <= lookAhead; ++i) {
       for (final JobType ty : values) {
         assertTrue("i=" + i + " ty=" + ty, allIds.contains(new JobIdMultisample(numberChunks, i, ty)));
       }
@@ -126,7 +115,7 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
     checkTo(dep, JobType.DANGLING, 1, id(2, JobType.DANGLING), id(1, JobType.BED), id(1, JobType.COMPLEX));
     checkTo(dep, JobType.BED, 1, id(2, JobType.BED));
     checkTo(dep, JobType.COMPLEX, 1, id(1, JobType.FILTER), id(1, JobType.BED), id(1, JobType.FLUSH));
-    checkTo(dep, JobType.FILTER, 1, id(1, JobType.OUT), id(2, JobType.FILTER));
+    checkTo(dep, JobType.FILTER, 1, id(1, JobType.OUT));
     checkTo(dep, JobType.OUT, 1, id(2, JobType.OUT));
   }
 
@@ -135,13 +124,12 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
     checkTo(dep, JobType.DANGLING, 5, id(5, JobType.BED), id(5, JobType.COMPLEX));
     checkTo(dep, JobType.BED, 5);
     checkTo(dep, JobType.COMPLEX, 5, id(5, JobType.FILTER), id(5, JobType.BED), id(5, JobType.FLUSH));
-    checkTo(dep, JobType.FILTER, 5, id(5, JobType.OUT), id(6, JobType.FILTER));
+    checkTo(dep, JobType.FILTER, 5, id(5, JobType.OUT));
     checkTo(dep, JobType.OUT, 5, id(6, JobType.OUT));
   }
 
   public void testToN1() {
     final Dependencies<JobIdMultisample> dep = getDependencies();
-    checkTo(dep, JobType.FILTER, 6, id(6, JobType.OUT));
     checkTo(dep, JobType.OUT, 6);
   }
 
@@ -163,12 +151,12 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
 
   public void testFrom1() {
     final Dependencies<JobIdMultisample> dep = getDependencies();
-    checkFrom(dep, JobType.FILTER, 1, id(0, JobType.INCR), id(1, JobType.COMPLEX), null, id(1, JobType.FLUSH));
+    checkFrom(dep, JobType.FILTER, 1, id(0, JobType.INCR), id(1, JobType.COMPLEX), id(1, JobType.FLUSH));
     checkFrom(dep, JobType.INCR, 1);
     checkFrom(dep, JobType.DANGLING, 1, id(0, JobType.INCR), id(1, JobType.INCR), id(0, JobType.DANGLING));
     checkFrom(dep, JobType.BED, 1, id(0, JobType.BED), id(1, JobType.DANGLING), id(1, JobType.COMPLEX));
     checkFrom(dep, JobType.COMPLEX, 1, id(1, JobType.DANGLING));
-    checkFrom(dep, JobType.OUT, 1, null, id(1, JobType.FILTER));
+    checkFrom(dep, JobType.OUT, 1, id(0, JobType.OUT), id(1, JobType.FILTER));
   }
 
   public void testFrom2() {
@@ -177,7 +165,7 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
     checkFrom(dep, JobType.DANGLING, 2, id(1, JobType.INCR), id(2, JobType.INCR), id(1, JobType.DANGLING));
     checkFrom(dep, JobType.BED, 2, id(1, JobType.BED), id(2, JobType.DANGLING), id(2, JobType.COMPLEX));
     checkFrom(dep, JobType.COMPLEX, 2, id(2, JobType.DANGLING));
-    checkFrom(dep, JobType.FILTER, 2, id(1, JobType.INCR), id(2, JobType.COMPLEX), id(1, JobType.FILTER), id(2, JobType.FLUSH));
+    checkFrom(dep, JobType.FILTER, 2, id(1, JobType.INCR), id(2, JobType.COMPLEX), id(2, JobType.FLUSH));
     checkFrom(dep, JobType.OUT, 2, id(1, JobType.OUT), id(2, JobType.FILTER));
   }
 
@@ -186,14 +174,13 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
     checkFrom(dep, JobType.DANGLING, 5, id(4, JobType.INCR), null, id(4, JobType.DANGLING));
     checkFrom(dep, JobType.BED, 5, id(4, JobType.BED), id(5, JobType.DANGLING), id(5, JobType.COMPLEX));
     checkFrom(dep, JobType.COMPLEX, 5, id(5, JobType.DANGLING));
-    checkFrom(dep, JobType.FILTER, 5, id(4, JobType.INCR), id(5, JobType.COMPLEX), id(4, JobType.FILTER), id(5, JobType.FLUSH));
+    checkFrom(dep, JobType.FILTER, 5, id(4, JobType.INCR), id(5, JobType.COMPLEX), id(5, JobType.FLUSH));
     checkFrom(dep, JobType.OUT, 5, id(4, JobType.OUT), id(5, JobType.FILTER));
   }
 
   public void testFromN1() {
     final Dependencies<JobIdMultisample> dep = getDependencies();
-    checkFrom(dep, JobType.FILTER, 6, null, null, id(5, JobType.FILTER), null);
-    checkFrom(dep, JobType.OUT, 6, id(5, JobType.OUT), id(6, JobType.FILTER));
+    checkFrom(dep, JobType.OUT, 6, id(5, JobType.OUT), null);
   }
 
   private void checkFrom(final Dependencies<JobIdMultisample> dep, final JobType ty, int time, final JobIdMultisample... exp) {
@@ -262,13 +249,14 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
           case DANGLING:
             return new Result(new Complexities(new ArrayList<>(), "foo", 0, 100, 5, 5, new byte[0], true, null));
           case COMPLEX:
-          case FILTER:
             return new Result(null, null);
+          case FILTER:
+            return new Result(null, 42);
           case FLUSH:
           case BED:
             return new Result();
           case OUT:
-            return null;
+            return new Result((List<VcfRecord>) null);
           default:
             throw new RuntimeException();
         }
