@@ -151,12 +151,12 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
 
   public void testFrom1() {
     final Dependencies<JobIdMultisample> dep = getDependencies();
-    checkFrom(dep, JobType.FILTER, 1, id(0, JobType.INCR), id(1, JobType.COMPLEX), id(1, JobType.FLUSH));
+    checkFrom(dep, JobType.FILTER, 1, id(0, JobType.INCR), id(1, JobType.COMPLEX));
     checkFrom(dep, JobType.INCR, 1);
     checkFrom(dep, JobType.DANGLING, 1, id(0, JobType.INCR), id(1, JobType.INCR), id(0, JobType.DANGLING));
     checkFrom(dep, JobType.BED, 1, id(0, JobType.BED), id(1, JobType.DANGLING), id(1, JobType.COMPLEX));
     checkFrom(dep, JobType.COMPLEX, 1, id(1, JobType.DANGLING));
-    checkFrom(dep, JobType.OUT, 1, id(0, JobType.OUT), id(1, JobType.FILTER));
+    checkFrom(dep, JobType.OUT, 1, id(0, JobType.OUT), id(1, JobType.FILTER), id(1, JobType.FLUSH));
   }
 
   public void testFrom2() {
@@ -165,8 +165,8 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
     checkFrom(dep, JobType.DANGLING, 2, id(1, JobType.INCR), id(2, JobType.INCR), id(1, JobType.DANGLING));
     checkFrom(dep, JobType.BED, 2, id(1, JobType.BED), id(2, JobType.DANGLING), id(2, JobType.COMPLEX));
     checkFrom(dep, JobType.COMPLEX, 2, id(2, JobType.DANGLING));
-    checkFrom(dep, JobType.FILTER, 2, id(1, JobType.INCR), id(2, JobType.COMPLEX), id(2, JobType.FLUSH));
-    checkFrom(dep, JobType.OUT, 2, id(1, JobType.OUT), id(2, JobType.FILTER));
+    checkFrom(dep, JobType.FILTER, 2, id(1, JobType.INCR), id(2, JobType.COMPLEX));
+    checkFrom(dep, JobType.OUT, 2, id(1, JobType.OUT), id(2, JobType.FILTER), id(2, JobType.FLUSH));
   }
 
   public void testFromN() {
@@ -174,13 +174,13 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
     checkFrom(dep, JobType.DANGLING, 5, id(4, JobType.INCR), null, id(4, JobType.DANGLING));
     checkFrom(dep, JobType.BED, 5, id(4, JobType.BED), id(5, JobType.DANGLING), id(5, JobType.COMPLEX));
     checkFrom(dep, JobType.COMPLEX, 5, id(5, JobType.DANGLING));
-    checkFrom(dep, JobType.FILTER, 5, id(4, JobType.INCR), id(5, JobType.COMPLEX), id(5, JobType.FLUSH));
-    checkFrom(dep, JobType.OUT, 5, id(4, JobType.OUT), id(5, JobType.FILTER));
+    checkFrom(dep, JobType.FILTER, 5, id(4, JobType.INCR), id(5, JobType.COMPLEX));
+    checkFrom(dep, JobType.OUT, 5, id(4, JobType.OUT), id(5, JobType.FILTER), id(5, JobType.FLUSH));
   }
 
   public void testFromN1() {
     final Dependencies<JobIdMultisample> dep = getDependencies();
-    checkFrom(dep, JobType.OUT, 6, id(5, JobType.OUT), null);
+    checkFrom(dep, JobType.OUT, 6, id(5, JobType.OUT), null, null);
   }
 
   private void checkFrom(final Dependencies<JobIdMultisample> dep, final JobType ty, int time, final JobIdMultisample... exp) {

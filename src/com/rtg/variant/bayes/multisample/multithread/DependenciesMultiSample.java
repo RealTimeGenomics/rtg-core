@@ -58,10 +58,10 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
 
     ORDERING.setLink(JobType.INCR, 1, JobType.FILTER);   // Only needed to propagate max read length for equivalent filtering limiting
     ORDERING.setLink(JobType.COMPLEX, 0, JobType.FILTER);
-    ORDERING.setLink(JobType.FLUSH, 0, JobType.FILTER);
 
     ORDERING.setLink(JobType.OUT, 1, JobType.OUT); // Ensure output ordering and needed for equivalent filtering across boundaries
     ORDERING.setLink(JobType.FILTER, 0, JobType.OUT);
+    ORDERING.setLink(JobType.FLUSH, 0, JobType.OUT);
 
     ORDERING.freeze();
   }
@@ -107,7 +107,7 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
               none = false;
               break;
             case OUT:
-              none = fridType == JobType.FILTER;
+              none = fridType == JobType.FILTER || fridType == JobType.FLUSH;
               break;
             default:
               throw new RuntimeException(id.toString());

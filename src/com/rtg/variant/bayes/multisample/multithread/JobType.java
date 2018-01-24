@@ -101,7 +101,7 @@ public enum JobType {
   FILTER {
     @Override
     public boolean validArguments(Result[] args) {
-      if (args.length != 3) {
+      if (args.length != 2) {
         return false;
       }
       return (args[0] == null || INCR.validResult(args[0])) && (args[1] == null || COMPLEX.validResult(args[1]));
@@ -136,7 +136,10 @@ public enum JobType {
   OUT {
     @Override
     public boolean validArguments(Result[] args) {
-      return args.length == 2 && (args[0] == null || OUT.validResult(args[0])) && (args[1] == null || FILTER.validResult(args[1]));
+      return args.length == 3
+        && (args[0] == null || OUT.validResult(args[0]))
+        && (args[1] == null || FILTER.validResult(args[1]))
+        && (args[2] == null || FLUSH.validResult(args[2]));
     }
     @Override
     public boolean validResult(Result result) {

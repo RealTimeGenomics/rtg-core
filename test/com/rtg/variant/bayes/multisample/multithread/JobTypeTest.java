@@ -108,13 +108,13 @@ public class JobTypeTest extends TestCase {
     assertFalse(t.validArguments(new Result[] {new Result(new Object())}));
 
     final ArrayList<Variant> list = new ArrayList<>();
-    assertTrue(t.validArguments(new Result[] {null, null, null}));
+    assertTrue(t.validArguments(new Result[] {null, null}));
 
     final Result r = getValidIncrementResult(); //increment
     final Result r2 = getValidComplexResult(); //complex
-    assertTrue(t.validArguments(new Result[] {r, r2, new Result()}));
-    assertFalse(t.validArguments(new Result[] {new Result(), r2, new Result()}));
-    assertFalse(t.validArguments(new Result[] {r, new Result(), new Result()}));
+    assertTrue(t.validArguments(new Result[] {r, r2}));
+    assertFalse(t.validArguments(new Result[] {new Result(), r2}));
+    assertFalse(t.validArguments(new Result[] {r, new Result()}));
 
     assertFalse(t.validResult(new Result()));
     assertTrue(t.validResult(new Result(null, 42)));
@@ -143,7 +143,7 @@ public class JobTypeTest extends TestCase {
     final Result r1 = getValidOutResult();
     final Result r2 = getValidFilterResult();
 
-    assertTrue(t.validArguments(new Result[] {r1, r2}));
+    assertTrue(t.validArguments(new Result[] {r1, r2, new Result()}));
 
     assertFalse(t.validResult(new Result()));
   }
