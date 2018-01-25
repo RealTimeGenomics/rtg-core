@@ -465,7 +465,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
       @Override
       public Result run() throws IOException {
-        final Complexities last = (Complexities) mArguments[1].result(0);
+        final Complexities last = (Complexities) mArguments[1].result(1);
         if (last != null) {
           mBed.write(last);
         }

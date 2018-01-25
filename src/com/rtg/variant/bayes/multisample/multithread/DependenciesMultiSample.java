@@ -48,8 +48,7 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
     ORDERING.setLink(JobType.DANGLING, 1, JobType.DANGLING);  // Dangling adjustment propagation through consecutive chunks
 
     ORDERING.setLink(JobType.BED, 1, JobType.BED);      // Ensure output ordering
-    ORDERING.setLink(JobType.DANGLING, 0, JobType.BED); // Needed to get complexities out, since COMPLEX doesn't return them as a result
-    ORDERING.setLink(JobType.COMPLEX, 0, JobType.BED);  // But needs to be after complex calling has put status into the complexities.
+    ORDERING.setLink(JobType.COMPLEX, 0, JobType.BED);
 
     ORDERING.setLink(JobType.DANGLING, 0, JobType.COMPLEX); // DANGLING passes the region from the previous timestep to complex
 

@@ -118,14 +118,14 @@ public enum JobType {
   BED {
     @Override
     public boolean validArguments(Result[] args) {
-      if (args.length != 3) {
+      if (args.length != 2) {
         return false;
       }
       if (args[0] == null) {
         //can happen at time 0
         return true;
       }
-      return BED.validResult(args[0]) && DANGLING.validResult(args[1]) && COMPLEX.validResult(args[2]);
+      return BED.validResult(args[0]) && COMPLEX.validResult(args[1]);
     }
     @Override
     public boolean validResult(Result result) {

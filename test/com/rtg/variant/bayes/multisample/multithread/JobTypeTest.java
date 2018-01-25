@@ -77,11 +77,9 @@ public class JobTypeTest extends TestCase {
     assertTrue(t.validArguments(new Result[] {r, r2, r3}));
     assertTrue(t.validArguments(new Result[] {null, r2, null}));
     assertTrue(t.validArguments(new Result[] {r, null, r3}));
-
     assertTrue(t.validArguments(new Result[] {r, r2, null}));
     assertFalse(t.validArguments(new Result[] {r, new Result(), r3}));
     assertFalse(t.validArguments(new Result[] {new Result(), r, r3}));
-
     assertFalse(t.validResult(new Result()));
     assertTrue(t.validResult(new Result((Object) null)));
   }
@@ -90,14 +88,11 @@ public class JobTypeTest extends TestCase {
     final JobType t = JobType.COMPLEX;
     assertTrue(t.validResult(getValidComplexResult()));
     assertFalse(t.validArguments(new Result[] {new Result(new Object())}));
-
     assertTrue(t.validArguments(new Result[] {new Result((Object) null)}));
 
     final Result r = getValidDanglingResult();
     assertTrue(t.validArguments(new Result[] {r}));
-
     assertFalse(t.validArguments(new Result[] {new Result()}));
-
     assertTrue(t.validResult(new Result(null, null)));
     assertFalse(t.validResult(new Result()));
   }
@@ -127,11 +122,10 @@ public class JobTypeTest extends TestCase {
     assertTrue(t.validResult(getValidBedResult()));
     assertFalse(t.validArguments(new Result[] {new Result(new Object())}));
     final Result r1 = getValidBedResult();
-    final Result r2 = getValidDanglingResult();
     final Result r3 = getValidComplexResult();
-    assertTrue(t.validArguments(new Result[] {null, r2, r3})); //for time 0
-    assertTrue(t.validArguments(new Result[] {r1, r2, r3}));
-    assertFalse(t.validArguments(new Result[] {r2, r3, r1}));
+    assertTrue(t.validArguments(new Result[] {null, r3})); //for time 0
+    assertTrue(t.validArguments(new Result[] {r1, r3}));
+    assertFalse(t.validArguments(new Result[] {r3, r1}));
     assertFalse(t.validResult(new Result(new Object())));
   }
 
@@ -144,7 +138,6 @@ public class JobTypeTest extends TestCase {
     final Result r2 = getValidFilterResult();
 
     assertTrue(t.validArguments(new Result[] {r1, r2, new Result()}));
-
     assertFalse(t.validResult(new Result()));
   }
 
