@@ -23,6 +23,7 @@ import com.rtg.bed.BedUtils;
 import com.rtg.launcher.ParamsTask;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
+import com.rtg.reader.SequencesReaderReferenceSource;
 import com.rtg.reference.Ploidy;
 import com.rtg.reference.SexMemo;
 import com.rtg.sam.CircularBufferMultifileSinglePassReaderWindowSync;
@@ -82,6 +83,7 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.AnnotatingVcfWriter;
+import com.rtg.vcf.ClusterAnnotator;
 import com.rtg.vcf.StatisticsVcfWriter;
 import com.rtg.vcf.VariantStatistics;
 import com.rtg.vcf.VcfAnnotator;
@@ -90,6 +92,7 @@ import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
 import com.rtg.vcf.VcfWriterFactory;
+import com.rtg.vcf.annotation.SimpleTandemRepeatAnnotator;
 import com.rtg.vcf.header.VcfHeader;
 
 import htsjdk.samtools.SAMReadGroupRecord;
@@ -758,7 +761,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       mDecomposer = new AligningDecomposer(mConfig.getDenovoChecker(), variantAlleleTrigger);
     }
     mAnnotators.addAll(mConfig.getVcfAnnotators());
-    //mAnnotators.add(new SimpleTandemRepeatAnnotator(new SequencesReaderReferenceSource(mReferenceSequences)));
+    mAnnotators.add(new SimpleTandemRepeatAnnotator(new SequencesReaderReferenceSource(mReferenceSequences)));
     mFilters.addAll(mConfig.getVcfFilters());
 
     String[] genomeNames = mConfig.getGenomeNames();
@@ -778,7 +781,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       annot.updateHeader(mVcfHeader);
     }
     mOut = new VcfWriterFactory().async(true).zip(mParams.blockCompressed()).make(mVcfHeader, mParams.vcfFile());
-    //mOut = new DensityAnnotator(mOut);
+    mOut = new ClusterAnnotator(mOut);
     mOut = new StatisticsVcfWriter<>(mOut, mStatistics, mFilters);
     // AVR annotator comes last because it wants to use other annotations
     if (mParams.avrModelFile() != null) {
