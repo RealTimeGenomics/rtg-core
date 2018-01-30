@@ -567,7 +567,12 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
         final List<VcfRecord> lastCalls;
         if (records == null) {
           // Handle very last records
-          filterAndWrite(prevLastCall);
+          // Other VCF level filtering
+          if (prevLastCall != null) {
+            for (final VcfRecord record : prevLastCall) {
+              mOut.write(record);
+            }
+          }
           lastCalls = null;
         } else {
           // RCEQUIV filtering
@@ -581,30 +586,17 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
             equivFiltered = equivFilter.filter(records, maxReadLen);
             lastCalls = equivFilter.lastCall(); // Remember last calls for checking equivalence across chunks
           }
-          filterAndWrite(equivFiltered);
+          // Other VCF level filtering
+          if (equivFiltered != null) {
+            for (final VcfRecord record : equivFiltered) {
+              mOut.write(record);
+            }
+          }
         }
         if (mBuffer.finishedTo() < Math.min(id().time() * mInfo.chunkSize() + mInfo.start() - 1, mInfo.end())) { //flushing should be keeping up with output
           throw new RuntimeException("Failed to flush chunk: " + mBuffer.finishedTo() + " : " + id().time() * mInfo.chunkSize());
         }
         return new Result(lastCalls);
-      }
-
-      private void filterAndWrite(List<VcfRecord> equivFiltered) throws IOException {
-        // Other VCF level filtering
-        if (equivFiltered != null) {
-          for (final VcfRecord record : equivFiltered) {
-            boolean keep = true;
-            for (final VcfFilter filter : mFilters) {
-              if (!filter.accept(record)) {
-                keep = false;
-                break;
-              }
-            }
-            if (keep) {
-              mOut.write(record);
-            }
-          }
-        }
       }
     }
   }
@@ -766,6 +758,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       mDecomposer = new AligningDecomposer(mConfig.getDenovoChecker(), variantAlleleTrigger);
     }
     mAnnotators.addAll(mConfig.getVcfAnnotators());
+    //mAnnotators.add(new SimpleTandemRepeatAnnotator(new SequencesReaderReferenceSource(mReferenceSequences)));
     mFilters.addAll(mConfig.getVcfFilters());
 
     String[] genomeNames = mConfig.getGenomeNames();
@@ -784,11 +777,9 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     for (final VcfAnnotator annot : mAnnotators) {
       annot.updateHeader(mVcfHeader);
     }
-    for (final VcfFilter filter : mFilters) {
-      filter.setHeader(mVcfHeader);
-    }
     mOut = new VcfWriterFactory().async(true).zip(mParams.blockCompressed()).make(mVcfHeader, mParams.vcfFile());
-    mOut = new StatisticsVcfWriter<>(mOut, mStatistics);
+    //mOut = new DensityAnnotator(mOut);
+    mOut = new StatisticsVcfWriter<>(mOut, mStatistics, mFilters);
     // AVR annotator comes last because it wants to use other annotations
     if (mParams.avrModelFile() != null) {
       Diagnostic.userLog("Loading AVR model: " + mParams.avrModelFile());
