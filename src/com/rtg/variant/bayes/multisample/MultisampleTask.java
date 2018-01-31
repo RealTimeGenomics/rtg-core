@@ -83,7 +83,6 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.AnnotatingVcfWriter;
-import com.rtg.vcf.ClusterAnnotator;
 import com.rtg.vcf.StatisticsVcfWriter;
 import com.rtg.vcf.VariantStatistics;
 import com.rtg.vcf.VcfAnnotator;
@@ -92,7 +91,6 @@ import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
 import com.rtg.vcf.VcfWriterFactory;
-import com.rtg.vcf.annotation.SimpleTandemRepeatAnnotator;
 import com.rtg.vcf.header.VcfHeader;
 
 import htsjdk.samtools.SAMReadGroupRecord;
@@ -118,7 +116,6 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
   private AbstractJointCallerConfiguration mConfig;
   private VcfWriter mOut;
   private VariantOutputVcfFormatter mFormatter;
-  private VcfHeader mVcfHeader;
   private ThreadedMultifileIteratorWrapper<VariantAlignmentRecord> mWrapper;
   private List<SAMSequenceRecord> mSequences;
   private ReferenceRegions mBedFilterRegions;
@@ -126,6 +123,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
   private Decomposer mDecomposer = null;
 
   private final JointCallerConfigurator<V> mConfigurator;
+  private SequencesReaderReferenceSource mRefSequencesSource = null;
 
   /**
    * @param params command line parameters.
@@ -761,7 +759,8 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       mDecomposer = new AligningDecomposer(mConfig.getDenovoChecker(), variantAlleleTrigger);
     }
     mAnnotators.addAll(mConfig.getVcfAnnotators());
-    mAnnotators.add(new SimpleTandemRepeatAnnotator(new SequencesReaderReferenceSource(mReferenceSequences)));
+//    mRefSequencesSource = new SequencesReaderReferenceSource(mReferenceSequences.copy());
+//    mAnnotators.add(new SimpleTandemRepeatAnnotator(mRefSequencesSource));
     mFilters.addAll(mConfig.getVcfFilters());
 
     String[] genomeNames = mConfig.getGenomeNames();
@@ -776,12 +775,12 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       throw new NoTalkbackSlimException("SAM file does not contain sequence dictionary.");
     }
     mFormatter = mConfig.getOutputFormatter(mParams);
-    mVcfHeader = mFormatter.makeHeader(mParams, mParams.uberHeader());
+    final VcfHeader vcfHeader = mFormatter.makeHeader(mParams, mParams.uberHeader());
     for (final VcfAnnotator annot : mAnnotators) {
-      annot.updateHeader(mVcfHeader);
+      annot.updateHeader(vcfHeader);
     }
-    mOut = new VcfWriterFactory().async(true).zip(mParams.blockCompressed()).make(mVcfHeader, mParams.vcfFile());
-    mOut = new ClusterAnnotator(mOut);
+    mOut = new VcfWriterFactory().async(true).zip(mParams.blockCompressed()).make(vcfHeader, mParams.vcfFile());
+//    mOut = new ClusterAnnotator(mOut);
     mOut = new StatisticsVcfWriter<>(mOut, mStatistics, mFilters);
     // AVR annotator comes last because it wants to use other annotations
     if (mParams.avrModelFile() != null) {
@@ -837,6 +836,9 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
            SequencesReader ignored4 = mReferenceSequences) {  // We want the sexy closing side effects.
         if (mConfig != null) {
           mConfig.close();
+        }
+        if (mRefSequencesSource != null) {
+          mRefSequencesSource.close();
         }
       }
     }
