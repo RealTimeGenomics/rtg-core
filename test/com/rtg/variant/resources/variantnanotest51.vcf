@@ -16,6 +16,8 @@
 ##INFO=<ID=RCE,Number=0,Type=Flag,Description="RTG variant is equivalent to the previous variant">
 ##INFO=<ID=CT,Number=1,Type=Integer,Description="Coverage threshold that was applied">
 ##INFO=<ID=NREF,Number=0,Type=Flag,Description="REF was not considered a valid allele during calling">
+##INFO=<ID=STRL,Number=1,Type=Integer,Description="Number of adjacent simple tandem repeats">
+##INFO=<ID=STRU,Number=1,Type=Integer,Description="Length of repeating unit in simple tandem repeat">
 ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
 ##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
 ##FORMAT=<ID=DPR,Number=1,Type=Float,Description="Ratio of read depth to expected read depth">
@@ -31,8 +33,9 @@
 ##FORMAT=<ID=RS,Number=.,Type=String,Description="RTG Support Statistics">
 ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
 ##FORMAT=<ID=GL,Number=G,Type=Float,Description="Log_10 scaled genotype likelihoods. As defined in VCF specifications">
+##FORMAT=<ID=CLUS,Number=1,Type=Integer,Description="Number of variants within 5 bases">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	TEST
-g1	3	.	A	C,G	117.7	PASS	DP=8	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL	1/2:8:0.080:0.000:48:0.00:8.69:17.37:0.000,79.999,79.999:0.00:C,4,0.040,G,4,0.040:0,4,4:-11.77,-6.56,-5.53,-5.96,0.00,-4.90
-g1	6	.	G	A	137.3	PASS	DP=13	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL	1/0:13:0.130:0.000:94:1.50:17.37:1.50:99.999,159.998:0.00:A,8,0.080,G,5,0.050:5,8:-13.73,0.00,-9.35
-g1	10	.	GG	G	42.4	PASS	DP=5;XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:AD:GL	1/1:5:0.100:0.000:21:0.00:10.86:10.86:0.000,85.057:0.00:0,5:-4.24,-2.15,0.00
+g1	3	.	A	C,G	117.7	PASS	DP=8;STRL=2;STRU=1	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL:CLUS	1/2:8:0.080:0.000:48:0.00:8.69:17.37:0.000,79.999,79.999:0.00:C,4,0.040,G,4,0.040:0,4,4:-11.77,-6.56,-5.53,-5.96,0.00,-4.90:1
+g1	6	.	G	A	137.3	PASS	DP=13	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL:CLUS	1/0:13:0.130:0.000:94:1.50:17.37:1.50:99.999,159.998:0.00:A,8,0.080,G,5,0.050:5,8:-13.73,0.00,-9.35:2
+g1	10	.	GG	G	42.4	PASS	DP=5;XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:AD:GL:CLUS	1/1:5:0.100:0.000:21:0.00:10.86:10.86:0.000,85.057:0.00:0,5:-4.24,-2.15,0.00:1
 g1	22	.	G	GA	94.8	PASS	DP=5;XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:AD:GL	1/1:5:0.050:0.000:22:0.00:10.86:0.00:0.000,99.999:0.00:0,5:-9.48,-2.17,0.00

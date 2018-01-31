@@ -16,6 +16,8 @@
 ##INFO=<ID=RCE,Number=0,Type=Flag,Description="RTG variant is equivalent to the previous variant">
 ##INFO=<ID=CT,Number=1,Type=Integer,Description="Coverage threshold that was applied">
 ##INFO=<ID=NREF,Number=0,Type=Flag,Description="REF was not considered a valid allele during calling">
+##INFO=<ID=STRL,Number=1,Type=Integer,Description="Number of adjacent simple tandem repeats">
+##INFO=<ID=STRU,Number=1,Type=Integer,Description="Length of repeating unit in simple tandem repeat">
 ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
 ##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
 ##FORMAT=<ID=DPR,Number=1,Type=Float,Description="Ratio of read depth to expected read depth">
@@ -31,5 +33,6 @@
 ##FORMAT=<ID=RS,Number=.,Type=String,Description="RTG Support Statistics">
 ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
 ##FORMAT=<ID=GL,Number=G,Type=Float,Description="Log_10 scaled genotype likelihoods. As defined in VCF specifications">
+##FORMAT=<ID=CLUS,Number=1,Type=Integer,Description="Number of variants within 5 bases">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SAMPLE
-g1	6	.	T	TAG	194.9	PASS	DP=8;XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:AD:GL	1/1:8:0.080:0.000:103:0.00:17.37:17.37:0.000,159.998:0.00:0,8:-19.49,-10.31,0.00
+g1	6	.	T	TAG	194.9	PASS	DP=8;XRX;STRL=3;STRU=2	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:AD:GL	1/1:8:0.080:0.000:103:0.00:17.37:17.37:0.000,159.998:0.00:0,8:-19.49,-10.31,0.00

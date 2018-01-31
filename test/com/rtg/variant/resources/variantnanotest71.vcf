@@ -16,6 +16,8 @@
 ##INFO=<ID=RCE,Number=0,Type=Flag,Description="RTG variant is equivalent to the previous variant">
 ##INFO=<ID=CT,Number=1,Type=Integer,Description="Coverage threshold that was applied">
 ##INFO=<ID=NREF,Number=0,Type=Flag,Description="REF was not considered a valid allele during calling">
+##INFO=<ID=STRL,Number=1,Type=Integer,Description="Number of adjacent simple tandem repeats">
+##INFO=<ID=STRU,Number=1,Type=Integer,Description="Length of repeating unit in simple tandem repeat">
 ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
 ##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
 ##FORMAT=<ID=DPR,Number=1,Type=Float,Description="Ratio of read depth to expected read depth">
@@ -31,5 +33,6 @@
 ##FORMAT=<ID=RS,Number=.,Type=String,Description="RTG Support Statistics">
 ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
 ##FORMAT=<ID=GL,Number=G,Type=Float,Description="Log_10 scaled genotype likelihoods. As defined in VCF specifications">
+##FORMAT=<ID=CLUS,Number=1,Type=Integer,Description="Number of variants within 5 bases">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	BACT_SAMPLE
-ref	103	.	NNNNNNNNNNNNNNNNNNNN	AAAAA	.	PASS	DP=10;XRX;NREF	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:AD	1/1:10:0.102:0.000:2147483647:0.00:21.71:21.71:0,199.150:0.00:0,10
+ref	103	.	NNNNNNNNNNNNNNNNNNNN	AAAAA	.	PASS	DP=10;XRX;NREF;STRL=2;STRU=1	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:AD	1/1:10:0.102:0.000:2147483647:0.00:21.71:21.71:0,199.150:0.00:0,10
