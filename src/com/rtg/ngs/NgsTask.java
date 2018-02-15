@@ -136,7 +136,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
   }
 
   private void chrStatsCheck() throws IOException {
-    if (mParams.outputParams().calibrate() && mParams.sex() != null) {
+    if (mParams.outputParams().calibrate() && mParams.sex() != null && mParams.outputParams().readGroup().getSample() != null) {
       // This checking requires the presence of calibration information
       final Collection<File> calibrationFiles = Arrays.asList(FileUtils.listFiles(mParams.directory(), (dir1, name) -> name.endsWith(CommonFlags.RECALIBRATE_EXTENSION)));
       if (!calibrationFiles.isEmpty()) {
@@ -150,7 +150,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
           if (cc.referenceOk()) {
             final ChrStats.ChrStatsResult res = cc.runCheckAndReport(expectedCoverages, sample, mParams.sex());
             if (res.getObservedSex() != null && res.getClaimedSex() != res.getObservedSex()) {
-              Diagnostic.warning(sample + " specified " + ChrStats.sexString(res.getClaimedSex()) + " but appears to be " + ChrStats.sexString(res.getObservedSex()));
+              Diagnostic.warning("Sample " + sample + " specified " + ChrStats.sexString(res.getClaimedSex()) + " but appears to be " + ChrStats.sexString(res.getObservedSex()));
             }
           }
         }
