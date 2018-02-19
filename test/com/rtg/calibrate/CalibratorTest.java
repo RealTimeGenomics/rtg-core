@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.rtg.AbstractTest;
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.FastaUtils;
@@ -36,17 +37,15 @@ import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.ReferenceRegions;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMRecord;
-import junit.framework.TestCase;
 
 /**
  */
-public class CalibratorTest extends TestCase {
+public class CalibratorTest extends AbstractTest {
 
   static final String EXPECTED_CALIBRATION = ""
     + "#CL\tfoo bar" + LS
@@ -74,17 +73,17 @@ public class CalibratorTest extends TestCase {
   private long mDiffCount;
 
   @Override
-  public void setUp() throws Exception {
-    Diagnostic.setLogStream();
+  public void setUp() throws IOException {
+    super.setUp();
     CommandLine.setCommandArgs("foo", "bar");
     mDir = FileUtils.createTempDir("test", "calibrator");
   }
 
   @Override
-  public void tearDown() {
-    CommandLine.clearCommandArgs();
+  public void tearDown() throws IOException {
     assertTrue(FileHelper.deleteAll(mDir));
     mDir = null;
+    super.tearDown();
   }
 
   public static String stripVersion(String calibrateFile) {
@@ -107,7 +106,7 @@ public class CalibratorTest extends TestCase {
     assertEquals(1, cal.getCovariateIndex(CovariateEnum.MACHINECYCLE));
   }
 
-  public void testProcessStats() throws IOException {
+  public void testProcessStats() {
     final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateMachineCycle(35)}, null);
     add2Records(cal);
     final Calibrator.QuerySpec query = cal.new QuerySpec();
@@ -270,17 +269,14 @@ public class CalibratorTest extends TestCase {
     // now check the output file
     final File tmp = File.createTempFile("test", "calibrator1", mDir);
     cal.writeToFile(tmp);
-    String stats = stripVersion(FileUtils.fileToString(tmp));
     final String expected = EXPECTED_CALIBRATION;
     // System.out.println(stats);
-    assertEquals(expected, stats);
+    assertEquals(expected, stripVersion(FileUtils.fileToString(tmp)));
     final Calibrator cal0 = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateMachineCycle(1), new CovariateBaseQuality(), new CovariateSequence()}, null);
     cal0.accumulate(tmp);
     final File tmp2 = File.createTempFile("test", "calibrator2", mDir);
     cal0.writeToFile(tmp2);
-    stats = stripVersion(FileUtils.fileToString(tmp2));
-    //System.out.println(stats);
-    assertEquals(expected, stats);
+    assertEquals(expected, stripVersion(FileUtils.fileToString(tmp2)));
   }
 
   public void testNotExpanding() throws IOException {
@@ -383,42 +379,42 @@ public class CalibratorTest extends TestCase {
         "@ins:rg1\t0\t0\t1",
         "@del:rg1\t0\t0\t0\t1",
         "@covar\tbasequality\tmachinecycle:35\tequal\tdiff\tins\tdel",
-        "15   0  2 0 0 0".replaceAll("  *", "\t"),
-        "15  10  1 0 0 0".replaceAll("  *", "\t"),
-        "16  10  1 0 0 0".replaceAll("  *", "\t"),
-        "15  20  2 0 0 0".replaceAll("  *", "\t"),
-        "16   1  2 0 0 0".replaceAll("  *", "\t"),
-        "16  11  2 0 0 0".replaceAll("  *", "\t"),
-        "16  21  2 0 0 0".replaceAll("  *", "\t"),
-        "17   2  2 0 0 0".replaceAll("  *", "\t"),
-        "17  12  2 0 0 0".replaceAll("  *", "\t"),
-        "17  22  2 0 0 3".replaceAll("  *", "\t"),
-        "18   3  2 0 0 0".replaceAll("  *", "\t"),
-        "18  13  2 0 0 0".replaceAll("  *", "\t"),
-        "18  23  2 0 0 0".replaceAll("  *", "\t"),
-        "19   4  2 0 0 0".replaceAll("  *", "\t"),
-        "19  14  2 0 0 0".replaceAll("  *", "\t"),
-        "19  24  2 0 0 0".replaceAll("  *", "\t"),
-        "20   5  1 1 0 0".replaceAll("  *", "\t"),
-        "20  15  1 0 1 0".replaceAll("  *", "\t"),
-        "20  25  2 0 0 0".replaceAll("  *", "\t"),
-        "21   6  1 1 0 0".replaceAll("  *", "\t"),
-        "21  16  1 0 1 0".replaceAll("  *", "\t"),
-        "21  26  1 1 0 0".replaceAll("  *", "\t"),
-        "22   7  1 1 0 0".replaceAll("  *", "\t"),
-        "22  17  2 0 0 0".replaceAll("  *", "\t"),
-        "22  27  1 1 0 0".replaceAll("  *", "\t"),
-        "23   8  1 1 0 0".replaceAll("  *", "\t"),
-        "23  18  2 0 0 0".replaceAll("  *", "\t"),
-        "23  28  1 1 0 0".replaceAll("  *", "\t"),
-        "24   9  1 1 0 0".replaceAll("  *", "\t"),
-        "24  19  2 0 0 0".replaceAll("  *", "\t"),
-        "24  29  1 1 0 0".replaceAll("  *", "\t"),
-        "32  30  1 1 0 0".replaceAll("  *", "\t"),
-        "33  31  2 0 0 0".replaceAll("  *", "\t"),
-        "34  32  2 0 0 0".replaceAll("  *", "\t"),
-        "35  33  2 0 0 0".replaceAll("  *", "\t"),
-        "36  34  1 0 0 0".replaceAll("  *", "\t")
+        "15   0  2 0 0 0".replaceAll(" +", "\t"),
+        "15  10  1 0 0 0".replaceAll(" +", "\t"),
+        "16  10  1 0 0 0".replaceAll(" +", "\t"),
+        "15  20  2 0 0 0".replaceAll(" +", "\t"),
+        "16   1  2 0 0 0".replaceAll(" +", "\t"),
+        "16  11  2 0 0 0".replaceAll(" +", "\t"),
+        "16  21  2 0 0 0".replaceAll(" +", "\t"),
+        "17   2  2 0 0 0".replaceAll(" +", "\t"),
+        "17  12  2 0 0 0".replaceAll(" +", "\t"),
+        "17  22  2 0 0 3".replaceAll(" +", "\t"),
+        "18   3  2 0 0 0".replaceAll(" +", "\t"),
+        "18  13  2 0 0 0".replaceAll(" +", "\t"),
+        "18  23  2 0 0 0".replaceAll(" +", "\t"),
+        "19   4  2 0 0 0".replaceAll(" +", "\t"),
+        "19  14  2 0 0 0".replaceAll(" +", "\t"),
+        "19  24  2 0 0 0".replaceAll(" +", "\t"),
+        "20   5  1 1 0 0".replaceAll(" +", "\t"),
+        "20  15  1 0 1 0".replaceAll(" +", "\t"),
+        "20  25  2 0 0 0".replaceAll(" +", "\t"),
+        "21   6  1 1 0 0".replaceAll(" +", "\t"),
+        "21  16  1 0 1 0".replaceAll(" +", "\t"),
+        "21  26  1 1 0 0".replaceAll(" +", "\t"),
+        "22   7  1 1 0 0".replaceAll(" +", "\t"),
+        "22  17  2 0 0 0".replaceAll(" +", "\t"),
+        "22  27  1 1 0 0".replaceAll(" +", "\t"),
+        "23   8  1 1 0 0".replaceAll(" +", "\t"),
+        "23  18  2 0 0 0".replaceAll(" +", "\t"),
+        "23  28  1 1 0 0".replaceAll(" +", "\t"),
+        "24   9  1 1 0 0".replaceAll(" +", "\t"),
+        "24  19  2 0 0 0".replaceAll(" +", "\t"),
+        "24  29  1 1 0 0".replaceAll(" +", "\t"),
+        "32  30  1 1 0 0".replaceAll(" +", "\t"),
+        "33  31  2 0 0 0".replaceAll(" +", "\t"),
+        "34  32  2 0 0 0".replaceAll(" +", "\t"),
+        "35  33  2 0 0 0".replaceAll(" +", "\t"),
+        "36  34  1 0 0 0".replaceAll(" +", "\t")
         );
   }
 
@@ -467,16 +463,16 @@ public class CalibratorTest extends TestCase {
   }
 
   private static final String CG_EXPECTED = ""
-    + "@cggap:rg1          0     0    10     0     0     0   10".replaceAll("  *", "\t") + LS
-    + "@cggap:rg2  0    20     0     0     0    20".replaceAll("  *", "\t") + LS
-    + "@cgover:rg1         0     0     0     0    10".replaceAll("  *", "\t") + LS
-    + "@cgover:rg2 0     0    20".replaceAll("  *", "\t") + LS
-    + "@mnp:rg1            0     0    10".replaceAll("  *", "\t") + LS
-    + "@nh:rg1             0    10".replaceAll("  *", "\t") + LS
-    + "@nh:rg2     0    20".replaceAll("  *", "\t") + LS
-    + "@covar readgroup equal diff ins del".replaceAll("  *", "\t") + LS
-    + "rg2 700     0     0     0".replaceAll("  *", "\t") + LS
-    + "rg1         330    20     0     0".replaceAll("  *", "\t") + LS
+    + "@cggap:rg1          0     0    10     0     0     0   10".replaceAll(" +", "\t") + LS
+    + "@cggap:rg2  0    20     0     0     0    20".replaceAll(" +", "\t") + LS
+    + "@cgover:rg1         0     0     0     0    10".replaceAll(" +", "\t") + LS
+    + "@cgover:rg2 0     0    20".replaceAll(" +", "\t") + LS
+    + "@mnp:rg1            0     0    10".replaceAll(" +", "\t") + LS
+    + "@nh:rg1             0    10".replaceAll(" +", "\t") + LS
+    + "@nh:rg2     0    20".replaceAll(" +", "\t") + LS
+    + "@covar readgroup equal diff ins del".replaceAll(" +", "\t") + LS
+    + "rg2 700     0     0     0".replaceAll(" +", "\t") + LS
+    + "rg1         330    20     0     0".replaceAll(" +", "\t") + LS
     ;
 
   public void testCG() throws IOException {
@@ -517,15 +513,15 @@ public class CalibratorTest extends TestCase {
     stats = FileUtils.fileToString(tmp2);
     //System.out.println(stats);
     TestUtils.containsAll(stats,
-        "@cggap:rg1  0 0  20  0 0 0  20".replaceAll("  *", "\t"),
-        "@cggap:rg2  0 40  0  0 0 40".replaceAll("  *", "\t"),
-        "@cgover:rg1 0 0 0  0 20".replaceAll("  *", "\t"),
-        "@cgover:rg2 0 0 40".replaceAll("  *", "\t"),
-        "@mnp:rg1  0 0 20".replaceAll("  *", "\t"),
-        "@nh:rg1 0 20".replaceAll("  *", "\t"),
-        "@nh:rg2 0 40".replaceAll("  *", "\t"),
-        "rg2 1400  0 0 0".replaceAll("  *", "\t"),
-        "rg1 660 40  0 0".replaceAll("  *", "\t")
+        "@cggap:rg1  0 0  20  0 0 0  20".replaceAll(" +", "\t"),
+        "@cggap:rg2  0 40  0  0 0 40".replaceAll(" +", "\t"),
+        "@cgover:rg1 0 0 0  0 20".replaceAll(" +", "\t"),
+        "@cgover:rg2 0 0 40".replaceAll(" +", "\t"),
+        "@mnp:rg1  0 0 20".replaceAll(" +", "\t"),
+        "@nh:rg1 0 20".replaceAll(" +", "\t"),
+        "@nh:rg2 0 40".replaceAll(" +", "\t"),
+        "rg2 1400  0 0 0".replaceAll(" +", "\t"),
+        "rg1 660 40  0 0".replaceAll(" +", "\t")
     );
   }
 
@@ -810,7 +806,7 @@ public class CalibratorTest extends TestCase {
   }
 
   public void checkLengthMap(MockSequencesReader reader) throws IOException {
-    final Map<String, Integer> names = Calibrator.getNonNSequenceLengthMap(reader, (RegionRestriction) null);
+    final Map<String, Integer> names = Calibrator.getNonNSequenceLengthMap(reader, null);
     assertEquals(10, names.size());
     for (int i = 0; i < names.size(); ++i) {
       final String key = "seq" + i;
