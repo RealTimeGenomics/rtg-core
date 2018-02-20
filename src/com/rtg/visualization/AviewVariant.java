@@ -11,7 +11,6 @@
  */
 package com.rtg.visualization;
 
-import com.rtg.mode.DnaUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
@@ -25,7 +24,7 @@ public class AviewVariant {
   private final int mReferenceLength;
   private final int mPosition;
   private final boolean mIsFiltered;
-  private final byte[][] mPrediction;
+  private final String[] mPrediction;
 
   /**
    * Construct a Detected Variant by inspecting a <code>VcfRecord</code> object. A string is supplied as the output representation of this object
@@ -41,10 +40,10 @@ public class AviewVariant {
 
     final boolean hasPreviousNt = VcfUtils.hasRedundantFirstNucleotide(rec);
     final String[] alleleStrings = VcfUtils.getAlleleStrings(rec, hasPreviousNt);
-    mPrediction = new byte[VcfUtils.isHomozygousAlt(rec, sampleNo) ? 1 : 2][];
+    mPrediction = new String[VcfUtils.isHomozygousAlt(rec, sampleNo) ? 1 : 2];
     for (int i = 0; i < mPrediction.length; ++i) {
       final int alleleId = gtArray[i];
-      mPrediction[i] = DnaUtils.encodeString(alleleId == -1 ? "N" : alleleStrings[alleleId]);
+      mPrediction[i] = alleleId == -1 ? "N" : alleleStrings[alleleId];
     }
     mIsFiltered = rec.isFiltered();
     mReferenceLength = rec.getRefCall().length() - (hasPreviousNt ? 1 : 0);
@@ -71,7 +70,7 @@ public class AviewVariant {
    * @param alleleA if true select the A allele.
    * @return the allele (may be null or zero length)
    */
-  public byte[] nt(boolean alleleA) {
+  public String nt(boolean alleleA) {
     if (mPrediction.length == 2) {
       return mPrediction[alleleA ? 0 : 1];
     } else if (alleleA) {
@@ -85,7 +84,7 @@ public class AviewVariant {
    * The first allele of the variant. Always non null but may be zero length.
    * @return the A allele
    */
-  public byte[] ntAlleleA() {
+  public String ntAlleleA() {
     return nt(true);
   }
 
@@ -93,7 +92,7 @@ public class AviewVariant {
    * Second allele of the variant. Will be null if homozygous and may be zero length.
    * @return the B allele, or null if homozygous
    */
-  public byte[] ntAlleleB() {
+  public String ntAlleleB() {
     return nt(false);
   }
 

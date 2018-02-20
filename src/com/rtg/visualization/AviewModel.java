@@ -331,9 +331,9 @@ final class AviewModel {
   private static int maxPredictionLength(AviewVariant v) {
     final int maxPredictionLength;
     if (v.ntAlleleB() == null) {
-      maxPredictionLength = v.ntAlleleA().length;
+      maxPredictionLength = v.ntAlleleA().length();
     } else {
-      maxPredictionLength = Math.max(v.ntAlleleA().length, v.ntAlleleB().length);
+      maxPredictionLength = Math.max(v.ntAlleleA().length(), v.ntAlleleB().length());
     }
     return maxPredictionLength;
   }

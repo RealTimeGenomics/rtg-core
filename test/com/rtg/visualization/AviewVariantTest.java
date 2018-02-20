@@ -14,9 +14,6 @@ package com.rtg.visualization;
 
 import static com.rtg.util.StringUtils.TAB;
 
-import java.util.Arrays;
-
-import com.rtg.mode.DnaUtils;
 import com.rtg.util.MathUtils;
 import com.rtg.util.PosteriorUtils;
 import com.rtg.vcf.VcfReader;
@@ -46,8 +43,8 @@ public class AviewVariantTest extends TestCase {
   public void testSnpConstruction() {
     final AviewVariant variant = getAviewVariant(SNP_LINE);
     assertEquals(23, variant.getPosition());
-    assertEquals(1, variant.nt(true).length);
-    assertEquals(4, variant.nt(true)[0]);
+    assertEquals(1, variant.nt(true).length());
+    assertEquals("T", variant.nt(true));
     assertNull(variant.nt(false));
   }
 
@@ -55,10 +52,10 @@ public class AviewVariantTest extends TestCase {
   public void testHeterozygousSnpConstruction() {
     final AviewVariant variant = getAviewVariant(SNP_LINE2);
     assertEquals(23, variant.getPosition());
-    assertEquals(1, variant.nt(true).length);
-    assertEquals(4, variant.nt(true)[0]);
-    assertEquals(1, variant.nt(false).length);
-    assertEquals(2, variant.nt(false)[0]);
+    assertEquals(1, variant.nt(true).length());
+    assertEquals("T", variant.nt(true));
+    assertEquals(1, variant.nt(false).length());
+    assertEquals("C", variant.nt(false));
   }
 
   private static final String INSERT_LINE = "someKindOfName" + TAB + "22" + TAB + "." + TAB + "A" + TAB + "AACT" + TAB + "12.8" + TAB + "PASS" + TAB + "." + TAB + "GT:DP:RE:GQ" + TAB + "1/1:4:0.02:" + PosteriorUtils.phredIfy(12.8 * MathUtils.LOG_10);
@@ -79,9 +76,8 @@ public class AviewVariantTest extends TestCase {
     final AviewVariant variant = getAviewVariant(MNP_LINE);
     assertEquals(23, variant.getPosition());
 
-    assertEquals(3, variant.nt(true).length);
-    assertEquals(2, variant.nt(true)[0]);
-    assertEquals(4, variant.nt(true)[1]);
+    assertEquals(3, variant.nt(true).length());
+    assertEquals("CTC", variant.nt(true));
     assertNull(variant.nt(false));
   }
 
@@ -89,22 +85,14 @@ public class AviewVariantTest extends TestCase {
   public void testUnchangedConstructor() {
     final AviewVariant variant = getAviewVariant(UNCHANGED_LINE);
     assertEquals(23, variant.getPosition());
-    assertTrue(Arrays.equals(DnaUtils.encodeString("C"), variant.nt(true)));
+    assertEquals("C", variant.nt(true));
   }
 
   private static final String SHORT_LINE = "someKindOfName" + TAB + "23" + TAB + "." + TAB + "A" + TAB + "C" + TAB + "0.0" + TAB + "PASS" + TAB + "." + TAB + "GT" + TAB + "1/1";
   public void testShortConstructor() {
     final AviewVariant variant = getAviewVariant(SHORT_LINE);
     assertEquals(23, variant.getPosition());
-    assertTrue(Arrays.equals(DnaUtils.encodeString("C"), variant.nt(true)));
-  }
-
-  private void checkArray(byte[] a, byte[] b) {
-    final String fail = "expected <" + Arrays.toString(a) + "> but was :<" + Arrays.toString(b) + ">";
-    assertEquals(fail, a.length, b.length);
-    for (int i = 0; i < a.length; ++i) {
-      assertEquals(fail, a[i], b[i]);
-    }
+    assertEquals("C", variant.nt(true));
   }
 
   public void testAllFieldsPresent() {
@@ -112,8 +100,8 @@ public class AviewVariantTest extends TestCase {
     final AviewVariant v = getAviewVariant(line);
     assertEquals(2180, v.getPosition());
     assertEquals(1, v.referenceLength());
-    checkArray(new byte[] {3}, v.ntAlleleA());
-    checkArray(new byte[] {4}, v.ntAlleleB());
+    assertEquals("G", v.ntAlleleA());
+    assertEquals("T", v.ntAlleleB());
   }
 
   public void testMissingGT() {

@@ -646,8 +646,8 @@ public final class Aview extends AbstractCli {
 
 
           final boolean hetCall = var.ntAlleleB() != null;
-          String firstCall = DnaUtils.bytesToSequenceIncCG(var.ntAlleleA());
-          String secondCall = hetCall ? DnaUtils.bytesToSequenceIncCG(var.ntAlleleB()) : firstCall;
+          String firstCall = var.ntAlleleA();
+          String secondCall = hetCall ? var.ntAlleleB() : firstCall;
           final int lengthDiff = Math.abs(firstCall.length() - secondCall.length());
           // Make displayed representation of each side of the call the same length
           if (hetCall) {
