@@ -65,7 +65,7 @@ public class CalibratingPopulatorFactory implements PopulatorFactory<SAMRecord> 
    * over the life of this factory.
    * @return merge calibrator
    */
-  public Calibrator mergedCalibrator() {
+  public Calibrator mergedCalibrator() throws IOException {
     final Calibrator merged = new Calibrator(mCovariates, null);
     if (mLengths != null) {
       merged.setSequenceLengths(mLengths);

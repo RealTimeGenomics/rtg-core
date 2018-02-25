@@ -14,6 +14,8 @@ package com.rtg.calibrate;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -454,7 +456,7 @@ public class Calibrator {
    * Accumulate the results of another compatible calibrator into this calibrator.
    * @param cal other calibrator
    */
-  public void accumulate(Calibrator cal) {
+  public void accumulate(Calibrator cal) throws IOException {
     // Check covariates match
     if (mCovariates.length != cal.mCovariates.length) {
       throw new RuntimeException("Missing covariates");
@@ -464,29 +466,10 @@ public class Calibrator {
         throw new RuntimeException("Covariates mismatch");
       }
     }
-    // Merge hypercubes
-    assert mStats.length == cal.mStats.length;
-    for (int k = 0; k < mStats.length; ++k) {
-      if (mStats[k] != null) {
-        if (cal.mStats[k] != null) {
-          mStats[k].accumulate(cal.mStats[k]);
-        }
-      } else {
-        mStats[k] = cal.mStats[k];
-      }
-    }
-    // Merge histograms
-    for (final Map.Entry<String, Histogram> e : mDistributions.entrySet()) {
-      final Histogram h = cal.getHistogram(e.getKey());
-      if (h != null) {
-        e.getValue().addHistogram(h);
-      }
-    }
-    for (final Map.Entry<String, Histogram> e : cal.mDistributions.entrySet()) {
-      final Histogram h = getHistogram(e.getKey());
-      if (h == null) {
-        mDistributions.put(e.getKey(), e.getValue());
-      }
+    final ByteArrayOutputStream bo = new ByteArrayOutputStream();
+    cal.writeToStream(bo);
+    try (final ByteArrayInputStream bi = new ByteArrayInputStream(bo.toByteArray())) {
+      accumulate(bi, "<internal>");
     }
   }
 
