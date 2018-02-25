@@ -455,6 +455,7 @@ public class Calibrator {
   /**
    * Accumulate the results of another compatible calibrator into this calibrator.
    * @param cal other calibrator
+   * @throws IOException if read or input format errors occur.
    */
   public void accumulate(Calibrator cal) throws IOException {
     // Check covariates match

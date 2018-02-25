@@ -63,6 +63,7 @@ public class CalibratingPopulatorFactory implements PopulatorFactory<SAMRecord> 
   /**
    * Return a calibrator representing the merged content of all the calibrators constructed
    * over the life of this factory.
+   * @throws IOException if read or input format errors occur.
    * @return merge calibrator
    */
   public Calibrator mergedCalibrator() throws IOException {
