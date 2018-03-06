@@ -499,6 +499,28 @@ public enum VcfFormatField {
   },
 
   // NOTE: VcfAnnotators (derived attributes) below here, non-derived above (convention is to have derived fields after non-derived)
+
+  /** Variant Allelic Fraction */
+  VAF {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      VAF_ANNOTATOR.updateHeader(header);
+    }
+    @Override
+    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      VAF_ANNOTATOR.annotate(rec);
+    }
+
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return rec.getFormat(ADE.name()) != null || rec.getFormat(AD.name()) != null;
+    }
+    @Override
+    public boolean isVcfAnnotator() {
+      return true;
+    }
+  },
+
   /** Genotype likelihood field (see VCF spec)  */
   GL {
     // GL is not a derived field but it depends upon the values of all sample's GT fields so must wait for the ALT arrays to be
@@ -660,26 +682,6 @@ public enum VcfFormatField {
         return true;
       }
       return false;
-    }
-    @Override
-    public boolean isVcfAnnotator() {
-      return true;
-    }
-  },
-  /** Variant Allelic Fraction */
-  VAF {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      VAF_ANNOTATOR.updateHeader(header);
-    }
-    @Override
-    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      VAF_ANNOTATOR.annotate(rec);
-    }
-
-    @Override
-    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return rec.getFormat(VA.name()) != null && rec.getFormat(AD.name()) != null;
     }
     @Override
     public boolean isVcfAnnotator() {

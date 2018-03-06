@@ -28,7 +28,7 @@
 ##FORMAT=<ID=OCOF,Number=1,Type=Float,Description="Contrary observations seen in original (as fraction of total)">
 ##FORMAT=<ID=DCOC,Number=1,Type=Integer,Description="Contrary observations seen in derived (as count)">
 ##FORMAT=<ID=DCOF,Number=1,Type=Float,Description="Contrary observations seen in derived (as fraction of total)">
-##FORMAT=<ID=VAF,Number=1,Type=Float,Description="Variant Allelic Fraction">
+##FORMAT=<ID=VAF,Number=A,Type=Float,Description="Variant Allelic Fraction">
 ##FORMAT=<ID=QA,Number=1,Type=Float,Description="Sum of quality of the alternate observations">
 ##FORMAT=<ID=MEANQAD,Number=1,Type=Float,Description="Difference between the mean alt quality and mean reference quality">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
