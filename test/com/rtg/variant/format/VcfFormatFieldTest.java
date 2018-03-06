@@ -57,7 +57,7 @@ import com.rtg.vcf.header.VcfHeader;
 public class VcfFormatFieldTest extends AbstractNanoTest {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, AQ, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, SCONT, VAF, QA, MEANQAD]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, AQ, PUR, RS, ADE, AD, SSC, SS, VAF, GL, GQD, ZY, PD, SCONT, QA, MEANQAD]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }

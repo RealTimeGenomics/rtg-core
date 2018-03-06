@@ -20,6 +20,7 @@
 ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
 ##FORMAT=<ID=SSC,Number=1,Type=Float,Description="Somatic score">
 ##FORMAT=<ID=SS,Number=1,Type=Integer,Description="Somatic status relative to original sample">
+##FORMAT=<ID=VAF,Number=A,Type=Float,Description="Variant Allelic Fraction">
 ##FORMAT=<ID=GL,Number=G,Type=Float,Description="Log_10 scaled genotype likelihoods. As defined in VCF specifications">
 ##FORMAT=<ID=GQD,Number=1,Type=Float,Description="GQ / DP for a single sample">
 ##FORMAT=<ID=ZY,Number=1,Type=String,Description="Zygosity of sample. 'e'=>heterozygous, 'o'=>homozygous">
@@ -28,7 +29,6 @@
 ##FORMAT=<ID=OCOF,Number=1,Type=Float,Description="Contrary observations seen in original (as fraction of total)">
 ##FORMAT=<ID=DCOC,Number=1,Type=Integer,Description="Contrary observations seen in derived (as count)">
 ##FORMAT=<ID=DCOF,Number=1,Type=Float,Description="Contrary observations seen in derived (as fraction of total)">
-##FORMAT=<ID=VAF,Number=A,Type=Float,Description="Variant Allelic Fraction">
 ##FORMAT=<ID=QA,Number=1,Type=Float,Description="Sum of quality of the alternate observations">
 ##FORMAT=<ID=MEANQAD,Number=1,Type=Float,Description="Difference between the mean alt quality and mean reference quality">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
