@@ -200,7 +200,7 @@ public final class ReadGroupStatsCalculator {
    * @param record the SAM record
    */
   public void addRecord(SAMRecord record) {
-    if (!record.getReadPairedFlag() || record.getReadUnmappedFlag() || record.getNotPrimaryAlignmentFlag() || record.isSecondaryOrSupplementary()) {
+    if (!record.getReadPairedFlag() || record.getReadUnmappedFlag() || record.isSecondaryAlignment() || record.isSecondaryOrSupplementary()) {
       return;
     }
     if (SamUtils.uniquelyMapped(record)) {

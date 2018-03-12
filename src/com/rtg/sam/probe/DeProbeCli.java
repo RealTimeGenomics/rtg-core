@@ -171,7 +171,7 @@ public class DeProbeCli extends LoggedCli {
             if (record.getFirstOfPairFlag()) {
               ++totalRecords;
               final int ih = MathUtils.unboxNatural(SamUtils.getNHOrIH(record));
-              final boolean unique = 1 == ih || !record.getNotPrimaryAlignmentFlag();
+              final boolean unique = 1 == ih || !record.isSecondaryAlignment();
               final boolean negative = record.getReadNegativeStrandFlag();
               final boolean mapped = !record.getReadUnmappedFlag();
               boolean stripped = false;
