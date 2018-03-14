@@ -114,7 +114,7 @@ public class CoverageCliTest extends AbstractCliTest {
             , "-m,", "--max-as-mated=INT", "if set, ignore mated SAM records with an alignment score (AS attribute) that exceeds this value"
             , "-u,", "--max-as-unmated=INT", "if set, ignore unmated SAM records with an alignment score (AS attribute) that exceeds this value"
             , "-c,", "--max-hits=INT", "if set, ignore SAM records with an alignment count that exceeds this value"
-            , "\\0, --region=STRING", "if set, only process SAM records within the specified range. The format is one of <sequence_name>, <sequence_name>:start-end or <sequence_name>:start+length"
+            , "\\0, --region=REGION", "if set, only process SAM records within the specified range. "
             , "-s,", "--smoothing", "smooth with this number of neighboring values (0 means no smoothing) (Default is 50)"
             , "-Z,", "--no-gzip", "do not gzip the output"
             , "--per-base", "output per-base counts in TSV format"

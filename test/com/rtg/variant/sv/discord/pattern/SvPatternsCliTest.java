@@ -44,7 +44,7 @@ public class SvPatternsCliTest extends AbstractParamsCliTest<BreakpointPatternPa
   public void testInitParams() {
     checkHelp("svpatterns [OPTION]... -o DIR FILE+",
         " -o DIR -I FILE ",
-        "--region=STRING ", "if set, only process SAM records within the specified range",
+        "--region=REGION ", "if set, only process SAM records within the specified range",
         "-I, --input-list-file=FILE file containing a list of VCF format files (1 per line) of discordant breakpoints",
         "--max-fragment-length=INT how far from the breakpoint to look ahead for inversions (Default is 500)",
         "--max-same-distance=INT how far apart can breakpoints be yet still be considered the same place (Default is 50)",

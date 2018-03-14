@@ -13,6 +13,9 @@
 package com.rtg.visualization;
 
 
+import static com.rtg.launcher.CommonFlags.REGION_SPEC;
+import static com.rtg.launcher.CommonFlags.RESTRICTION_FLAG;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,9 +28,6 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.FlagValue;
-import com.rtg.util.cli.Validator;
-import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.intervals.RegionRestriction;
 
 
@@ -43,7 +43,6 @@ class AviewParams {
   static final String ALIGNMENTS = "alignments";
 
   static final String SAMPLE = "sample";
-  static final String REGION = "region";
   static final String MAX_MATED_ALIGNMENT_SCORE = "Xmax-as-mated";
   static final String MAX_UNMATED_ALIGNMENT_SCORE = "Xmax-as-unmated";
   static final String MAX_IH_SCORE = "Xmax-hits";
@@ -91,7 +90,7 @@ class AviewParams {
 
     // Filtering options
     flags.registerOptional(SAMPLE, String.class, CommonFlags.STRING, "specify name of sample to select").setMaxCount(Integer.MAX_VALUE).enableCsv().setCategory(CommonFlagCategories.FILTERING);
-    flags.registerRequired(REGION, String.class, CommonFlags.STRING, "the region of interest to display. The format is one of <sequence_name>, <sequence_name>:start-end or <sequence_name>:start+length").setCategory(CommonFlagCategories.FILTERING);
+    flags.registerRequired(RESTRICTION_FLAG, String.class, CommonFlags.REGION, "the region of interest to display. " + REGION_SPEC).setCategory(CommonFlagCategories.FILTERING);
     flags.registerOptional('p', PADDING, Integer.class, CommonFlags.INT, "padding around region of interest (Default is to automatically determine padding to avoid read truncation)").setCategory(CommonFlagCategories.FILTERING);
 
     flags.registerOptional(MAX_MATED_ALIGNMENT_SCORE, Integer.class, CommonFlags.INT, "if set, ignore mated SAM records with an alignment score (AS attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
@@ -127,32 +126,10 @@ class AviewParams {
 
     flags.addRequiredSet(in);
     flags.addRequiredSet(listFlag);
-    flags.setValidator(new Validator() {
-
-      @Override
-      public boolean isValid(CFlags flags) {
-        // It's OK to not provide mappings, but we need at least one type of file to display
-        if (!(CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE) || flags.isSet(BASELINE_VCF) || flags.isSet(CALLS_VCF) || flags.isSet(BEDS))) {
-          return false;
-        }
-        if (!flags.checkAtMostOne(SORT_READS, SORT_READGROUP, SORT_SAMPLE)) {
-          return false;
-        }
-        final String region = (String) flags.getValue(REGION);
-        try {
-          new RegionRestriction(region);
-        } catch (IllegalArgumentException e) {
-          flags.setParseMessage("Invalid --" + REGION + " specification " + region);
-          return false;
-        }
-        final int variance = (Integer) flags.getValue(XMAPPING_TOLERANCE);
-        if (variance < 0) {
-          Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + XMAPPING_TOLERANCE, String.valueOf(variance), "0");
-          return false;
-        }
-        return true;
-      }
-    });
+    flags.setValidator(flags1 -> (CommonFlags.checkFileList(flags1, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE) || flags1.isSet(BASELINE_VCF) || flags1.isSet(CALLS_VCF) || flags1.isSet(BEDS))
+      && flags1.checkAtMostOne(SORT_READS, SORT_READGROUP, SORT_SAMPLE)
+      && CommonFlags.validateRegions(flags1)
+      && flags1.checkInRange(XMAPPING_TOLERANCE, 0, Integer.MAX_VALUE));
   }
 
   private final File[] mAlignments;
@@ -246,7 +223,7 @@ class AviewParams {
    list = fileList.toArray(list);
    builder.alignments(list)
      .reference((File) flags.getValue(CommonFlags.TEMPLATE_FLAG))
-     .region(flags.getValue(REGION).toString())
+     .region(flags.getValue(RESTRICTION_FLAG).toString())
      .headerLineRepeat((Integer) flags.getValue(PRINT_REFERENCE_LINE))
      .displayDots(!flags.isSet(NO_DOTS))
      .colorBases(!flags.isSet(NO_BASE_COLORS))
