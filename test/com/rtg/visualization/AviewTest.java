@@ -128,11 +128,15 @@ public class AviewTest extends AbstractCliTest {
   }
 
   public void testColor() throws IOException, InterruptedException {
-    run("aview-color.txt", SAM, "--region", "g1:11+4", "--no-dots", "--no-base-color");
+    if (DisplayHelper.DEFAULT_MARKUP_TYPE != DisplayHelper.MarkupType.NONE) {
+      run("aview-color.txt", SAM, "--region", "g1:11+4", "--no-dots", "--no-base-color");
+    }
   }
 
   public void testBaseColor() throws IOException, InterruptedException {
-    run("aview-basecolor.txt", SAM, "--region", "g1:11+4", "--no-dots");
+    if (DisplayHelper.DEFAULT_MARKUP_TYPE != DisplayHelper.MarkupType.NONE) {
+      run("aview-basecolor.txt", SAM, "--region", "g1:11+4", "--no-dots");
+    }
   }
 
   @Override
