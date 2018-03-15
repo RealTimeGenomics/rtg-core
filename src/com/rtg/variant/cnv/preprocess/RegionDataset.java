@@ -63,6 +63,11 @@ public class RegionDataset {
   public static RegionDataset readFromBed(File file, List<Column> desiredColumns) throws IOException {
     try (BedReader br = BedReader.openBedReader(null, file, 0)) {
       final List<String> columnNames = Arrays.asList(getColumnNames(br.getHeader()));
+      for (Column c : desiredColumns) {
+        if (!columnNames.contains(c.getName())) {
+          throw new IOException("Input file: " + file + " does not contain the expected column: " + c.getName());
+        }
+      }
       final RegionDataset dataset = new RegionDataset(desiredColumns, columnNames);
       loadBedRecords(br, dataset, desiredColumns == null);
       Diagnostic.userLog("Read dataset containing " + dataset.size() + " regions and " + dataset.columns() + " columns from " + file);

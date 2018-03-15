@@ -46,7 +46,7 @@ public class CnvPonBuildCliTest extends AbstractCliTest {
       );
   }
 
-  public void testErrors() throws IOException {
+  public void testErrors() {
     TestUtils.containsAll(checkHandleFlagsErr(), "Error: You must provide values for -o FILE -t SDF FILE+");
   }
 
@@ -58,7 +58,7 @@ public class CnvPonBuildCliTest extends AbstractCliTest {
       final String ref = ">1\n" + StringUtils.repeat("ACGGT", 25000 / "ACGGT".length());
       final File sdf = new File(dir, "sdf");
       ReaderTestUtils.getDNADir(ref, sdf);
-      final MainResult result = checkMainInit("-Z", "-o", output.getPath(), "-t", sdf.getPath(), coverage.getPath());
+      final MainResult result = checkMainInit("-Z", "-o", output.getPath(), "-t", sdf.getPath(), "--label-column-name=label", coverage.getPath());
       final String actual = StringUtils.grepMinusV(FileHelper.fileToString(output), "^#");
       mNano.check("expected.panel.bed", actual);
       TestUtils.containsAll(result.out(), "Normalizing and G+C correcting", "coverage.bed");

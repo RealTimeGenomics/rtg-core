@@ -55,8 +55,8 @@ public class CnvPonBuildCli extends AbstractCli {
   private static final String VERSION_STRING = "#Version " + Environment.getVersion();
   private static final String CNV_PON_OUTPUT_VERSION = "v1.1";
 
-  // Name of the input column containing region name
-  static final String LABEL_COLUMN = "label";
+  private static final String LABEL_COLUMN_NAME = "label-column-name";
+
   // Name of the output column containing normalized coverage profile
   static final String NORMALIZED_COVERAGE_COLUMN = "normalized-coverage";
 
@@ -81,6 +81,7 @@ public class CnvPonBuildCli extends AbstractCli {
     mFlags.registerRequired('o', OUTPUT_FLAG, File.class, FILE, "BED output file").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(SegmentCli.GCBINS_FLAG, Integer.class, INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(SegmentCli.COV_COLUMN_NAME, String.class, STRING, "name of the coverage column in input data", SegmentCli.DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(LABEL_COLUMN_NAME, String.class, STRING, "if set, include region labels using the named column from the input data").setCategory(SENSITIVITY_TUNING);
     final Flag<File> covFlag = mFlags.registerRequired(File.class, FILE, "coverage BED file").setCategory(INPUT_OUTPUT);
     covFlag.setMaxCount(Integer.MAX_VALUE);
     mFlags.setValidator(flags -> flags.checkInRange(SegmentCli.GCBINS_FLAG, 0, Integer.MAX_VALUE)
@@ -117,10 +118,11 @@ public class CnvPonBuildCli extends AbstractCli {
 
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
+    final String labelColumn = mFlags.isSet(LABEL_COLUMN_NAME) ? (String) mFlags.getValue(LABEL_COLUMN_NAME) : null;
     try (final SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG))) {
       final int gcbins = (Integer) mFlags.getValue(SegmentCli.GCBINS_FLAG);
       final AddGc gcCorrector = gcbins > 1 ? new AddGc(sr) : null;
-      final RegionDataset typicalSample = RegionDataset.readFromBed((File) mFlags.getAnonymousValue(0), Collections.singletonList(new StringColumn(LABEL_COLUMN)));
+      final RegionDataset typicalSample = RegionDataset.readFromBed((File) mFlags.getAnonymousValue(0), labelColumn == null ? Collections.emptyList() : Collections.singletonList(new StringColumn(labelColumn)));
       if (gcCorrector != null) {
         Diagnostic.info("Computing per-region G+C content");
         gcCorrector.process(typicalSample);
@@ -132,7 +134,7 @@ public class CnvPonBuildCli extends AbstractCli {
           sum[k] += covData.get(k);
         }
       }
-      typicalSample.getColumns().removeIf((Column col) -> !LABEL_COLUMN.equals(col.getName()));
+      typicalSample.getColumns().removeIf((Column col) -> !col.getName().equals(labelColumn));
       final int n = mFlags.getAnonymousValues(0).size();
       final NumericColumn col = new NumericColumn(NORMALIZED_COVERAGE_COLUMN);
       for (final double v : sum) {

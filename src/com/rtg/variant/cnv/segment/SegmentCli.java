@@ -85,7 +85,8 @@ public class SegmentCli extends LoggedCli {
   static final String GCBINS_FLAG = "Xgcbins";
   private static final String MIN_CASE_COV_FLAG = "min-case-coverage";
   private static final String MIN_CTRL_COV_FLAG = "min-control-coverage";
-  static final String COV_COLUMN_NAME = "Xcolumn-name";
+  private static final String MIN_PANEL_COV_FLAG = "min-panel-coverage";
+  static final String COV_COLUMN_NAME = "coverage-column-name";
 
   static final String DEFAULT_COLUMN_NAME = "coverage";
 
@@ -128,6 +129,7 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerOptional(LIMIT_FLAG, Integer.class, INT, "lower bound on the number of segments to be produced", 1).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(MIN_CASE_COV_FLAG, Double.class, FLOAT, "minimum case coverage required for a bin to be included in segmentation", 5.0).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(MIN_CTRL_COV_FLAG, Double.class, FLOAT, "minimum control coverage required for a bin to be included in segmentation", 300.0).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MIN_PANEL_COV_FLAG, Double.class, FLOAT, "minimum panel normalized coverage required for a bin to be included in segmentation", 0.1).setCategory(SENSITIVITY_TUNING);
 
     mFlags.registerOptional(MIN_BINS_FLAG, Integer.class, INT, "minimum number of bins required for copy number alteration to be called", 1).setCategory(REPORTING);
     mFlags.registerOptional('r', MIN_LOGR_FLAG, Double.class, FLOAT, "minimum (absolute) log ratio required for copy number alteration to be called", 0.2).setCategory(REPORTING);
@@ -149,6 +151,7 @@ public class SegmentCli extends LoggedCli {
       && CommonFlags.validateInputFile(flags, SUMMARY_FLAG)
       && flags.checkInRange(LIMIT_FLAG, 1, Integer.MAX_VALUE)
       && flags.checkXor(COLUMN_FLAG, CONTROL_FLAG, PANEL_FLAG)
+      && flags.checkNand(MIN_CTRL_COV_FLAG, MIN_PANEL_COV_FLAG)
     );
   }
 
@@ -263,7 +266,7 @@ public class SegmentCli extends LoggedCli {
 
   private void computeCasePanelDataset() throws IOException {
     final double minCaseCoverage = (Double) mFlags.getValue(MIN_CASE_COV_FLAG);
-    final double minPanelCoverage = (Double) mFlags.getValue(MIN_CTRL_COV_FLAG); // Slight abuse of semantics
+    final double minPanelCoverage = (Double) mFlags.getValue(MIN_PANEL_COV_FLAG);
     final int gcbins = (Integer) mFlags.getValue(GCBINS_FLAG);
     final String coverageColumnName = (String) mFlags.getValue(COV_COLUMN_NAME);
 
