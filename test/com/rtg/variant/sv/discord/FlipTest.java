@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Real Time Genomics Limited.
+ * Copyright (c) 2018. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -14,6 +14,8 @@ package com.rtg.variant.sv.discord;
 
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.variant.sv.ReadGroupStats;
+import com.rtg.variant.sv.bndeval.Orientation;
+import com.rtg.variant.sv.bndeval.OrientationTest;
 
 import junit.framework.TestCase;
 

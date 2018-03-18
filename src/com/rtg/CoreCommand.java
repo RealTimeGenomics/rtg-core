@@ -307,7 +307,7 @@ public final class CoreCommand {
     ToolsCommand.MENDELIAN,
     ToolsCommand.VCFSTATS, ToolsCommand.VCFMERGE,                       // VCF related
     ToolsCommand.VCFFILTER, ToolsCommand.VCFANNOTATE, ToolsCommand.VCFSUBSET,
-    ToolsCommand.VCFDECOMPOSE, ToolsCommand.VCFEVAL, SNPINTERSECT,
+    ToolsCommand.VCFDECOMPOSE, ToolsCommand.VCFEVAL, ToolsCommand.BNDEVAL, SNPINTERSECT,
     ToolsCommand.PEDFILTER, ToolsCommand.PEDSTATS,
     AVRSTATS, ToolsCommand.ROCPLOT,
     HASHDIST,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Real Time Genomics Limited.
+ * Copyright (c) 2018. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -18,6 +18,9 @@ import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.variant.sv.ReadGroupStats;
+import com.rtg.variant.sv.bndeval.AbstractBreakpointGeometry;
+import com.rtg.variant.sv.bndeval.BreakpointGeometry;
+import com.rtg.variant.sv.bndeval.Orientation;
 
 import htsjdk.samtools.SAMRecord;
 
@@ -226,7 +229,7 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   }
 
   @Override
-  BreakpointConstraint intersect(AbstractBreakpointGeometry that) {
+  public BreakpointConstraint intersect(AbstractBreakpointGeometry that) {
     final AbstractBreakpointGeometry intersect = mProxy.intersect(that);
     if (intersect == null) {
       return null;
@@ -235,7 +238,7 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   }
 
   @Override
-  BreakpointConstraint union(AbstractBreakpointGeometry that) {
+  public BreakpointConstraint union(AbstractBreakpointGeometry that) {
     //System.err.println("union");
     //System.err.println("this=" + this);
     //System.err.println("that=" + that);
@@ -247,52 +250,52 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   }
 
   @Override
-  BreakpointConstraint flip() {
+  public BreakpointConstraint flip() {
     return new BreakpointConstraint(mProxy.flip(), mMeanR, mStdDeviation);
   }
 
   @Override
-  protected Orientation getOrientation() {
+  public Orientation getOrientation() {
     return mProxy.getOrientation();
   }
 
   @Override
-  protected int getRLo() {
+  public int getRLo() {
     return mProxy.getRLo();
   }
 
   @Override
-  protected int getRHi() {
+  public int getRHi() {
     return mProxy.getRHi();
   }
 
   @Override
-  protected int getYHi() {
+  public int getYHi() {
     return mProxy.getYHi();
   }
 
   @Override
-  protected int getXLo() {
+  public int getXLo() {
     return mProxy.getXLo();
   }
 
   @Override
-  protected String getXName() {
+  public String getXName() {
     return mProxy.getXName();
   }
 
   @Override
-  protected int getYLo() {
+  public int getYLo() {
     return mProxy.getYLo();
   }
 
   @Override
-  protected String getYName() {
+  public String getYName() {
     return mProxy.getYName();
   }
 
   @Override
-  protected int getXHi() {
+  public int getXHi() {
     return mProxy.getXHi();
   }
 

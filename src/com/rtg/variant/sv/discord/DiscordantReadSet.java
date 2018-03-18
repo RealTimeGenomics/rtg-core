@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Real Time Genomics Limited.
+ * Copyright (c) 2018. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.rtg.util.StringUtils;
+import com.rtg.variant.sv.bndeval.AbstractBreakpointGeometry;
 
 import htsjdk.samtools.SAMRecord;
 

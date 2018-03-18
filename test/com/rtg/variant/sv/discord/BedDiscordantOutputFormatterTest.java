@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Real Time Genomics Limited.
+ * Copyright (c) 2018. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -20,6 +20,8 @@ import java.io.IOException;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
+import com.rtg.variant.sv.bndeval.BreakpointGeometry;
+import com.rtg.variant.sv.bndeval.Orientation;
 
 import junit.framework.TestCase;
 
