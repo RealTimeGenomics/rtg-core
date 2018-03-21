@@ -40,7 +40,6 @@ public class CnvPonBuildCliTest extends AbstractCliTest {
       "reference genome",
       "coverage BED file. Must be specified 1 or more times",
       "do not gzip the output",
-      "do not produce indexes for output files",
       "Utility",
       "File Input/Output"
       );

@@ -51,7 +51,6 @@ public class SegmentCliTest extends AbstractCliTest {
       "Utility",
       "File Input/Output",
       "--no-gzip",
-      "--no-index",
       "--help"
       );
   }
