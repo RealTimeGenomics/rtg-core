@@ -89,7 +89,6 @@ import com.rtg.vcf.VariantStatistics;
 import com.rtg.vcf.VcfAnnotator;
 import com.rtg.vcf.VcfFilter;
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
 import com.rtg.vcf.VcfWriterFactory;
 import com.rtg.vcf.annotation.SimpleTandemRepeatAnnotator;
@@ -781,7 +780,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     for (final VcfAnnotator annot : mAnnotators) {
       annot.updateHeader(vcfHeader);
     }
-    mOut = new VcfWriterFactory().async(true).zip(mParams.blockCompressed()).make(vcfHeader, mParams.vcfFile());
+    mOut = new VcfWriterFactory().async(true).zip(mParams.blockCompressed()).index(mParams.outputIndex()).make(vcfHeader, mParams.vcfFile());
     mOut = new ClusterAnnotator(mOut);
     mOut = new StatisticsVcfWriter<>(mOut, mStatistics, mFilters);
     // AVR annotator comes last because it wants to use other annotations
@@ -845,7 +844,6 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       }
     }
     if (mParams.blockCompressed() && mParams.outputIndex()) {
-      VcfUtils.createVcfTabixIndex(mParams.vcfFile());
       BedUtils.createBedTabixIndex(mParams.bedFile());
     }
   }
