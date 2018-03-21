@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Appendix &#8212; RTG Core Operations Manual v3.8</title>
+    <title>Appendix &#8212; RTG Core Operations Manual v3.9</title>
     
     <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.8',
+        VERSION:     '3.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="administration.html" title="Administration &amp; Capacity Planning"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.8</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.9</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -962,7 +962,9 @@ multi-sample calling commands such as <code class="docutils literal"><span class
 of the of quality the call of any particular sample.</p>
 </div>
 <p>RTG adds custom fields to the VCF format to better account for some of
-its unique variant calling features, described in the tables below.</p>
+its unique variant calling features, described in the tables below.
+The exact set of fields used depend on the module run, with some fields
+only appropriate and present for family calling, somatic calling, etc.</p>
 <p>Table : RTG VCF file FILTER fields</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1049,13 +1051,19 @@ its unique variant calling features, described in the tables below.</p>
 <tr class="row-odd"><td><code class="docutils literal"><span class="pre">AN</span></code></td>
 <td>The standard VCF total number of alleles in called genotypes field.</td>
 </tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">STRL</span></code></td>
+<td>The number of adjacent simple tandem repeats on the reference sequence.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">STRU</span></code></td>
+<td>The length of the repeating unit in a simple tandem repeat.</td>
+</tr>
 </tbody>
 </table>
 <p>Table : RTG VCF file FORMAT fields</p>
 <table border="1" class="longtable docutils">
 <colgroup>
-<col width="2%" />
-<col width="98%" />
+<col width="3%" />
+<col width="97%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Value</th>
@@ -1086,6 +1094,12 @@ its unique variant calling features, described in the tables below.</p>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal"><span class="pre">GQ</span></code></td>
 <td>The standard VCF format genotype quality field. This is the Phred scaled posterior score of the call. It is not necessarily the same as the <code class="docutils literal"><span class="pre">QUAL</span></code> column score.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">GQD</span></code></td>
+<td>The genotype quality divided by the read depth of the sample.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">QD</span></code></td>
+<td>The quality field divided by the sum of the read depth for all samples.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal"><span class="pre">DN</span></code></td>
 <td>Indicates with a value of <code class="docutils literal"><span class="pre">Y</span></code> if the call for this sample is a putative <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> mutation, or <code class="docutils literal"><span class="pre">N</span></code> to indicate that the sample is not a <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> mutation. Note that even in cases when the <code class="docutils literal"><span class="pre">GT</span></code> of the sample and the parents would otherwise seem to indicate a <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> mutation, this field may be set to <code class="docutils literal"><span class="pre">N</span></code> when the variant caller has assigned a sufficiently low score to the likelihood that a <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> event has occurred.</td>
@@ -1149,17 +1163,47 @@ its unique variant calling features, described in the tables below.</p>
 <tr class="row-odd"><td><code class="docutils literal"><span class="pre">AQ</span></code></td>
 <td>The sum of the quality of evidence (including base quality and mapping quality) for the reference and alternate alleles in the order listed.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">SSC</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">MEANQAD</span></code></td>
+<td>The difference in the mean <code class="docutils literal"><span class="pre">AQ</span></code> between the two called alleles.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">SSC</span></code></td>
 <td>The score for the somatic mutation specified by the <code class="docutils literal"><span class="pre">GT</span></code> field.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">SS</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">SS</span></code></td>
 <td>The somatic status of the genotype for this sample. A value of 0 indicates none or wild type, a value of 1 indicates a germline variant, and a value of 2 indicates a somatic variant.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">GL</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">GL</span></code></td>
 <td>The log10 scaled likelihoods for all possible genotypes given the set of alleles defined in the <code class="docutils literal"><span class="pre">REF</span></code> and <code class="docutils literal"><span class="pre">ALT</span></code> fields as defined in the VCF specifications.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">VAF</span></code></td>
-<td>When a <code class="docutils literal"><span class="pre">VA</span></code> attribute is present, the <code class="docutils literal"><span class="pre">VAF</span></code> field contains the estimated variant allelic fraction of that alternate allele.</td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">VAF</span></code></td>
+<td>The <code class="docutils literal"><span class="pre">VAF</span></code> field contains the estimated variant allelic fraction of each alternate allele, in the order listed.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">IC</span></code></td>
+<td>The inbreeding coefficient for the site.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">EP</span></code></td>
+<td>The Phred scaled probability that the site is not in Hardy-Weinberg equilibrium.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">LAL</span></code></td>
+<td>The length of the longest allele for the site.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">NAA</span></code></td>
+<td>The number of alternate alleles for the site.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">PD</span></code></td>
+<td>The ploidy of the sample.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">ZY</span></code></td>
+<td>The zygosity of the sample.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">RA</span></code></td>
+<td>Categorizes the call as hom-ref (<code class="docutils literal"><span class="pre">RR</span></code>), hom-alt (<code class="docutils literal"><span class="pre">AA</span></code>), het-ref (<code class="docutils literal"><span class="pre">RA</span></code>), or het-alt (<code class="docutils literal"><span class="pre">AB</span></code>), independent of phase or ALT allele indices.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">QA</span></code></td>
+<td>Sum of quality of the alternate observations.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">CLUS</span></code></td>
+<td>The number of variants in this sample within five bases of the current variant.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal"><span class="pre">AVR</span></code></td>
 <td>The adaptive variant rescoring value. It is a value between 0 and 1 that represents the probability that the variant for the sample is correct.</td>
@@ -2551,7 +2595,7 @@ referenced in this document are the property of their respective owners.</p>
         <li class="right" >
           <a href="administration.html" title="Administration &amp; Capacity Planning"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.8</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.9</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
