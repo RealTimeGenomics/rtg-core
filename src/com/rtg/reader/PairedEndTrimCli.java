@@ -74,7 +74,7 @@ public class PairedEndTrimCli extends AbstractCli {
   private static final String DISCARD_EMPTY_READS = "discard-empty-reads";
   private static final String DISCARD_EMPTY_PAIRS = "discard-empty-pairs";
 
-  private static final String MISMATCH_HANDLING = "Xmismatch-adjustment";
+  private static final String MISMATCH_HANDLING = "mismatch-adjustment";
 
   private static final String VERBOSE = "Xverbose";
 
