@@ -69,10 +69,7 @@
 <li><a class="reference internal" href="#sdf2fastq">sdf2fastq</a></li>
 <li><a class="reference internal" href="#sdf2sam">sdf2sam</a></li>
 <li><a class="reference internal" href="#fastqtrim">fastqtrim</a></li>
-<li><a class="reference internal" href="#petrim">petrim</a><ul>
-<li><a class="reference internal" href="#formatting-with-paired-end-trimming-on-the-fly">Formatting with paired-end trimming on the fly</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#petrim">petrim</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#read-mapping-commands">Read Mapping Commands</a><ul>
@@ -1628,9 +1625,9 @@ formatting to SDF:</p>
 </table>
 <table border="1" class="docutils">
 <colgroup>
-<col width="6%" />
-<col width="23%" />
-<col width="71%" />
+<col width="4%" />
+<col width="18%" />
+<col width="77%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head" colspan="3">Filtering</th>
@@ -1662,6 +1659,10 @@ formatting to SDF:</p>
 <td>If a read ends up shorter than this threshold it will be trimmed to zero length (Default is 0)</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
+<td><code class="docutils literal"><span class="pre">--mismatch-adjustment=STRING</span></code></td>
+<td>Method used to alter bases/qualities at mismatches within overlap region. Allowed values are [none, zero-phred, pick-best] (Default is none)</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
 <td><code class="docutils literal"><span class="pre">--right-probe-length=INT</span></code></td>
 <td>Assume R2 starts with probes this long, and trim R1 bases that overlap into this (Default is 0)</td>
 </tr>
@@ -1736,6 +1737,13 @@ bases. For example, if the left arms contain 11-mer probes, using
 bases that overlap into the first 11 bases of the left arm. Similar
 trimming is available for situations where probes are ligated to the
 right arm by using <code class="docutils literal"><span class="pre">--right-probe-length</span></code>.</li>
+<li>Adjustment of mismatching read bases inside areas of overlap. Such
+mismatches indicate that one or other of the bases has been
+incorrectly sequenced. Alteration of these bases is selected by
+supplying the <code class="docutils literal"><span class="pre">--mismatch-adjustment</span></code> flag with a value of
+<code class="docutils literal"><span class="pre">zero-phred</span></code> to alter the phred quality score of both bases to zero,
+or <code class="docutils literal"><span class="pre">pick-best</span></code> to choose whichever base had the higher reported
+quality score.</li>
 <li>Removal of overlap regions by trimming both arms back to a point where
 no overlap is present. An equal number of bases are removed from each
 arm. This trimming is enabled by specifying <code class="docutils literal"><span class="pre">--midpoint-trim</span></code> and
@@ -11060,9 +11068,9 @@ accuracy, see:
 and <a class="reference external" href="https://en.wikipedia.org/wiki/Sensitivity_and_specificity">https://en.wikipedia.org/wiki/Sensitivity_and_specificity</a></p>
 </div>
 </div>
-<div class="section" id="benchmarking-performance-for-snps-vs-indels">
-<h4>Benchmarking performance for SNPs vs indels<a class="headerlink" href="#benchmarking-performance-for-snps-vs-indels" title="Permalink to this headline">¶</a></h4>
-<p>A common desire is to perform analysis separately for SNPs vs
+<div class="section" id="benchmarking-performance-for-snps-versus-indels">
+<h4>Benchmarking performance for SNPs versus indels<a class="headerlink" href="#benchmarking-performance-for-snps-versus-indels" title="Permalink to this headline">¶</a></h4>
+<p>A common desire is to perform analysis separately for SNPs versus
 indels. However, it is important to note that due the representation
 ambiguity problem, it is not always trivial to decide in a global sense
 whether a variant is a SNP or an indel or other complex variant. A group
@@ -11098,7 +11106,7 @@ the baseline and calls (or between calls from one variant caller and
 another), then at some level there is really a semantic difference
 between a &#8220;baseline indel&#8221; and a &#8220;call-set indel&#8221; (or &#8220;variant-caller-A
 indel&#8221; and &#8220;variant-caller-B indel&#8221;), so caution should be applied when
-making conclusions related to SNP vs indel accuracy.</p>
+making conclusions related to SNP versus indel accuracy.</p>
 <p>In the <code class="docutils literal"><span class="pre">snp_roc.tsv</span></code> and <code class="docutils literal"><span class="pre">non_snp_roc.tsv</span></code> output files, <code class="docutils literal"><span class="pre">vcfeval</span></code>
 notes the number of baseline and call variants of each variant
 type. When considering benchmarking metrics in the absence of any
@@ -11201,12 +11209,13 @@ decomposition options) is also available via <code class="docutils literal"><spa
 </table>
 <p><strong>Usage:</strong></p>
 <p>The <code class="docutils literal"><span class="pre">svdecompose</span></code> command is applied to a VCF containing structural
-variants and converts deletion, inversion, and tandem duplications with
-<code class="docutils literal"><span class="pre">SVTYPE</span></code> of <code class="docutils literal"><span class="pre">DEL</span></code>, <code class="docutils literal"><span class="pre">INV</span></code>, and <code class="docutils literal"><span class="pre">DUP</span></code>, respectively, into
-corresponding breakend events with <code class="docutils literal"><span class="pre">SVTYPE=BND</span></code>.  <code class="docutils literal"><span class="pre">svdecompose</span></code> will
-also decompose sequence-resolved insertions and deletions greater than
-<code class="docutils literal"><span class="pre">--min-indel-length</span></code> into breakend representation. Records of others
-types are passed through without modification.</p>
+variants and converts deletion, insertion, inversion, and tandem
+duplications with <code class="docutils literal"><span class="pre">SVTYPE</span></code> of <code class="docutils literal"><span class="pre">DEL</span></code>, <code class="docutils literal"><span class="pre">INS</span></code>, <code class="docutils literal"><span class="pre">INV</span></code>, and
+<code class="docutils literal"><span class="pre">DUP</span></code>, respectively, into corresponding breakend events with
+<code class="docutils literal"><span class="pre">SVTYPE=BND</span></code>.  <code class="docutils literal"><span class="pre">svdecompose</span></code> will also decompose sequence-resolved
+insertions and deletions greater than <code class="docutils literal"><span class="pre">--min-indel-length</span></code> into
+breakend representation. Records of others types are passed through
+without modification.</p>
 <p>This operation can be useful for the purposes of reducing output from
 various structural variant callers to a common representation to
 better facilitate comparison with the <code class="docutils literal"><span class="pre">bndeval</span></code> command.</p>
@@ -11920,7 +11929,7 @@ the two positions.</li>
 <li>Additional ROC data files can be loaded by clicking on the &#8220;Open...&#8221;
 button, and multiple ROC data files within a directory can be loaded
 at once using multi-select.</li>
-<li>The &#8216;Cmd&#8217; button will open a message window that contains a
+<li>The &#8220;Cmd&#8221; button will open a message window that contains a
 command-line equivalent to the currently displayed set of curves. This
 command-line may be copy-pasted, providing an easy way to replicate
 the current set of curves in another session, generate a curve in a
@@ -11929,7 +11938,7 @@ script, or share with a colleague.</li>
 precision/sensitivity graph types.</li>
 </ul>
 <p>Each curve in the GUI has a customization widget on the right hand
-side of the UI that allows several operations:</p>
+side of the window that allows several operations:</p>
 <ul class="simple">
 <li>Rename the title used for the curve via the editable text.</li>
 <li>Temporarily hide/show the curve via selection checkbox.</li>
