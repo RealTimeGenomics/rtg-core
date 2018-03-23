@@ -11,12 +11,16 @@
  */
 package com.rtg.variant.cnv.preprocess;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.util.MathUtils;
 
 /**
  * Applies log base 2 of a column
  */
 public class AddLog implements DatasetProcessor {
+
+  private static final double MIN_LOG_RATIO = GlobalFlags.getDoubleValue(CoreGlobalFlags.SEGMENT_MIN_LOG_RATIO);
 
   protected final int mCol;
   private final String mColName;
@@ -45,7 +49,7 @@ public class AddLog implements DatasetProcessor {
     final NumericColumn out = dataset.addColumn(new NumericColumn(mColName == null ? "log2(" + dataset.columnName(mCol) + ")" : mColName));
     final double[] values = new double[in.size()];
     for (int i = 0; i < in.size(); ++i) {
-      values[i] = Math.log(in.get(i)) / MathUtils.LOG_2;
+      values[i] = Math.max(Math.log(in.get(i)) / MathUtils.LOG_2, MIN_LOG_RATIO);
     }
     out.set(values);
   }

@@ -110,6 +110,9 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   /** If set, debugging mode also outputs a separate file for every new discordant record */
   public static final String SV_DISCORD_DEBUG_PER_RECORD = "com.rtg.variant.sv.discord-debug-per-record";
 
+  /** The minimum value permitted for CNV log ratio - a pure deletion will have this ratio */
+  public static final String SEGMENT_MIN_LOG_RATIO = "com.rtg.variant.cnv.min-logr";
+
   /** Allow prediction to continue even if the VCF does not declare all the attributes of the model. */
   public static final String AVR_ALLOW_UNDECLARED_ATTRIBUTES = "com.rtg.avr.allow-undeclared";
   /** Level of BAM compression to use during recalibration (probably also works for SAM merge). */
@@ -185,6 +188,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     registerFlag(SV_ALIGNMENT_END_IGNORED_FRACTION, Integer.class, 8);
     registerFlag(SV_IGNORE_RGSTATS_VERSION);
     registerFlag(SV_DISCORD_DEBUG_PER_RECORD);
+
+    registerFlag(SEGMENT_MIN_LOG_RATIO, Double.class, Double.NEGATIVE_INFINITY);
 
     registerFlag(COVERAGE_DP, Integer.class, 2);
 

@@ -251,7 +251,7 @@ public class SegmentCli extends LoggedCli {
     controlCoverageCol = filtered.columns() - 1;
 
     Diagnostic.userLog("Computing ratio");
-    checkNonZero(filtered, caseCoverageCol);
+    //checkNonZero(filtered, caseCoverageCol);
     checkNonZero(filtered, controlCoverageCol);
     new AddRatio(caseCoverageCol, controlCoverageCol, "ratio_wmednorm").process(filtered);
 
@@ -322,7 +322,7 @@ public class SegmentCli extends LoggedCli {
     // Panel is already median normalized
 
     Diagnostic.userLog("Computing ratio");
-    checkNonZero(filtered, caseCoverageCol);
+    //checkNonZero(filtered, caseCoverageCol);
     checkNonZero(filtered, panelCoverageCol);
     new AddRatio(caseCoverageCol, panelCoverageCol, "ratio_wmednorm").process(filtered);
 
