@@ -29,15 +29,16 @@ public class CnvRecordFilterTest extends TestCase {
     final CnvRecordFilter f = new CnvRecordFilter(Collections.singletonList("pretend"), true);
     f.setHeader(null);
     final VcfRecord record = new VcfRecord("pretend", 42, "A");
-    assertFalse(f.accept(record));
+    assertFalse(f.accept(record)); // Not SV
     record.addInfo(VcfUtils.INFO_END, "42");
-    assertFalse(f.accept(record));
+    assertFalse(f.accept(record)); // Not SV
     record.addInfo(VcfUtils.INFO_SVTYPE, CnaType.DEL.toString());
-    assertTrue(f.accept(record));
+    assertTrue(f.accept(record)); // SV with END
+
     final VcfRecord record2 = new VcfRecord("pretend2", 42, "A");
     record2.addInfo(VcfUtils.INFO_END, "42");
     record2.addInfo(VcfUtils.INFO_SVTYPE, CnaType.DEL.toString());
-    assertFalse(f.accept(record2));
+    assertFalse(f.accept(record2)); // Overlap
   }
 
   public void testNoEnd() {
@@ -55,10 +56,16 @@ public class CnvRecordFilterTest extends TestCase {
     record.addInfo(VcfUtils.INFO_END, "48");
     record.addInfo(VcfUtils.INFO_SVTYPE, CnaType.DEL.toString());
     assertTrue(f.accept(record));
-    final VcfRecord record2 = new VcfRecord("pretend", 42, "A");
-    record2.addInfo(VcfUtils.INFO_END, "42");
+
+    final VcfRecord record2 = new VcfRecord("pretend", 46, "A");
+    record2.addInfo(VcfUtils.INFO_END, "49");
     record2.addInfo(VcfUtils.INFO_SVTYPE, CnaType.DEL.toString());
     assertFalse(f.accept(record2));
+
+    final VcfRecord record3 = new VcfRecord("pretend", 47, "A"); // Since according to VCF spec, SV records include the base BEFORE the event
+    record3.addInfo(VcfUtils.INFO_END, "49");
+    record3.addInfo(VcfUtils.INFO_SVTYPE, CnaType.DEL.toString());
+    assertTrue(f.accept(record3));
   }
 
 }

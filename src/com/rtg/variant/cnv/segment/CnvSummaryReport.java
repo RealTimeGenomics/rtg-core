@@ -124,7 +124,7 @@ class CnvSummaryReport {
         final CnaType status = CnaType.valueOf(rec);
         final String chr = rec.getSequenceName();
         final int start = rec.getStart() + 1;  // Spec says SV start is the base before the SV.
-        final Integer end = VcfUtils.getIntegerInfoFieldFromRecord(rec, INFO_END) - 1; // Convert from 1-based to 0-based
+        final Integer end = VcfUtils.getIntegerInfoFieldFromRecord(rec, INFO_END);
 
         // Determine intersection
         final RangeList<String> rr = mRegions.get(chr);

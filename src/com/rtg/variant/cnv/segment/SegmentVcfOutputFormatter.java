@@ -131,7 +131,7 @@ public class SegmentVcfOutputFormatter {
       }
     }
 
-    rec.setInfo(INFO_END, String.valueOf(current.getEnd() + 1));
+    rec.setInfo(INFO_END, String.valueOf(current.getEnd()));
     rec.setInfo(INFO_IMPRECISE);
     // For CIPOS and CIEND, we extend outward to the closest neighboring segment boundary (or the edge of the reference sequence)
     // For the inward side, we go to half of the bin length

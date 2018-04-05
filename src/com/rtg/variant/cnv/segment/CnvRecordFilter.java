@@ -53,7 +53,7 @@ public class CnvRecordFilter implements VcfFilter {
       Diagnostic.warning("Skipping SV record without a defined END: " + rec);
       return false;
     }
-    if (mFilterOverlap && rec.getSequenceName().equals(mLastSeq) && rec.getStart() + 1 < mLastEnd) { // Maybe it's OK to keep?
+    if (mFilterOverlap && rec.getSequenceName().equals(mLastSeq) && rec.getStart() + 1 < mLastEnd) { // +1 since spec says SV records include the base before the event
       Diagnostic.warning("Skipping SV record that overlaps a previous SV variant: " + rec);
       return false;
     }
@@ -62,7 +62,7 @@ public class CnvRecordFilter implements VcfFilter {
       return false;
     }
     mLastSeq = rec.getSequenceName();
-    mLastEnd = end - 1;
+    mLastEnd = end;
     return true;
   }
 
