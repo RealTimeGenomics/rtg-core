@@ -32,6 +32,7 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.Environment;
+import com.rtg.util.MathUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
@@ -56,6 +57,8 @@ public class CnvPonBuildCli extends AbstractCli {
   private static final String CNV_PON_OUTPUT_VERSION = "v1.1";
 
   private static final String LABEL_COLUMN_NAME = "label-column-name";
+
+  private static final String EXPANDED = "Xexpanded";
 
   // Name of the output column containing normalized coverage profile
   static final String NORMALIZED_COVERAGE_COLUMN = "normalized-coverage";
@@ -82,6 +85,7 @@ public class CnvPonBuildCli extends AbstractCli {
     mFlags.registerOptional(SegmentCli.GCBINS_FLAG, Integer.class, INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(SegmentCli.COV_COLUMN_NAME, String.class, STRING, "name of the coverage column in input data", SegmentCli.DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(LABEL_COLUMN_NAME, String.class, STRING, "if set, include region labels using the named column from the input data").setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(EXPANDED, "if set, include additional columns in the output file").setCategory(SENSITIVITY_TUNING);
     final Flag<File> covFlag = mFlags.registerRequired(File.class, FILE, "coverage BED file").setCategory(INPUT_OUTPUT);
     covFlag.setMaxCount(Integer.MAX_VALUE);
     mFlags.setValidator(flags -> flags.checkInRange(SegmentCli.GCBINS_FLAG, 0, Integer.MAX_VALUE)
@@ -89,7 +93,7 @@ public class CnvPonBuildCli extends AbstractCli {
     );
   }
 
-  private NumericColumn normalize(final File coverageFile, final boolean gcCorrect, final int gcbins, RegionDataset typicalSample) throws IOException {
+  private NumericColumn normalize(final File coverageFile, RegionDataset typicalSample, final boolean gcCorrect, final int gcbins) throws IOException {
     Diagnostic.info("Normalizing and G+C correcting " + coverageFile);
     final String coverageColumnName = (String) mFlags.getValue(SegmentCli.COV_COLUMN_NAME);
     final RegionDataset coverageData = RegionDataset.readFromBed(coverageFile, Collections.singletonList(new NumericColumn(coverageColumnName)));
@@ -123,24 +127,31 @@ public class CnvPonBuildCli extends AbstractCli {
       final int gcbins = (Integer) mFlags.getValue(SegmentCli.GCBINS_FLAG);
       final AddGc gcCorrector = gcbins > 1 ? new AddGc(sr) : null;
       final RegionDataset typicalSample = RegionDataset.readFromBed((File) mFlags.getAnonymousValue(0), labelColumn == null ? Collections.emptyList() : Collections.singletonList(new StringColumn(labelColumn)));
+      typicalSample.getColumns().removeIf((Column col) -> !col.getName().equals(labelColumn));
+      final int cleanFirst = typicalSample.columns();
       if (gcCorrector != null) {
         Diagnostic.info("Computing per-region G+C content");
         gcCorrector.process(typicalSample);
       }
-      final double[] sum = new double[typicalSample.size()];
+
+      final int first = typicalSample.columns();
+      int sampleNum = 1;
       for (final Object coverageFile : mFlags.getAnonymousValues(0)) {
-        final NumericColumn covData = normalize((File) coverageFile, gcCorrector != null, gcbins, typicalSample);
-        for (int k = 0; k < sum.length; ++k) {
-          sum[k] += covData.get(k);
+        final NumericColumn covData = normalize((File) coverageFile, typicalSample, gcCorrector != null, gcbins);
+        covData.setName("wmednorm_" + sampleNum++);
+        typicalSample.addColumn(covData);
+      }
+      final int last = typicalSample.columns();
+
+      addPonMean(typicalSample, first, last);
+      if (mFlags.isSet(EXPANDED)) {
+        addPonMed(typicalSample, first, last);
+      } else {
+        for (int i = 0; i < (last - cleanFirst); i++) {
+          typicalSample.getColumns().remove(cleanFirst);
         }
       }
-      typicalSample.getColumns().removeIf((Column col) -> !col.getName().equals(labelColumn));
-      final int n = mFlags.getAnonymousValues(0).size();
-      final NumericColumn col = new NumericColumn(NORMALIZED_COVERAGE_COLUMN);
-      for (final double v : sum) {
-        col.add(v / n);
-      }
-      typicalSample.addColumn(col);
+
       final boolean gzip = !mFlags.isSet(NO_GZIP);
       final File bedFile = FileUtils.getOutputFileName((File) mFlags.getValue(OUTPUT_FLAG), gzip, BedUtils.BED_SUFFIX);
       try (final BedWriter bw = new BedWriter(FileUtils.createOutputStream(bedFile))) {
@@ -153,5 +164,40 @@ public class CnvPonBuildCli extends AbstractCli {
       }
     }
     return 0;
+  }
+
+  // Compute mean value for each ROI
+  private void addPonMean(RegionDataset typicalSample, int first, int last) {
+    final double[] sum = new double[typicalSample.size()];
+    for (int i = first; i < last; i++) {
+      final NumericColumn covData = typicalSample.asNumeric(i);
+      for (int k = 0; k < sum.length; ++k) {
+        sum[k] += covData.get(k);
+      }
+    }
+
+    final int n = last - first;
+    final NumericColumn col = new NumericColumn(NORMALIZED_COVERAGE_COLUMN);
+    for (final double v : sum) {
+      col.add(v / n);
+    }
+    typicalSample.addColumn(col);
+  }
+
+  // Compute median value for each ROI
+  private void addPonMed(RegionDataset typicalSample, int first, int last) {
+    final NumericColumn medcol = new NumericColumn("med-" + NORMALIZED_COVERAGE_COLUMN);
+    final NumericColumn iqrcol = new NumericColumn("iqr-" + NORMALIZED_COVERAGE_COLUMN);
+    final double[] roi = new double[last - first];
+    for (int k = 0; k < typicalSample.size(); ++k) {
+      for (int i = first; i < last; i++) {
+        roi[i - first] = typicalSample.asNumeric(i).get(k);
+      }
+      final double[] dist = MathUtils.quartiles(roi);
+      medcol.add(dist[1]);
+      iqrcol.add(dist[2] - dist[0]);
+    }
+    typicalSample.addColumn(medcol);
+    typicalSample.addColumn(iqrcol);
   }
 }
