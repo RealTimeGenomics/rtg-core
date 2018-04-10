@@ -46,9 +46,9 @@ public class FragTest extends TestCase {
       counts[i] = new SortedMultiSet<>();
     }
     fr.count(counts);
-    assertEquals("[ ]", counts[0].toString());
-    assertEquals("[ 2->42]", counts[1].toString());
-    assertEquals("[ 2->42]", counts[42].toString());
+    assertEquals("[]", counts[0].toString());
+    assertEquals("[2->42]", counts[1].toString());
+    assertEquals("[2->42]", counts[42].toString());
     final Frag fr0 = frag(1, 1, 42);
     final Frag fr1 = frag(1, 2, 42);
     final Frag fr2 = frag(42);
