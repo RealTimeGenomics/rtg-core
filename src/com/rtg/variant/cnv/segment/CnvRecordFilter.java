@@ -58,7 +58,6 @@ public class CnvRecordFilter implements VcfFilter {
       return false;
     }
     if (!mChrs.contains(rec.getSequenceName())) {
-      Diagnostic.warning("Skipping SV record on untargeted chromosome: " + rec);
       return false;
     }
     mLastSeq = rec.getSequenceName();
