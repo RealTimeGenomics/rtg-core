@@ -188,16 +188,21 @@ public class CnvPonBuildCli extends AbstractCli {
   private void addPonMed(RegionDataset typicalSample, int first, int last) {
     final NumericColumn medcol = new NumericColumn("med-" + NORMALIZED_COVERAGE_COLUMN);
     final NumericColumn iqrcol = new NumericColumn("iqr-" + NORMALIZED_COVERAGE_COLUMN);
+    final NumericColumn iqrnormcol = new NumericColumn("norm-iqr-" + NORMALIZED_COVERAGE_COLUMN);
     final double[] roi = new double[last - first];
     for (int k = 0; k < typicalSample.size(); ++k) {
       for (int i = first; i < last; i++) {
         roi[i - first] = typicalSample.asNumeric(i).get(k);
       }
       final double[] dist = MathUtils.quartiles(roi);
-      medcol.add(dist[1]);
-      iqrcol.add(dist[2] - dist[0]);
+      final double iqr = dist[2] - dist[0];
+      final double median = dist[1];
+      medcol.add(median);
+      iqrcol.add(iqr);
+      iqrnormcol.add(median == 0 ? Double.POSITIVE_INFINITY : iqr / median);
     }
     typicalSample.addColumn(medcol);
     typicalSample.addColumn(iqrcol);
+    typicalSample.addColumn(iqrnormcol);
   }
 }
