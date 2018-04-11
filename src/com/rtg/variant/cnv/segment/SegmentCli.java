@@ -87,6 +87,7 @@ public class SegmentCli extends LoggedCli {
   private static final String MIN_CTRL_COV_FLAG = "min-control-coverage";
   private static final String MIN_PANEL_COV_FLAG = "min-panel-coverage";
   static final String COV_COLUMN_NAME = "coverage-column-name";
+  static final String PANEL_COV_COLUMN_NAME = "Xpanel-coverage-column-name";
 
   static final String DEFAULT_COLUMN_NAME = "coverage";
 
@@ -138,6 +139,7 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerOptional('c', COLUMN_FLAG, Integer.class, INT, "just run segmentation directly on the specified data column from the case file, ignoring control data", 0).setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(GCBINS_FLAG, Integer.class, INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(COV_COLUMN_NAME, String.class, STRING, "name of the coverage column in input data", DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(PANEL_COV_COLUMN_NAME, String.class, STRING, "name of the normalized coverage column in panel data", NORMALIZED_COVERAGE_COLUMN).setCategory(SENSITIVITY_TUNING);
     mFlags.addRequiredSet(controlFlag);
     mFlags.addRequiredSet(panelFlag);
     mFlags.setValidator(flags -> CommonFlags.validateOutputDirectory(flags)
@@ -269,6 +271,7 @@ public class SegmentCli extends LoggedCli {
     final double minPanelCoverage = (Double) mFlags.getValue(MIN_PANEL_COV_FLAG);
     final int gcbins = (Integer) mFlags.getValue(GCBINS_FLAG);
     final String coverageColumnName = (String) mFlags.getValue(COV_COLUMN_NAME);
+    final String panelCoverageColumnName = (String) mFlags.getValue(PANEL_COV_COLUMN_NAME);
 
     Diagnostic.userLog("Loading case");
     final File caseFile = (File) mFlags.getValue(CASE_FLAG);
@@ -283,11 +286,11 @@ public class SegmentCli extends LoggedCli {
 
     Diagnostic.userLog("Loading panel file");
     final File panelFile = (File) mFlags.getValue(PANEL_FLAG);
-    final RegionDataset panelData = RegionDataset.readFromBed(panelFile, Collections.singletonList(new NumericColumn(NORMALIZED_COVERAGE_COLUMN)));
-    if (panelData.columnId(NORMALIZED_COVERAGE_COLUMN) == -1) {
-      throw new NoTalkbackSlimException("Could not find column named " + NORMALIZED_COVERAGE_COLUMN + " in " + panelData);
+    final RegionDataset panelData = RegionDataset.readFromBed(panelFile, Collections.singletonList(new NumericColumn(panelCoverageColumnName)));
+    if (panelData.columnId(panelCoverageColumnName) == -1) {
+      throw new NoTalkbackSlimException("Could not find column named " + panelCoverageColumnName + " in " + panelData);
     }
-    panelData.getColumns().removeIf((Column col) -> !NORMALIZED_COVERAGE_COLUMN.equals(col.getName()));
+    panelData.getColumns().removeIf((Column col) -> !panelCoverageColumnName.equals(col.getName()));
 
 
     Diagnostic.userLog("Joining");
@@ -302,7 +305,6 @@ public class SegmentCli extends LoggedCli {
     filtered = filtered.filter(row -> cc1.get(row) >= minPanelCoverage);
     Diagnostic.userLog("Filtered with minimum panel coverage " + minPanelCoverage + ", dataset has " + filtered.size() + " rows");
 
-    // TODO deal with deletions properly
     final NumericColumn cc2 = filtered.asNumeric(caseCoverageCol);
     filtered = filtered.filter(row -> cc2.get(row) >= minCaseCoverage);
     Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", dataset has " + filtered.size() + " rows");
