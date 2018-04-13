@@ -13,31 +13,34 @@ package com.rtg.variant.cnv.preprocess;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 /**
  * Tests the corresponding class.
  */
-public class SimpleJoinTest extends TestCase {
+public class IntersectJoinTest extends SimpleJoinTest {
 
+  @Override
   protected DatasetProcessor getJoiner(RegionDataset d) {
-    return new SimpleJoin(d, "prefix");
+    return new IntersectJoin(d, "prefix");
   }
 
-  public void test() throws IOException {
+  public void test2() throws IOException {
     final RegionDataset ds1 = new RegionDataset(new String[0]);
     ds1.regions().add("sequence 0:123-456");
     ds1.regions().add("sequence 1:123-456");
+    ds1.regions().add("sequence 2:123-456");
     final IntColumn col = new IntColumn("x");
     col.add(8);
-    col.add(8);
+    col.add(10);
+    col.add(12);
     ds1.addColumn(col);
     final RegionDataset ds2 = new RegionDataset(new String[0]);
     ds2.regions().add("sequence 0:123-456");
     ds2.regions().add("sequence 1:123-456");
+    ds2.regions().add("sequence 1:789-101112");
     final IntColumn col2 = new IntColumn("y");
+    col2.add(2);
     col2.add(4);
-    col2.add(4);
+    col2.add(6);
     ds2.addColumn(col2);
     final DatasetProcessor sj = getJoiner(ds1);
     sj.process(ds2);

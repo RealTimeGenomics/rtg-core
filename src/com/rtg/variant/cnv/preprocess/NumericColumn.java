@@ -74,6 +74,14 @@ public class NumericColumn extends Column {
     add(value);
   }
 
+  @Override
+  void remove(int i) {
+    if (i + 1 < mSize) {
+      System.arraycopy(mData, i + 1, mData, i, 1);
+    }
+    mSize--;
+  }
+
   /**
    * Append the specified value to this column.
    * @param value value to append

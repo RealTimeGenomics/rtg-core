@@ -44,6 +44,13 @@ public abstract class Column implements Cloneable {
   abstract void add(String value);
 
   /**
+   * Removes the element at the specified position in this list.
+   * Shifts any subsequent elements to the left (subtracts one from their indices).
+   * @param i the index of the entry to remove
+   */
+  abstract void remove(int i);
+
+  /**
    * Get a value in String representation
    * @param i the item
    * @return the String representation of the item

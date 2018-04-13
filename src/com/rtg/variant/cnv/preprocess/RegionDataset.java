@@ -259,6 +259,17 @@ public class RegionDataset {
   }
 
   /**
+   * Removes the specified data row
+   * @param row the row index
+   */
+  public void remove(int row) {
+    mRegions.remove(row);
+    for (int i = 0; i < mColumnIndexes.length; ++i) {
+      column(i).remove(row);
+    }
+  }
+
+  /**
    * Computes the median of a column
    * @param col the column to operate on
    * @return the median

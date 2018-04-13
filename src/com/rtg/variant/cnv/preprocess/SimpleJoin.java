@@ -24,8 +24,8 @@ import com.rtg.util.intervals.SequenceNameLocusComparator;
  */
 public class SimpleJoin implements DatasetProcessor {
 
-  private final String mPrefix;
-  private final RegionDataset mDataset;
+  protected final String mPrefix;
+  protected final RegionDataset mDataset;
 
   SimpleJoin(File in) throws IOException {
     final String[] split = StringUtils.split(in.toString(), '=', 2);

@@ -76,6 +76,11 @@ public abstract class ObjectColumn<T> extends Column {
   }
 
   @Override
+  public void remove(int i) {
+    mData.remove(i);
+  }
+
+  @Override
   @SuppressWarnings("unchecked")
   ObjectColumn<T> filter(RegionPredicate p) {
     final ArrayList<T> newData = new ArrayList<>();

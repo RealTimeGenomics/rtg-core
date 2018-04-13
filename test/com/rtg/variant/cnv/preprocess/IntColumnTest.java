@@ -28,5 +28,14 @@ public class IntColumnTest extends TestCase {
     assertEquals("42", col.toString(0));
     assertEquals(42.0, col.mean());
     assertEquals(42.0, col.median());
+    col.remove(0);
+    assertEquals(0, col.size());
+    col.add(1);
+    col.add(2);
+    col.add(3);
+    assertEquals(3, col.size());
+    col.remove(1);
+    assertEquals(2, col.size());
+    assertEquals(3, (int) col.get(1));
   }
 }
