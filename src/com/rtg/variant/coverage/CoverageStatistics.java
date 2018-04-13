@@ -14,7 +14,6 @@ package com.rtg.variant.coverage;
 import static com.rtg.util.StringUtils.LS;
 
 import java.awt.Color;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,7 +41,6 @@ import com.rtg.util.DoubleMultiSet;
 import com.rtg.util.HtmlReportHelper;
 import com.rtg.util.MathUtils;
 import com.rtg.util.MultiSet;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TextTable;
 import com.rtg.util.Utils;
 import com.rtg.util.cli.CommandLine;
@@ -54,10 +52,42 @@ import com.rtg.util.io.FileUtils;
  */
 public class CoverageStatistics extends AbstractStatistics {
 
+  /** Container for a row of coverage level output. */
+  public static final class LevelDatum {
+    final int mCoverageLevel;
+    final long mCount;
+    final double mPercent;
+    final double mCumulative;
+
+    private LevelDatum(int coverageLevel, long count, double percent, double cumulative) {
+      mCoverageLevel = coverageLevel;
+      mCount = count;
+      mPercent = percent;
+      mCumulative = cumulative;
+    }
+
+    public int getCoverageLevel() {
+      return mCoverageLevel;
+    }
+
+    public long getCount() {
+      return mCount;
+    }
+
+    public double getPercent() {
+      return mPercent;
+    }
+
+    public double getCumulative() {
+      return mCumulative;
+    }
+  }
+
   private static final int BUCKET_SIZE = Integer.getInteger("rtg.coverage.bucketsize", 1);
 
   private static final int BREADTH_DP = 4; // This is a fraction, so several DP is appropriate
   private static final int COVERAGE_DP = GlobalFlags.getIntegerValue(CoreGlobalFlags.COVERAGE_DP);
+  private static final double RESIDUE_CUMULATIVE_PERCENT = 0.01; // Cumulative coverage below this level need not be reported
 
   private static final String COVERAGE_PNG_NAME = "coverage.png";
   private static final String CUMULATIVE_COVERAGE_PNG_NAME = "cumulative_coverage.png";
@@ -164,7 +194,7 @@ public class CoverageStatistics extends AbstractStatistics {
     return sb.toString();
   }
 
-  void writeGraphs(List<List<Double>> data, HtmlReportHelper hrh, Map<String, Object> velocityMap) throws IOException {
+  void writeGraphs(List<LevelDatum> data, HtmlReportHelper hrh, Map<String, Object> velocityMap) throws IOException {
 
     final Graph2D graph = new Graph2D();
     graph.setGrid(true);
@@ -178,10 +208,9 @@ public class CoverageStatistics extends AbstractStatistics {
     final Datum2D[] covData = new Point2D[data.size()];
 
     for (int i = 0; i < data.size(); ++i) {
-      final List<Double> datum = data.get(i);
-
-      cumulativeCovData[i] = new Point2D(i, datum.get(2).floatValue()); //%age cumulative
-      covData[i] = new Point2D(i, datum.get(1).floatValue()); //%age
+      final LevelDatum datum = data.get(i);
+      cumulativeCovData[i] = new Point2D(datum.mCoverageLevel, (float) datum.mCumulative); //%age cumulative
+      covData[i] = new Point2D(datum.mCoverageLevel, (float) datum.mPercent); //%age
     }
 
     plot.setData(cumulativeCovData);
@@ -208,56 +237,60 @@ public class CoverageStatistics extends AbstractStatistics {
     velocityMap.put("coveragePng", COVERAGE_PNG_NAME);
   }
 
-  void writeLevels(List<List<Double>> data, OutputStream os) throws IOException {
+  void writeLevels(List<LevelDatum> data, OutputStream os) throws IOException {
     final StringBuilder sb = new StringBuilder();
     sb.append("#coverage_level\tcount\tpercent\tcumulative");
     sb.append(LS);
 
-    String leader = "";
-    for (int i = 0; i < data.size(); ++i) {
-
-      final List<Double> datum = data.get(i);
-      sb.append(leader);
-      sb.append(i * BUCKET_SIZE);
+    for (final LevelDatum datum : data) {
+      sb.append(datum.mCoverageLevel);
       sb.append('\t');
-      sb.append(datum.get(0).longValue()); //count
+      sb.append(datum.mCount);
       sb.append('\t');
-      sb.append(Utils.realFormat(datum.get(1), 2)); //%age
+      sb.append(Utils.realFormat(datum.mPercent, 2)); //%age
       sb.append('\t');
-      sb.append(Utils.realFormat(datum.get(2), 2)); //%age cumulative
+      sb.append(Utils.realFormat(datum.mCumulative, 2)); //%age cumulative
       sb.append(LS);
-
-      if (BUCKET_SIZE > 1) {
-        leader = (i * BUCKET_SIZE + 1) + "..";
-      }
     }
     os.write(sb.toString().getBytes());
   }
 
-  List<List<Double>> coverageLevels() {
-    final List<List<Double>> data = new ArrayList<>();
-
-    if (mHistogram != null) {
-      int lastNonZero = 0;
-      final double[] nums = new double[mHistogram.length];
-      for (int i = 0; i < mHistogram.length; ++i) {
-        final double percent = 100.0 * mHistogram[i] / mTotalBases;
-//        final String num = Utils.realFormat(percent, 2);
-        nums[i] = percent;
-        if (!MathUtils.approxEquals(percent, 0.00, 0.01)) {
-          lastNonZero = i;
-        }
+  private int getEffectiveLength() {
+    // Since some runs can have extremely high coverage points (e.g. >100000x)
+    // we sometimes want to bin multiple coverage points together so that the
+    // output is smaller and the percentages reported are useful for plotting
+    // etc.  However, it can be the case that the coverage distribution
+    // contains a long tail of low-coverage counts and we don't want those to
+    // affect the amount of binning that occurs.  Therefore we compute here
+    // the number of coverage points that accounts for the majority of the data.
+    long sum = 0;
+    for (int k = 0; k < mHistogram.length; ++k) {
+      final double cumulativeP = 100.0 * (mTotalBases - sum) / mTotalBases;
+      sum += mHistogram[k];
+      if (cumulativeP < RESIDUE_CUMULATIVE_PERCENT) {
+        return k;
       }
+    }
+    return mHistogram.length;
+  }
 
+  List<LevelDatum> coverageLevels() {
+    final List<LevelDatum> data = new ArrayList<>();
+    if (mHistogram != null) {
+      final int binSize = 1 + getEffectiveLength() / 1000;
       long sum = 0;
-      for (int i = 0; i <= lastNonZero; ++i) {
+      for (int binStart = 0; binStart < mHistogram.length; binStart += binSize) {
         final double cumulativeP = 100.0 * (mTotalBases - sum) / mTotalBases;
-        sum += mHistogram[i];
-        final List<Double> datum = new ArrayList<>();
-        datum.add((double) mHistogram[i]);
-        datum.add(nums[i]);
-        datum.add(cumulativeP);
-        data.add(datum);
+        long binSum = 0;
+        for (int j = 0; j < binSize && binStart + j < mHistogram.length; ++j) {
+          binSum += mHistogram[binStart + j];
+        }
+        final double percent = 100.0 * binSum / mTotalBases;
+        sum += binSum;
+        data.add(new LevelDatum(binStart * BUCKET_SIZE, binSum, percent, cumulativeP));
+        if (cumulativeP < RESIDUE_CUMULATIVE_PERCENT) {
+          break;
+        }
       }
     }
     return data;
@@ -388,7 +421,7 @@ public class CoverageStatistics extends AbstractStatistics {
       statsFile.write(getStatistics(false).getBytes());
     }
 
-    final List<List<Double>> levelsData = coverageLevels();
+    final List<LevelDatum> levelsData = coverageLevels();
 
     try (OutputStream levelsOs = FileUtils.createOutputStream(new File(hrh.getBaseDir(), LEVELS_TSV_NAME))) {
       writeLevels(levelsData, levelsOs);
@@ -399,7 +432,7 @@ public class CoverageStatistics extends AbstractStatistics {
     }
   }
 
-  void generateHtmlReport(List<List<Double>> levelsData, HtmlReportHelper hrh) throws IOException {
+  void generateHtmlReport(List<LevelDatum> levelsData, HtmlReportHelper hrh) throws IOException {
     final Map<String, Object> velocityMap = new HashMap<>();
 
     velocityMap.put("resourceDir", hrh.getResourcesDirName());
@@ -415,53 +448,5 @@ public class CoverageStatistics extends AbstractStatistics {
     report = VelocityReportUtils.wrapDefaultTemplate(report, "Coverage", hrh);
 
     FileUtils.stringToFile(report, hrh.getReportFile());
-  }
-
-  private List<List<Double>> readLevelsData(File levelsFile) throws IOException {
-    final List<List<Double>> data = new ArrayList<>();
-    try (final BufferedReader br = new BufferedReader(FileUtils.createReader(levelsFile, false))) {
-      String line;
-      while ((line = br.readLine()) != null) {
-        if (!line.startsWith("#")) {
-          final String[] split = StringUtils.split(line, '\t');
-          if (split.length == 4) {
-            final List<Double> datum = new ArrayList<>();
-            datum.add(Double.valueOf(split[1]));
-            datum.add(Double.valueOf(split[2]));
-            datum.add(Double.valueOf(split[3]));
-            data.add(datum);
-          }
-        }
-      }
-    }
-    return data;
-  }
-
-  /**
-   * @param args arg arg arg
-   * @throws Exception if bad
-   */
-  public static void main(String[] args) throws Exception {
-    if (args.length != 1) {
-      System.err.println("Usage: CoverageStatistics <coveragedir>");
-      System.exit(1);
-    }
-    final File dir = new File(args[0]);
-    if (!dir.exists() || !dir.isDirectory()) {
-      throw new IOException("Could not find " + args[0] + " or was not a directory");
-    }
-
-    final File levels = new File(dir, LEVELS_TSV_NAME);
-    if (!levels.exists()) {
-      throw new IOException("Could not find file: " + args[0] + StringUtils.FS + LEVELS_TSV_NAME);
-    }
-
-    final CoverageStatistics stats = new CoverageStatistics(dir, false);
-
-    //read stats levels file into double list list
-    final List<List<Double>> data = stats.readLevelsData(levels);
-
-    stats.generateHtmlReport(data, stats.getReportHelper());
-
   }
 }
