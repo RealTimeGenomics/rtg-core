@@ -215,21 +215,21 @@ public class MatrixUtilsTest extends TestCase {
 
   public final void testSameShapeSimple() {
     final Matrix a = new MatrixSimple(3);
-    assertEquals(3, a.size());
+    assertEquals(3, a.rows());
     assertTrue(a.isSymmetric());
     a.set(1, 2, Math.PI);
     assertFalse(a.isSymmetric());
     final Matrix b = MatrixUtils.sameShape(a);
-    assertEquals(3, b.size());
+    assertEquals(3, b.rows());
     assertTrue(b.isSymmetric());
   }
 
   public final void testSameShapeSym() {
     final Matrix a = new MatrixSymmetric(3);
-    assertEquals(3, a.size());
+    assertEquals(3, a.rows());
     assertTrue(a.isSymmetric());
     final Matrix b = MatrixUtils.sameShape(a);
-    assertEquals(3, b.size());
+    assertEquals(3, b.rows());
     assertTrue(b.isSymmetric());
   }
 

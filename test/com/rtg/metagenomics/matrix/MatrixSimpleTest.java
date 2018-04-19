@@ -27,7 +27,7 @@ public class MatrixSimpleTest extends TestCase {
     mb.set(0, 1, 1.0);
     mb.set(1, 0, 0.2);
     mb.set(1, 1, 1.0);
-    assertEquals(2, mb.size());
+    assertEquals(2, mb.rows());
     assertEquals(0.5, mb.get(0, 0));
     assertEquals(1.0, mb.get(0, 1));
     assertEquals(0.2, mb.get(1, 0));

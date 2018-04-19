@@ -195,7 +195,7 @@ public class SpeciesTest extends TestCase {
       r.set(0, 1.0);
       r.set(1, 1.0);
       r.set(2, 1.0);
-      final Vector stdDev = Species.variance(Species.makeFlatMembership(hessian.size()), blockInfo, r, ed);
+      final Vector stdDev = Species.variance(Species.makeFlatMembership(hessian.rows()), blockInfo, r, ed);
       assertEquals(0.4365, Math.sqrt(stdDev.get(0)), 1e-4);
       assertEquals(0.1111, Math.sqrt(stdDev.get(1)), 1e-4);
     } finally {
@@ -284,7 +284,7 @@ public class SpeciesTest extends TestCase {
   }
 
   private void checkStdDev(final Matrix hessian, final double... stdDev) {
-    final int n = hessian.size();
+    final int n = hessian.rows();
     //System.err.println("Hessian:");
     //System.err.println(hessian);
     //Extract eigenvectors and eigenvalues.

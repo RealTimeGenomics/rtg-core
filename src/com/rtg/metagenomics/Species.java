@@ -101,7 +101,7 @@ public class Species extends IntegralAbstract {
     final long startTime = System.currentTimeMillis();
     final EigenvalueDecomposition ed = hessian.toJama().eig();
     final long endTime = System.currentTimeMillis();
-    Diagnostic.developerLog("B:" + mBlockInfo.id() + " EigenValue Decomp took: " + ((endTime - startTime) / 1000) + "s" + " Hessian dimensions: " + hessian.size());
+    Diagnostic.developerLog("B:" + mBlockInfo.id() + " EigenValue Decomp took: " + ((endTime - startTime) / 1000) + "s" + " Hessian dimensions: " + hessian.rows());
     final int totalGenomes =  mBlockInfo.getGlobalSpeciesMap() == null ? mBlockInfo.getSpeciesMap().size() : mBlockInfo.getGlobalSpeciesMap().size();
     return new SubBlockResult(mLastR, variance(mMembersOf, mBlockInfo, mLastR, ed), new Vector(totalGenomes), mLastL);
 

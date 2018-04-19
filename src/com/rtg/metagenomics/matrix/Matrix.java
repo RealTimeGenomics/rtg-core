@@ -21,34 +21,40 @@ import com.rtg.util.Utils;
 public abstract class Matrix {
 
   /**
-   * Get the (i, j)th value.
-   * @param i first index.
-   * @param j second index.
+   * Get the <code>(row, col)th</code> value.
+   * @param row first index.
+   * @param col second index.
    * @return the value.
    */
-  public abstract double get(int i, int j);
+  public abstract double get(int row, int col);
 
   /**
-   * Set the (i, j)th value.
-   * @param i first index.
-   * @param j second index.
+   * Set the <code>(row, col)th</code> value.
+   * @param row first index.
+   * @param col second index.
    * @param v value.
    */
-  public abstract void set(int i, int j, double v);
+  public abstract void set(int row, int col, double v);
 
   /**
-   * Increment the (i, j)th value.
-   * @param i first index.
-   * @param j second index.
+   * Increment the <code>(row, col)th</code> value.
+   * @param row first index.
+   * @param col second index.
    * @param v value.
    */
-  public abstract void incr(int i, int j, double v);
+  public abstract void incr(int row, int col, double v);
 
   /**
-   * Get the length n of a square n x n matrix.
+   * Number of rows in the matrix.
    * @return the length (&ge; 0).
    */
-  public abstract int size();
+  public abstract int rows();
+
+  /**
+   * Number of rows in the matrix.
+   * @return the length (&ge; 0).
+   */
+  public abstract int cols();
 
   /**
    * Test if is symmetric.
@@ -59,9 +65,9 @@ public abstract class Matrix {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < size(); ++i) {
+    for (int i = 0; i < rows(); ++i) {
       sb.append("[").append(i).append("]");
-      final int hi = isSymmetric() ? i : size() - 1;
+      final int hi = isSymmetric() ? i : rows() - 1;
       for (int j = 0; j <= hi; ++j) {
         sb.append("  ").append(Utils.realFormat(get(i, j), 4));
       }

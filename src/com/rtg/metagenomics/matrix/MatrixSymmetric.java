@@ -31,33 +31,38 @@ public class MatrixSymmetric extends Matrix {
   }
 
   @Override
-  public double get(final int i, final int j) {
-    if (j > i) {
-      return mMatrix[j][i];
+  public double get(final int row, final int col) {
+    if (col > row) {
+      return mMatrix[col][row];
     }
-    return mMatrix[i][j];
+    return mMatrix[row][col];
   }
 
   @Override
-  public void set(final int i, final int j, final double v) {
-    if (j > i) {
-      mMatrix[j][i] = v;
+  public void set(final int row, final int col, final double v) {
+    if (col > row) {
+      mMatrix[col][row] = v;
     } else {
-      mMatrix[i][j] = v;
+      mMatrix[row][col] = v;
     }
   }
 
   @Override
-  public void incr(final int i, final int j, final double v) {
-    if (j > i) {
-      mMatrix[j][i] += v;
+  public void incr(final int row, final int col, final double v) {
+    if (col > row) {
+      mMatrix[col][row] += v;
     } else {
-      mMatrix[i][j] += v;
+      mMatrix[row][col] += v;
     }
   }
 
   @Override
-  public int size() {
+  public int rows() {
+    return mSize;
+  }
+
+  @Override
+  public int cols() {
     return mSize;
   }
 
@@ -68,9 +73,9 @@ public class MatrixSymmetric extends Matrix {
 
   @Override
   public Jama.Matrix toJama() {
-    final Jama.Matrix m = new Jama.Matrix(size(), size());
-    for (int i = 0; i < size(); ++i) {
-      for (int j = 0; j < size(); ++j) {
+    final Jama.Matrix m = new Jama.Matrix(rows(), rows());
+    for (int i = 0; i < rows(); ++i) {
+      for (int j = 0; j < rows(); ++j) {
         m.set(i, j, get(i, j));
       }
     }

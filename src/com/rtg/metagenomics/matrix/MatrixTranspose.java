@@ -25,23 +25,28 @@ public class MatrixTranspose extends Matrix {
   }
 
   @Override
-  public double get(final int i, final int j) {
-    return mMatrix.get(j, i);
+  public double get(final int row, final int col) {
+    return mMatrix.get(col, row);
   }
 
   @Override
-  public void set(final int i, final int j, final double v) {
-    mMatrix.set(j, i, v);
+  public void set(final int row, final int col, final double v) {
+    mMatrix.set(col, row, v);
   }
 
   @Override
-  public void incr(final int i, final int j, final double v) {
-    mMatrix.incr(j, i, v);
+  public void incr(final int row, final int col, final double v) {
+    mMatrix.incr(col, row, v);
   }
 
   @Override
-  public int size() {
-    return mMatrix.size();
+  public int rows() {
+    return mMatrix.cols();
+  }
+
+  @Override
+  public int cols() {
+    return mMatrix.rows();
   }
 
   @Override
@@ -51,9 +56,9 @@ public class MatrixTranspose extends Matrix {
 
   @Override
   public Jama.Matrix toJama() {
-    final Jama.Matrix m = new Jama.Matrix(mMatrix.size(), mMatrix.size());
-    for (int i = 0; i < size(); ++i) {
-      for (int j = 0; j < size(); ++j) {
+    final Jama.Matrix m = new Jama.Matrix(mMatrix.rows(), mMatrix.rows());
+    for (int i = 0; i < rows(); ++i) {
+      for (int j = 0; j < rows(); ++j) {
         m.set(i, j, get(i, j));
       }
     }

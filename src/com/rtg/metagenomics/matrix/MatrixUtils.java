@@ -36,15 +36,14 @@ public final class MatrixUtils {
    * @return result of multiplication.
    */
   public static Matrix multiply(final Matrix a, final Matrix b) {
-    final int n = a.size();
-    if (n != b.size()) {
-      throw new IllegalArgumentException("A.length=" + n + " B.length=" + b.size());
+    if (a.cols() != b.rows()) {
+      throw new IllegalArgumentException("A.length=" + a.cols() + " B.length=" + b.rows());
     }
-    final Matrix res = new MatrixSimple(n);
-    for (int i = 0; i < n; ++i) {
-      for (int j = 0; j < n; ++j) {
+    final Matrix res = new MatrixSimple(a.rows(), b.cols());
+    for (int i = 0; i < a.rows(); ++i) {
+      for (int j = 0; j < b.cols(); ++j) {
         double sum = 0.0;
-        for (int k = 0; k < n; ++k) {
+        for (int k = 0; k < a.cols(); ++k) {
           sum += a.get(i, k) * b.get(k, j);
         }
         res.set(i, j, sum);
@@ -60,7 +59,7 @@ public final class MatrixUtils {
    * @return result of multiplication.
    */
   public static Vector multiply(final Matrix a, final Vector v) {
-    final int n = a.size();
+    final int n = a.rows();
     if (n != v.size()) {
       throw new IllegalArgumentException("A.length=" + n + " v.length=" + v.size());
     }
@@ -163,9 +162,9 @@ public final class MatrixUtils {
    */
   public static double innerProduct(final Vector v, final Matrix a, final Vector w) {
     double sum = 0.0;
-    final int n = a.size();
+    final int n = a.rows();
     if (n != v.size() || n != w.size()) {
-      throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.size() + " w.length=" + w.size());
+      throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.rows() + " w.length=" + w.size());
     }
     for (int i = 0; i < n; ++i) {
       final double vi = v.get(i);
@@ -182,7 +181,7 @@ public final class MatrixUtils {
    * @return a new matrix with the same shape as <code>a</code>.
    */
   public static Matrix sameShape(final Matrix a) {
-    final int n = a.size();
+    final int n = a.rows();
     final Matrix res;
     if (a.isSymmetric()) {
       res = new MatrixSymmetric(n);
@@ -202,10 +201,10 @@ public final class MatrixUtils {
    * @return the inner product.
    */
   public static Matrix pointProduct(final Vector v, final Matrix a, final Vector w) {
-    final Matrix res = new MatrixSimple(a.size());
-    final int n = a.size();
+    final Matrix res = new MatrixSimple(a.rows());
+    final int n = a.rows();
     if (n != v.size() || n != w.size()) {
-      throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.size() + " w.length=" + w.size());
+      throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.rows() + " w.length=" + w.size());
     }
     for (int i = 0; i < n; ++i) {
       final double vi = v.get(i);
@@ -228,9 +227,9 @@ public final class MatrixUtils {
   public static Matrix pointProduct(final Vector v, final Matrix a) {
     //if a is symmetrix then so is the result and the calculation can be optimized
     final Matrix res = sameShape(a);
-    final int n = a.size();
+    final int n = a.rows();
     if (n != v.size()) {
-      throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.size());
+      throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.rows());
     }
     for (int i = 0; i < n; ++i) {
       final double vi = v.get(i);
@@ -269,7 +268,7 @@ public final class MatrixUtils {
    * @return a vector containing the trace.
    */
   public static Vector trace(final Matrix a) {
-    final int n = a.size();
+    final int n = a.rows();
     final Vector res = new Vector(n);
     for (int i = 0; i < n; ++i) {
       res.set(i, a.get(i, i));

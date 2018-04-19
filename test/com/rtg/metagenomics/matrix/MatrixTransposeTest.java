@@ -27,7 +27,7 @@ public class MatrixTransposeTest extends TestCase {
   public void test() {
     final Matrix ma = new MatrixSimple(3);
     assertTrue(ma.isSymmetric());
-    assertEquals(3, ma.size());
+    assertEquals(3, ma.rows());
 
     ma.set(0, 0, 1.0);
     ma.set(0, 2, 2.0);
@@ -43,7 +43,7 @@ public class MatrixTransposeTest extends TestCase {
 
     final Matrix mt = new MatrixTranspose(ma);
     assertFalse(mt.isSymmetric());
-    assertEquals(3, mt.size());
+    assertEquals(3, mt.rows());
 
     final String exp2 = ""
       + "[0]  1.0000  0.0000  0.0000" + LS
