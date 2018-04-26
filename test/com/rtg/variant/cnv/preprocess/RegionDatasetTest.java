@@ -62,7 +62,8 @@ public class RegionDatasetTest extends TestCase {
 
   public void testRestrictedColumns() {
     final String[] desiredColumns = {"second-data"};
-    final RegionDataset d = new RegionDataset(new String[] {"numeric-data", "second-data"}, desiredColumns);
+    final RegionDataset d = new RegionDataset(desiredColumns);
+    d.setColumnIndex(Arrays.asList("numeric-data", "second-data"));
     d.add("chr", 1, 2, 10, 110);
     d.add("chr", 3, 4, "12", "130");
 

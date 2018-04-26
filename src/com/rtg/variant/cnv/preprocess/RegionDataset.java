@@ -68,7 +68,9 @@ public class RegionDataset {
           throw new IOException("Input file: " + file + " does not contain the expected column: " + c.getName());
         }
       }
-      final RegionDataset dataset = new RegionDataset(desiredColumns, columnNames);
+      final RegionDataset dataset = new RegionDataset(desiredColumns);
+      dataset.setColumnIndex(columnNames);
+
       loadBedRecords(br, dataset, desiredColumns == null);
       Diagnostic.userLog("Read dataset containing " + dataset.size() + " regions and " + dataset.columns() + " columns from " + file);
       dataset.integrity();
@@ -115,33 +117,36 @@ public class RegionDataset {
 
   private RegionColumn mRegions;
   private final ArrayList<Column> mColumns = new ArrayList<>();
-  private int[] mColumnIndexes;
+
+  private int[] mColumnIndexes; // Contains a lookup when calling add with multiple values, when only a subset of columns is required.
 
 
-  RegionDataset(String[] columnNames) {
-    this(columnNames, columnNames);
+  RegionDataset(String[] desiredColumns) {
+    this(Arrays.stream(desiredColumns).map(StringColumn::new).collect(Collectors.toList()));
   }
 
-  RegionDataset(String[] columnNames, String[] desiredColumns) {
-    this(Arrays.stream(desiredColumns).map(StringColumn::new).collect(Collectors.toList()), Arrays.asList(columnNames));
+  RegionDataset(List<Column> desiredColumns) {
+    mRegions = new RegionColumn("region");
+    mColumns.addAll(desiredColumns);
+    identityIndex(mColumns.size());
   }
 
-  private static int[] buildColumnIndex(List<String> desiredColumns, List<String> headerNames) {
+
+  /**
+   * Sets the names of each column being provided in input data when calling add.
+   * @param headerColumns the names of each data column supplied during upcoming add calls.
+   */
+  void setColumnIndex(List<String> headerColumns) {
+    final List<String> desiredColumns = getColumnNames();
     final int[] columnIndexes = new int[desiredColumns.size()];
     int i = 0;
     for (final String columnName : desiredColumns) {
-      columnIndexes[i++] = headerNames.indexOf(columnName);
+      columnIndexes[i++] = headerColumns.indexOf(columnName);
     }
-    return columnIndexes;
+    mColumnIndexes = columnIndexes;
   }
 
-  RegionDataset(List<Column> desiredColumns, List<String> headerColumns) {
-    mRegions = new RegionColumn("region");
-    mColumns.addAll(desiredColumns);
-    final List<String> desiredNames = desiredColumns.stream().map(Column::getName).collect(Collectors.toList());
-    mColumnIndexes = buildColumnIndex(desiredNames, headerColumns);
-  }
-
+  /** Sets default column index, assuming add will supply one value for each column, in the correct order. */
   private void identityIndex(int length) {
     mColumnIndexes = ArrayUtils.identity(length);
   }
@@ -200,6 +205,7 @@ public class RegionDataset {
    */
   public <T extends Column> T addColumn(T column) {
     mColumns.add(column);
+    mColumnIndexes = null;
     return column;
   }
 
@@ -264,7 +270,7 @@ public class RegionDataset {
    */
   public void remove(int row) {
     mRegions.remove(row);
-    for (int i = 0; i < mColumnIndexes.length; ++i) {
+    for (int i = 0; i < mColumns.size(); ++i) {
       column(i).remove(row);
     }
   }
