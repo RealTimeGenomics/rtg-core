@@ -30,6 +30,7 @@ import com.rtg.launcher.HashingRegion;
 import com.rtg.position.FinderPositionOutput;
 import com.rtg.position.PositionUtils;
 import com.rtg.position.PositionWriterFactory;
+import com.rtg.position.SearchIncrementalHashLoop;
 import com.rtg.position.SearchResetHashLoop;
 import com.rtg.position.output.GapBucketsInfo;
 import com.rtg.position.output.OutputFormatType;
@@ -362,7 +363,9 @@ public final class LongReadTask {
           queryHashLoop = new SearchResetHashLoop(mSubParams.search().windowSize(), mSubParams.search().stepSize(), function, outputVars, outputVarsReverse, mIndex, true);
         } else {
           final ExactHashFunction function = new ExactHashFunction(buildParams, true);
-          queryHashLoop = new SpecializedIncrementalHashLoop(mSubParams.search().stepSize(), function, outputVars, outputVarsReverse,  mIndex, true);
+          // xxx SpecializedIncrementalHashLoop claims to be optimized, but does it really help?
+          //queryHashLoop = new SpecializedIncrementalHashLoop(mSubParams.search().stepSize(), function, outputVars, outputVarsReverse,  mIndex, true);
+          queryHashLoop = new SearchIncrementalHashLoop(mSubParams.search().stepSize(), function, outputVars, outputVarsReverse,  mIndex, true);
         }
         final int padding = mSubParams.ngsParams().calculateThreadPadding(); // Amount added either side
         final byte[] buffer = new byte[(int) mSubParams.search().sequences().region().longestSubSequence(mSubParams.search().sequences().reader()) + 2 * padding];
