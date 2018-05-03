@@ -18,6 +18,8 @@ import com.rtg.util.intervals.Range;
  */
 class Segment extends Range {
 
+  private final Segment mLeft;
+  private final Segment mRight;
   private final double mSum;
   private final double mSumSq;
   private final long mBins; // Total number of original bins in this segment
@@ -26,20 +28,32 @@ class Segment extends Range {
   private final int mLastBinLength;
   private final double mSumDistanceBetween; // mSumDistanceBetween / mBins is mean distance between bins within this segment
 
-  private Segment(int start, int end, double sum, double sumSquares, long bins, int firstBinLength, int lastBinLength, double distanceToPrevious, double distanceBetween) {
-    super(start, end);
-    mFirstBinLength = firstBinLength;
-    mLastBinLength = lastBinLength;
-    mSum = sum;
-    mSumSq = sumSquares;
-    mBins = bins;
-    mDistanceToPrevious = distanceToPrevious;
-    mSumDistanceBetween = distanceBetween;
-  }
-
   // Single bin
   Segment(int start, int end, final double sum, final double distPrevious) {
-    this(start, end, sum, sum * sum, 1, end - start, end - start, distPrevious, 0);
+    super(start, end);
+    mFirstBinLength = end - start;
+    mLastBinLength = end - start;
+    mSum = sum;
+    mSumSq = sum * sum;
+    mBins = 1;
+    mDistanceToPrevious = distPrevious;
+    mSumDistanceBetween = 0;
+    mLeft = null;
+    mRight = null;
+  }
+
+  Segment(final Segment left, final Segment right) {
+    super(left.getStart(), right.getEnd());
+    assert left.getStart() < right.getStart() && right.getEnd() > left.getEnd();
+    mLeft = left;
+    mRight = right;
+    mSum = left.mSum + right.mSum;
+    mSumSq = left.mSumSq + right.mSumSq;
+    mBins = left.mBins + right.mBins;
+    mFirstBinLength = left.mFirstBinLength;
+    mLastBinLength = right.mLastBinLength;
+    mDistanceToPrevious = left.mDistanceToPrevious;
+    mSumDistanceBetween = left.mSumDistanceBetween + right.mSumDistanceBetween + right.mDistanceToPrevious;
   }
 
   long bins() {
@@ -74,16 +88,12 @@ class Segment extends Range {
     return mBins == 1 ? 0 : mSumDistanceBetween / (mBins - 1);
   }
 
-  Segment merge(final Segment other) {
-    assert getStart() < other.getStart() && other.getEnd() > getEnd();
-    return new Segment(getStart(),
-      other.getEnd(),
-      mSum + other.mSum,
-      mSumSq + other.mSumSq,
-      mBins + other.mBins,
-      mFirstBinLength, other.mLastBinLength,
-      mDistanceToPrevious,
-      mSumDistanceBetween + other.mSumDistanceBetween + other.mDistanceToPrevious);
+  Segment left() {
+    return mLeft;
+  }
+
+  Segment right() {
+    return mRight;
   }
 
   @Override

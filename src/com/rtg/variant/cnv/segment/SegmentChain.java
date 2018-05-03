@@ -47,6 +47,8 @@ public class SegmentChain extends ArrayList<Segment> {
     if (!isEmpty()) {
       // Compute score to previous block
       final Segment prev = get(size() - 1);
+      // Ideally prev.getEnd() <= segment.getStart(), but following still words for overlapping segments
+      assert prev.getStart() < segment.getStart();
       mPriority.add(new AdjacentSegments(mScorer.score(prev, segment), prev, segment));
     }
     return super.add(segment);
@@ -87,7 +89,7 @@ public class SegmentChain extends ArrayList<Segment> {
       // those when they are encountered.
       assert get(pos + 1) == b;
       remove(b);
-      final Segment mergedSegment = a.merge(b);
+      final Segment mergedSegment = new Segment(a, b);
       set(pos, mergedSegment);
       if (pos > 0) {
         final Segment prev = get(pos - 1);

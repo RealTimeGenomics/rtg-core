@@ -21,7 +21,7 @@ public class EnergySegmentScorerTest extends TestCase {
 
   public void test() {
     final Segment s = new Segment(0, 1, 100, 1);
-    final Segment t = new Segment(1, 2, 50, 1).merge(new Segment(2, 3, 50, 10)).merge(new Segment(3, 4, 50, 20));
+    final Segment t = new Segment(new Segment(new Segment(1, 2, 50, 1), new Segment(2, 3, 50, 10)), new Segment(3, 4, 50, 20));
     assertEquals(1875, new EnergySegmentScorer(0, 0).score(s, t), 1e-4);
     assertEquals(1877.772588, new EnergySegmentScorer(1, 0).score(s, t), 1e-4);
     assertEquals(1878.46574, new EnergySegmentScorer(1, 1).score(s, t), 1e-4);
