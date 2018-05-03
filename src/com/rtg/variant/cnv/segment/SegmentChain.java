@@ -20,7 +20,7 @@ import java.util.TreeSet;
 public class SegmentChain extends ArrayList<Segment> {
 
   private final SegmentScorer mScorer;
-  private final double mBeta;
+  final double mBeta;
 
   SegmentChain(final SegmentScorer scorer, final double beta) {
     mScorer = scorer;
@@ -54,7 +54,7 @@ public class SegmentChain extends ArrayList<Segment> {
     return super.add(segment);
   }
 
-  private double nu() {
+  double nu() {
     // total variability of data set
     double sum = 0;
     double sumSquares = 0;
@@ -68,19 +68,13 @@ public class SegmentChain extends ArrayList<Segment> {
   }
 
   void collapse(final int limit) {
-    final double sensitivityLimit = mBeta * nu();
     double prevLambda = 0;
+    double dE = Double.NEGATIVE_INFINITY;
     while (!mPriority.isEmpty() && size() > limit) {
       final AdjacentSegments mergeMe = mPriority.pollFirst();
-      final double lambda = mergeMe.getScore();
-      if (lambda - prevLambda > sensitivityLimit) {
-        //System.out.println("Terminating " + lambda + " - " + prevLambda + " > " + sensitivityLimit);
-        break;
-      }
-      prevLambda = lambda;
       final Segment a = mergeMe.getFirst();
       final Segment b = mergeMe.getSecond();
-      final int pos = indexOf(a); // todo this could be slow for lots of bins
+      final int pos = indexOf(a); // this could be slow for lots of bins
       if (pos < 0 || get(pos + 1) != b) {
         continue; // Obsolete entry in priorty queue refering to already merged segments, just ignore it
       }
@@ -89,7 +83,11 @@ public class SegmentChain extends ArrayList<Segment> {
       // those when they are encountered.
       assert get(pos + 1) == b;
       remove(b);
-      final Segment mergedSegment = new Segment(a, b);
+      final double lambda = mergeMe.getScore();
+      final double delta = lambda - prevLambda;
+      prevLambda = lambda;
+      dE = Math.max(dE, delta);
+      final Segment mergedSegment = new Segment(a, b, dE);
       set(pos, mergedSegment);
       if (pos > 0) {
         final Segment prev = get(pos - 1);
@@ -101,6 +99,10 @@ public class SegmentChain extends ArrayList<Segment> {
       }
       //System.out.println("[" + pos + "](" + a.bins() + ")(" + b.bins() + ")[" + (size() - 1) + "]  gain " + mScorer.score(a, b));
     }
+  }
+
+  double sensitivityLimit() {
+    return mBeta * nu();
   }
 
   @Override

@@ -29,9 +29,10 @@ public class SegmentTest extends TestCase {
     assertEquals(42, left.getStart());
     assertEquals(43, left.getEnd());
     final Segment right = new Segment(43, 45, 50, 1);
-    final Segment m = new Segment(left, right);
+    final Segment m = new Segment(left, right, Math.PI);
     assertEquals(left, m.left());
     assertEquals(right, m.right());
+    assertEquals(Math.PI, m.deltaEnergy());
     assertEquals(2, m.bins());
     assertEquals(150.0, m.sum());
     assertEquals(12500.0, m.sumSquares());

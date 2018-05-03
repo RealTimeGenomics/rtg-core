@@ -20,6 +20,7 @@ class Segment extends Range {
 
   private final Segment mLeft;
   private final Segment mRight;
+  private final double mDeltaEnergy;
   private final double mSum;
   private final double mSumSq;
   private final long mBins; // Total number of original bins in this segment
@@ -40,13 +41,15 @@ class Segment extends Range {
     mSumDistanceBetween = 0;
     mLeft = null;
     mRight = null;
+    mDeltaEnergy = Double.NEGATIVE_INFINITY;
   }
 
-  Segment(final Segment left, final Segment right) {
+  Segment(final Segment left, final Segment right, double deltaEnergy) {
     super(left.getStart(), right.getEnd());
     assert left.getStart() < right.getStart() && right.getEnd() > left.getEnd();
     mLeft = left;
     mRight = right;
+    mDeltaEnergy = deltaEnergy;
     mSum = left.mSum + right.mSum;
     mSumSq = left.mSumSq + right.mSumSq;
     mBins = left.mBins + right.mBins;
@@ -94,6 +97,10 @@ class Segment extends Range {
 
   Segment right() {
     return mRight;
+  }
+
+  double deltaEnergy() {
+    return mDeltaEnergy;
   }
 
   @Override

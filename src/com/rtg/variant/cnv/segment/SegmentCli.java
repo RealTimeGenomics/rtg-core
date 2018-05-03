@@ -25,7 +25,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import com.rtg.bed.BedRangeLoader;
 import com.rtg.bed.BedUtils;
@@ -418,13 +420,45 @@ public class SegmentCli extends LoggedCli {
     }
   }
 
+  private void split(final List<Segment> res, final Segment seg, final double deltaEnergyLimit) {
+    if (seg == null) {
+      return;
+    }
+    if (seg.deltaEnergy() >= deltaEnergyLimit) {
+      split(res, seg.left(), deltaEnergyLimit);
+      split(res, seg.right(), deltaEnergyLimit);
+    } else {
+      res.add(seg);
+    }
+  }
+
+  private List<Segment> split(final SegmentChain sg, final double deltaEnergyLimit) {
+    final ArrayList<Segment> res = new ArrayList<>();
+    for (final Segment seg : sg) {
+      split(res, seg, deltaEnergyLimit);
+    }
+    return res;
+  }
+
+//  private void dump(final Segment seg, final String prefix) {
+//    if (seg == null) {
+//      return;
+//    }
+//    System.out.println(prefix + Utils.realFormat(seg.deltaEnergy(), 2) + " " + seg.getStart() + "-" + seg.getEnd() + " " + seg.toString());
+//    dump(seg.left(), prefix + ".");
+//    dump(seg.right(), prefix + ".");
+//  }
+
   private void processSequence(final String seqName, final SegmentChain sg, final int limit) throws IOException {
+    final double sensitivityLimit = sg.sensitivityLimit();
     sg.collapse(limit);
-    for (int i = 0; i < sg.size(); ++i) {
+    //dump(sg.get(0), "");
+    final List<Segment> outputSegments = split(sg, sensitivityLimit);
+    for (int i = 0; i < outputSegments.size(); ++i) {
       final VcfRecord record = mFormatter.vcfRecord(seqName,
-        i == 0 ? null : sg.get(i - 1),
-        sg.get(i),
-        i + 1 < sg.size() ? sg.get(i + 1) : null);
+        i == 0 ? null : outputSegments.get(i - 1),
+        outputSegments.get(i),
+        i + 1 < outputSegments.size() ? outputSegments.get(i + 1) : null);
       mStatusCounts.add(CnaType.valueOf(record));
       mVcfOut.write(record);
     }
