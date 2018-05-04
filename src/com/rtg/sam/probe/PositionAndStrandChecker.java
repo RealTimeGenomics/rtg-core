@@ -11,6 +11,7 @@
  */
 package com.rtg.sam.probe;
 
+import com.rtg.util.intervals.Interval;
 import com.rtg.util.intervals.RangeList;
 
 import htsjdk.samtools.CigarOperator;
@@ -40,11 +41,12 @@ abstract class PositionAndStrandChecker {
     mDeletionStats = new int[MAX_OP_LEN];
   }
 
-  abstract boolean check(SAMRecord record, RangeList.RangeData<?> data);
+  abstract boolean checkStrand(SAMRecord record);
+  abstract boolean checkPosition(SAMRecord record, Interval data);
 
   abstract int getStartDataIndex(SAMRecord record, RangeList<?> list);
 
-  abstract void stripRecord(SAMRecord record, SAMRecord mate, RangeList.RangeData<?> data);
+  abstract void stripRecord(SAMRecord record, SAMRecord mate, Interval data);
 
   protected void updateStrippedStats(CigarOperator operator, int consume) {
     final int statIndex = consume > MAX_OP_LEN ? MAX_OP_LEN - 1 : consume - 1;

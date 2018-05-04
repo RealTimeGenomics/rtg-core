@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.rtg.sam.SamUtils;
+import com.rtg.util.intervals.Interval;
 import com.rtg.util.intervals.RangeList;
 
 import htsjdk.samtools.Cigar;
@@ -34,13 +35,17 @@ class NegChecker extends PositionAndStrandChecker {
   }
 
   @Override
-  public boolean check(SAMRecord record, RangeList.RangeData<?> data) {
-    if (record.getReadNegativeStrandFlag()) {
-      final int alignmentEnd = record.getAlignmentEnd();
-      if (data.getEnd() >= alignmentEnd - mTolerance && data.getEnd() <= alignmentEnd + mTolerance) {
+  public boolean checkStrand(SAMRecord record) {
+    return record.getReadNegativeStrandFlag();
+  }
+
+  @Override
+  public boolean checkPosition(SAMRecord record, Interval data) {
+    assert checkStrand(record);
+    final int alignmentEnd = record.getAlignmentEnd();
+    if (data.getEnd() >= alignmentEnd - mTolerance && data.getEnd() <= alignmentEnd + mTolerance) {
 //                    System.err.println(record.getSAMString() + "strip back to: " + data.getStart() + " (" + data.getStart() + " : " + data.getEnd() + ")");
-        return true;
-      }
+      return true;
     }
     return false;
   }
@@ -51,7 +56,7 @@ class NegChecker extends PositionAndStrandChecker {
   }
 
   @Override
-  void stripRecord(SAMRecord record, SAMRecord mate, RangeList.RangeData<?> data) {
+  void stripRecord(SAMRecord record, SAMRecord mate, Interval data) {
     final int diff = record.getAlignmentEnd() - data.getEnd();
     mPosDiffStats[mTolerance + diff]++;
     setAlignmentEnd(record, mate, data.getStart());

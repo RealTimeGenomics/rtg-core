@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.rtg.sam.SamUtils;
+import com.rtg.util.intervals.Interval;
 import com.rtg.util.intervals.RangeList;
 
 import htsjdk.samtools.Cigar;
@@ -32,13 +33,17 @@ class PosChecker extends PositionAndStrandChecker {
   }
 
   @Override
-  public boolean check(SAMRecord record, RangeList.RangeData<?> data) {
+  public boolean checkStrand(SAMRecord record) {
+    return !record.getReadNegativeStrandFlag();
+  }
+
+  @Override
+  public boolean checkPosition(SAMRecord record, Interval data) {
+    assert checkStrand(record);
     final int alignmentStart = record.getAlignmentStart() - 1;
-    if (!record.getReadNegativeStrandFlag()) {
-      if (data.getStart() >= alignmentStart - mTolerance && data.getStart() <= alignmentStart + mTolerance) {
+    if (data.getStart() >= alignmentStart - mTolerance && data.getStart() <= alignmentStart + mTolerance) {
 //                    System.err.println(record.getSAMString() + " strip forward to: " + data.getEnd() + " (" + data.getStart() + " : " + data.getEnd() + ")");
-        return true;
-      }
+      return true;
     }
     return false;
   }
@@ -50,7 +55,7 @@ class PosChecker extends PositionAndStrandChecker {
   }
 
   @Override
-  void stripRecord(SAMRecord record, SAMRecord mate, RangeList.RangeData<?> data) {
+  void stripRecord(SAMRecord record, SAMRecord mate, Interval data) {
     final int diff = record.getAlignmentStart() - 1 - data.getStart();
     mPosDiffStats[mTolerance + diff]++;
     setAlignmentStart(record, mate, data.getEnd());

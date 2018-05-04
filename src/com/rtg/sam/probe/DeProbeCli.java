@@ -48,6 +48,7 @@ import com.rtg.util.TextTable;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
@@ -68,6 +69,7 @@ import htsjdk.samtools.SAMTagUtil;
  */
 public class DeProbeCli extends LoggedCli {
 
+  private static final String PROBE_DROPPING = "probe-specific-dropping";
   private static final String PROBE_BED = "probe-bed";
   private static final String TOLERANCE_FLAG = "tolerance";
   private static final String EXTRA_SOFT_CLIP_FLAG = "extra-soft-clip";
@@ -113,6 +115,7 @@ public class DeProbeCli extends LoggedCli {
     mFlags.registerRequired('b', PROBE_BED, File.class, CommonFlags.FILE, "BED file specifying each probe location and strand").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 5).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     mFlags.registerOptional(EXTRA_SOFT_CLIP_FLAG, "if set, add extra soft-clipping where mismatches occur at the end of reads").setCategory(CommonFlagCategories.FILTERING);
+    mFlags.registerOptional(PROBE_DROPPING, "if set, apply probe-specific minimum read lengths as supplied in probe bed column 5").setCategory(CommonFlagCategories.FILTERING);
     CommonFlags.initMinReadLength(mFlags);
     mFlags.addRequiredSet(inFlag);
     mFlags.addRequiredSet(listFlag);
@@ -138,6 +141,7 @@ public class DeProbeCli extends LoggedCli {
     final File bedFile = (File) mFlags.getValue(PROBE_BED);
     final int threads = CommonFlags.parseIOThreads(null); // Just use the default
     final int minBases = (int) mFlags.getValue(MIN_READ_LENGTH);
+    final boolean probeBasedDropping = mFlags.isSet(PROBE_DROPPING);
 
     mTotalMappedReads = 0;
     mTotalMappedPos = 0;
@@ -176,10 +180,16 @@ public class DeProbeCli extends LoggedCli {
               final boolean mapped = !record.getReadUnmappedFlag();
               boolean stripped = false;
               if (mapped) {
-                stripped = checkList(mPosRanges.get(record.getReferenceName()), record, null, tolerance, posChecker)
-                  || checkList(mNegRanges.get(record.getReferenceName()), record, null, tolerance, negChecker);
+                ProbeCounter hitProbe = checkList(mPosRanges.get(record.getReferenceName()), record, null, tolerance, posChecker);
+                if (hitProbe == null) {
+                  hitProbe = checkList(mNegRanges.get(record.getReferenceName()), record, null, tolerance, negChecker);
+                }
+                stripped = hitProbe != null;
                 if (!stripped) {
                   record.setAttribute("XS", "failed");
+                } else if (probeBasedDropping && record.getReadBases().length < hitProbe.getMinReadLength()) {
+                  filterRead(record);
+                  shortReads++;
                 }
               }
 
@@ -208,21 +218,21 @@ public class DeProbeCli extends LoggedCli {
             }
             totalRecords12++;
             if (minBases > 0 && MinLengthFilter.filterShortReads(record, minBases)) {
-                shortReads++;
+              shortReads++;
             }
 
-            if (extraSoftClip &&  ExtraSoftClip.addSoftClip(record)) {
-                softClippedRecords12++;
+            if (extraSoftClip && ExtraSoftClip.addSoftClip(record)) {
+              softClippedRecords12++;
             }
 
             if (totalRecords12 % 1000000 == 0) {
-              logStats(extraSoftClip, minBases, totalRecords12, softClippedRecords12, shortReads);
+              logStats(extraSoftClip, minBases > 0 || probeBasedDropping, totalRecords12, softClippedRecords12, shortReads);
             }
 
             writer.addRecord(record);
           }
 
-          logStats(extraSoftClip, minBases, totalRecords12, softClippedRecords12, shortReads);
+          logStats(extraSoftClip, minBases > 0 || probeBasedDropping, totalRecords12, softClippedRecords12, shortReads);
           if (writer.getDuplicateCount() > 0) {
             Diagnostic.warning(writer.getDuplicateCount() + " duplicate records were dropped during output.");
           }
@@ -256,17 +266,22 @@ public class DeProbeCli extends LoggedCli {
     return 0;
   }
 
-  private void logStats(boolean extraSoftClip, int minBases, int totalRecords12, int softClippedRecords12, int shortReads) {
-    if (extraSoftClip || minBases > 0) {
-      final StringBuilder logString = new StringBuilder();
-      if (minBases > 0) {
-        logString.append(String.format(", Short reads: %d (%.2f%%)", shortReads, 100.0 * shortReads / totalRecords12));
-      }
-      if (extraSoftClip) {
-        logString.append(String.format(", Soft-clipped reads: %d (%.2f%%)", softClippedRecords12, 100.0 * softClippedRecords12 / totalRecords12));
-      }
-      Diagnostic.developerLog(String.format("Records: %d", totalRecords12) + logString.toString());
+  static void filterRead(SAMRecord record) {
+    //end positions are 1 based exclusive
+    record.setCigarString("*");
+    record.setReadUnmappedFlag(true);
+    record.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, null);
+  }
+
+  private void logStats(boolean extraSoftClip, boolean minBases, int totalRecords12, int softClippedRecords12, int shortReads) {
+    final StringBuilder logString = new StringBuilder();
+    if (minBases) {
+      logString.append(String.format(", Short reads: %d (%.2f%%)", shortReads, 100.0 * shortReads / totalRecords12));
     }
+    if (extraSoftClip) {
+      logString.append(String.format(", Soft-clipped reads: %d (%.2f%%)", softClippedRecords12, 100.0 * softClippedRecords12 / totalRecords12));
+    }
+    Diagnostic.developerLog(String.format("Records: %d", totalRecords12) + logString.toString());
   }
 
   private void writeStrandFile(File file, ReferenceRanges<ProbeCounter> posRanges) throws IOException {
@@ -385,13 +400,28 @@ public class DeProbeCli extends LoggedCli {
 
   private static class ProbeCounter extends Counter {
     private final List<String> mAnnotations;
+    private final int mMinReadLength;
 
     ProbeCounter(List<String> annotations) {
       this.mAnnotations = annotations;
+      int minReadLength = -1;
+      if (annotations.size() > 1) {
+        try {
+          minReadLength = Integer.parseInt(annotations.get(1));
+        } catch (NumberFormatException nfe) {
+          throw new NoTalkbackSlimException("Expected Integer minimum read length in column 5 for probe " + annotations.get(0) + " was " + annotations.get(1));
+        }
+      }
+      mMinReadLength = minReadLength;
+
     }
 
     public List<String> getAnnotations() {
       return mAnnotations;
+    }
+
+    public int getMinReadLength() {
+      return mMinReadLength;
     }
   }
 
@@ -421,20 +451,22 @@ public class DeProbeCli extends LoggedCli {
     mNegRanges = negRangesAccum.getReferenceRanges();
   }
 
-  private static boolean checkList(RangeList<ProbeCounter> list, SAMRecord record, SAMRecord mate, int tolerance, PositionAndStrandChecker checker) {
+  private static ProbeCounter checkList(RangeList<ProbeCounter> list, SAMRecord record, SAMRecord mate, int tolerance, PositionAndStrandChecker checker) {
     if (list == null) {
-      return false;
+      return null;
+    }
+    if (!checker.checkStrand(record)) {
+      return null;
     }
     int index = checker.getStartDataIndex(record, list);
     RangeList.RangeData<ProbeCounter> data = list.getFullRangeList().get(index);
     while (recordOverlap(record, data, tolerance)) {
-      if (data != null
-        && data.getMeta() != null
-        && data.getMeta().get(0).getAnnotations().size() >= 3) {
-        if (checker.check(record, data)) {
+      if (data != null && data.getMeta() != null) {
+        final ProbeCounter counter = data.getMeta().get(0);
+        if (checker.checkPosition(record, data)) {
           checker.stripRecord(record, mate, data);
-          data.getMeta().get(0).increment();
-          return true;
+          counter.increment();
+          return counter;
         }
       }
       if (list.getFullRangeList().size() > ++index) {
@@ -443,7 +475,7 @@ public class DeProbeCli extends LoggedCli {
         data = null;
       }
     }
-    return false;
+    return null;
   }
 
   private static <T> boolean recordOverlap(SAMRecord rec, RangeList.RangeData<T> data, int tolerance) {
