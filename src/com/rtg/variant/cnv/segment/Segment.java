@@ -11,12 +11,12 @@
  */
 package com.rtg.variant.cnv.segment;
 
-import com.rtg.util.intervals.Range;
+import com.rtg.util.intervals.SequenceNameLocusSimple;
 
 /**
  * Hold a segment comprising one or more bins in a segmentation.
  */
-class Segment extends Range {
+class Segment extends SequenceNameLocusSimple {
 
   private final Segment mLeft;
   private final Segment mRight;
@@ -30,8 +30,8 @@ class Segment extends Range {
   private final double mSumDistanceBetween; // mSumDistanceBetween / mBins is mean distance between bins within this segment
 
   // Single bin
-  Segment(int start, int end, final double sum, final double distPrevious) {
-    super(start, end);
+  Segment(String seqName, int start, int end, final double sum, final double distPrevious) {
+    super(seqName, start, end);
     mFirstBinLength = end - start;
     mLastBinLength = end - start;
     mSum = sum;
@@ -45,8 +45,9 @@ class Segment extends Range {
   }
 
   Segment(final Segment left, final Segment right, double deltaEnergy) {
-    super(left.getStart(), right.getEnd());
+    super(left.getSequenceName(), left.getStart(), right.getEnd());
     assert left.getStart() < right.getStart() && right.getEnd() > left.getEnd();
+    assert left.getSequenceName().equals(right.getSequenceName());
     mLeft = left;
     mRight = right;
     mDeltaEnergy = deltaEnergy;

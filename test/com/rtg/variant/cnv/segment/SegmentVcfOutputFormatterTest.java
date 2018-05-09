@@ -46,8 +46,8 @@ public class SegmentVcfOutputFormatterTest extends AbstractNanoTest {
       "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE"
       );
     final StringBuilder sb = new StringBuilder();
-    sb.append(formatter.vcfRecord("sequence 1", null, new Segment(1, 42, 4.3, 0), new Segment(60, 70, 8.0, 48.0))).append('\n');
-    sb.append(formatter.vcfRecord("sequence 1", new Segment(1, 42, 4.3, 0), new Segment(60, 70, 8.0, 48.0), null)).append('\n');
+    sb.append(formatter.vcfRecord("sequence 1", null, new Segment("test", 1, 42, 4.3, 0), new Segment("test", 60, 70, 8.0, 48.0))).append('\n');
+    sb.append(formatter.vcfRecord("sequence 1", new Segment("Test", 1, 42, 4.3, 0), new Segment("test", 60, 70, 8.0, 48.0), null)).append('\n');
     mNano.check("svof-example.txt", sb.toString());
   }
 }

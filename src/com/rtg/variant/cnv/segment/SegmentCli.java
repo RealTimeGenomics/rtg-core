@@ -372,24 +372,24 @@ public class SegmentCli extends LoggedCli {
 
       for (int i = 0; i < mDataset.size(); ++i) {
         final SequenceNameLocus rec = regions.get(i);
-        final String seq = rec.getSequenceName();
+        final String seqName = rec.getSequenceName();
         final int start = rec.getStart();
         final int end = rec.getEnd();
-        if (prevSeq != null && !seq.equals(prevSeq)) {
+        if (prevSeq != null && !seqName.equals(prevSeq)) {
           Diagnostic.progress("Processing: " + prevSeq);
           // We are about to swap to a new sequence, so do all the processing for the records of prevSeq
           processSequence(prevSeq, sg, limit);
           prevMidPoint = -1;
           sg.clear();
         }
-        prevSeq = seq;
+        prevSeq = seqName;
         final double data = c.get(i);
         final long length = end - start;
         final double newMid = start + 0.5 * length;
         final double distPrev = prevMidPoint < 0 ? 0 : newMid - prevMidPoint;
         assert distPrev >= 0;
         prevMidPoint = newMid;
-        sg.add(new Segment(start, end, data, distPrev));
+        sg.add(new Segment(seqName, start, end, data, distPrev));
       }
       if (prevSeq != null) {
         Diagnostic.progress("Processing: " + prevSeq);

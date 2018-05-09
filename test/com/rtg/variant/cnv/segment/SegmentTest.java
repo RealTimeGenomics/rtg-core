@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 public class SegmentTest extends TestCase {
 
   public void test() {
-    final Segment left = new Segment(42, 43, 100, 1);
+    final Segment left = new Segment("test", 42, 43, 100, 1);
     assertEquals(1, left.bins());
     assertEquals(100.0, left.sum());
     assertEquals(10000.0, left.sumSquares());
@@ -28,7 +28,7 @@ public class SegmentTest extends TestCase {
     assertEquals(0.0, left.meanDistanceBetween());
     assertEquals(42, left.getStart());
     assertEquals(43, left.getEnd());
-    final Segment right = new Segment(43, 45, 50, 1);
+    final Segment right = new Segment("test", 43, 45, 50, 1);
     final Segment m = new Segment(left, right, Math.PI);
     assertEquals(left, m.left());
     assertEquals(right, m.right());
