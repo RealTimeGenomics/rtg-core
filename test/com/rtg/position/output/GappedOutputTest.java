@@ -50,7 +50,7 @@ public class GappedOutputTest extends TestCase {
         return new GappedRegion(id, params.build(), distribution);
       }
     };
-    return new GappedOutput<>(params, regionFactory, new GappedDistribution(params).probabilities(), null, out, writer, bucketInfo, params.hashCountThreshold());
+    return new GappedOutput<>(params, regionFactory, new GappedDistribution(params).probabilities(), null, out, writer, bucketInfo);
   }
 
   protected static PositionParams makeParams(final int[] seqLengths, final int stepSize, final int windowSize, final int gapSize) throws IOException {

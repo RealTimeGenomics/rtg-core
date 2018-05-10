@@ -58,14 +58,11 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
 
   private final boolean mReverseFrame;
 
-  private final int mRepeatThreshold;
-
   //hang on to these for clone calls
 
   private final GapBucketsInfo mBucketInfo;
 
   /**
-   *
    * @param params parameters.
    * @param regionFactory factory for creating regions
    * @param scorer scoring implementation used
@@ -73,11 +70,9 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
    * @param out where to write the output.
    * @param writer where to write output for unmapped reads
    * @param bucketInfo bucket info
-   * @param repeatFreq the repeat frequency threshold
    */
-  GappedOutput(final PositionParams params, GappedRegionFactory<G> regionFactory, GapScorer scorer, final ImmutableIntArray buildLengths, final Appendable out, final PositionWriter writer, final GapBucketsInfo bucketInfo, int repeatFreq) {
+  GappedOutput(final PositionParams params, GappedRegionFactory<G> regionFactory, GapScorer scorer, final ImmutableIntArray buildLengths, final Appendable out, final PositionWriter writer, final GapBucketsInfo bucketInfo) {
     super(params, out);
-    mRepeatThreshold = repeatFreq;
     mBucketInfo = bucketInfo;
     mBuildLengths = buildLengths;
     final Integer maxGap = params.output().maxGap();
@@ -436,7 +431,7 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
 
   @Override
   public PositionOutput reverseClone() {
-    return new GappedOutput<>(mParams, mRegionFactory, mProbabilities, mBuildLengths, mOut, mWriter.reverseClone(), mBucketInfo, mRepeatThreshold);
+    return new GappedOutput<>(mParams, mRegionFactory, mProbabilities, mBuildLengths, mOut, mWriter.reverseClone(), mBucketInfo);
   }
 
 }

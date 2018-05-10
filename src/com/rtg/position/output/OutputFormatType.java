@@ -49,7 +49,7 @@ public abstract class OutputFormatType implements Serializable {
     public
     PositionOutput output(final PositionParams params, final GapBucketsInfo bucketInfo, final ImmutableIntArray readLengths, final Appendable out, final Appendable unmappedOut, PositionWriter writer, int repeatFreq) {
       final GapScorer gs = new MismatchScores(params.output().maxGap(), params.output().distribution().maxIndel(), params.build().windowSize(), params.build().stepSize());
-      return new GappedOutput<>(params, GappedScoreLongRead.FACTORY, gs, readLengths, out, writer, bucketInfo, repeatFreq);
+      return new GappedOutput<>(params, GappedScoreLongRead.FACTORY, gs, readLengths, out, writer, bucketInfo);
     }
 
   }
