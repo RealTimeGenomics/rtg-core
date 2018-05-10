@@ -14,17 +14,17 @@ package com.rtg.variant.cnv.segment;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
+import com.rtg.util.diagnostic.Diagnostic;
+
 /**
  * Chain of segments.
  */
 public class SegmentChain extends ArrayList<Segment> {
 
   private final SegmentScorer mScorer;
-  final double mBeta;
 
-  SegmentChain(final SegmentScorer scorer, final double beta) {
+  SegmentChain(final SegmentScorer scorer) {
     mScorer = scorer;
-    mBeta = beta;
   }
 
   private final TreeSet<AdjacentSegments> mPriority = new TreeSet<>((a, b) -> {
@@ -49,25 +49,18 @@ public class SegmentChain extends ArrayList<Segment> {
       final Segment prev = get(size() - 1);
       // Ideally prev.getEnd() <= segment.getStart(), but following still words for overlapping segments
       assert prev.getStart() < segment.getStart();
-      mPriority.add(new AdjacentSegments(mScorer.score(prev, segment), prev, segment));
+      if (segment.getSequenceName().equals(prev.getSequenceName())) {
+        mPriority.add(new AdjacentSegments(mScorer.score(prev, segment), prev, segment));
+      }
     }
     return super.add(segment);
   }
 
-  double nu() {
-    // total variability of data set
-    double sum = 0;
-    double sumSquares = 0;
-    for (final Segment s : this) {
-      sum += s.sum();
-      sumSquares += s.sumSquares();
-    }
-    final double mean = sum / size();
-    final double var = sumSquares / size() - mean * mean;
-    return Math.sqrt(var);
-  }
-
   void collapse(final int limit) {
+    if (isEmpty()) {
+      return;
+    }
+    Diagnostic.progress("Processing: " + get(0).getSequenceName());
     double prevLambda = 0;
     double dE = Double.NEGATIVE_INFINITY;
     while (!mPriority.isEmpty() && size() > limit) {
@@ -91,18 +84,18 @@ public class SegmentChain extends ArrayList<Segment> {
       set(pos, mergedSegment);
       if (pos > 0) {
         final Segment prev = get(pos - 1);
-        mPriority.add(new AdjacentSegments(mScorer.score(prev, mergedSegment), prev, mergedSegment));
+        if (mergedSegment.getSequenceName().equals(prev.getSequenceName())) {
+          mPriority.add(new AdjacentSegments(mScorer.score(prev, mergedSegment), prev, mergedSegment));
+        }
       }
       if (pos < size() - 1) {
         final Segment next = get(pos + 1);
-        mPriority.add(new AdjacentSegments(mScorer.score(mergedSegment, next), mergedSegment, next));
+        if (mergedSegment.getSequenceName().equals(next.getSequenceName())) {
+          mPriority.add(new AdjacentSegments(mScorer.score(mergedSegment, next), mergedSegment, next));
+        }
       }
       //System.out.println("[" + pos + "](" + a.bins() + ")(" + b.bins() + ")[" + (size() - 1) + "]  gain " + mScorer.score(a, b));
     }
-  }
-
-  double sensitivityLimit() {
-    return mBeta * nu();
   }
 
   @Override

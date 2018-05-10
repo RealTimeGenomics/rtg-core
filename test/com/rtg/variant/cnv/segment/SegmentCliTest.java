@@ -62,8 +62,8 @@ public class SegmentCliTest extends AbstractCliTest {
       assertTrue(res.contains("Error: You must provide values for --case FILE -o DIR -t SDF"));
       res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath());
       TestUtils.containsAll(res, "Error: One of --Xcolumn or --control or --panel must be set");
-      res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath(), "--control", emptyFile.getPath(), "--Xlimit", "0");
-      assertTrue(res.contains("Error: The value for --Xlimit must be at least 1"));
+      res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath(), "--control", emptyFile.getPath(), "--Xmin-segments", "0");
+      assertTrue(res.contains("Error: The value for --Xmin-segments must be at least 1"));
     } finally {
       assertTrue(emptyFile.delete());
     }

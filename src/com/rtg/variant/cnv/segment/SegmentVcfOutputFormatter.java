@@ -111,11 +111,11 @@ public class SegmentVcfOutputFormatter {
     return header;
   }
 
-  VcfRecord vcfRecord(String seqName, Segment prev, Segment current, Segment next) throws IOException {
+  VcfRecord vcfRecord(Segment prev, Segment current, Segment next) throws IOException {
     // Spec says SV records are given the position BEFORE the SV.
     final int refPosition = Math.max(current.getStart() - 1, 0);
-    final String ref = getRefBase(seqName, refPosition);
-    final VcfRecord rec = new VcfRecord(seqName, refPosition, ref);
+    final String ref = getRefBase(current.getSequenceName(), refPosition);
+    final VcfRecord rec = new VcfRecord(current.getSequenceName(), refPosition, ref);
 
     // Classify the segment as gain or loss
     boolean altered = false;

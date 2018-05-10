@@ -26,8 +26,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.TreeSet;
 
 import com.rtg.bed.BedRangeLoader;
 import com.rtg.bed.BedUtils;
@@ -35,11 +38,14 @@ import com.rtg.bed.BedWriter;
 import com.rtg.bed.NamedBedRangeLoader;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
+import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.MathUtils;
 import com.rtg.util.MultiSet;
 import com.rtg.util.TextTable;
+import com.rtg.util.Utils;
+import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -71,7 +77,8 @@ public class SegmentCli extends LoggedCli {
   private static final String ALEPH_FLAG = "aleph";
   private static final String ALPHA_FLAG = "alpha";
   private static final String BETA_FLAG = "beta";
-  private static final String LIMIT_FLAG = "Xlimit";
+  private static final String MIN_SEGMENTS_FLAG = "Xmin-segments";
+  private static final String MAX_SEGMENTS_FLAG = "Xmax-segments";
 
   private static final String MIN_LOGR_FLAG = "min-logr";
   private static final String MIN_BINS_FLAG = "min-bins";
@@ -96,12 +103,10 @@ public class SegmentCli extends LoggedCli {
   private final MultiSet<CnaType> mStatusCounts = new MultiSet<>();
   private SegmentVcfOutputFormatter mFormatter = null;
   private SequencesReader mReference = null;
-  private VcfWriter mVcfOut = null;
   private RegionDataset mDataset;
   private int mDataCol;
   private CnvSummaryReport mReporter = null;
   private OutputStream mOut;
-
 
   @Override
   public String moduleName() {
@@ -129,7 +134,8 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerOptional(ALEPH_FLAG, Double.class, FLOAT, "weighting factor for inter-segment distances during energy scoring", 0.0).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(ALPHA_FLAG, Double.class, FLOAT, "weighting factor for intra-segment distances during energy scoring", 0.001).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(BETA_FLAG, Double.class, FLOAT, "segmentation sensitivity factor", 0.5).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(LIMIT_FLAG, Integer.class, INT, "lower bound on the number of segments to be produced", 1).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MIN_SEGMENTS_FLAG, Integer.class, INT, "lower bound on the number of segments to be produced", 1).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MAX_SEGMENTS_FLAG, Integer.class, INT, "upper bound on the number of segments to be produced", Integer.MAX_VALUE).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(MIN_CASE_COV_FLAG, Double.class, FLOAT, "minimum case coverage required for a bin to be included in segmentation", 5.0).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(MIN_CTRL_COV_FLAG, Double.class, FLOAT, "minimum control coverage required for a bin to be included in segmentation", 300.0).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(MIN_PANEL_COV_FLAG, Double.class, FLOAT, "minimum panel normalized coverage required for a bin to be included in segmentation", 0.1).setCategory(SENSITIVITY_TUNING);
@@ -153,10 +159,19 @@ public class SegmentCli extends LoggedCli {
       && CommonFlags.validateInputFile(flags, CASE_FLAG)
       && CommonFlags.validateInputFile(flags, CONTROL_FLAG)
       && CommonFlags.validateInputFile(flags, SUMMARY_FLAG)
-      && flags.checkInRange(LIMIT_FLAG, 1, Integer.MAX_VALUE)
+      && flags.checkInRange(MIN_SEGMENTS_FLAG, 1, Integer.MAX_VALUE)
       && flags.checkXor(COLUMN_FLAG, CONTROL_FLAG, PANEL_FLAG)
       && flags.checkNand(MIN_CTRL_COV_FLAG, MIN_PANEL_COV_FLAG)
+      && checkMinMax(flags)
     );
+  }
+
+  private static boolean checkMinMax(final CFlags flags) {
+    if ((Integer) flags.getValue(MIN_SEGMENTS_FLAG) > (Integer) flags.getValue(MAX_SEGMENTS_FLAG)) {
+      flags.setParseMessage("--" + MIN_SEGMENTS_FLAG + " cannot exceed --" + MAX_SEGMENTS_FLAG);
+      return false;
+    }
+    return true;
   }
 
   @Override
@@ -352,10 +367,10 @@ public class SegmentCli extends LoggedCli {
 
 
   private void runSegmentation() throws IOException {
-    final int limit = (Integer) mFlags.getValue(LIMIT_FLAG);
+    final int minSegments = (Integer) mFlags.getValue(MIN_SEGMENTS_FLAG);
     final int minBins = (Integer) mFlags.getValue(MIN_BINS_FLAG);
     final SegmentScorer scorer = new EnergySegmentScorer((Double) mFlags.getValue(ALPHA_FLAG), (Double) mFlags.getValue(ALEPH_FLAG));
-    final SegmentChain sg = new SegmentChain(scorer, (Double) mFlags.getValue(BETA_FLAG));
+    final Collection<SegmentChain> sg = new ArrayList<>();
     final double refThreshold = (Double) mFlags.getValue(MIN_LOGR_FLAG);
 
     final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
@@ -366,35 +381,32 @@ public class SegmentCli extends LoggedCli {
     final RegionColumn regions = mDataset.regions();
     mFormatter = new SegmentVcfOutputFormatter(mReference, refThreshold, minBins, (String) mFlags.getValue(SAMPLE_FLAG));
     try (final VcfWriter vw = new VcfWriterFactory(mFlags).make(mFormatter.header(), vcfFile)) {
-      mVcfOut = vw;
       double prevMidPoint = -1;
-      String prevSeq = null;
+      String prevSeqName = null;
+      SegmentChain sc = new SegmentChain(scorer);
 
       for (int i = 0; i < mDataset.size(); ++i) {
         final SequenceNameLocus rec = regions.get(i);
         final String seqName = rec.getSequenceName();
+        if (!seqName.equals(prevSeqName)) {
+          prevMidPoint = -1;
+          prevSeqName = seqName;
+          sg.add(sc);
+          sc = new SegmentChain(scorer);
+        }
         final int start = rec.getStart();
         final int end = rec.getEnd();
-        if (prevSeq != null && !seqName.equals(prevSeq)) {
-          Diagnostic.progress("Processing: " + prevSeq);
-          // We are about to swap to a new sequence, so do all the processing for the records of prevSeq
-          processSequence(prevSeq, sg, limit);
-          prevMidPoint = -1;
-          sg.clear();
-        }
-        prevSeq = seqName;
         final double data = c.get(i);
         final long length = end - start;
         final double newMid = start + 0.5 * length;
         final double distPrev = prevMidPoint < 0 ? 0 : newMid - prevMidPoint;
         assert distPrev >= 0;
         prevMidPoint = newMid;
-        sg.add(new Segment(seqName, start, end, data, distPrev));
+        sc.add(new Segment(seqName, start, end, data, distPrev));
       }
-      if (prevSeq != null) {
-        Diagnostic.progress("Processing: " + prevSeq);
-        processSequence(prevSeq, sg, limit);
-      }
+      Diagnostic.progress("Starting segmentation");
+      sg.add(sc);
+      runSegmentation(vw, sg, minSegments, (Double) mFlags.getValue(BETA_FLAG));
     }
 
     if (mReporter != null) {
@@ -420,48 +432,96 @@ public class SegmentCli extends LoggedCli {
     }
   }
 
-  private void split(final List<Segment> res, final Segment seg, final double deltaEnergyLimit) {
-    if (seg == null) {
-      return;
+  private Collection<Segment> split(final Collection<SegmentChain> sg, final double deltaEnergyLimit) throws IOException {
+    // Keep splitting until the energy limit or until the maximum number of segments,
+    // whichever comes first.
+    final int maxSegments = (Integer) mFlags.getValue(MAX_SEGMENTS_FLAG);
+    final Map<String, Long> seqNameMap = ReaderUtils.getSequenceNameMap(mReference);
+    final Comparator<Segment> locusComparator = (a, b) -> {
+      final int sc = seqNameMap.get(a.getSequenceName()).compareTo(seqNameMap.get(b.getSequenceName()));
+      if (sc != 0) {
+        return sc;
+      }
+      final int start = Integer.compare(a.getStart(), b.getStart());
+      if (start != 0) {
+        return start;
+      }
+      return Integer.compare(a.getEnd(), b.getEnd());
+    };
+
+    final TreeSet<Segment> orderByDeltaEnergyLimit = new TreeSet<>((a, b) -> {
+      final int sc = Double.compare(b.deltaEnergy(), a.deltaEnergy());
+      if (sc != 0) {
+        return sc;
+      }
+      return locusComparator.compare(a, b);
+    });
+    for (final SegmentChain chain : sg) {
+      orderByDeltaEnergyLimit.addAll(chain);
     }
-    if (seg.deltaEnergy() >= deltaEnergyLimit) {
-      split(res, seg.left(), deltaEnergyLimit);
-      split(res, seg.right(), deltaEnergyLimit);
-    } else {
-      res.add(seg);
+    while (orderByDeltaEnergyLimit.size() < maxSegments) {
+      final double dE = orderByDeltaEnergyLimit.first().deltaEnergy();
+      if (dE < deltaEnergyLimit) {
+        break; // Nothing further to be done, reached beta limit
+      }
+      // Split the top segment
+      final Segment highest = orderByDeltaEnergyLimit.pollFirst();
+      orderByDeltaEnergyLimit.add(highest.left());
+      orderByDeltaEnergyLimit.add(highest.right());
     }
+
+    // Reorder by genome locus in reference order
+    final TreeSet<Segment> orderByReference = new TreeSet<>(locusComparator);
+    orderByReference.addAll(orderByDeltaEnergyLimit);
+    return orderByReference;
   }
 
-  private List<Segment> split(final SegmentChain sg, final double deltaEnergyLimit) {
-    final ArrayList<Segment> res = new ArrayList<>();
-    for (final Segment seg : sg) {
-      split(res, seg, deltaEnergyLimit);
-    }
-    return res;
-  }
-
-//  private void dump(final Segment seg, final String prefix) {
-//    if (seg == null) {
-//      return;
-//    }
-//    System.out.println(prefix + Utils.realFormat(seg.deltaEnergy(), 2) + " " + seg.getStart() + "-" + seg.getEnd() + " " + seg.toString());
-//    dump(seg.left(), prefix + ".");
-//    dump(seg.right(), prefix + ".");
-//  }
-
-  private void processSequence(final String seqName, final SegmentChain sg, final int limit) throws IOException {
-    final double sensitivityLimit = sg.sensitivityLimit();
-    sg.collapse(limit);
-    //dump(sg.get(0), "");
-    final List<Segment> outputSegments = split(sg, sensitivityLimit);
-    for (int i = 0; i < outputSegments.size(); ++i) {
-      final VcfRecord record = mFormatter.vcfRecord(seqName,
-        i == 0 ? null : outputSegments.get(i - 1),
-        outputSegments.get(i),
-        i + 1 < outputSegments.size() ? outputSegments.get(i + 1) : null);
+  private void output(final VcfWriter writer, final Segment a, final Segment b, final Segment c) throws IOException {
+    if (b != null) {
+      final String currentName = b.getSequenceName();
+      final Segment prev = a == null || !a.getSequenceName().equals(currentName) ? null : a;
+      final Segment next = c == null || !c.getSequenceName().equals(currentName) ? null : c;
+      final VcfRecord record = mFormatter.vcfRecord(prev, b, next);
       mStatusCounts.add(CnaType.valueOf(record));
-      mVcfOut.write(record);
+      writer.write(record);
     }
+  }
+
+  private void runSegmentation(final VcfWriter writer, final Collection<SegmentChain> sg, final int limit, final double beta) throws IOException {
+    final double nu = nu(sg);
+    for (final SegmentChain chain : sg) {
+      chain.collapse(limit);
+    }
+    final double sensitivityLimit = beta * nu;
+    Diagnostic.userLog("Sensitivity limit = " + Utils.realFormat(sensitivityLimit, 3));
+    final Collection<Segment> outputSegments = split(sg, sensitivityLimit);
+
+    Segment b = null;
+    Segment c = null;
+    for (final Segment s : outputSegments) {
+      final Segment a = b;
+      b = c;
+      c = s;
+      output(writer, a, b, c);
+    }
+    output(writer, b, c, null);
+  }
+
+  private double nu(final Collection<SegmentChain> chains) {
+    // total variability of data set
+    double sum = 0;
+    double sumSquares = 0;
+    int size = 0;
+    for (final SegmentChain chain : chains) {
+      for (final Segment s : chain) {
+        sum += s.sum();
+        sumSquares += s.sumSquares();
+      }
+      size += chain.size();
+    }
+    final double mean = sum / size;
+    final double var = sumSquares / size - mean * mean;
+    return Math.sqrt(var);
   }
 
   private void checkNonZero(RegionDataset dataset, int col) {
