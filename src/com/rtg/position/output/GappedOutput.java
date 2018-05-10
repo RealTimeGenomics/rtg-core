@@ -13,7 +13,9 @@
 package com.rtg.position.output;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.rtg.launcher.BuildParams;
@@ -42,11 +44,9 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
 
   private final GapBuckets<G> mBuckets;
 
-  private final AbstractGappedRegion<G>[][] mRegions;
+  private final List<AbstractGappedRegion<G>>[] mRegions;
 
   private final int mNumberColumns;
-
-  private final int[] mNextRegion;
 
   private final GappedRegionFactory<G> mRegionFactory;
 
@@ -81,13 +81,10 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
     mBucketInfo = bucketInfo;
     mBuildLengths = buildLengths;
     final Integer maxGap = params.output().maxGap();
-    //System.err.println("params=" + params);
-    //System.err.println(maxGap + "=maxGap");
     mMaxGap = maxGap;
     final BuildParams buildParams = params.build();
     mWordSize = buildParams.windowSize();
-    mProbabilities = scorer; // params.output().format().getScorer(params);
-    //System.err.println("probabilities=" + mProbabilities + " GappedOutput");
+    mProbabilities = scorer;
     mMinDelta = mProbabilities.minDelta();
     mMaxDelta = mProbabilities.maxDelta();
     Diagnostic.developerLog("GappedOutput minDelta=" + mMinDelta + " maxDelta=" + mMaxDelta + " maxGap=" + maxGap);
@@ -96,31 +93,24 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
     mNumberColumns = maxGap + 1;
     mRegions = regionArray();
     mRegionFactory = regionFactory;
-    mNextRegion = new int[mNumberColumns];
     mWriter = writer;
     mScanner = new GappedOutputScannerImpl<>(this);
   }
 
-  private AbstractGappedRegion<G>[][] regionArray() {
-    //System.err.println(" threshold=" + params.threshold());
+  private List<AbstractGappedRegion<G>>[] regionArray() {
     @SuppressWarnings("unchecked")
-    final AbstractGappedRegion<G>[][] ret = (AbstractGappedRegion<G>[][]) new AbstractGappedRegion<?>[mNumberColumns][];
+    final List<AbstractGappedRegion<G>>[] ret = (List<AbstractGappedRegion<G>>[]) new List<?>[mNumberColumns];
     for (int i = 0; i < ret.length; ++i) {
-      @SuppressWarnings("unchecked")
-      final AbstractGappedRegion<G>[] gs = (AbstractGappedRegion<G>[]) new AbstractGappedRegion<?>[mRepeatThreshold];
-      ret[i] = gs;
+      ret[i] = new ArrayList<>();
     }
     return ret;
   }
 
   @Override
   public void endQuery() throws IOException {
-    //System.err.println("endQuery");
-    //printRegions(System.err);
     if (mSearchPosition != NULL) {
       for (int i = mSearchPosition + 1; i <= mSearchPosition + mNumberColumns; ++i) {
         final int im = i % mNumberColumns;
-        //System.err.println("flushing i=" + i + " im=" + im);
         flush(im);
       }
     }
@@ -146,44 +136,19 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
 
   private boolean checkRegionsEmpty() {
     for (int i = 0; i < mRegions.length; ++i) {
-      for (int j = 0; j < mRegions[i].length; ++j) {
-        assert mRegions[i][j] == null || !mRegions[i][j].isValid() : "endQuery i=" + i + " j=" + j + " region=" + mRegions[i][j];
+      for (int j = 0; j < mRegions[i].size(); ++j) {
+        assert mRegions[i].get(j).isValid() : "endQuery i=" + i + " j=" + j + " region=" + mRegions[i].get(j);
       }
     }
     return true;
   }
 
-//  void printRegions(final PrintStream out) {
-//    out.println("Regions[" + mRegions.length + "][" + mRegions[0].length + "] search=" + mSearchPosition + " curr. col=" + mCurrColumn);
-//    for (int i = 0; i < mRegions.length; ++i) {
-//      //System.err.println("i=" + i);
-//      out.print("[" + i + "] ");
-//      for (int j = 0; j < mRegions[i].length; ++j) {
-//        if (mRegions[i][j].isValid()) {
-//          out.print((j == 0 ? "" : ",") + " [" + j + "]" + mRegions[i][j]);
-//        }
-//      }
-//      out.println();
-//    }
-//  }
-
   @Override
   public void hit(final int seqId, final int posn) throws IOException {
-    final int index = mNextRegion[mCurrColumn];
-    //System.err.println("hit seqId=" + seqId + " posn=" + posn + " curr=" + mCurrColumn + " index=" + index);
-    @SuppressWarnings("unchecked")
-    final G cu = (G) mRegions[mCurrColumn][index];
-    final G curr;
-    if (cu == null) { //lazily contruct regions
-      ++mId;
-      //System.err.println("buildLengths=" + mBuildLengths);
-      curr = mRegionFactory.region(mId, mProbabilities, mParams, mBuildLengths);
-      mRegions[mCurrColumn][index] = curr;
-    } else {
-      curr = cu;
-    }
+    ++mId;
+    final G curr = mRegionFactory.region(mId, mProbabilities, mParams, mBuildLengths);
+    mRegions[mCurrColumn].add(curr);
     final long bucket = mBuckets.bucket(seqId, posn, mSearchPosition);
-    //System.err.println("bucket=" + bucket + " seqId=" + seqId);
     final G last = mBuckets.get(bucket);
     final G next;
     if (last == null) {
@@ -193,14 +158,12 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
       last.setNext(curr);
     }
     curr.initialize(seqId, posn, mSearchPosition, mBuckets, next, mReverseFrame);
-    mNextRegion[mCurrColumn]++;
     mBuckets.set(bucket, curr);
     super.hit(seqId, posn);
   }
 
   @Override
   public void setPosition(final int position) throws IOException {
-    //System.err.println("setPosition position=" + position);
     if (mSearchPosition != NULL) {
       if (position == mSearchPosition + 1) {
         final int in = mCurrColumn + 1;
@@ -210,7 +173,6 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
       } else {
         final int end = mSearchPosition + mNumberColumns;
         final int hi = position >= end ? end : position;
-        //System.err.println("mSearchPosition=" + mSearchPosition + " hi=" + hi);
         for (int i = mSearchPosition + 1; i <= hi; ++i) {
           final int im = i % mNumberColumns;
           flush(im);
@@ -226,19 +188,13 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
   }
 
   private void flush(final int col) throws IOException {
-    //if (mNextRegion[col] > 0) {
-    //System.err.println("flush col=" + col + " next=" + mNextRegion[col]);
-    //}
-    //System.err.println(this.toString());
-    for (int i = 0; i < mNextRegion[col]; ++i) {
-      //System.err.println("flush col=" + col + " i=" + i);
-      final AbstractGappedRegion<G> region = mRegions[col][i];
+    for (int i = 0; i < mRegions[col].size(); ++i) {
+      final AbstractGappedRegion<G> region = mRegions[col].get(i);
       //this is tricky
       //the bucket may not point to the region we have just found
       //so the merged region may be another one - MUST keep going here
       //so we dont miss because the other is no longer initialized by the time we get to it
       final long b = region.bucket();
-      //System.err.println(b + "=b");
       while (region.isInitialized()) {
         final G actual = mBuckets.get(b).next();
         flushBucket(actual);
@@ -248,8 +204,7 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
         actual.reset();
       }
     }
-    mNextRegion[col] = 0;
-    //System.err.println(this.toString());
+    mRegions[col].clear();
     assert globalIntegrity();
   }
 
@@ -265,7 +220,6 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
       } else {
         bestBest = null;
       }
-      //System.err.println("region=" + region + " best=" + best + " bestBest=" + bestBest);
       if (best == null || region != bestBest) { //no reciprocal match write out the region
         mWriter.write(region, mSearchSeqId, mSearchFrame, mQueryLength, mQueryEffectiveLength);
         assert region.isValid() && !region.isInitialized();
@@ -311,7 +265,11 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
 
   @Override
   public long bytes() {
-    return mBuckets.bytes() + mRegions.length * mRegions[0].length * 42L + mNextRegion.length * 4;
+    long total = mBuckets.bytes();
+    for (final List<AbstractGappedRegion<G>> mRegion : mRegions) {
+      total += mRegion.size() * 42L + 4;
+    }
+    return total;
   }
 
   @Override
@@ -324,9 +282,9 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
   public void toString(final StringBuilder sb) {
     sb.append("GappedOutput wordSize=").append(mWordSize).append(" maxGap=").append(mMaxGap).append(" minDelta=").append(mMinDelta).append(" maxDelta=").append(mMaxDelta).append(" score=").append(score()).append(StringUtils.LS);
     for (int i = 0; i < mRegions.length; ++i) {
-      sb.append("[").append(i).append("]").append(mNextRegion[i]);
-      for (int j = 0; j < mNextRegion[i]; ++j) {
-        sb.append(" ").append(mRegions[i][j]);
+      sb.append("[").append(i).append("]").append(mRegions[i].size());
+      for (int j = 0; j < mRegions[i].size(); ++j) {
+        sb.append(" ").append(mRegions[i].get(j));
       }
       sb.append(StringUtils.LS);
     }
@@ -338,16 +296,13 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
     //scan the regions array
     if (!mReverseFrame) {
       for (int i = 0; i < mRegions.length; ++i) {
-        final AbstractGappedRegion<G>[] column = mRegions[i];
-        final int init = mNextRegion[i];
-        Exam.assertTrue(init >= 0 && init <= column.length);
+        final List<AbstractGappedRegion<G>> column = mRegions[i];
+        final int init = column.size();
         int qEnd = -1;
-        for (int j = 0; j < init; ++j) {
-          final AbstractGappedRegion<G> region = column[j];
+        for (final AbstractGappedRegion<G> region : column) {
           region.integrity();
           Exam.assertTrue(region.isInitialized());
           final int k = (region.queryEnd() - mWordSize + 1) % (mMaxGap + 1);
-          //System.err.println("i=" + i + " k=" + k + " region=" + region);
           Exam.assertEquals(i, k);
           if (qEnd == -1) {
             qEnd = region.queryEnd();
@@ -357,12 +312,11 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
           final long bucket = region.bucket();
           Exam.assertTrue(mBuckets.get(bucket) != null);
         }
-        for (int j = init; j < column.length; ++j) {
-          final AbstractGappedRegion<G> region = column[j];
-          if (region != null) {
-            region.integrity();
-            Exam.assertTrue(!region.isInitialized());
-          }
+        for (int j = init; j < column.size(); ++j) {
+          final AbstractGappedRegion<G> region = column.get(j);
+          assert region != null;
+          region.integrity();
+          Exam.assertTrue(!region.isInitialized());
         }
       }
 
@@ -378,7 +332,6 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
         int lastEnd = 0;
         while (true) {
           //all point to same bucket
-          //System.err.println("i=" + i + " ptr.bucket()=" + ptr.bucket() + " mod=" + (ptr.bucket() % mBuckets.numberBuckets()));
           Exam.assertEquals(i, ptr.bucket() % mBuckets.numberBuckets());
           //end point must increase along chain
           Exam.assertTrue(ptr.queryEnd() >= lastEnd);
@@ -443,7 +396,6 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
 
     @Override
     protected void scan(final G region, final boolean forward, final long lo, final long hi) {
-      //System.err.println("scan region=" + region + " forward=" + forward + " lo=" + lo + " hi=" + hi);
       for (long b = lo; b <= hi; ++b) {
         //have a bucket - scan all the regions linked to the bucket
         final G lastRegion = mOuter.mBuckets.get(b);
@@ -462,7 +414,6 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
                 score = Double.NEGATIVE_INFINITY;
               }
             }
-            //System.err.println(" score=" + score + " ptr=" + ptr);
             if (score > mBestScore) {
               mBestScore = score;
               mBestRegion = ptr;
