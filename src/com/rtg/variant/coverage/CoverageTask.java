@@ -206,7 +206,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
         if (currentTemplatePosition == range.getEnd()) {
           // do things necessary at the end of a range BEFORE processing the base at this position.
 
-          if (byLevels) { // Write new level at range boundary
+          if (lastLevel != -1 && byLevels) { // Write new level at range boundary
             coverageWriter.setRegionLabel(levelLabel);
             coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, lastLevel);
           }

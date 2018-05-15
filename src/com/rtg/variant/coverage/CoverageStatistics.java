@@ -154,11 +154,11 @@ public class CoverageStatistics extends AbstractStatistics {
       final int size = mTotalLengthPerName.get(name);
       final double coverage = mTotalCoveragePerName.get(name);
       final int baseCount = mCoveredLengthPerName.get(name);
-      final double breadth = baseCount / (double) size;
-      final double depth = coverage / size;
-      cov[k++] = depth;
+      cov[k++] = coverage / size;
 
       if (!summary || mCoverageNames.size() < 100) {  // show up to 99 labels in summary, otherwise only output the total line.
+        final double breadth = size == 0 ? 0 : baseCount / (double) size;
+        final double depth = size == 0 ? 0 : coverage / size;
         if (summary) {
           appendRow(table, Utils.realFormat(depth, COVERAGE_DP), Utils.realFormat(breadth, BREADTH_DP), baseCount, size, name);
         } else {
@@ -330,7 +330,7 @@ public class CoverageStatistics extends AbstractStatistics {
       if (!newList.contains(origRange)) {
         final CoverageSequenceStatistics stats = mOriginalRangeStatisticsMap.get(origRange);
         final String name = origRange.getMeta().get(0);
-        if (mCoverageWriter != null) {
+        if (mCoverageWriter != null && stats.mBases > 0) {
           mCoverageWriter.setRegionLabel(name);
           mCoverageWriter.finalCoverageRegion(sequenceName, origRange.getStart(), origRange.getEnd(), stats.mTotalCoverage / stats.mBases);
         }
