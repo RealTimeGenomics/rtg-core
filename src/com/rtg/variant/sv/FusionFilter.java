@@ -42,7 +42,6 @@ import com.rtg.util.TsvParser;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
-import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.AltVariantTypeFilter;
 import com.rtg.vcf.AssertVcfSorted;
 import com.rtg.vcf.BreakpointAlt;
@@ -113,7 +112,6 @@ public class FusionFilter extends AbstractCli {
     final File inputFile = (File) mFlags.getValue(INPUT_FLAG);
     final File output = (File) mFlags.getValue(OUTPUT_FLAG);
     final boolean gzip = !mFlags.isSet(NO_GZIP);
-    final boolean stdout = FileUtils.isStdio(output);
 
     final List<VcfFilter> filters = new ArrayList<>();
     filters.add(new AssertVcfSorted());
@@ -130,8 +128,8 @@ public class FusionFilter extends AbstractCli {
       final VcfHeader header = reader.getHeader();
       filters.forEach(filter -> filter.setHeader(header));
       annotators.forEach(ann -> ann.updateHeader(header));
-      final File vcfFile = stdout ? null : VcfUtils.getZippedVcfFileName(gzip, output);
-      try (VcfWriter writer = new VcfWriterFactory(mFlags).addRunInfo(true).make(header, vcfFile, out)) {
+      final File vcfFile = VcfUtils.getZippedVcfFileName(gzip, output);
+      try (VcfWriter writer = new VcfWriterFactory(mFlags).addRunInfo(true).make(header, vcfFile)) {
         while (reader.hasNext()) {
           final VcfRecord rec = reader.next();
           annotators.forEach(filter -> filter.annotate(rec));

@@ -27,7 +27,6 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
@@ -105,10 +104,9 @@ public class PredictCli extends AbstractCli {
       }
 
       final File o = (File) mFlags.getValue(OUTPUT_FLAG);
-      final boolean stdout = FileUtils.isStdio(o);
       final boolean gzip = !mFlags.isSet(NO_GZIP);
-      final File vcfFile = stdout ? null : VcfUtils.getZippedVcfFileName(gzip, o);
-      try (VcfWriter writer = new VcfWriterFactory(mFlags).addRunInfo(true).make(header, vcfFile, out)) {
+      final File vcfFile = VcfUtils.getZippedVcfFileName(gzip, o);
+      try (final VcfWriter writer = new VcfWriterFactory(mFlags).addRunInfo(true).make(header, vcfFile)) {
         while (posReader.hasNext()) {
           final VcfRecord current = posReader.next();
           if (samples.length > 0) {
