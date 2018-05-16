@@ -489,7 +489,6 @@ public class SegmentCli extends LoggedCli {
 
   private void runSegmentation(final VcfWriter writer, final Collection<SegmentChain> sg, final int limit, final double beta) throws IOException {
     final double nu = nu(sg);
-    mFormatter.setNu(nu);
     final double sensitivityLimit = beta * nu;
     Diagnostic.userLog("Nu = " + Utils.realFormat(nu, 3));
     Diagnostic.userLog("Sensitivity limit = " + Utils.realFormat(sensitivityLimit, 3));
