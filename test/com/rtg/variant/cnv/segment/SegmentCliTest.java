@@ -84,7 +84,7 @@ public class SegmentCliTest extends AbstractCliTest {
 
       // gc correction does not work well here because the regions are small, so turn it off
       final MainResult result = MainResult.run(getCli(), "-t", reference.getPath(), "-o", output.getPath(), "--control", control.getPath(), "--case", sample.getPath(), "--sample", "foo", "--beta", "0.1", "--Xgcbins", "0");
-      assertEquals(0, result.rc());
+      assertEquals(result.err(), 0, result.rc());
       final File vcf = new File(output, "segments.vcf.gz");
       assertEquals(BlockCompressedInputStream.FileTermination.HAS_TERMINATOR_BLOCK, BlockCompressedInputStream.checkTermination(vcf));
       mNano.check("expected.unsegmented.bed", FileHelper.gzFileToString(new File(output, "unsegmented.bed.gz")));
@@ -105,7 +105,7 @@ public class SegmentCliTest extends AbstractCliTest {
 
       // gc correction does not work well here because the regions are small, so turn it off
       final MainResult result = MainResult.run(getCli(), "-t", reference.getPath(), "-o", output.getPath(), "--panel", panel.getPath(), "--case", sample.getPath(), "--sample", "foo", "-Z", "--beta", "0.1", "--Xgcbins", "0", "--min-control-coverage", "0.001");
-      assertEquals(0, result.rc());
+      assertEquals(result.err(), 0, result.rc());
       mNano.check("expected.unsegmented-panel.bed", FileUtils.fileToString(new File(output, "unsegmented.bed")));
       mNano.check("expected.segments-panel.vcf", TestUtils.sanitizeVcfHeader(FileUtils.fileToString(new File(output, "segments.vcf"))));
       mNano.check("expected.summary-panel.txt", FileUtils.fileToString(new File(output, "summary.txt")));
@@ -126,7 +126,7 @@ public class SegmentCliTest extends AbstractCliTest {
 
       // gc correction does not work well here because the regions are small, so turn it off
       final MainResult result = MainResult.run(getCli(), "-t", reference.getPath(), "-o", output.getPath(), "--control", control.getPath(), "--case", sample.getPath(), "--sample", "foo", "-Z", "--beta", "0.1", "--Xgcbins", "2");
-      assertEquals(0, result.rc());
+      assertEquals(result.err(), 0, result.rc());
       mNano.check("expected.unsegmented-gc.bed", FileUtils.fileToString(new File(output, "unsegmented.bed")));
       mNano.check("expected.segments-gc.vcf", TestUtils.sanitizeVcfHeader(FileUtils.fileToString(new File(output, "segments.vcf"))));
       mNano.check("expected.summary-gc.txt", FileUtils.fileToString(new File(output, "summary.txt")));
