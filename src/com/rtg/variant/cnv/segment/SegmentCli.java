@@ -367,7 +367,6 @@ public class SegmentCli extends LoggedCli {
 
 
   private void runSegmentation() throws IOException {
-    final int minSegments = (Integer) mFlags.getValue(MIN_SEGMENTS_FLAG);
     final int minBins = (Integer) mFlags.getValue(MIN_BINS_FLAG);
     final SegmentScorer scorer = new EnergySegmentScorer((Double) mFlags.getValue(ALPHA_FLAG), (Double) mFlags.getValue(ALEPH_FLAG));
     final Collection<SegmentChain> sg = new ArrayList<>();
