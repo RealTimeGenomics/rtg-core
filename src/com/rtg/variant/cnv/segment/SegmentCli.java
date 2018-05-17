@@ -406,7 +406,7 @@ public class SegmentCli extends LoggedCli {
       }
       Diagnostic.progress("Starting segmentation");
       sg.add(sc);
-      runSegmentation(vw, sg, minSegments, (Double) mFlags.getValue(BETA_FLAG));
+      runSegmentation(vw, sg, (Double) mFlags.getValue(BETA_FLAG));
     }
 
     if (mReporter != null) {
@@ -435,6 +435,7 @@ public class SegmentCli extends LoggedCli {
   private Collection<Segment> split(final Collection<SegmentChain> sg, final double deltaEnergyLimit) throws IOException {
     // Keep splitting until the energy limit or until the maximum number of segments,
     // whichever comes first.
+    final int minSegments = (Integer) mFlags.getValue(MIN_SEGMENTS_FLAG);
     final int maxSegments = (Integer) mFlags.getValue(MAX_SEGMENTS_FLAG);
     final Map<String, Long> seqNameMap = ReaderUtils.getSequenceNameMap(mReference);
     final Comparator<Segment> locusComparator = (a, b) -> {
@@ -461,7 +462,7 @@ public class SegmentCli extends LoggedCli {
     }
     while (orderByDeltaEnergyLimit.size() < maxSegments) {
       final double dE = orderByDeltaEnergyLimit.first().deltaEnergy();
-      if (dE < deltaEnergyLimit) {
+      if (dE < deltaEnergyLimit && orderByDeltaEnergyLimit.size() >= minSegments) {
         break; // Nothing further to be done, reached beta limit
       }
       // Split the top segment
@@ -487,14 +488,14 @@ public class SegmentCli extends LoggedCli {
     }
   }
 
-  private void runSegmentation(final VcfWriter writer, final Collection<SegmentChain> sg, final int limit, final double beta) throws IOException {
+  private void runSegmentation(final VcfWriter writer, final Collection<SegmentChain> sg, final double beta) throws IOException {
     final double nu = nu(sg);
     final double sensitivityLimit = beta * nu;
     Diagnostic.userLog("Nu = " + Utils.realFormat(nu, 3));
     Diagnostic.userLog("Sensitivity limit = " + Utils.realFormat(sensitivityLimit, 3));
 
     for (final SegmentChain chain : sg) {
-      chain.collapse(limit);
+      chain.collapse();
     }
     final Collection<Segment> outputSegments = split(sg, sensitivityLimit);
 

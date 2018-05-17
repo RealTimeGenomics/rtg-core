@@ -39,6 +39,10 @@ public class SegmentChain extends ArrayList<Segment> {
     if (c1 != 0) {
       return c1;
     }
+    final int c2 = Integer.compare(a.getFirst().getStart(), b.getFirst().getStart());
+    if (c2 != 0) {
+      return c2;
+    }
     return Integer.compare(System.identityHashCode(a), System.identityHashCode(b));
   });
 
@@ -56,14 +60,14 @@ public class SegmentChain extends ArrayList<Segment> {
     return super.add(segment);
   }
 
-  void collapse(final int limit) {
+  void collapse() {
     if (isEmpty()) {
       return;
     }
     Diagnostic.progress("Processing: " + get(0).getSequenceName());
     double prevLambda = 0;
     double dE = Double.NEGATIVE_INFINITY;
-    while (!mPriority.isEmpty() && size() > limit) {
+    while (!mPriority.isEmpty()) {
       final AdjacentSegments mergeMe = mPriority.pollFirst();
       final Segment a = mergeMe.getFirst();
       final Segment b = mergeMe.getSecond();

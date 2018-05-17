@@ -12,6 +12,9 @@
 
 package com.rtg.variant.cnv.segment;
 
+import java.util.Arrays;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 /**
@@ -27,16 +30,15 @@ public class SegmentChainTest extends TestCase {
     sc.add(new Segment("test", 3, 4, 1, 0.0));
     sc.add(new Segment("test", 4, 5, 1, 0.0));
     sc.add(new Segment("test", 6, 7, 1, 0.0));
-    sc.collapse(2);
-    assertEquals(2, sc.size());
-    final Segment a = sc.get(0);
-    assertEquals(sc.toString(), 3, a.bins());
+    sc.collapse();
+    final List<Segment> segs = Arrays.asList(sc.get(0).left(), sc.get(0).right());
+    assertEquals(2, segs.size());
+    final Segment a = segs.get(0);
+    assertEquals(segs.toString(), 3, a.bins());
     assertEquals(100.0, a.mean(), 1e-8);
-    final Segment b = sc.get(1);
+    final Segment b = segs.get(1);
     assertEquals(3, b.bins());
     assertEquals(1.0, b.mean(), 1e-8);
-    sc.clear();
-    assertEquals(0, sc.size());
   }
 
   public void testMiddleEnergy() {
@@ -49,17 +51,17 @@ public class SegmentChainTest extends TestCase {
     for (int k = 0; k < 10; ++k) {
       sc.add(new Segment("test", 14 + k, 15 + k, 1, 0.0));
     }
-    sc.collapse(3);
-    assertEquals(3, sc.size());
-    final Segment a = sc.get(0);
-    assertEquals(sc.toString(), 10, a.bins());
+    sc.collapse();
+    final List<Segment> segs = Arrays.asList(sc.get(0).left().left(), sc.get(0).left().right(), sc.get(0).right());
+    assertEquals(3, segs.size());
+    final Segment a = segs.get(0);
+    assertEquals(segs.toString(), 10, a.bins());
     assertEquals(1.0, a.mean(), 1e-8);
-    final Segment b = sc.get(1);
+    final Segment b = segs.get(1);
     assertEquals(2, b.bins());
     assertEquals((4 + 3) / 2.0, b.mean(), 1e-8);
-    final Segment c = sc.get(2);
+    final Segment c = segs.get(2);
     assertEquals(10, c.bins());
     assertEquals(1.0, c.mean(), 1e-8);
   }
-
 }
