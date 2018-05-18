@@ -24,12 +24,14 @@ import static com.rtg.variant.cnv.segment.CnvPonBuildCli.NORMALIZED_COVERAGE_COL
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeSet;
 
 import com.rtg.bed.BedRangeLoader;
@@ -41,6 +43,7 @@ import com.rtg.launcher.LoggedCli;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
+import com.rtg.relation.GenomeRelationships;
 import com.rtg.util.MathUtils;
 import com.rtg.util.MultiSet;
 import com.rtg.util.TextTable;
@@ -53,6 +56,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.LineWriter;
 import com.rtg.util.io.LogStream;
 import com.rtg.variant.cnv.preprocess.AddGc;
 import com.rtg.variant.cnv.preprocess.AddLog;
@@ -97,6 +101,7 @@ public class SegmentCli extends LoggedCli {
   private static final String MIN_PANEL_COV_FLAG = "min-panel-coverage";
   static final String COV_COLUMN_NAME = "coverage-column-name";
   static final String PANEL_COV_COLUMN_NAME = "Xpanel-coverage-column-name";
+  static final String GRAPHVIZ_SEGMENTATION = "Xgraphviz-segmentation";
 
   static final String DEFAULT_COLUMN_NAME = "coverage";
 
@@ -148,6 +153,7 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerOptional(GCBINS_FLAG, Integer.class, INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(COV_COLUMN_NAME, String.class, STRING, "name of the coverage column in input data", DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(PANEL_COV_COLUMN_NAME, String.class, STRING, "name of the normalized coverage column in panel data", NORMALIZED_COVERAGE_COLUMN).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(GRAPHVIZ_SEGMENTATION, "if set, output a graphviz file for viewing the segmentation tree for each chromosome").setCategory(SENSITIVITY_TUNING);
     mFlags.addRequiredSet(controlFlag);
     mFlags.addRequiredSet(panelFlag);
     mFlags.setValidator(flags -> CommonFlags.validateOutputDirectory(flags)
@@ -495,6 +501,11 @@ public class SegmentCli extends LoggedCli {
 
     for (final SegmentChain chain : sg) {
       chain.collapse();
+
+      if (mFlags.isSet(GRAPHVIZ_SEGMENTATION) && !chain.isEmpty()) {
+        toGraphViz(chain, sensitivityLimit, new File(outputDirectory(), "chain-" + chain.get(0).getSequenceName() + ".dot"));
+      }
+
     }
     final Collection<Segment> outputSegments = split(sg, sensitivityLimit);
 
@@ -534,4 +545,55 @@ public class SegmentCli extends LoggedCli {
       }
     }
   }
+
+
+  private void toGraphViz(SegmentChain chain, double sl, File outfile) throws IOException {
+    try (final LineWriter w = new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(outfile)))) {
+      final StringBuilder sb = new StringBuilder();
+      sb.append(GenomeRelationships.initGraph(new Properties(), "segmentation", "Segments for Chromosome " + chain.get(0).getSequenceName()));
+      for (Segment s : chain) {
+        graphVizSubtree(sb, s, sl);
+      }
+      sb.append("}\n");
+      w.writeln(sb.toString());
+    }
+  }
+  private void graphVizSubtree(StringBuilder sb, Segment parent, double sl) {
+    sb.append(graphVizNodeId(parent)).append(' ').append(graphVizNode(parent, sl));
+    graphVizSubtree(sb, parent, sl, parent.left());
+    graphVizSubtree(sb, parent, sl, parent.right());
+  }
+  private void graphVizSubtree(StringBuilder sb, Segment parent, double sl, Segment child) {
+    if (child != null) {
+      sb.append(graphVizNodeId(parent)).append(" -> ").append(graphVizNodeId(child)).append(";\n");
+      graphVizSubtree(sb, child, sl);
+    }
+  }
+  private String graphVizNode(Segment s, double sl) {
+    final String fillColor = s.bins() == 1 ? "white"
+      : s.mean() > 1.1
+      ? "dodgerblue"
+      : s.mean() > 0.7
+      ? "skyblue"
+      : s.mean() < -0.8
+      ? "pink"
+      : s.mean() < -1.4
+      ? "deeppink"
+      : "grey";
+    final String label = (s.getStart() + 1) + "\n"
+      + s.getEnd() + "\n"
+      + Utils.realFormat(s.mean(), 3) + " (" + s.bins() + ")";
+    final String shape = "box";
+    final String style = s.deltaEnergy() >= sl ? "filled" : "filled,rounded";
+    return "["
+      + "label=\""
+      + label + "\""
+      + ", shape=\"" + shape + "\""
+      + ", style=\"" + style + "\", fillcolor=\"" + fillColor + "\""
+      + "];\n";
+  }
+  private String graphVizNodeId(Segment s) {
+    return (s.getStart() + 1) + "." + s.getEnd();
+  }
+
 }
