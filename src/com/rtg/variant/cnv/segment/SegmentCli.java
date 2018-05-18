@@ -101,7 +101,8 @@ public class SegmentCli extends LoggedCli {
   private static final String MIN_PANEL_COV_FLAG = "min-panel-coverage";
   static final String COV_COLUMN_NAME = "coverage-column-name";
   static final String PANEL_COV_COLUMN_NAME = "Xpanel-coverage-column-name";
-  static final String GRAPHVIZ_SEGMENTATION = "Xgraphviz-segmentation";
+  private static final String GRAPHVIZ_SEGMENTATION = "Xgraphviz-segmentation";
+  private static final String ABSORB_SINGLETONS_FLAG = "Xabsorb-singletons";
 
   static final String DEFAULT_COLUMN_NAME = "coverage";
 
@@ -154,6 +155,7 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerOptional(COV_COLUMN_NAME, String.class, STRING, "name of the coverage column in input data", DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(PANEL_COV_COLUMN_NAME, String.class, STRING, "name of the normalized coverage column in panel data", NORMALIZED_COVERAGE_COLUMN).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(GRAPHVIZ_SEGMENTATION, "if set, output a graphviz file for viewing the segmentation tree for each chromosome").setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(ABSORB_SINGLETONS_FLAG, "absorb single bins into closest scoring adjacent segment").setCategory(SENSITIVITY_TUNING);
     mFlags.addRequiredSet(controlFlag);
     mFlags.addRequiredSet(panelFlag);
     mFlags.setValidator(flags -> CommonFlags.validateOutputDirectory(flags)
@@ -472,8 +474,20 @@ public class SegmentCli extends LoggedCli {
       }
       // Split the top segment
       final Segment highest = orderByDeltaEnergyLimit.pollFirst();
-      orderByDeltaEnergyLimit.add(highest.left());
-      orderByDeltaEnergyLimit.add(highest.right());
+      final Segment left = highest.left();
+      final Segment right = highest.right();
+      if (right.bins() == 1 && mFlags.isSet(ABSORB_SINGLETONS_FLAG)) {
+        // Absorb right into left, pushing down the boundary change on the right
+        final Segment newLeft = Segment.absorbRight(left, right);
+        orderByDeltaEnergyLimit.add(newLeft); // right is discarded
+      } else if (left.bins() == 1 && mFlags.isSet(ABSORB_SINGLETONS_FLAG)) {
+        // Absorb left into right, pushing down the boundary change on the left
+        final Segment newRight = Segment.absorbLeft(left, right);
+        orderByDeltaEnergyLimit.add(newRight); // left is discarded
+      } else {
+        orderByDeltaEnergyLimit.add(left);
+        orderByDeltaEnergyLimit.add(right);
+      }
     }
 
     // Reorder by genome locus in reference order

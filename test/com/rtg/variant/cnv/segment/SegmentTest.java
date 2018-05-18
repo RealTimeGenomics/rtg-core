@@ -45,4 +45,35 @@ public class SegmentTest extends TestCase {
     assertEquals(1, m.firstBinLength());
     assertEquals(2, m.lastBinLength());
   }
+
+  public void testAbsorbLeft() {
+    final Segment left = new Segment("test", 42, 43, 100, 1);
+    final Segment rl = new Segment("test", 43, 44, 25, 1);
+    final Segment rr = new Segment("test", 44, 45, 25, 1);
+    final Segment right = new Segment(rl, rr, 1.0);
+    final Segment seg = Segment.absorbLeft(left, right);
+    assertEquals(3, seg.bins());
+    assertEquals(42, seg.getStart());
+    assertEquals(45, seg.getEnd());
+    assertEquals("test", seg.getSequenceName());
+    assertEquals(50.0, seg.sum());
+    assertEquals(2, seg.left().bins());
+    assertEquals(1, seg.right().bins());
+  }
+
+  public void testAbsorbRight() {
+    final Segment ll = new Segment("test", 42, 43, 50, 1);
+    final Segment lr = new Segment("test", 43, 44, 25, 1);
+    final Segment left = new Segment(ll, lr, Math.PI);
+    final Segment right = new Segment("test", 44, 45, 100, 1);
+    final Segment seg = Segment.absorbRight(left, right);
+    assertEquals(3, seg.bins());
+    assertEquals(42, seg.getStart());
+    assertEquals(45, seg.getEnd());
+    assertEquals("test", seg.getSequenceName());
+    assertEquals(75.0, seg.sum());
+    assertEquals(Math.PI, seg.deltaEnergy());
+    assertEquals(1, seg.left().bins());
+    assertEquals(2, seg.right().bins());
+  }
 }

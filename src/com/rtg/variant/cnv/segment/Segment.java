@@ -18,8 +18,8 @@ import com.rtg.util.intervals.SequenceNameLocusSimple;
  */
 class Segment extends SequenceNameLocusSimple {
 
-  private final Segment mLeft;
-  private final Segment mRight;
+  private Segment mLeft;
+  private Segment mRight;
   private final double mDeltaEnergy;
   private final double mSum;
   private final double mSumSq;
@@ -29,19 +29,49 @@ class Segment extends SequenceNameLocusSimple {
   private final int mLastBinLength;
   private final double mSumDistanceBetween; // mSumDistanceBetween / mBins is mean distance between bins within this segment
 
-  // Single bin
-  Segment(String seqName, int start, int end, final double sum, final double distPrevious) {
+  static Segment absorbRight(final Segment left, final Segment right) {
+    // Discard the right segment, but adjust boundaries of the left accordingly
+    if (left == null) {
+      return null;
+    }
+    final Segment res = new Segment(left.getSequenceName(), left.getStart(), right.getEnd(),
+      left.bins() + right.bins(), left.sum(), left.mDeltaEnergy, // Deliberately ignore energy of right
+      left.distanceToPrevious(), left.mSumDistanceBetween + right.mSumDistanceBetween + right.mDistanceToPrevious);
+    res.mLeft = left.left();
+    res.mRight = absorbRight(left.right(), right); // Cascade down
+    return res;
+  }
+
+  static Segment absorbLeft(final Segment left, final Segment right) {
+    // Discard the left segment, but adjust boundaries of the right accordingly
+    if (right == null) {
+      return null;
+    }
+    final Segment res = new Segment(left.getSequenceName(), left.getStart(), right.getEnd(),
+      left.bins() + right.bins(), right.sum(), right.mDeltaEnergy, // Deliberately ignore energy of left
+      right.distanceToPrevious(), left.mSumDistanceBetween + right.mSumDistanceBetween + right.mDistanceToPrevious);
+    res.mLeft = absorbLeft(left, right.left()); // Cascade down
+    res.mRight = right.right();
+    return res;
+  }
+
+  private Segment(String seqName, int start, int end, final long bins, final double sum, final double deltaEnergy, final double distPrevious, final double sumDistanceBetween) {
     super(seqName, start, end);
     mFirstBinLength = end - start;
     mLastBinLength = end - start;
     mSum = sum;
     mSumSq = sum * sum;
-    mBins = 1;
+    mBins = bins;
     mDistanceToPrevious = distPrevious;
-    mSumDistanceBetween = 0;
+    mSumDistanceBetween = sumDistanceBetween;
     mLeft = null;
     mRight = null;
-    mDeltaEnergy = Double.NEGATIVE_INFINITY;
+    mDeltaEnergy = deltaEnergy;
+  }
+
+  // Single bin
+  Segment(String seqName, int start, int end, final double sum, final double distPrevious) {
+    this(seqName, start, end, 1, sum, Double.NEGATIVE_INFINITY, distPrevious, 0);
   }
 
   Segment(final Segment left, final Segment right, double deltaEnergy) {
