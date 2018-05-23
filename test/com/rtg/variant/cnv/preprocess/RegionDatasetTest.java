@@ -71,4 +71,13 @@ public class RegionDatasetTest extends TestCase {
     assertEquals(240.0, dc.sum());
     assertEquals(Arrays.asList(desiredColumns), d.getColumnNames());
   }
+
+  public void testFilterIntColumn() {
+    final RegionDataset d = new RegionDataset(new String[0]);
+    d.addColumn(new IntColumn("mycol"));
+    assertEquals(1, d.getColumns().size());
+    final RegionDataset f = d.filter(row -> false);
+    assertEquals(1, f.getColumns().size());
+    assertTrue(f.getColumns().get(0) instanceof IntColumn);
+  }
 }

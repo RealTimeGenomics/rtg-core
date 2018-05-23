@@ -49,6 +49,7 @@ public class NumericColumn extends Column {
     return String.format(mFormat, get(i));
   }
 
+
   @Override
   NumericColumn filter(RegionPredicate p) {
     final double[] newData = new double[mSize];
@@ -58,9 +59,13 @@ public class NumericColumn extends Column {
         newData[j++] = mData[i];
       }
     }
-    final NumericColumn result = new NumericColumn(getName(), mFormat);
-    result.set(Arrays.copyOf(newData, j));
-    return result;
+    try {
+      final NumericColumn result = (NumericColumn) clone();
+      result.set(Arrays.copyOf(newData, j));
+      return result;
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override
