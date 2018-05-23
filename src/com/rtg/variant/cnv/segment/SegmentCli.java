@@ -98,7 +98,7 @@ public class SegmentCli extends LoggedCli {
   static final String GCBINS_FLAG = "Xgcbins";
   private static final String MIN_CASE_COV_FLAG = "min-case-coverage";
   private static final String MIN_CTRL_COV_FLAG = "min-control-coverage";
-  private static final String MIN_PANEL_COV_FLAG = "min-panel-coverage";
+  private static final String MIN_NORM_CTRL_COV_FLAG = "min-norm-control-coverage";
   static final String COV_COLUMN_NAME = "coverage-column-name";
   static final String PANEL_COV_COLUMN_NAME = "Xpanel-coverage-column-name";
   private static final String GRAPHVIZ_SEGMENTATION = "Xgraphviz-segmentation";
@@ -143,8 +143,8 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerOptional(MIN_SEGMENTS_FLAG, Integer.class, INT, "lower bound on the number of segments to be produced", 1).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(MAX_SEGMENTS_FLAG, Integer.class, INT, "upper bound on the number of segments to be produced", Integer.MAX_VALUE).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(MIN_CASE_COV_FLAG, Double.class, FLOAT, "minimum case coverage required for a bin to be included in segmentation", 5.0).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(MIN_CTRL_COV_FLAG, Double.class, FLOAT, "minimum control coverage required for a bin to be included in segmentation", 300.0).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(MIN_PANEL_COV_FLAG, Double.class, FLOAT, "minimum panel normalized coverage required for a bin to be included in segmentation", 0.1).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MIN_CTRL_COV_FLAG, Double.class, FLOAT, "minimum control coverage required for a bin to be included in segmentation").setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MIN_NORM_CTRL_COV_FLAG, Double.class, FLOAT, "minimum normalized control or panel coverage required for a bin to be included in segmentation", 0.1).setCategory(SENSITIVITY_TUNING);
 
     mFlags.registerOptional(MIN_BINS_FLAG, Integer.class, INT, "minimum number of bins required for copy number alteration to be called", 1).setCategory(REPORTING);
     mFlags.registerOptional('r', MIN_LOGR_FLAG, Double.class, FLOAT, "minimum (absolute) log ratio required for copy number alteration to be called", 0.2).setCategory(REPORTING);
@@ -169,7 +169,7 @@ public class SegmentCli extends LoggedCli {
       && CommonFlags.validateInputFile(flags, SUMMARY_FLAG)
       && flags.checkInRange(MIN_SEGMENTS_FLAG, 1, Integer.MAX_VALUE)
       && flags.checkXor(COLUMN_FLAG, CONTROL_FLAG, PANEL_FLAG)
-      && flags.checkNand(MIN_CTRL_COV_FLAG, MIN_PANEL_COV_FLAG)
+      && flags.checkNand(MIN_CTRL_COV_FLAG, MIN_NORM_CTRL_COV_FLAG)
       && checkMinMax(flags)
     );
   }
@@ -222,7 +222,6 @@ public class SegmentCli extends LoggedCli {
   // Input datasets are both coverage output, construct data based on (log) ratio with control
   private void computeCaseControlDataset() throws IOException {
     final double minCaseCoverage = (Double) mFlags.getValue(MIN_CASE_COV_FLAG);
-    final double minCtrlCoverage = (Double) mFlags.getValue(MIN_CTRL_COV_FLAG);
     final int gcbins = (Integer) mFlags.getValue(GCBINS_FLAG);
     final String coverageColumnName = (String) mFlags.getValue(COV_COLUMN_NAME);
 
@@ -252,10 +251,13 @@ public class SegmentCli extends LoggedCli {
     filtered.column(controlCoverageCol).setName("ctrl_cover_raw");
 
 
-    // Min coverage filters
-    final NumericColumn cc1 = filtered.asNumeric(controlCoverageCol);
-    filtered = filtered.filter(row -> cc1.get(row) >= minCtrlCoverage);
-    Diagnostic.userLog("Filtered with minimum control coverage " + minCtrlCoverage + ", dataset has " + filtered.size() + " rows");
+    if (mFlags.isSet(MIN_CTRL_COV_FLAG)) {
+      // Apply minimum abosolute control coverage filter
+      final double minCtrlCoverage = (Double) mFlags.getValue(MIN_CTRL_COV_FLAG);
+      final NumericColumn cc1 = filtered.asNumeric(controlCoverageCol);
+      filtered = filtered.filter(row -> cc1.get(row) >= minCtrlCoverage);
+      Diagnostic.userLog("Filtered with minimum control coverage " + minCtrlCoverage + ", dataset has " + filtered.size() + " rows");
+    }
 
     final NumericColumn cc2 = filtered.asNumeric(caseCoverageCol);
     filtered = filtered.filter(row -> cc2.get(row) >= minCaseCoverage);
@@ -277,6 +279,14 @@ public class SegmentCli extends LoggedCli {
     new WeightedMedianNormalize(controlCoverageCol, "ctrl_cover_wmednorm").process(filtered);
     controlCoverageCol = filtered.columns() - 1;
 
+    if (!mFlags.isSet(MIN_CTRL_COV_FLAG)) {
+      // Apply minimum normalized control coverage if appropriate
+      final double minNormCtrlCoverage = (Double) mFlags.getValue(MIN_NORM_CTRL_COV_FLAG);
+      final NumericColumn cc1 = filtered.asNumeric(controlCoverageCol);
+      filtered = filtered.filter(row -> cc1.get(row) >= minNormCtrlCoverage);
+      Diagnostic.userLog("Filtered with minimum normalized control coverage " + minNormCtrlCoverage + ", dataset has " + filtered.size() + " rows");
+    }
+
     Diagnostic.userLog("Computing ratio");
     //checkNonZero(filtered, caseCoverageCol);
     checkNonZero(filtered, controlCoverageCol);
@@ -293,7 +303,7 @@ public class SegmentCli extends LoggedCli {
 
   private void computeCasePanelDataset() throws IOException {
     final double minCaseCoverage = (Double) mFlags.getValue(MIN_CASE_COV_FLAG);
-    final double minPanelCoverage = (Double) mFlags.getValue(MIN_PANEL_COV_FLAG);
+    final double minPanelCoverage = (Double) mFlags.getValue(MIN_NORM_CTRL_COV_FLAG);
     final int gcbins = (Integer) mFlags.getValue(GCBINS_FLAG);
     final String coverageColumnName = (String) mFlags.getValue(COV_COLUMN_NAME);
     final String panelCoverageColumnName = (String) mFlags.getValue(PANEL_COV_COLUMN_NAME);

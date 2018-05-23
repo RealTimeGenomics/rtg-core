@@ -125,6 +125,7 @@ public class SegmentCliTest extends AbstractCliTest {
       final File output = new File(dir, "output");
 
       // gc correction does not work well here because the regions are small, so turn it off
+      //final MainResult result = MainResult.run(getCli(), "-t", reference.getPath(), "-o", output.getPath(), "--control", control.getPath(), "--case", sample.getPath(), "--sample", "foo", "-Z", "--beta", "0.1", "--Xgcbins", "2", "--min-control-coverage", "300");
       final MainResult result = MainResult.run(getCli(), "-t", reference.getPath(), "-o", output.getPath(), "--control", control.getPath(), "--case", sample.getPath(), "--sample", "foo", "-Z", "--beta", "0.1", "--Xgcbins", "2");
       assertEquals(result.err(), 0, result.rc());
       mNano.check("expected.unsegmented-gc.bed", FileUtils.fileToString(new File(output, "unsegmented.bed")));
