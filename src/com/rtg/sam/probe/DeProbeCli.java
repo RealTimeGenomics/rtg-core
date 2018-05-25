@@ -69,7 +69,7 @@ import htsjdk.samtools.SAMTagUtil;
  */
 public class DeProbeCli extends LoggedCli {
 
-  private static final String PROBE_DROPPING = "probe-specific-dropping";
+  private static final String PROBE_DROPPING = "probe-specific-filter";
   private static final String PROBE_BED = "probe-bed";
   private static final String TOLERANCE_FLAG = "tolerance";
   private static final String EXTRA_SOFT_CLIP_FLAG = "extra-soft-clip";
@@ -115,7 +115,7 @@ public class DeProbeCli extends LoggedCli {
     mFlags.registerRequired('b', PROBE_BED, File.class, CommonFlags.FILE, "BED file specifying each probe location and strand").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 5).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     mFlags.registerOptional(EXTRA_SOFT_CLIP_FLAG, "if set, add extra soft-clipping where mismatches occur at the end of reads").setCategory(CommonFlagCategories.FILTERING);
-    mFlags.registerOptional(PROBE_DROPPING, "if set, apply probe-specific minimum read lengths as supplied in probe bed column 5").setCategory(CommonFlagCategories.FILTERING);
+    mFlags.registerOptional(PROBE_DROPPING, "if set, apply probe-specific minimum read length filter as supplied in probe bed column 5").setCategory(CommonFlagCategories.FILTERING);
     CommonFlags.initMinReadLength(mFlags);
     mFlags.addRequiredSet(inFlag);
     mFlags.addRequiredSet(listFlag);
