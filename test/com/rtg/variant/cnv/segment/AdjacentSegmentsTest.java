@@ -20,8 +20,8 @@ public class AdjacentSegmentsTest {
 
   @Test
   public void testConstructor() {
-    final Segment segment = new Segment("test", 0, 10, 10.1, 0.4);
-    final Segment segment2 = new Segment("test", 10, 40, 10.1, 0.4);
+    final Segment segment = new Segment("test", 0, 10, 10.1, 0.4, 1, 1);
+    final Segment segment2 = new Segment("test", 10, 40, 10.1, 0.4, 1, 1);
     final AdjacentSegments adjacentSegments = new AdjacentSegments(19.0, segment, segment2);
     assertEquals(segment.getStart(), adjacentSegments.getFirst().getStart());
     assertEquals(segment.getEnd(), adjacentSegments.getFirst().getEnd());

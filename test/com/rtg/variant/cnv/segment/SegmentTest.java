@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 public class SegmentTest extends TestCase {
 
   public void test() {
-    final Segment left = new Segment("test", 42, 43, 100, 1);
+    final Segment left = new Segment("test", 42, 43, 100, 1, 1, 1);
     assertEquals(1, left.bins());
     assertEquals(100.0, left.sum());
     assertEquals(10000.0, left.sumSquares());
@@ -28,7 +28,7 @@ public class SegmentTest extends TestCase {
     assertEquals(0.0, left.meanDistanceBetween());
     assertEquals(42, left.getStart());
     assertEquals(43, left.getEnd());
-    final Segment right = new Segment("test", 43, 45, 50, 1);
+    final Segment right = new Segment("test", 43, 45, 50, 1, 1, 1);
     final Segment m = new Segment(left, right, Math.PI);
     assertEquals(left, m.left());
     assertEquals(right, m.right());
@@ -47,33 +47,33 @@ public class SegmentTest extends TestCase {
   }
 
   public void testAbsorbLeft() {
-    final Segment left = new Segment("test", 42, 43, 100, 1);
-    final Segment rl = new Segment("test", 43, 44, 25, 1);
-    final Segment rr = new Segment("test", 44, 45, 25, 1);
+    final Segment left = new Segment("test", 42, 43, 100, 1, 1, 1);
+    final Segment rl = new Segment("test", 43, 44, 25, 1, 1, 1);
+    final Segment rr = new Segment("test", 44, 45, 25, 1, 1, 1);
     final Segment right = new Segment(rl, rr, 1.0);
     final Segment seg = Segment.absorbLeft(left, right);
-    assertEquals(3, seg.bins());
+    assertEquals(2, seg.bins());
     assertEquals(42, seg.getStart());
     assertEquals(45, seg.getEnd());
     assertEquals("test", seg.getSequenceName());
     assertEquals(50.0, seg.sum());
-    assertEquals(2, seg.left().bins());
+    assertEquals(1, seg.left().bins());
     assertEquals(1, seg.right().bins());
   }
 
   public void testAbsorbRight() {
-    final Segment ll = new Segment("test", 42, 43, 50, 1);
-    final Segment lr = new Segment("test", 43, 44, 25, 1);
+    final Segment ll = new Segment("test", 42, 43, 50, 1, 1, 1);
+    final Segment lr = new Segment("test", 43, 44, 25, 1, 1, 1);
     final Segment left = new Segment(ll, lr, Math.PI);
-    final Segment right = new Segment("test", 44, 45, 100, 1);
+    final Segment right = new Segment("test", 44, 45, 100, 1, 1, 1);
     final Segment seg = Segment.absorbRight(left, right);
-    assertEquals(3, seg.bins());
+    assertEquals(2, seg.bins());
     assertEquals(42, seg.getStart());
     assertEquals(45, seg.getEnd());
     assertEquals("test", seg.getSequenceName());
     assertEquals(75.0, seg.sum());
     assertEquals(Math.PI, seg.deltaEnergy());
     assertEquals(1, seg.left().bins());
-    assertEquals(2, seg.right().bins());
+    assertEquals(1, seg.right().bins());
   }
 }

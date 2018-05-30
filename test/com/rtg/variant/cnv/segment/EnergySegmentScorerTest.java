@@ -20,8 +20,8 @@ import junit.framework.TestCase;
 public class EnergySegmentScorerTest extends TestCase {
 
   public void test() {
-    final Segment s = new Segment("test", 0, 1, 100, 1);
-    final Segment t = new Segment(new Segment(new Segment("test", 1, 2, 50, 1), new Segment("test", 2, 3, 50, 10), 1), new Segment("test", 3, 4, 50, 20), 1);
+    final Segment s = new Segment("test", 0, 1, 100, 1, 1, 1);
+    final Segment t = new Segment(new Segment(new Segment("test", 1, 2, 50, 1, 1, 1), new Segment("test", 2, 3, 50, 10, 1, 1), 1), new Segment("test", 3, 4, 50, 20, 1, 1), 1);
     assertEquals(1875, new EnergySegmentScorer(0, 0).score(s, t), 1e-4);
     assertEquals(1877.772588, new EnergySegmentScorer(1, 0).score(s, t), 1e-4);
     assertEquals(1878.46574, new EnergySegmentScorer(1, 1).score(s, t), 1e-4);

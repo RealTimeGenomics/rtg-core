@@ -24,12 +24,12 @@ public class SegmentChainTest extends TestCase {
 
   public void testNiceClean() {
     final SegmentChain sc = new SegmentChain(new EnergySegmentScorer(0, 0));
-    sc.add(new Segment("test", 0, 1, 100, 0.0));
-    sc.add(new Segment("test", 1, 2, 100, 0.0));
-    sc.add(new Segment("test", 2, 3, 100, 0.0));
-    sc.add(new Segment("test", 3, 4, 1, 0.0));
-    sc.add(new Segment("test", 4, 5, 1, 0.0));
-    sc.add(new Segment("test", 6, 7, 1, 0.0));
+    sc.add(new Segment("test", 0, 1, 100, 0.0, 1, 1));
+    sc.add(new Segment("test", 1, 2, 100, 0.0, 1, 1));
+    sc.add(new Segment("test", 2, 3, 100, 0.0, 1, 1));
+    sc.add(new Segment("test", 3, 4, 1, 0.0, 1, 1));
+    sc.add(new Segment("test", 4, 5, 1, 0.0, 1, 1));
+    sc.add(new Segment("test", 6, 7, 1, 0.0, 1, 1));
     sc.collapse();
     final List<Segment> segs = Arrays.asList(sc.get(0).left(), sc.get(0).right());
     assertEquals(2, segs.size());
@@ -44,12 +44,12 @@ public class SegmentChainTest extends TestCase {
   public void testMiddleEnergy() {
     final SegmentChain sc = new SegmentChain(new EnergySegmentScorer(0, 0));
     for (int k = 0; k < 10; ++k) {
-      sc.add(new Segment("test", k, k + 1, 1, 0.0));
+      sc.add(new Segment("test", k, k + 1, 1, 0.0, 1, 1));
     }
-    sc.add(new Segment("test", 11, 12, 4, 0.0));
-    sc.add(new Segment("test", 12, 13, 3, 0.0));
+    sc.add(new Segment("test", 11, 12, 4, 0.0, 1, 1));
+    sc.add(new Segment("test", 12, 13, 3, 0.0, 1, 1));
     for (int k = 0; k < 10; ++k) {
-      sc.add(new Segment("test", 14 + k, 15 + k, 1, 0.0));
+      sc.add(new Segment("test", 14 + k, 15 + k, 1, 0.0, 1, 1));
     }
     sc.collapse();
     final List<Segment> segs = Arrays.asList(sc.get(0).left().left(), sc.get(0).left().right(), sc.get(0).right());

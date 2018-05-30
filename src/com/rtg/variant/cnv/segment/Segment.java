@@ -28,6 +28,8 @@ class Segment extends SequenceNameLocusSimple {
   private final int mFirstBinLength;
   private final int mLastBinLength;
   private final double mSumDistanceBetween; // mSumDistanceBetween / mBins is mean distance between bins within this segment
+  private final double mSumCaseCoverage;
+  private final double mSumCtrlCoverage;
 
   static Segment absorbRight(final Segment left, final Segment right) {
     // Discard the right segment, but adjust boundaries of the left accordingly
@@ -35,8 +37,9 @@ class Segment extends SequenceNameLocusSimple {
       return null;
     }
     final Segment res = new Segment(left.getSequenceName(), left.getStart(), right.getEnd(),
-      left.bins() + right.bins(), left.sum(), left.mDeltaEnergy, // Deliberately ignore energy of right
-      left.distanceToPrevious(), left.mSumDistanceBetween + right.mSumDistanceBetween + right.mDistanceToPrevious);
+      left.bins(), left.sum(), left.mDeltaEnergy, // Deliberately ignore energy of right
+      left.distanceToPrevious(), left.mSumDistanceBetween + right.mSumDistanceBetween + right.mDistanceToPrevious,
+      left.mSumCaseCoverage, left.mSumCtrlCoverage);
     res.mLeft = left.left();
     res.mRight = absorbRight(left.right(), right); // Cascade down
     return res;
@@ -48,14 +51,16 @@ class Segment extends SequenceNameLocusSimple {
       return null;
     }
     final Segment res = new Segment(left.getSequenceName(), left.getStart(), right.getEnd(),
-      left.bins() + right.bins(), right.sum(), right.mDeltaEnergy, // Deliberately ignore energy of left
-      right.distanceToPrevious(), left.mSumDistanceBetween + right.mSumDistanceBetween + right.mDistanceToPrevious);
+      right.bins(), right.sum(), right.mDeltaEnergy, // Deliberately ignore energy of left
+      right.distanceToPrevious(), left.mSumDistanceBetween + right.mSumDistanceBetween + right.mDistanceToPrevious,
+      right.mSumCaseCoverage, right.mSumCtrlCoverage);
     res.mLeft = absorbLeft(left, right.left()); // Cascade down
     res.mRight = right.right();
     return res;
   }
 
-  private Segment(String seqName, int start, int end, final long bins, final double sum, final double deltaEnergy, final double distPrevious, final double sumDistanceBetween) {
+  private Segment(String seqName, int start, int end, final long bins, final double sum, final double deltaEnergy,
+                  final double distPrevious, final double sumDistanceBetween, final double caseCov, final double ctrlCov) {
     super(seqName, start, end);
     mFirstBinLength = end - start;
     mLastBinLength = end - start;
@@ -67,11 +72,13 @@ class Segment extends SequenceNameLocusSimple {
     mLeft = null;
     mRight = null;
     mDeltaEnergy = deltaEnergy;
+    mSumCaseCoverage = caseCov;
+    mSumCtrlCoverage = ctrlCov;
   }
 
   // Single bin
-  Segment(String seqName, int start, int end, final double sum, final double distPrevious) {
-    this(seqName, start, end, 1, sum, Double.NEGATIVE_INFINITY, distPrevious, 0);
+  Segment(String seqName, int start, int end, final double sum, final double distPrevious, double caseCov, double crtlCov) {
+    this(seqName, start, end, 1, sum, Double.NEGATIVE_INFINITY, distPrevious, 0, caseCov, crtlCov);
   }
 
   Segment(final Segment left, final Segment right, double deltaEnergy) {
@@ -88,6 +95,8 @@ class Segment extends SequenceNameLocusSimple {
     mLastBinLength = right.mLastBinLength;
     mDistanceToPrevious = left.mDistanceToPrevious;
     mSumDistanceBetween = left.mSumDistanceBetween + right.mSumDistanceBetween + right.mDistanceToPrevious;
+    mSumCaseCoverage = left.mSumCaseCoverage + right.mSumCaseCoverage;
+    mSumCtrlCoverage = left.mSumCtrlCoverage + right.mSumCtrlCoverage;
   }
 
   long bins() {
@@ -116,6 +125,14 @@ class Segment extends SequenceNameLocusSimple {
 
   double mean() {
     return sum() / bins();
+  }
+
+  double meanNormalizedCaseCov() {
+    return mSumCaseCoverage / bins();
+  }
+
+  double meanNormalizedCtrlCov() {
+    return mSumCtrlCoverage / bins();
   }
 
   double meanDistanceBetween() {

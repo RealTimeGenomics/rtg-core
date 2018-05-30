@@ -113,6 +113,8 @@ public class SegmentCli extends LoggedCli {
   private int mDataCol;
   private CnvSummaryReport mReporter = null;
   private OutputStream mOut;
+  private int mCaseCoverageCol = -1;
+  private int mControlCoverageCol = -1;
 
   @Override
   public String moduleName() {
@@ -231,8 +233,8 @@ public class SegmentCli extends LoggedCli {
     if (caseData.columnId(coverageColumnName) == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + caseFile);
     }
-    int caseCoverageCol = caseData.columnId(coverageColumnName);
-    caseData.column(caseCoverageCol).setName("case_cover_raw");
+    mCaseCoverageCol = caseData.columnId(coverageColumnName);
+    caseData.column(mCaseCoverageCol).setName("case_cover_raw");
 
 
     Diagnostic.userLog("Loading control");
@@ -247,19 +249,19 @@ public class SegmentCli extends LoggedCli {
     Diagnostic.userLog("Joining");
     new SimpleJoin(controlData, "control").process(caseData);
     RegionDataset filtered = caseData;
-    int controlCoverageCol = filtered.columns() - 1;
-    filtered.column(controlCoverageCol).setName("ctrl_cover_raw");
+    mControlCoverageCol = filtered.columns() - 1;
+    filtered.column(mControlCoverageCol).setName("ctrl_cover_raw");
 
 
     if (mFlags.isSet(MIN_CTRL_COV_FLAG)) {
       // Apply minimum abosolute control coverage filter
       final double minCtrlCoverage = (Double) mFlags.getValue(MIN_CTRL_COV_FLAG);
-      final NumericColumn cc1 = filtered.asNumeric(controlCoverageCol);
+      final NumericColumn cc1 = filtered.asNumeric(mControlCoverageCol);
       filtered = filtered.filter(row -> cc1.get(row) >= minCtrlCoverage);
       Diagnostic.userLog("Filtered with minimum control coverage " + minCtrlCoverage + ", dataset has " + filtered.size() + " rows");
     }
 
-    final NumericColumn cc2 = filtered.asNumeric(caseCoverageCol);
+    final NumericColumn cc2 = filtered.asNumeric(mCaseCoverageCol);
     filtered = filtered.filter(row -> cc2.get(row) >= minCaseCoverage);
     Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", dataset has " + filtered.size() + " rows");
 
@@ -267,30 +269,30 @@ public class SegmentCli extends LoggedCli {
       Diagnostic.userLog("Computing per-region GC values");
       new AddGc(mReference).process(filtered);
       Diagnostic.userLog("Applying GC correction using " + gcbins + " bins");
-      new GcNormalize(caseCoverageCol, gcbins, "case_cover_gcnorm").process(filtered);
-      caseCoverageCol = filtered.columns() - 1;
-      new GcNormalize(controlCoverageCol, gcbins, "ctrl_cover_gcnorm").process(filtered);
-      controlCoverageCol = filtered.columns() - 1;
+      new GcNormalize(mCaseCoverageCol, gcbins, "case_cover_gcnorm").process(filtered);
+      mCaseCoverageCol = filtered.columns() - 1;
+      new GcNormalize(mControlCoverageCol, gcbins, "ctrl_cover_gcnorm").process(filtered);
+      mControlCoverageCol = filtered.columns() - 1;
     }
 
     Diagnostic.userLog("Applying weighted median normalization");
-    new WeightedMedianNormalize(caseCoverageCol, "case_cover_wmednorm").process(filtered);
-    caseCoverageCol = filtered.columns() - 1;
-    new WeightedMedianNormalize(controlCoverageCol, "ctrl_cover_wmednorm").process(filtered);
-    controlCoverageCol = filtered.columns() - 1;
+    new WeightedMedianNormalize(mCaseCoverageCol, "case_cover_wmednorm").process(filtered);
+    mCaseCoverageCol = filtered.columns() - 1;
+    new WeightedMedianNormalize(mControlCoverageCol, "ctrl_cover_wmednorm").process(filtered);
+    mControlCoverageCol = filtered.columns() - 1;
 
     if (!mFlags.isSet(MIN_CTRL_COV_FLAG)) {
       // Apply minimum normalized control coverage if appropriate
       final double minNormCtrlCoverage = (Double) mFlags.getValue(MIN_NORM_CTRL_COV_FLAG);
-      final NumericColumn cc1 = filtered.asNumeric(controlCoverageCol);
+      final NumericColumn cc1 = filtered.asNumeric(mControlCoverageCol);
       filtered = filtered.filter(row -> cc1.get(row) >= minNormCtrlCoverage);
       Diagnostic.userLog("Filtered with minimum normalized control coverage " + minNormCtrlCoverage + ", dataset has " + filtered.size() + " rows");
     }
 
     Diagnostic.userLog("Computing ratio");
     //checkNonZero(filtered, caseCoverageCol);
-    checkNonZero(filtered, controlCoverageCol);
-    new AddRatio(caseCoverageCol, controlCoverageCol, "ratio_wmednorm").process(filtered);
+    checkNonZero(filtered, mControlCoverageCol);
+    new AddRatio(mCaseCoverageCol, mControlCoverageCol, "ratio_wmednorm").process(filtered);
 
     // Log
     Diagnostic.userLog("Computing log");
@@ -315,8 +317,8 @@ public class SegmentCli extends LoggedCli {
       throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + caseFile);
     }
 
-    int caseCoverageCol = caseData.columnId(coverageColumnName);
-    caseData.column(caseCoverageCol).setName("case_cover_raw");
+    mCaseCoverageCol = caseData.columnId(coverageColumnName);
+    caseData.column(mCaseCoverageCol).setName("case_cover_raw");
 
 
     Diagnostic.userLog("Loading panel file");
@@ -331,16 +333,16 @@ public class SegmentCli extends LoggedCli {
     Diagnostic.userLog("Joining");
     new SimpleJoin(panelData, "panel").process(caseData);
     RegionDataset filtered = caseData;
-    final int panelCoverageCol = filtered.columns() - 1;
-    filtered.column(panelCoverageCol).setName("pon_cover_wmednorm");
+    mControlCoverageCol = filtered.columns() - 1;
+    filtered.column(mControlCoverageCol).setName("pon_cover_wmednorm");
     Diagnostic.userLog("Joined dataset has " + filtered.size() + " rows");
 
     // Min coverage filters
-    final NumericColumn cc1 = filtered.asNumeric(panelCoverageCol);
+    final NumericColumn cc1 = filtered.asNumeric(mControlCoverageCol);
     filtered = filtered.filter(row -> cc1.get(row) >= minPanelCoverage);
     Diagnostic.userLog("Filtered with minimum panel coverage " + minPanelCoverage + ", dataset has " + filtered.size() + " rows");
 
-    final NumericColumn cc2 = filtered.asNumeric(caseCoverageCol);
+    final NumericColumn cc2 = filtered.asNumeric(mCaseCoverageCol);
     filtered = filtered.filter(row -> cc2.get(row) >= minCaseCoverage);
     Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", dataset has " + filtered.size() + " rows");
 
@@ -348,20 +350,20 @@ public class SegmentCli extends LoggedCli {
       Diagnostic.userLog("Computing per-region GC values");
       new AddGc(mReference).process(filtered);
       Diagnostic.userLog("Applying GC correction using " + gcbins + " bins");
-      new GcNormalize(caseCoverageCol, gcbins, "case_cover_gcnorm").process(filtered);
-      caseCoverageCol = filtered.columns() - 1;
+      new GcNormalize(mCaseCoverageCol, gcbins, "case_cover_gcnorm").process(filtered);
+      mCaseCoverageCol = filtered.columns() - 1;
       // Panel is already gc normalized
     }
 
     Diagnostic.userLog("Applying weighted median normalization");
-    new WeightedMedianNormalize(caseCoverageCol, "case_cover_wmednorm").process(filtered);
-    caseCoverageCol = filtered.columns() - 1;
+    new WeightedMedianNormalize(mCaseCoverageCol, "case_cover_wmednorm").process(filtered);
+    mCaseCoverageCol = filtered.columns() - 1;
     // Panel is already median normalized
 
     Diagnostic.userLog("Computing ratio");
     //checkNonZero(filtered, caseCoverageCol);
-    checkNonZero(filtered, panelCoverageCol);
-    new AddRatio(caseCoverageCol, panelCoverageCol, "ratio_wmednorm").process(filtered);
+    checkNonZero(filtered, mControlCoverageCol);
+    new AddRatio(mCaseCoverageCol, mControlCoverageCol, "ratio_wmednorm").process(filtered);
 
     // Log
     Diagnostic.userLog("Computing log");
@@ -394,7 +396,9 @@ public class SegmentCli extends LoggedCli {
 
     final File vcfFile = VcfUtils.getZippedVcfFileName(gzip, new File(outputDirectory(), "segments.vcf"));
 
-    final NumericColumn c = mDataset.asNumeric(mDataCol);
+    final NumericColumn ratioCol = mDataset.asNumeric(mDataCol);
+    final NumericColumn caseCol = mDataset.asNumeric(mCaseCoverageCol);
+    final NumericColumn ctrlCol = mDataset.asNumeric(mControlCoverageCol);
     final RegionColumn regions = mDataset.regions();
     mFormatter = new SegmentVcfOutputFormatter(mReference, refThreshold, minBins, (String) mFlags.getValue(SAMPLE_FLAG));
     try (final VcfWriter vw = new VcfWriterFactory(mFlags).make(mFormatter.header(), vcfFile)) {
@@ -413,13 +417,13 @@ public class SegmentCli extends LoggedCli {
         }
         final int start = rec.getStart();
         final int end = rec.getEnd();
-        final double data = c.get(i);
+        final double data = ratioCol.get(i);
         final long length = end - start;
         final double newMid = start + 0.5 * length;
         final double distPrev = prevMidPoint < 0 ? 0 : newMid - prevMidPoint;
         assert distPrev >= 0;
         prevMidPoint = newMid;
-        sc.add(new Segment(seqName, start, end, data, distPrev));
+        sc.add(new Segment(seqName, start, end, data, distPrev, caseCol.get(i), ctrlCol.get(i)));
       }
       Diagnostic.progress("Starting segmentation");
       sg.add(sc);
