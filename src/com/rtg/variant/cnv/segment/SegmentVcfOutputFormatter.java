@@ -49,10 +49,10 @@ public class SegmentVcfOutputFormatter {
   static final String FORMAT_RDR = "RDR";
   // Log of ratio
   static final String FORMAT_LOGR = "LR";
-  /** Mean normalized case coverage of bins in this segment. */
-  private static final String FORMAT_CASE = "NSC";
-  /** Mean normalized control coverage of bins in this segment. */
-  private static final String FORMAT_CTRL = "NCC";
+//  /** Mean normalized case coverage of bins in this segment. */
+//  private static final String FORMAT_CASE = "NSC";
+//  /** Mean normalized control coverage of bins in this segment. */
+//  private static final String FORMAT_CTRL = "NCC";
   /** The FORMAT field we use to store an overall quality score */
   public static final String FORMAT_SQS = "SQS";
 
@@ -109,8 +109,8 @@ public class SegmentVcfOutputFormatter {
     header.addFormatField(FORMAT_SQS, MetaType.FLOAT, VcfNumber.ONE, "Segment quality score");
     header.addFormatField(FORMAT_RDR, MetaType.FLOAT, VcfNumber.ONE, "Mean normalized RD ratio with respect to control");
     header.addFormatField(FORMAT_LOGR, MetaType.FLOAT, VcfNumber.ONE, "Log2 of RD ratio with respect to control");
-    header.addFormatField(FORMAT_CASE, MetaType.FLOAT, VcfNumber.ONE, "Mean normalized case coverage of the segment");
-    header.addFormatField(FORMAT_CTRL, MetaType.FLOAT, VcfNumber.ONE, "Mean normalized control coverage of the segment");
+//    header.addFormatField(FORMAT_CASE, MetaType.FLOAT, VcfNumber.ONE, "Mean normalized case coverage of the segment");
+//    header.addFormatField(FORMAT_CTRL, MetaType.FLOAT, VcfNumber.ONE, "Mean normalized control coverage of the segment");
 
     header.addSampleName(mSampleName);
 
@@ -161,8 +161,8 @@ public class SegmentVcfOutputFormatter {
     rec.addFormatAndSample(FORMAT_LOGR, Utils.realFormat(current.mean(), 4));
     rec.addFormatAndSample(FORMAT_RDR, Utils.realFormat(rdr(current.mean()), 4));
     rec.addFormatAndSample(FORMAT_SQS, Utils.realFormat(sqs(current.mean()), 4)); // For now, just use abs of LogR as proxy for quality
-    rec.addFormatAndSample(FORMAT_CASE, Utils.realFormat(current.meanNormalizedCaseCov(), 4));
-    rec.addFormatAndSample(FORMAT_CTRL, Utils.realFormat(current.meanNormalizedCtrlCov(), 4));
+//    rec.addFormatAndSample(FORMAT_CASE, Utils.realFormat(current.meanNormalizedCaseCov(), 4));
+//    rec.addFormatAndSample(FORMAT_CTRL, Utils.realFormat(current.meanNormalizedCtrlCov(), 4));
 
     return rec;
   }

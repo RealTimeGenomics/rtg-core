@@ -43,8 +43,8 @@ public class SegmentVcfOutputFormatterTest extends AbstractNanoTest {
       "#FORMAT=<ID=SQS,Number=1,Type=Float,Description=\"Segment quality score\">",
       "##FORMAT=<ID=RDR,Number=1,Type=Float,Description=\"Mean normalized RD ratio with respect to control\">",
       "##FORMAT=<ID=LR,Number=1,Type=Float,Description=\"Log2 of RD ratio with respect to control\">",
-      "##FORMAT=<ID=NSC,Number=1,Type=Float,Description=\"Mean normalized case coverage of the segment\">",
-      "##FORMAT=<ID=NCC,Number=1,Type=Float,Description=\"Mean normalized control coverage of the segment\">",
+      //"##FORMAT=<ID=NSC,Number=1,Type=Float,Description=\"Mean normalized case coverage of the segment\">",
+      //"##FORMAT=<ID=NCC,Number=1,Type=Float,Description=\"Mean normalized control coverage of the segment\">",
       "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE"
       );
     final String sb = String.valueOf(formatter.vcfRecord(null, new Segment("sequence 1", 1, 42, 4.3, 0, 1, 1), new Segment("sequence 1", 60, 70, 8.0, 48.0, 1, 1)))
