@@ -269,7 +269,6 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   protected void compact() {
     Diagnostic.developerLog("compacting using hash frequency");
     mMaxHashCount = 0;
-    final long threshold;
     mIndexFilterMethod.initialize(this);
 
     //System.err.println("compact");
@@ -510,7 +509,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public void scan(FinderHashValue finder) throws IOException {
+  public void scan(FinderHashValue finder) {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -528,7 +527,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public void scanAll(FinderHashValueExtended finder) throws IOException {
+  public void scanAll(FinderHashValueExtended finder) {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
