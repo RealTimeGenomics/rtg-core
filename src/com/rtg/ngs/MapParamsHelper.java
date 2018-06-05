@@ -13,9 +13,11 @@ package com.rtg.ngs;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +31,7 @@ import com.rtg.index.FixedRepeatFrequencyFilterMethod;
 import com.rtg.index.HashBlacklist;
 import com.rtg.index.IndexFilterMethod;
 import com.rtg.index.ProportionalRepeatFrequencyFilterMethod;
+import com.rtg.index.UnionRepeatFrequencyFilterMethod;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.DefaultReaderParams;
 import com.rtg.launcher.ISequenceParams;
@@ -113,33 +116,30 @@ public final class MapParamsHelper {
     return maxReadLength;
   }
 
+  // Sets up appropriate repeat frequency filtering.
+  // Defaults to read based repeat frequency filtering, but allows either (or both) to be explicitly requested
   static void populateHashFilteringSettings(CFlags flags, NgsParamsBuilder builder, int wordSize) throws IOException {
     final boolean forceBlacklist = flags.isSet(MapFlags.BLACKLIST_THRESHOLD);
-
-    if (!builder.mUseLongReadMapping && forceBlacklist) {
-      throw new InvalidParamsException(ErrorType.BLACKLIST_LONG_READ_ONLY);
-    }
 
     final boolean forceRepeat = flags.isSet(CommonFlags.REPEAT_FREQUENCY_FLAG)
       || flags.isSet(MapFlags.MAX_REPEAT_FREQUENCY_FLAG)
       || flags.isSet(MapFlags.MIN_REPEAT_FREQUENCY_FLAG);
 
-    if (forceBlacklist && forceRepeat) {
-      throw new InvalidParamsException("Repeat frequency and blacklist options are mutually exclusive");
-    }
+    final List<IndexFilterMethod> filters = new ArrayList<>();
     if (forceBlacklist) {
-      final File refDir = builder.searchParams().directory();
-      final boolean blackListExists = HashBlacklist.blacklistExists(refDir, wordSize);
-      if (!blackListExists) {
-        throw new InvalidParamsException("A blacklist does not exist in " + refDir + " for word size " + wordSize);
-      } else {
-        final Integer blacklistThreshold = (Integer) flags.getValue(MapFlags.BLACKLIST_THRESHOLD);
-        final IndexFilterMethod method = BlacklistFilterMethod.loadBlacklist(refDir, wordSize, blacklistThreshold, builder.mNumberThreads);
-        builder.indexFilter(method);
-        return;
-      }
+      filters.add(makeReferenceRepeatFrequencyFilter(flags, builder, wordSize));
     }
-    populateProportionalRepeat(flags, builder);
+
+    if (forceRepeat || !forceBlacklist) {
+      filters.add(makeReadRepeatFrequencyFilter(flags));
+    }
+    assert filters.size() > 0;
+    if (filters.size() == 1) {
+      builder.indexFilter(filters.get(0));
+    } else {
+      builder.indexFilter(new UnionRepeatFrequencyFilterMethod(filters));
+    }
+    Diagnostic.userLog("Using IndexFilterMethod: " + builder.mIndexFilter);
   }
 
   /**
@@ -148,15 +148,34 @@ public final class MapParamsHelper {
    * @param flags the flags
    * @param builder the builder
    */
-  public static void populateProportionalRepeat(CFlags flags, NgsParamsBuilder builder) {
+  public static void populateReadRepeatFrequencyFilter(CFlags flags, NgsParamsBuilder builder) {
+    builder.indexFilter(makeReadRepeatFrequencyFilter(flags));
+  }
+
+  private static IndexFilterMethod makeReferenceRepeatFrequencyFilter(CFlags flags, NgsParamsBuilder builder, int wordSize) throws IOException {
+    if (!builder.mUseLongReadMapping) {
+      throw new InvalidParamsException(ErrorType.BLACKLIST_LONG_READ_ONLY);
+    }
+    final File refDir = builder.searchParams().directory();
+    final boolean blackListExists = HashBlacklist.blacklistExists(refDir, wordSize);
+    if (!blackListExists) {
+      throw new InvalidParamsException("A blacklist does not exist in " + refDir + " for word size " + wordSize);
+    }
+    final Integer blacklistThreshold = (Integer) flags.getValue(MapFlags.BLACKLIST_THRESHOLD);
+    return BlacklistFilterMethod.loadBlacklist(refDir, wordSize, blacklistThreshold, builder.mNumberThreads);
+  }
+
+  private static IndexFilterMethod makeReadRepeatFrequencyFilter(CFlags flags) {
+    final IndexFilterMethod filter;
     final IntegerOrPercentage repeat = (IntegerOrPercentage) flags.getValue(CommonFlags.REPEAT_FREQUENCY_FLAG);
     if (repeat.isPercentage()) {
       final int maxHC = (flags.getFlag(MapFlags.MAX_REPEAT_FREQUENCY_FLAG) != null) ? (Integer) flags.getValue(MapFlags.MAX_REPEAT_FREQUENCY_FLAG) : 1000;
       final int minHC = (flags.getFlag(MapFlags.MIN_REPEAT_FREQUENCY_FLAG) != null) ? (Integer) flags.getValue(MapFlags.MIN_REPEAT_FREQUENCY_FLAG) : 1;
-      builder.indexFilter(new ProportionalRepeatFrequencyFilterMethod(100 - repeat.getValue(100), maxHC, minHC));
+      filter = new ProportionalRepeatFrequencyFilterMethod(100 - repeat.getValue(100), maxHC, minHC);
     } else {
-      builder.indexFilter(new FixedRepeatFrequencyFilterMethod(repeat.getRawValue()));
+      filter = new FixedRepeatFrequencyFilterMethod(repeat.getRawValue());
     }
+    return filter;
   }
 
   static void populateAlignmentScoreSettings(CFlags flags, NgsFilterParams.NgsFilterParamsBuilder ngsFilterParamsBuilder, boolean paired, SAMReadGroupRecord rg)  {

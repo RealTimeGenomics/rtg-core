@@ -248,7 +248,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     }
     ngsParamsBuilder.enableProteinReadCache(mFlags.isSet(READ_CACHE_FLAG));
 
-    MapParamsHelper.populateProportionalRepeat(mFlags, ngsParamsBuilder);
+    MapParamsHelper.populateReadRepeatFrequencyFilter(mFlags, ngsParamsBuilder);
 
     ngsParamsBuilder.numberThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)));
     final int metaChunkSize;

@@ -600,9 +600,6 @@ public final class MapFlags {
    * @return <code>true</code> if all okay <code>false</code> otherwise
    */
   public static boolean checkBlacklistThreshold(CFlags flags) {
-    if (!flags.checkNand(BLACKLIST_THRESHOLD, CommonFlags.REPEAT_FREQUENCY_FLAG)) {
-      return false;
-    }
     if (flags.isSet(BLACKLIST_THRESHOLD)) {
       final int val = (Integer) flags.getValue(BLACKLIST_THRESHOLD);
       if (val < 0) {

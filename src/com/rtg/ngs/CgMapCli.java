@@ -213,7 +213,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     .readFreqThreshold((Integer) mFlags.getValue(MapFlags.READ_FREQUENCY_FLAG))
     .parallelUnmatedProcessing((Boolean) mFlags.getValue(MapFlags.PARALLEL_UNMATED_PROCESSING_FLAG));
 
-    MapParamsHelper.populateProportionalRepeat(mFlags, ngsParamBuilder);
+    MapParamsHelper.populateReadRepeatFrequencyFilter(mFlags, ngsParamBuilder);
 
     final File reads = (File) mFlags.getValue(CommonFlags.READS_FLAG);
     final LongRange buildReaderRestriction = CommonFlags.getReaderRestriction(mFlags);
