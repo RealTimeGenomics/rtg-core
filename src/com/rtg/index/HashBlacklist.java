@@ -54,7 +54,7 @@ public final class HashBlacklist {
    */
   public static List<Long> loadBlacklist(File sdfDir, int wordSize, int threshold) throws IOException {
     final File blacklistFile = getFile(sdfDir, wordSize);
-    Diagnostic.developerLog("Loading blacklist at word size " + wordSize + " and threshold " + threshold);
+    Diagnostic.userLog("Loading blacklist at word size " + wordSize + " and threshold " + threshold);
     return loadBlacklist(new FileReader(blacklistFile), threshold);
   }
 

@@ -200,7 +200,7 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
     if (mInitialHashes != 0) {
       final long discarded = mInitialHashes - mNumValues;
       final int percent = (int) (100.0 * discarded / mInitialHashes + 0.5);
-      Diagnostic.userLog("Applied hash count threshold (initial " + mInitialHashes + ", now " + mNumValues + ", " + percent + "% of hashes discarded)");
+      Diagnostic.userLog("Applied index hash filtering (initial " + mInitialHashes + ", now " + mNumValues + ", " + percent + "% of hashes discarded)");
       if (!sHavePrintedRepeatFrequencyWarning) {
         printWarning(percent, mNumValues, mInitialHashes);
       }

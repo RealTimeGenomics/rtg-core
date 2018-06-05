@@ -48,4 +48,9 @@ public class FixedRepeatFrequencyFilterMethod implements IndexFilterMethod {
   public boolean keepHash(long hash, long numHits) {
     return numHits <= mThreshold;
   }
+
+  @Override
+  public String toString() {
+    return "FixedRepeatFrequency(" + mThreshold + ")";
+  }
 }

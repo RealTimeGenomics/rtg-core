@@ -84,7 +84,7 @@ public class ProportionalRepeatFrequencyFilterMethod implements IndexFilterMetho
       }
       ret = freq;
     }
-    Diagnostic.userLog("Calculated hash frequency threshold: " + ret);
+    Diagnostic.userLog("Calculated " + mDiscardTarget + "% volume hash frequency threshold: " + ret);
     final int preLimit = ret;
     if (mMaxThreshold > 0 && ret > mMaxThreshold) {
       ret = mMaxThreshold;
@@ -93,8 +93,13 @@ public class ProportionalRepeatFrequencyFilterMethod implements IndexFilterMetho
       ret = mMinThreshold;
     }
     if (ret != preLimit) {
-      Diagnostic.userLog("Limiting hash frequency to bounds: [" + mMinThreshold + "," + mMaxThreshold + "] now " + ret);
+      Diagnostic.userLog("Limiting hash frequency threshold to bounds: [" + mMinThreshold + "," + mMaxThreshold + "] now " + ret);
     }
     return ret - 1;
+  }
+
+  @Override
+  public String toString() {
+    return "ProportionalRepeatFrequency(" + mDiscardTarget + "%, " + mMinThreshold + ", " + mMaxThreshold + ")";
   }
 }

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.rtg.index.params.CreateParams;
+import com.rtg.util.diagnostic.Diagnostic;
 
 /**
  * Filter which uses a blacklist
@@ -31,6 +32,7 @@ public class BlacklistFilterMethod implements IndexFilterMethod {
    */
   public BlacklistFilterMethod(List<Long> blacklist, int hashBits, int numberThreads) {
     final CreateParams createParams = new CreateParams.CreateParamsBuilder().valueBits(0).compressHashes(true).createBitVector(true).windowBits(hashBits).size(blacklist.size()).hashBits(hashBits).create();
+    Diagnostic.userLog("Creating blacklist index");
     final IndexCompressed blacklistIndex = new IndexCompressed(createParams, new UnfilteredFilterMethod(), numberThreads);
     for (long hash : blacklist) {
       blacklistIndex.add(hash, 0);
@@ -40,6 +42,7 @@ public class BlacklistFilterMethod implements IndexFilterMethod {
       blacklistIndex.add(hash, 0);
     }
     blacklistIndex.freeze();
+    Diagnostic.userLog("Blacklist index constructed");
     mBlacklist = blacklistIndex;
   }
 
@@ -73,5 +76,10 @@ public class BlacklistFilterMethod implements IndexFilterMethod {
   @Override
   public boolean keepHash(long hash, long numHits) {
     return !mBlacklist.contains(hash);
+  }
+
+  @Override
+  public String toString() {
+    return "Blacklist";
   }
 }
