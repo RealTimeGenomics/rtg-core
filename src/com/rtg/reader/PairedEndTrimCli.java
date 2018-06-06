@@ -204,7 +204,7 @@ public class PairedEndTrimCli extends AbstractCli {
         try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(txtBase.suffixedFile(".summary")), out))) {
           summaryOut.println(stats.printSummary());
         }
-        final BaseFile tsvBase = FileUtils.getBaseFile(baseFile.getBaseFile(), gzip, ".tsv");
+        final BaseFile tsvBase = FileUtils.getBaseFile(baseFile.getBaseFile(), false, ".tsv");
         FileUtils.stringToFile(overlapDist, tsvBase.suffixedFile(".overlap-lengths"));
         FileUtils.stringToFile(fragDist, tsvBase.suffixedFile(".fragment-lengths"));
       }
