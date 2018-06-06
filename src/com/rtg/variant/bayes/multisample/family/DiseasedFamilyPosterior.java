@@ -142,7 +142,7 @@ public class DiseasedFamilyPosterior {
    * @param mother current hypothesis for the mother
    */
   void calculateMarginals(double marginal, int father, int mother) {
-    calculateMarginalsSlowly(marginal, father, mother, new Stack<Integer>(), 0);
+    calculateMarginalsSlowly(marginal, father, mother, new Stack<>(), 0);
   }
 
   private void calculateMarginalsSlowly(double marginal, int father, int mother, Stack<Integer> childCats, int childCount) {

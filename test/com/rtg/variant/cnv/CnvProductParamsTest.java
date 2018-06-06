@@ -70,8 +70,8 @@ public class CnvProductParamsTest extends TestCase {
     final File tempFile = FileUtils.createTempDir("cnvproductparams", "test");
     assertTrue(tempFile.delete());
     final CnvProductParams params = CnvProductParams.builder()
-      .mappedBase(new ArrayList<File>())
-      .mappedTarget(new ArrayList<File>())
+      .mappedBase(new ArrayList<>())
+      .mappedTarget(new ArrayList<>())
       .outputParams(new OutputParams(tempFile, false, false))
       .divisionFactor(5.0)
       .multiplicationFactor(7.0)

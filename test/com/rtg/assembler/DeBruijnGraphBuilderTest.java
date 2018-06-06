@@ -179,8 +179,7 @@ public class DeBruijnGraphBuilderTest extends TestCase {
 
   public void checkTipValues(int[] expectedStartTipValues, int[] expectedEndTipValues, Map<Long, ComparisonNode> graph, DeBruijnGraphBuilder dbg) {
     final Pair<IntChunks, IntChunks> tipValues = dbg.calculateTipValues();
-    final List<Long> contigIds = new ArrayList<>();
-    contigIds.addAll(graph.keySet());
+    final List<Long> contigIds = new ArrayList<>(graph.keySet());
     Collections.sort(contigIds);
     for (int i = 0; i < graph.size(); ++i) {
       final ComparisonNode node = graph.get(contigIds.get(i));

@@ -39,7 +39,7 @@ public class SimilarityReportTest extends AbstractReportTest {
       FileUtils.stringToFile(SIMILARITY_TSV, new File(in, "similarity.tsv"));
 
       final SimilarityReport report = new SimilarityReport();
-      report.generateReport(ReportType.HTML, out, new File[] {in});
+      report.generateReport(ReportType.HTML, out, in);
 
       assertTrue(out.exists());
 //      System.err.println(Arrays.toString(out.listFiles()));

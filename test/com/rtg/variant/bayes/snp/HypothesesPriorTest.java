@@ -33,7 +33,7 @@ public class HypothesesPriorTest extends TestCase {
 
   public void testDiploid() {
     final double[] probs = {0.15, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.05};
-    final HypothesesPrior<Description> hyp = new HypothesesPrior<Description>(DescriptionSnp.SINGLETON, SimplePossibility.SINGLETON, probs, true, 2);
+    final HypothesesPrior<Description> hyp = new HypothesesPrior<>(DescriptionSnp.SINGLETON, SimplePossibility.SINGLETON, probs, true, 2);
     assertEquals(0.15, hyp.p(0), 0.001);
     assertEquals(0.10, hyp.p(1), 0.001);
     assertEquals(0.10, hyp.p(2), 0.001);

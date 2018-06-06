@@ -115,7 +115,7 @@ public class GraphImplementationTest extends TestCase {
     final long[] p4 = {+3, +7};
     final long[][] paths = {p1, p2, p3, p4};
 
-    final GraphImplementation graph = new GraphImplementation(0, Collections.<String, String> emptyMap(), Collections.<String, String> emptyMap());
+    final GraphImplementation graph = new GraphImplementation(0, Collections.emptyMap(), Collections.emptyMap());
     buildGraph(graph, contigs, paths);
 
     //graph.dump(System.err);
@@ -229,7 +229,7 @@ public class GraphImplementationTest extends TestCase {
     final long[] p4 = {+3, +7};
     final long[][] paths = {p1, p2, p3, p4};
 
-    final GraphImplementation graph = new GraphImplementation(0, Collections.<String, String> emptyMap(), Collections.<String, String> emptyMap());
+    final GraphImplementation graph = new GraphImplementation(0, Collections.emptyMap(), Collections.emptyMap());
     buildGraph(graph, contigs, paths);
 
     //graph.dump(System.err);

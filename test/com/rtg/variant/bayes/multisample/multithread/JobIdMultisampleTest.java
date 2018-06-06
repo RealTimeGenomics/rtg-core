@@ -15,7 +15,6 @@ package com.rtg.variant.bayes.multisample.multithread;
 import java.util.ArrayList;
 
 import com.rtg.scheduler.Result;
-import com.rtg.variant.Variant;
 import com.rtg.variant.bayes.multisample.Complexities;
 import com.rtg.variant.bayes.multisample.ComplexitiesTest;
 
@@ -27,7 +26,7 @@ public class JobIdMultisampleTest extends TestCase {
 
   public void test() {
     final JobIdMultisample jbs = new JobIdMultisample(20, 5, JobType.INCR);
-    final Complexities complexities = new Complexities(new ArrayList<Variant>(), null, 1, 2, 0, 0, ComplexitiesTest.template(40), true, null);
+    final Complexities complexities = new Complexities(new ArrayList<>(), null, 1, 2, 0, 0, ComplexitiesTest.template(40), true, null);
     final Result r = new Result(complexities, 5);
     assertTrue(jbs.validResult(r));
     final Result[] res = {};

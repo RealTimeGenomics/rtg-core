@@ -204,16 +204,7 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
   }
 
   private int compareId(MultifileIteratorRunner<T> that) {
-    final int thisId = this.mId;
-    final int thatId = that.mId;
-    //System.err.println("id  this=" + thisId + " that=" + thatId);
-    if (thisId < thatId) {
-      return -1;
-    }
-    if (thisId > thatId) {
-      return +1;
-    }
-    return 0;
+    return Integer.compare(this.mId, that.mId);
   }
 
   @Override

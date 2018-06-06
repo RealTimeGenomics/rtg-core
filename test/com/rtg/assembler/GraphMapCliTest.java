@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.UUID;
 
 import com.rtg.assembler.graph.MutableGraph;
 import com.rtg.assembler.graph.implementation.ContigString;
@@ -94,7 +93,7 @@ public class GraphMapCliTest extends AbstractParamsCliTest<GraphMapParams> {
 
           final File inputGraph =  new File(tmpDir, "graph");
           assertTrue(inputGraph.mkdir());
-          GraphWriter.write(new GraphKmerAttribute(29), new StoreDirProxy(inputGraph), "foo" , Collections.<UUID>emptySet());
+          GraphWriter.write(new GraphKmerAttribute(29), new StoreDirProxy(inputGraph), "foo" , Collections.emptySet());
           final CFlags flags =  new CFlags("foo", TestUtils.getNullPrintStream(), TestUtils.getNullPrintStream());
           GraphMapCli.initLocalFlags(flags);
           flags.setFlags("-o", output.toString(), "-g", inputGraph.toString(), "-I", fileList.toString(), "-w", "29", "-s", "12");

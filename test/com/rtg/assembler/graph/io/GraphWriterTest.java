@@ -83,7 +83,7 @@ public class GraphWriterTest extends TestCase {
   }
 
   public void testLongContig() throws IOException {
-    final GraphImplementation graph = new GraphImplementation(0, Collections.<String, String>emptyMap(), Collections.<String, String>emptyMap());
+    final GraphImplementation graph = new GraphImplementation(0, Collections.emptyMap(), Collections.emptyMap());
     final StringBuilder sb = new StringBuilder();
     final String tenLong = "ACTG" + "GGTT" + "AA";
     for (int i = 0; i < 16; ++i) {
@@ -98,7 +98,7 @@ public class GraphWriterTest extends TestCase {
     graph.addContig(new ContigString("CCCC"));
 
     final StoreDirectory dir = new StoreDirString();
-    GraphWriter.write(graph, dir, "test", Collections.<UUID>emptySet());
+    GraphWriter.write(graph, dir, "test", Collections.emptySet());
 
     final StoreFile contigs = dir.child("contig.1.fa");
     //System.err.print(contigs.content());

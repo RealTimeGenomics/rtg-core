@@ -15,7 +15,6 @@ import static com.rtg.util.StringUtils.LS;
 
 import java.io.File;
 
-import com.rtg.index.Index;
 import com.rtg.index.hash.ExactHashFunction;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
@@ -78,7 +77,7 @@ public class SpecializedIncrementalHashLoopTest extends NgsLongTest {
       final FinderPositionOutput fpo = new FinderPositionOutput(null, new MockPositionOutput());
 
       final int[] pos = {1};
-      final SpecializedIncrementalHashLoop sihl = new SpecializedIncrementalHashLoop(2, new MockHashFunction1(2, 2), fpo, (FinderPositionOutput) null, (Index) null, true) {
+      final SpecializedIncrementalHashLoop sihl = new SpecializedIncrementalHashLoop(2, new MockHashFunction1(2, 2), fpo, null, null, true) {
 
         @Override
         public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) {
@@ -133,7 +132,7 @@ public class SpecializedIncrementalHashLoopTest extends NgsLongTest {
 
 
 
-      final SpecializedIncrementalHashLoop sihl = new SpecializedIncrementalHashLoop(2, new MockHashFunction2(2, 2), fpo, (FinderPositionOutput) null, (Index) null, true) {
+      final SpecializedIncrementalHashLoop sihl = new SpecializedIncrementalHashLoop(2, new MockHashFunction2(2, 2), fpo, null, null, true) {
         boolean mSeenFirst = false;
 
         @Override

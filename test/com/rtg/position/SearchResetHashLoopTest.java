@@ -57,7 +57,7 @@ public class SearchResetHashLoopTest extends ResetHashLoopTest {
   @Override
   protected ResetHashLoop getHashLoop1a(final int windowSize, int stepSize, final int bits)
   throws IOException {
-    return new SearchResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), getOutputVarsEmpty(), (Index) null, false) {
+    return new SearchResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), getOutputVarsEmpty(), null, false) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
         // do nothing
@@ -72,7 +72,7 @@ public class SearchResetHashLoopTest extends ResetHashLoopTest {
     final int[] mi = new int[1];
     mi[0] = maxId;
     hashLoop =
-      new SearchResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), getOutputVarsEmpty(), (Index) null, false) {
+      new SearchResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), getOutputVarsEmpty(), null, false) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
         assertTrue("" + internalId, internalId >= 0 && internalId < mi[0]);
@@ -89,7 +89,7 @@ public class SearchResetHashLoopTest extends ResetHashLoopTest {
     final int[] count = new int[1];
     //System.err.println(" mode=" + mode + " type=" +  mode.type() + " bits=" + bits);
     hashLoop =
-      new SearchResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), getOutputVarsEmpty(), (Index) null, false) {
+      new SearchResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), getOutputVarsEmpty(), null, false) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
         assertEquals(count[0] + "", expectedL[count[0]], hash);

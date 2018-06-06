@@ -305,7 +305,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
         rest = arithmetic().add(rest, mPoss[i]);
       }
     }
-    return new Pair<>(getMap(new HashMap<Variable, Integer>(), best), arithmetic().divide(bestScore, rest));
+    return new Pair<>(getMap(new HashMap<>(), best), arithmetic().divide(bestScore, rest));
   }
 
   @Override

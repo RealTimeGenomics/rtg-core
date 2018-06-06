@@ -96,8 +96,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
               for (PartialAlignment pa : alignments) {
                 endPoint = Math.max(pa.getReadEnd(), endPoint);
               }
-              final SortedSet<PartialAlignment> sorted = new TreeSet<>();
-              sorted.addAll(alignments);
+              final SortedSet<PartialAlignment> sorted = new TreeSet<>(alignments);
               final Map<Long, List<PacBioPath>> longListMap = joinAlignments(new ArrayList<>(sorted), graph);
               final PacBioPath best = uniqueBest(longListMap, read.length);
               if (best != null) {

@@ -90,7 +90,7 @@ public class CovariateSequenceFixedTest extends TestCase {
   }
 
   public void testGetType() {
-    final CovariateSequenceFixed cs = new CovariateSequenceFixed(new ArrayList<String>());
+    final CovariateSequenceFixed cs = new CovariateSequenceFixed(new ArrayList<>());
     assertEquals(CovariateEnum.SEQUENCE, cs.getType());
   }
 }

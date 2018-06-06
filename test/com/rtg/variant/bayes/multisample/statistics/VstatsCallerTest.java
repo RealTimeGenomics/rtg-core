@@ -56,7 +56,7 @@ public class VstatsCallerTest extends TestCase {
     Diagnostic.setLogStream();
     final double[] priors = PRIORS;
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<Description> hypotheses = new MockHypotheses<Description>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<Description> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final List<ModelInterface<?>> list = new ArrayList<>();
     final MockModel<Description> model = new  MockModel<>(hypotheses, new StatisticsSnp(hypotheses.description()), null);
     list.add(model);
@@ -87,7 +87,7 @@ public class VstatsCallerTest extends TestCase {
   public void testNtRange() throws Exception {
     final double[] priors = PRIORS;
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<Description> hypotheses = new MockHypotheses<Description>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<Description> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final List<ModelInterface<?>> list = new ArrayList<>();
     final MockModel<Description> model = new  MockModel<>(hypotheses, new StatisticsSnp(hypotheses.description()), null);
     list.add(model);
@@ -138,7 +138,7 @@ public class VstatsCallerTest extends TestCase {
   public void testWithIncrements() throws Exception {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<Description> hypotheses = new MockHypotheses<Description>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<Description> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final List<ModelInterface<?>> listA = new ArrayList<>();
     listA.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
     final List<ModelInterface<?>> listB = new ArrayList<>();
@@ -180,7 +180,7 @@ public class VstatsCallerTest extends TestCase {
 
   public void testWithIncrementsDiploid() throws Exception {
     final double[] priors = {0.1, 0.4, 0.35, 0.15, 0.1, 0.4, 0.35, 0.15, 0.35, 0.15};
-    final MockHypotheses<Description> hypotheses = new MockHypotheses<Description>(DescriptionSnp.SINGLETON, SimplePossibility.SINGLETON, false, priors, 0);
+    final MockHypotheses<Description> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, SimplePossibility.SINGLETON, false, priors, 0);
     final List<ModelInterface<?>> listA = new ArrayList<>();
     listA.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
     final List<ModelInterface<?>> listB = new ArrayList<>();

@@ -42,7 +42,7 @@ public class CombinedReportTest extends TestCase {
           if (!log.createNewFile()) {
             throw new IOException();
           }
-          final CombinedReport combined = new CombinedReport(Arrays.<File>asList(dir), dir);
+          final CombinedReport combined = new CombinedReport(Arrays.asList(dir), dir);
 //          System.err.println(type);
           combined.makeReport();
           final String s = FileUtils.fileToString(new File(dir, "index.html"));

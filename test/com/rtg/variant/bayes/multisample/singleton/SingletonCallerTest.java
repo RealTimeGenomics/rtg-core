@@ -46,7 +46,7 @@ public class SingletonCallerTest extends TestCase {
   public void test() {
     final double[] priors = PRIORS;
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<Description> hypotheses = new MockHypotheses<Description>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<Description> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final List<ModelInterface<?>> list = new ArrayList<>();
     list.add(new  MockModel<>(hypotheses, new StatisticsSnp(hypotheses.description()), null));
     final VariantParams p = VariantParams.builder()
@@ -65,7 +65,7 @@ public class SingletonCallerTest extends TestCase {
     Diagnostic.setLogStream();
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<Description> hypotheses = new MockHypotheses<Description>(DescriptionSnp.SINGLETON, arith, true, priors, 2);
+    final MockHypotheses<Description> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 2);
     final List<ModelInterface<?>> list = new ArrayList<>();
     list.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
     final VariantParams p = VariantParams.builder()
@@ -91,7 +91,7 @@ public class SingletonCallerTest extends TestCase {
   public void testCorrectLeftEndTemplate() {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<Description> hypotheses = new MockHypotheses<Description>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<Description> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final List<ModelInterface<?>> list = new ArrayList<>();
     list.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
     final VariantParams p = VariantParams.builder()

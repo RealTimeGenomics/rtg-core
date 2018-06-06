@@ -47,7 +47,7 @@ public class MapReportTest extends AbstractReportTest {
       }
 
       final MapReport report = new MapReport(SamFilterParams.builder().create());
-      report.generateReport(ReportType.HTML, out, new File[] {in});
+      report.generateReport(ReportType.HTML, out, in);
 
       assertTrue(out.exists());
 

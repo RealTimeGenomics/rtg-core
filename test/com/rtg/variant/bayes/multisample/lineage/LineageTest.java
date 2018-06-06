@@ -79,8 +79,8 @@ public class LineageTest extends TestCase {
     final List<ModelInterface<?>> models = new ArrayList<>();
     final DescriptionCommon descriptionCommon = new DescriptionCommon("A", "B", "C");
     final PossibilityArithmetic arithmetic = SimplePossibility.SINGLETON;
-    final HypothesesPrior<Description> h = new HypothesesPrior<Description>(descriptionCommon, arithmetic, new double[] {0.2, 0.5, 0.3}, true, 0);
-    final HypothesesPrior<Description> hypDiploid = new HypothesesPrior<Description>(descriptionCommon, arithmetic, new double[] {0.2, 0.5, 0.3}, false, 0);
+    final HypothesesPrior<Description> h = new HypothesesPrior<>(descriptionCommon, arithmetic, new double[]{0.2, 0.5, 0.3}, true, 0);
+    final HypothesesPrior<Description> hypDiploid = new HypothesesPrior<>(descriptionCommon, arithmetic, new double[]{0.2, 0.5, 0.3}, false, 0);
     models.add(new MockModel<>(h.hypotheses(), new StatisticsSnp(h.description()), new double[] {0.0005, 0.0005, 0.999}));
     models.add(new MockModel<>(h.hypotheses(), new StatisticsSnp(h.description()), new double[] {0.0005, 0.0005, 0.999}));
     models.add(new MockModel<>(h.hypotheses(), new StatisticsSnp(h.description()), new double[] {0.999, 0.0005, 0.0005}));
@@ -113,8 +113,8 @@ public class LineageTest extends TestCase {
     final List<ModelInterface<?>> models = new ArrayList<>();
     final DescriptionCommon descriptionCommon = new DescriptionCommon("A", "B", "C");
     final PossibilityArithmetic arithmetic = SimplePossibility.SINGLETON;
-    final HypothesesPrior<Description> h = new HypothesesPrior<Description>(descriptionCommon, arithmetic, new double[] {0.2, 0.5, 0.3}, true, 0);
-    final HypothesesPrior<Description> hypDiploid = new HypothesesPrior<Description>(descriptionCommon, arithmetic, new double[] {0.2, 0.5, 0.3}, false, 0);
+    final HypothesesPrior<Description> h = new HypothesesPrior<>(descriptionCommon, arithmetic, new double[]{0.2, 0.5, 0.3}, true, 0);
+    final HypothesesPrior<Description> hypDiploid = new HypothesesPrior<>(descriptionCommon, arithmetic, new double[]{0.2, 0.5, 0.3}, false, 0);
     models.add(new MockModel<>(h.hypotheses(), new StatisticsSnp(h.description()), new double[] {0.999, 0.0005, 0.0005}));
     models.add(new MockModel<>(h.hypotheses(), new StatisticsSnp(h.description()), new double[] {0.999, 0.0005, 0.0005}));
     models.add(new MockModel<>(h.hypotheses(), new StatisticsSnp(h.description()), new double[] {0.999, 0.0005, 0.0005}));

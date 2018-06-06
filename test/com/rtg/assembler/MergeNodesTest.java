@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import com.rtg.assembler.graph.Graph;
 import com.rtg.assembler.graph.MutableGraph;
@@ -275,7 +274,7 @@ public class MergeNodesTest extends TestCase {
     final MergeNodes merge = new MergeNodes(graph, 2, 2);
     merge.simplifyGraph();
     final StoreDirString dir = new StoreDirString();
-    GraphWriter.write(graph, dir, "foo", Collections.<UUID>emptySet());
+    GraphWriter.write(graph, dir, "foo", Collections.emptySet());
 //    System.err.println(dir);
     final Graph compact = graph.compact();
     final String[] expected = {"AAAACCGGTAGACCAC", "ATCCGGTAGAGTG"};

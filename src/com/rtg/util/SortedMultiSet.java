@@ -26,7 +26,7 @@ public class SortedMultiSet<E extends Comparable<E>> extends MultiSet<E> {
    * Constructor.
    */
   public SortedMultiSet() {
-    super(new TreeMap<E, Counter>());
+    super(new TreeMap<>());
   }
 
   /**

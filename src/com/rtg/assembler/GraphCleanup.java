@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import com.rtg.assembler.graph.MutableGraph;
 import com.rtg.assembler.graph.io.GraphReader;
@@ -78,7 +77,7 @@ public final class GraphCleanup {
   private static void process(int minLength, File input, File output) throws IOException {
     final MutableGraph mutable = (MutableGraph) GraphReader.read(new StoreDirProxy(input));
     clean(minLength, mutable);
-    GraphWriter.write(mutable.compact(), new StoreDirProxy(output), "GraphCleanup", Collections.<UUID>emptySet());
+    GraphWriter.write(mutable.compact(), new StoreDirProxy(output), "GraphCleanup", Collections.emptySet());
   }
 
   static int clean(int minLength, MutableGraph mutable) {

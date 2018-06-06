@@ -222,8 +222,7 @@ public class PairJoiner {
 
   private GraphAlignment buildSloptigAlignment(GraphAlignment startAlignment , int overlapContig, GraphAlignment endAlignment) {
     final int endPosition = mGraph.contigLength(endAlignment.startContig()) - endAlignment.startPosition() - 1;
-    final List<Long> contigs = new ArrayList<>();
-    contigs.addAll(startAlignment.contigs().subList(0, overlapContig));
+    final List<Long> contigs = new ArrayList<>(startAlignment.contigs().subList(0, overlapContig));
     for (long contig : endAlignment.contigs()) {
       contigs.add(overlapContig, -contig);
     }

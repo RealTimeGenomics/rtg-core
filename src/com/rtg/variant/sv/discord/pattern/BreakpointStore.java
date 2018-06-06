@@ -47,8 +47,7 @@ class BreakpointStore implements Iterable<VcfBreakpoint> {
     mMap.getOrAdd(br.getLocalChr()).getOrAdd(br.getRemoteChr()).add(br);
   }
   List<String> getChromosomes() {
-    final List<String> names = new ArrayList<>();
-    names.addAll(mMap.keySet());
+    final List<String> names = new ArrayList<>(mMap.keySet());
     Collections.sort(names);
     return names;
   }

@@ -34,8 +34,8 @@ public class EmResultTest extends TestCase {
   public void test() {
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final DescriptionCommon descr = new DescriptionCommon("X", "Y", "Z");
-    final MockHypotheses<Description> haploid = new MockHypotheses<Description>(descr, arith, true, AbstractEstimatorTest.uniform(3), 0);
-    final MockHypotheses<Description> diploid = new MockHypotheses<Description>(descr, arith, false, AbstractEstimatorTest.uniform(6), 0);
+    final MockHypotheses<Description> haploid = new MockHypotheses<>(descr, arith, true, AbstractEstimatorTest.uniform(3), 0);
+    final MockHypotheses<Description> diploid = new MockHypotheses<>(descr, arith, false, AbstractEstimatorTest.uniform(6), 0);
     final HypothesisScore[] calls = new HypothesisScore[42];
     final HaploidDiploidHypotheses<HypothesesPrior<Description>> hdh = new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploid, diploid);
     final EmResult<HypothesesPrior<Description>> emr = new EmResult<>(hdh, new HypothesisScores(calls, false, 0, null), null);
@@ -71,8 +71,8 @@ public class EmResultTest extends TestCase {
   public void testDifference1() {
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final DescriptionCommon descr = new DescriptionCommon("X", "Y", "Z");
-    final MockHypotheses<Description> haploid = new MockHypotheses<Description>(descr, arith, true, AbstractEstimatorTest.uniform(3), 0);
-    final MockHypotheses<Description> diploid = new MockHypotheses<Description>(descr, arith, false, AbstractEstimatorTest.uniform(6), 0);
+    final MockHypotheses<Description> haploid = new MockHypotheses<>(descr, arith, true, AbstractEstimatorTest.uniform(3), 0);
+    final MockHypotheses<Description> diploid = new MockHypotheses<>(descr, arith, false, AbstractEstimatorTest.uniform(6), 0);
     final HypothesisScores calls = new HypothesisScores(scores(1, 2, 3), false, 0, null);
     final HaploidDiploidHypotheses<HypothesesPrior<Description>> hdh = new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploid, diploid);
     final EmResult<HypothesesPrior<Description>> emr = new EmResult<>(hdh, calls, null);

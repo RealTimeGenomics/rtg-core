@@ -12,7 +12,6 @@
 
 package com.rtg.variant.bayes.complex;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +42,6 @@ import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -175,7 +173,7 @@ public class HypothesesComplexTest extends TestCase {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     final GenomePriorParams gppb = new GenomePriorParamsBuilder().create();
     final VariantParamsBuilder vpb = new VariantParamsBuilder();
-    vpb.mapped(new TreeSet<File>());
+    vpb.mapped(new TreeSet<>());
     final VariantParams vp = vpb.genomePriors(gppb).callLevel(VariantOutputLevel.ALL).create();
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
     cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);

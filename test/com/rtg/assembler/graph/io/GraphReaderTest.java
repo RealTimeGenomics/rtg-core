@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import com.rtg.assembler.GraphMapCliTest;
 import com.rtg.assembler.graph.Contig;
@@ -253,7 +252,7 @@ public class GraphReaderTest extends TestCase {
         , new String[]{"ACGT", "GGGG", "TTAA"}
         , new long[][]{{1, 2}, {3, 2}});
     StoreDirString storeDir = new StoreDirString();
-    GraphWriter.write(builtGraph, storeDir, "monkey", Collections.<UUID>emptySet());
+    GraphWriter.write(builtGraph, storeDir, "monkey", Collections.emptySet());
     GraphReader.getUUID(storeDir);
     storeDir = new StoreDirString();
     try (OutputStream out = storeDir.child("header.txt").outputStream()) {

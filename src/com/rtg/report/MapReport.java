@@ -184,7 +184,7 @@ public class MapReport extends MapSummaryReport {
    * Check the version number of the report file is the same as the current MapReport version.
    * @param reportFile the report file to check the version of.
    * @return true if the version matches, false otherwise.
-   * @throws IOException
+   * @throws IOException if an I/O error occurs.
    */
   private boolean checkVersion(File reportFile) throws IOException {
     try (InputStream is = new FileInputStream(reportFile)) {

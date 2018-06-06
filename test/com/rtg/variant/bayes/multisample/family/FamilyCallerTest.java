@@ -296,7 +296,7 @@ public class FamilyCallerTest extends AbstractNanoTest {
     final int refNt = 4;
     final List<ModelInterface<?>> models = buildFamily(params, refNt , "GGGGGGGGGG" + "GGGGGTTTTT" + "GGGGGGGGGG" + "A", "GGGGGGGGGG" + "GGGGGGGGGG" + "G", "GGGCCCCGGG" + "GGGGGGGGGG" + "GGGGGGGGGG" + "G");
     assertEquals(31, Utils.maxCoverage(models));
-    assertEquals(0, Utils.maxCoverage(new ArrayList<ModelInterface<?>>()));
+    assertEquals(0, Utils.maxCoverage(new ArrayList<>()));
     assertEquals(0.0, Utils.meanAmbiguityRatio(models));
   }
 

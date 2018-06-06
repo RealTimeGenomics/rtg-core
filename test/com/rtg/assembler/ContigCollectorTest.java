@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import com.rtg.assembler.graph.PathsIterator;
 import com.rtg.assembler.graph.implementation.ContigString;
@@ -368,12 +367,12 @@ public class ContigCollectorTest extends TestCase {
   public void testCollapseWithLongPaths() throws IOException {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put("readCount", "count em all");
-    final GraphKmerAttribute g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "GGGG", "AAA", "A", "AA", "GGGGG"}, new long[][]{{1, 2, 3, 4}, {5, 2, 3, 6}}, Collections.<String, String>emptyMap(), pathAttr);
+    final GraphKmerAttribute g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "GGGG", "AAA", "A", "AA", "GGGGG"}, new long[][]{{1, 2, 3, 4}, {5, 2, 3, 6}}, Collections.emptyMap(), pathAttr);
     g.setPathAttribute(1, "readCount", "10");
     g.setPathAttribute(2, "readCount", "10");
     new ContigCollector(0, 1, null, null, g).collapse();
     final StoreDirString str = new StoreDirString();
-    GraphWriter.writeWithDeleted(g, str, "foo", Collections.<UUID>emptySet());
+    GraphWriter.writeWithDeleted(g, str, "foo", Collections.emptySet());
     assertEquals("GGGGAAA", ContigString.contigSequenceString(g.contig(7)));
     assertEquals(Arrays.asList(1L, 7L, 4L), MergeNodes.getPath(g, 4));
     assertEquals(Arrays.asList(5L, 7L, 6L), MergeNodes.getPath(g, 3));
@@ -392,7 +391,7 @@ public class ContigCollectorTest extends TestCase {
     g.setPathAttribute(2, "readCount", "10");
     new ContigCollector(0, 1, null, null, g).collapse();
     final StoreDirString str = new StoreDirString();
-    GraphWriter.writeWithDeleted(g, str, "foo", Collections.<UUID>emptySet());
+    GraphWriter.writeWithDeleted(g, str, "foo", Collections.emptySet());
     assertEquals("GGGGAAA", ContigString.contigSequenceString(g.contig(9)));
     assertEquals(Arrays.asList(1L, 9L, 4L), MergeNodes.getPath(g, 8));
     assertEquals(Arrays.asList(5L, 9L, 6L), MergeNodes.getPath(g, 7));

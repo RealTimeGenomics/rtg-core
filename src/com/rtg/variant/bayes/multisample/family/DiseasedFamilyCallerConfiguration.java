@@ -66,8 +66,7 @@ public final class DiseasedFamilyCallerConfiguration extends AbstractJointCaller
       final String motherName = family.getMother();
       final String[] genomes = new String[family.getChildren().length + Family.FIRST_CHILD_INDEX];
       final Sex[] sexes = new Sex[genomes.length];
-      final List<String> childNames = new ArrayList<>();
-      childNames.addAll(Arrays.asList(family.getChildren()));
+      final List<String> childNames = new ArrayList<>(Arrays.asList(family.getChildren()));
       final String[] outputGenomes = SamUtils.getSampleNames(params.uberHeader());
       if (outputGenomes.length != genomes.length) {
         throw new NoTalkbackSlimException("Exactly " + genomes.length + " sample names expected in mappings");

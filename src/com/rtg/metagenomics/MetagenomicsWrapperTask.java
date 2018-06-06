@@ -203,14 +203,13 @@ class MetagenomicsWrapperTask extends ParamsTask<MetaPipelineParams, NoStatistic
     }
     for (int i = 0; i < mapxInput.size(); ++i) {
       final File mapxReads = mapxInput.get(i);
-      final List<String> mapxFlags = new ArrayList<>();
       final File mapxOutput = new File(output, "mapx" + (i + 1));
       mOutputDirectories.add(mapxOutput);
-      mapxFlags.addAll(Arrays.asList(
-          "--" + CommonFlags.OUTPUT_FLAG, mapxOutput.getPath()
-          , "--" + CommonFlags.TEMPLATE_FLAG, mParams.proteinSdf().getPath()
-          , "--" + MapXCli.MAX_ALIGNMENT_SCORE, errorRate(mParams.inputPlatform())
-          , "--" + MapFlags.MAX_TOP_RESULTS_FLAG, "10"
+      final List<String> mapxFlags = new ArrayList<>(Arrays.asList(
+        "--" + CommonFlags.OUTPUT_FLAG, mapxOutput.getPath()
+        , "--" + CommonFlags.TEMPLATE_FLAG, mParams.proteinSdf().getPath()
+        , "--" + MapXCli.MAX_ALIGNMENT_SCORE, errorRate(mParams.inputPlatform())
+        , "--" + MapFlags.MAX_TOP_RESULTS_FLAG, "10"
       ));
       mapxFlags.add("--" + CommonFlags.READS_FLAG);
       mapxFlags.add(mapxReads.getPath());
@@ -252,12 +251,11 @@ class MetagenomicsWrapperTask extends ParamsTask<MetaPipelineParams, NoStatistic
     if (mapResult != 0) {
       return mapResult;
     }
-    final List<String> speciesFlags = new ArrayList<>();
     final File speciesOutput = new File(output, "species");
     mOutputDirectories.add(speciesOutput);
-    speciesFlags.addAll(Arrays.asList(
-        "--" + CommonFlags.OUTPUT_FLAG, speciesOutput.getPath()
-        , "--" + SpeciesCli.TEMPLATE_FLAG, mParams.speciesSdf().getPath()
+    final List<String> speciesFlags = new ArrayList<>(Arrays.asList(
+      "--" + CommonFlags.OUTPUT_FLAG, speciesOutput.getPath()
+      , "--" + SpeciesCli.TEMPLATE_FLAG, mParams.speciesSdf().getPath()
     ));
     final String[] bamFiles = mapOutput.list(new BamFilter());
     if (bamFiles != null) {

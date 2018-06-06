@@ -44,7 +44,7 @@ public class GraphKmerAttribute extends GraphImplementation {
    * @param contigOverlap the number of bases adjacent contigs overlap
    */
   public GraphKmerAttribute(int contigOverlap) {
-    this(contigOverlap, Collections.<String, String>emptyMap(), Collections.<String, String>emptyMap());
+    this(contigOverlap, Collections.emptyMap(), Collections.emptyMap());
   }
 
   /**

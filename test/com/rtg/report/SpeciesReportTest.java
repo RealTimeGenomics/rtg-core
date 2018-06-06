@@ -41,7 +41,7 @@ public class SpeciesReportTest extends AbstractReportTest {
       FileHelper.streamToFile(bais, new File(in, "species.tsv"));
 
       final SpeciesReport report = new SpeciesReport();
-      report.generateReport(ReportType.HTML, out, new File[] {in});
+      report.generateReport(ReportType.HTML, out, in);
 
       assertTrue(out.exists());
       assertTrue(new File(out, "index.html").exists());
@@ -74,7 +74,7 @@ public class SpeciesReportTest extends AbstractReportTest {
       FileHelper.streamToFile(bais, new File(in, "species.tsv"));
 
       final SpeciesReport report = new SpeciesReport();
-      report.generateReport(ReportType.HTML, out, new File[] {in});
+      report.generateReport(ReportType.HTML, out, in);
 
       assertTrue(out.exists());
       assertTrue(new File(out, "index.html").exists());

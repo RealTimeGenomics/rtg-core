@@ -14,7 +14,6 @@ package com.rtg.assembler;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.UUID;
 
 import com.rtg.assembler.graph.Graph;
 import com.rtg.assembler.graph.implementation.GraphKmerAttribute;
@@ -34,11 +33,10 @@ public class GraphSorterTest extends TestCase {
     final Graph sortedB = GraphSorter.sortedGraph(b);
     final StoreDirString aString = new StoreDirString();
     final StoreDirString bString = new StoreDirString();
-    GraphWriter.write(sortedA, aString, "foo", Collections.<UUID>emptySet());
-    GraphWriter.write(sortedB, bString, "foo", Collections.<UUID>emptySet());
+    GraphWriter.write(sortedA, aString, "foo", Collections.emptySet());
+    GraphWriter.write(sortedB, bString, "foo", Collections.emptySet());
     final String aFiltered = StringUtils.grepMinusV(aString.toString(), "header.tsv|guid|date");
     final String bFiltered = StringUtils.grepMinusV(bString.toString(), "header.tsv|date|guid");
     assertEquals(aFiltered, bFiltered);
-
   }
 }

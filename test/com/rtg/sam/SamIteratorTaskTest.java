@@ -111,7 +111,7 @@ public class SamIteratorTaskTest extends TestCase {
     //validateRecord
     final SamReader samReader = SamUtils.makeSamReader(new ByteArrayInputStream(SAMINVALID_IH.getBytes()));
     final CloseableIterator<SAMRecord> records = samReader.iterator();
-    final DummySamIteratorTask task = new DummySamIteratorTask(new DummySingleMappedParams(new ArrayList<File>(), null, 0));
+    final DummySamIteratorTask task = new DummySamIteratorTask(new DummySingleMappedParams(new ArrayList<>(), null, 0));
     assertFalse(task.validateRecord(records.next()));
     assertTrue(task.validateRecord(records.next()));
 

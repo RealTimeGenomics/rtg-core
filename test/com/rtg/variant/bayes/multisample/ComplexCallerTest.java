@@ -172,7 +172,7 @@ public class ComplexCallerTest extends TestCase {
    private class MockComplexities extends Complexities {
 
     MockComplexities() {
-      super(new ArrayList<Variant>(), "foo", 0, 2000, 5, 5, ComplexitiesTest.template(30), true, null);
+      super(new ArrayList<>(), "foo", 0, 2000, 5, 5, ComplexitiesTest.template(30), true, null);
     }
 
     @Override

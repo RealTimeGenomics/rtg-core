@@ -92,7 +92,7 @@ public class AsyncKmerIterableTest extends TestCase {
     }
   }
   public void testEmpty() throws IOException {
-    try (AsyncKmerIterable iterable = new AsyncKmerIterable(Collections.<ReadPairSource>emptyList(), StringKmer.factory(), 3)) {
+    try (AsyncKmerIterable iterable = new AsyncKmerIterable(Collections.emptyList(), StringKmer.factory(), 3)) {
     assertFalse(iterable.iterator().hasNext());
     }
   }

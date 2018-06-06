@@ -35,7 +35,7 @@ public class DedupifyingIterator<T extends ReaderRecord<T> & MateInfo> implement
     }
 
     private static int compareInts(int a, int b) {
-      return a < b ? -1 : (a == b ? 0 : 1);
+      return Integer.compare(a, b);
     }
 
     int firstRef() {

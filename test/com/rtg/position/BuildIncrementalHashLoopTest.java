@@ -13,7 +13,6 @@ package com.rtg.position;
 
 import java.io.IOException;
 
-import com.rtg.index.Index;
 import com.rtg.index.hash.ExactHashFunction;
 import com.rtg.index.hash.HashLoop;
 import com.rtg.launcher.ISequenceParams;
@@ -34,7 +33,7 @@ public class BuildIncrementalHashLoopTest extends AbstractPositionHashLoopTest {
     final int[] mi = new int[1];
     mi[0] = maxId;
     hashLoop =
-      new BuildIncrementalHashLoop(stepSize, new ExactHashFunction(windowSize, bits), (Index) null, 42, false) {
+      new BuildIncrementalHashLoop(stepSize, new ExactHashFunction(windowSize, bits), null, 42, false) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
         assertTrue("" + internalId, internalId >= 0 && internalId < mi[0]);
@@ -46,7 +45,7 @@ public class BuildIncrementalHashLoopTest extends AbstractPositionHashLoopTest {
 
   @Override
   protected HashLoop getHashLoop1a(final int windowSize, int stepSize, final int bits) {
-    return new BuildIncrementalHashLoop(stepSize, new ExactHashFunction(windowSize, bits), (Index) null, 42, false) {
+    return new BuildIncrementalHashLoop(stepSize, new ExactHashFunction(windowSize, bits), null, 42, false) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
         // do nothing
@@ -59,7 +58,7 @@ public class BuildIncrementalHashLoopTest extends AbstractPositionHashLoopTest {
       final long[] expectedL, final int[] expectedI, final int bits, final int[] count) {
     final HashLoop hashLoop;
     hashLoop =
-      new BuildIncrementalHashLoop(stepSize, new ExactHashFunction(windowSize, bits), (Index) null, 42, false) {
+      new BuildIncrementalHashLoop(stepSize, new ExactHashFunction(windowSize, bits), null, 42, false) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
         assertEquals(count[0] + "", expectedL[count[0]], hash);

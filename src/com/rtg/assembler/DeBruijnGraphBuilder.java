@@ -88,7 +88,7 @@ public class DeBruijnGraphBuilder {
    */
   public DeBruijnGraphBuilder(List<ReadPairSource> sources, int kmerSize, KmerFactory factory, int tipConstant, int numberThreads) {
     mKmerSize = kmerSize;
-    mContigGraph = new GraphKmerAttribute(kmerSize - 1, new HashMap<String, String>(), new HashMap<String, String>());
+    mContigGraph = new GraphKmerAttribute(kmerSize - 1, new HashMap<>(), new HashMap<>());
     mFactory = factory;
     mTipConstant = tipConstant;
     final OneShotTimer init = new OneShotTimer("DeBruijn_build");

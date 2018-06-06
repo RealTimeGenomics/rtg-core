@@ -33,7 +33,7 @@ public class DiscordantToolParamsTest extends TestCase {
   }
 
   public void testDefaults() {
-      final DiscordantToolParams def = DiscordantToolParams.builder().mapped(Collections.<File>emptyList()).outputParams(new OutputParams(new File("blah"), false, false)).genome(new MockReaderParams(1, 1, SequenceMode.BIDIRECTIONAL)).create();
+      final DiscordantToolParams def = DiscordantToolParams.builder().mapped(Collections.emptyList()).outputParams(new OutputParams(new File("blah"), false, false)).genome(new MockReaderParams(1, 1, SequenceMode.BIDIRECTIONAL)).create();
       assertFalse(def.bedOutput());
       assertFalse(def.debugOutput());
       assertFalse(def.intersectionOnly());

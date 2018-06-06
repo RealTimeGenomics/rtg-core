@@ -49,7 +49,7 @@ final class ComplexCnvRegion extends AbstractCnvRegion implements Integrity {
     } else {
       final ArrayList<SortedSet<AbstractCnvRegion>> sets = new ArrayList<>();
       for (int i = 0; i < mLengthMid; ++i) {
-        sets.add(new TreeSet<AbstractCnvRegion>());
+        sets.add(new TreeSet<>());
       }
       for (int i = 1; i < size - 1; ++i) {
         final AbstractCnvRegion reg = rega[i];

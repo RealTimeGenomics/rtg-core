@@ -59,8 +59,8 @@ public abstract class AbstractEstimatorTest extends TestCase {
     final double third = 1.0 / 3.0;
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final DescriptionCommon descr = new DescriptionCommon("X", "Y", "Z");
-    final HypothesesPrior<Description> haploid = new MockHypotheses<Description>(descr, arith, true, uniform(3), 0);
-    final HypothesesPrior<Description> diploid = new MockHypotheses<Description>(descr, arith, false, uniform(6), 0);
+    final HypothesesPrior<Description> haploid = new MockHypotheses<>(descr, arith, true, uniform(3), 0);
+    final HypothesesPrior<Description> diploid = new MockHypotheses<>(descr, arith, false, uniform(6), 0);
     final double[] prob = {third, third, third};
     final List<ModelInterface<?>> models = new ArrayList<>();
     for (int i = 0; i < 100; ++i) {

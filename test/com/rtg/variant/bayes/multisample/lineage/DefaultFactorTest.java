@@ -150,8 +150,8 @@ public class DefaultFactorTest extends TestCase {
     final List<Variable> scopePhi1 = makeScope(a, b);
     final double[] p = {1, 2, 3, 4, 5, 6};
     final DefaultFactor phi = new DefaultFactor(SimplePossibility.SINGLETON, scopePhi1, p);
-    final Factor psi = phi.marginal(Collections.<Variable>emptySet());
-    assertEquals(21, psi.p(new HashMap<Variable, Integer>()), 1e-10);
+    final Factor psi = phi.marginal(Collections.emptySet());
+    assertEquals(21, psi.p(new HashMap<>()), 1e-10);
   }
 
   public void testMarginalNoSuchVariable() {

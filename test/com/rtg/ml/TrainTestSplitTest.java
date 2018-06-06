@@ -59,8 +59,7 @@ public class TrainTestSplitTest extends TestCase {
     assertEquals(tsize, t.mTrain.size());
     assertTrue(t.mTest.size() >= d.size() - tsize);
 
-    final HashSet<Instance> train = new HashSet<>();
-    train.addAll(t.mTrain.getInstances());
+    final HashSet<Instance> train = new HashSet<>(t.mTrain.getInstances());
 
     assertTrue(train.size() > 0); // Chance of this failing at random is very low.
 

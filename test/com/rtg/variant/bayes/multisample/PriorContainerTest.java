@@ -28,8 +28,8 @@ import junit.framework.TestCase;
 public class PriorContainerTest extends TestCase {
 
   public void test() {
-    final HypothesesPrior<Description> hap = new MockHypotheses<Description>(new DescriptionCommon("a"), SimplePossibility.SINGLETON, true, new double[] {1.0}, 0);
-    final HypothesesPrior<Description> dip = new MockHypotheses<Description>(new DescriptionCommon("a"), SimplePossibility.SINGLETON, false, new double[] {1.0}, 0);
+    final HypothesesPrior<Description> hap = new MockHypotheses<>(new DescriptionCommon("a"), SimplePossibility.SINGLETON, true, new double[]{1.0}, 0);
+    final HypothesesPrior<Description> dip = new MockHypotheses<>(new DescriptionCommon("a"), SimplePossibility.SINGLETON, false, new double[]{1.0}, 0);
     final BContainer[] bs = {new BContainer(new UnitFactor<>(hap, hap.arithmetic(), 1))};
     final HaploidDiploidHypotheses<HypothesesPrior<Description>> hdp = new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, hap, dip, false, null);
     final PriorContainer<?> pc = new PriorContainer<>(hdp, bs);

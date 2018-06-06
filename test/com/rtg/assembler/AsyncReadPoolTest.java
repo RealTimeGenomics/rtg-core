@@ -58,7 +58,7 @@ public class AsyncReadPoolTest extends AbstractTest {
   }
 
   public void testEmpty() throws IOException {
-    final AsyncReadPool pool = new AsyncReadPool("name", Collections.<ReadPairSource>emptyList());
+    final AsyncReadPool pool = new AsyncReadPool("name", Collections.emptyList());
     pool.terminate();
   }
 }

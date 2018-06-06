@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.UUID;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.assembler.graph.MutableGraph;
@@ -65,7 +64,7 @@ public class GraphMapTask extends ParamsTask<GraphMapParams, GraphMapStatistics>
         reads.add(readPairSource);
       }
       run(graph, reads, mParams, mStatistics);
-      GraphWriter.write(graph, outProxy, CommandLine.getCommandLine(), Collections.<UUID>emptySet());
+      GraphWriter.write(graph, outProxy, CommandLine.getCommandLine(), Collections.emptySet());
     } finally {
       for (ReadPairSource reader : reads) {
         reader.close();

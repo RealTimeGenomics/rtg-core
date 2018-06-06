@@ -276,7 +276,7 @@ public class PairJoinerTest extends TestCase {
     );
     checkAlignments(expected, actual);
     actual = joiner.paired(sets, -15, 100);
-    checkAlignments(Collections.<GraphAlignment>emptyList(), actual);
+    checkAlignments(Collections.emptyList(), actual);
   }
   public void testSlopTigsKmerOverlap() {
     final Graph graph = GraphMapCliTest.makeGraph(0,
@@ -302,7 +302,7 @@ public class PairJoinerTest extends TestCase {
     );
     checkAlignments(expected, actual);
     actual = joiner.paired(sets, -3, 100);
-    checkAlignments(Collections.<GraphAlignment>emptyList(), actual);
+    checkAlignments(Collections.emptyList(), actual);
   }
 
   public void testSlopTigsSameContig() {
@@ -327,7 +327,7 @@ public class PairJoinerTest extends TestCase {
     );
     checkAlignments(expected, actual);
     actual = joiner.paired(sets, -12, 100);
-    checkAlignments(Collections.<GraphAlignment>emptyList(), actual);
+    checkAlignments(Collections.emptyList(), actual);
   }
   public void testSlopTigsAltBranch() {
     final Graph graph = GraphMapCliTest.makeGraph(0,

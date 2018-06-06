@@ -349,7 +349,7 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
         final RegionRestriction side = dup.getB();
         final Long key = nameMap.get(side.getSequenceName());
         if (!result.containsKey(key)) {
-          result.put(key, new ArrayList<Pair<Integer, Integer>>());
+          result.put(key, new ArrayList<>());
         }
         result.get(key).add(new Pair<>(side.getStart(), side.getEnd()));
       }

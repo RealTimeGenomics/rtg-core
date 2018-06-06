@@ -264,7 +264,7 @@ public class ComplexitiesTest extends TestCase {
   }
 
   public void testFirstPass() {
-    final Complexities complex = new Complexities(Collections.<Variant>emptyList(), "foo", 0, 50, 3, 15, template(30), false, null);
+    final Complexities complex = new Complexities(Collections.emptyList(), "foo", 0, 50, 3, 15, template(30), false, null);
     complex.globalIntegrity();
     assertEquals(0, complex.size());
     final ArrayList<Variant> chunk = new ArrayList<>();
@@ -352,7 +352,7 @@ public class ComplexitiesTest extends TestCase {
   }
 
   public void testFirstPassHyper() {
-    final Complexities complex = new Complexities(Collections.<Variant>emptyList(), "foo", 0, 50, 3, 5, template(30), false, null);
+    final Complexities complex = new Complexities(Collections.emptyList(), "foo", 0, 50, 3, 5, template(30), false, null);
     assertEquals(0, complex.size());
     final ArrayList<Variant> chunk = new ArrayList<>();
     chunk.add(TestUtils.createVariant(0));
@@ -383,7 +383,7 @@ public class ComplexitiesTest extends TestCase {
   }
 
   public void testStartDangling() {
-    final Complexities complex = new Complexities(Collections.<Variant>emptyList(), "foo", 0, 50, 3, 5, template(50), true, null);
+    final Complexities complex = new Complexities(Collections.emptyList(), "foo", 0, 50, 3, 5, template(50), true, null);
     complex.globalIntegrity();
     for (int i = 0; i < 2; ++i) {
       final LinkedList<ComplexRegion> regions = new LinkedList<>();
@@ -398,11 +398,11 @@ public class ComplexitiesTest extends TestCase {
     final ComplexRegion startDangle = complex.computeStartDangle(regions);
     assertNotNull(startDangle);
     assertEquals(4, startDangle.getStart());
-    assertNull(complex.computeStartDangle(new LinkedList<ComplexRegion>()));
+    assertNull(complex.computeStartDangle(new LinkedList<>()));
   }
 
   public void testEndDangling() {
-    final Complexities complex = new Complexities(Collections.<Variant>emptyList(), "foo", 0, 50, 3, 5, template(30), true, null);
+    final Complexities complex = new Complexities(Collections.emptyList(), "foo", 0, 50, 3, 5, template(30), true, null);
     complex.globalIntegrity();
     for (int i = 0; i < 2; ++i) {
       final LinkedList<ComplexRegion> regions = new LinkedList<>();
@@ -416,7 +416,7 @@ public class ComplexitiesTest extends TestCase {
     final ComplexRegion endDangle = complex.computeEndDangle(regions);
     assertNotNull(endDangle);
     assertEquals(46, endDangle.getStart());
-    assertNull(complex.computeEndDangle(new LinkedList<ComplexRegion>()));
+    assertNull(complex.computeEndDangle(new LinkedList<>()));
   }
 
   public void testMerge() {
@@ -1094,7 +1094,7 @@ public class ComplexitiesTest extends TestCase {
   }
 
   public void testHyperComplexBoundaryCase() {
-    final Complexities regions = new Complexities(Collections.<Variant>emptyList(), "foo", 20, 40, 3, 15, template(30), true, null);
+    final Complexities regions = new Complexities(Collections.emptyList(), "foo", 20, 40, 3, 15, template(30), true, null);
     final LinkedList<ComplexRegion> crs = new LinkedList<>();
     regions.addRegion(crs, 0, 15, true, 0, 0);
     assertEquals(1, crs.size());
@@ -1102,7 +1102,7 @@ public class ComplexitiesTest extends TestCase {
   }
 
   public void testHyperComplexBoundaryCase2() {
-    final Complexities regions = new Complexities(Collections.<Variant>emptyList(), "foo", 20, 40, 3, 15, template(30), true, null);
+    final Complexities regions = new Complexities(Collections.emptyList(), "foo", 20, 40, 3, 15, template(30), true, null);
     final LinkedList<ComplexRegion> crs = new LinkedList<>();
     regions.addRegion(crs, 0, 16, true, 0, 0);
     assertEquals(1, crs.size());

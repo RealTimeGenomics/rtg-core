@@ -51,7 +51,7 @@ public class SequencesReaderIteratorTest extends TestCase {
     }
   }
   public void testEmpty() {
-    final SequencesReaderIterator iterator = new SequencesReaderIterator(Collections.<File>emptyList());
+    final SequencesReaderIterator iterator = new SequencesReaderIterator(Collections.emptyList());
     assertFalse(iterator.hasNext());
   }
 }

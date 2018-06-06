@@ -33,7 +33,7 @@ public class ModelFactorTest extends TestCase {
   public void testP() {
     final double[] p = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, p, 0);
+    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, p, 0);
     final double[] post = {0.1, 0.6, 0.25, 0.05};
     final ModelInterface<?> model = new MockModel<>(hypotheses, new StatisticsSnp(hypotheses.description()), post);
     final Variable var = new Variable("G0", hypotheses.size());

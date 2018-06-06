@@ -112,7 +112,7 @@ public class TopNProteinOutputProcessorTest extends TestCase {
 
   private ProteinAlignmentResult getProteinRes(int readid, final int score) throws InvalidParamsException, IOException {
     final SharedProteinResources resx = new SharedProteinResources(new ProteinScoringMatrix(), null, null, false);
-    return new ProteinAlignmentResult(resx, 0, readid * 6, (int[]) null, 0) {
+    return new ProteinAlignmentResult(resx, 0, readid * 6, null, 0) {
         @Override
         int alignmentScore() {
           return score;

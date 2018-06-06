@@ -302,9 +302,6 @@ public class NgsTaskFunctionalTest extends TestCase {
     final DiagnosticListener l = new DiagnosticListener() {
       @Override
       public void handleDiagnosticEvent(final DiagnosticEvent<?> event) {
-        if (event.getMessage().equals("Preread")) {
-          return;
-        }
       }
 
       @Override

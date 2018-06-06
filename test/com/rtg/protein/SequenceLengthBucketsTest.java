@@ -53,8 +53,7 @@ public class SequenceLengthBucketsTest extends TestCase {
     final int[] lengths = {100, 101, 102, 103, 104, 105, 24, 106, 107, 108};
     final SequenceLengthBuckets buckets = new SequenceLengthBuckets(new MockLengthsReader(lengths), 99);
     final Collection<Long> b = buckets.getBuckets();
-    final Set<Long> expected = new HashSet<>();
-    expected.addAll(Arrays.asList(99L, 102L, 105L, 108L));
+    final Set<Long> expected = new HashSet<>(Arrays.asList(99L, 102L, 105L, 108L));
     assertEquals(expected, b);
   }
 }

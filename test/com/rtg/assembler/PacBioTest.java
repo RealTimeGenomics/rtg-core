@@ -357,7 +357,7 @@ public class PacBioTest extends TestCase {
 
   private void addEmptyHits(List<List<ContigPosition>> hits, int emptyCount) {
     for (int i = 0; i < emptyCount; ++i) {
-      hits.add(Collections.<ContigPosition>emptyList());
+      hits.add(Collections.emptyList());
     }
   }
 

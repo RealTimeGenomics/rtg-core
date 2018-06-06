@@ -70,8 +70,7 @@ public class DeletionOverlapFilter implements Iterable<DiscordBedRecord> {
       while (size.size() > 0) {
         final DiscordBedRecord current = size.pollFirst();
 
-        final Set<DiscordBedRecord> tmp = new HashSet<>();
-        tmp.addAll(startSet(start, current));
+        final Set<DiscordBedRecord> tmp = new HashSet<>(startSet(start, current));
         tmp.retainAll(endSet(end, current));
         size.removeAll(tmp);
         start.removeAll(tmp);

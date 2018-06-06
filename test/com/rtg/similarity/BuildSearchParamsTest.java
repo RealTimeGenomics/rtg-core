@@ -58,7 +58,7 @@ public class BuildSearchParamsTest extends TestCase {
   BuildSearchParams getParams(final ProgramMode mode, final SequenceParams sequence, final BuildParams build, final CountParams count, boolean emptySequenceList) {
     final ArrayList<Pair<String, List<SequenceParams>>> sequences = new ArrayList<>();
     if (!emptySequenceList) {
-      final Pair<String, List<SequenceParams>> pair = new Pair<String, List<SequenceParams>>("test", new ArrayList<SequenceParams>());
+      final Pair<String, List<SequenceParams>> pair = new Pair<>("test", new ArrayList<>());
       pair.getB().add(sequence);
       sequences.add(pair);
     }

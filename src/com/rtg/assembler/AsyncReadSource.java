@@ -128,7 +128,7 @@ public final class AsyncReadSource implements IORunnable {
     }
     if (!mClosed) {
       try {
-        while (!mQueue.offer(Collections.<byte[]> emptyList(), TIMEOUT, TimeUnit.SECONDS)) {
+        while (!mQueue.offer(Collections.emptyList(), TIMEOUT, TimeUnit.SECONDS)) {
           ProgramState.checkAbort();
         }
         Diagnostic.developerLog("AsyncReadSource: " + mName + " finished reading");

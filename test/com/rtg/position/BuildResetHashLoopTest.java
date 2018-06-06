@@ -56,7 +56,7 @@ public class BuildResetHashLoopTest extends ResetHashLoopTest {
 
   @Override
   protected ResetHashLoop getHashLoop1a(final int windowSize, int stepSize, final int bits) throws IOException {
-    return new BuildResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), (Index) null/*index*/, 0/*mxs*/) {
+    return new BuildResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), null/*index*/, 0/*mxs*/) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
         // do nothing
@@ -74,7 +74,7 @@ public class BuildResetHashLoopTest extends ResetHashLoopTest {
     final int[] mi = new int[1];
     mi[0] = maxId;
     hashLoop =
-      new BuildResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), (Index) null, 0/*mxs*/) {
+      new BuildResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), null, 0/*mxs*/) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
         assertTrue("" + internalId, internalId >= 0 && internalId < mi[0]);
@@ -91,7 +91,7 @@ public class BuildResetHashLoopTest extends ResetHashLoopTest {
     final int[] count = new int[1];
     //System.err.println(" mode=" + mode + " type=" +  mode.type() + " bits=" + bits);
     hashLoop =
-      new BuildResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), (Index) null, 0/*mxs*/) {
+      new BuildResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), null, 0/*mxs*/) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
         assertEquals(count[0] + "", expectedL[count[0]], hash);
@@ -196,7 +196,7 @@ public class BuildResetHashLoopTest extends ResetHashLoopTest {
   }
 
   public void testExceptionMessage() throws Exception {
-    final HashLoop loop = new BuildResetHashLoop(15, 1, new ExactHashFunction(15, UNIDIRECTIONAL.codeType().bits()), (Index) null, 42) {
+    final HashLoop loop = new BuildResetHashLoop(15, 1, new ExactHashFunction(15, UNIDIRECTIONAL.codeType().bits()), null, 42) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
         // do nothing

@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import com.rtg.AbstractTest;
 import com.rtg.assembler.graph.Graph;
@@ -94,7 +93,7 @@ public class GraphMapTest extends AbstractTest {
     final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
     final GraphMapStatistics stats = new GraphMapStatistics(null);
-    GraphMapTask.run(constructGraph, Collections.<ReadPairSource>emptyList(), params(4, 4, 0), stats);
+    GraphMapTask.run(constructGraph, Collections.emptyList(), params(4, 4, 0), stats);
     TestUtils.containsAll(stats.getStatistics()
         , "0 Mapped without pairing"
         , "0 Too many paths"
@@ -389,7 +388,7 @@ public class GraphMapTest extends AbstractTest {
   public void testEquivalentAlignments() throws IOException {
     final GraphImplementation constructGraph = buildGraph(3, "ACGTACGG");
     final StoreDirString graphDir = new StoreDirString();
-    GraphWriter.write(constructGraph, graphDir, "foo", Collections.<UUID>emptySet());
+    GraphWriter.write(constructGraph, graphDir, "foo", Collections.emptySet());
     final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
     // Both forward and rc read should have two hits and be aligned once each

@@ -51,7 +51,7 @@ final class VariantHelper {
         actualSamples.add(0);
         final String sampleName = sampleNames.get(0);
         actualSampleNames.add(sampleName);
-        snpmap.put(sampleName, new ArrayList<AviewVariant>());
+        snpmap.put(sampleName, new ArrayList<>());
       } else {
         // We have multiple samples, if the user didn't ask for a sample, print the list of availables and exit
         if (wantedSampleNames == null || wantedSampleNames.length == 0) {
@@ -66,7 +66,7 @@ final class VariantHelper {
             if (wanted.equals(sampleNames.get(i))) {
               actualSamples.add(i);
               actualSampleNames.add(wanted);
-              snpmap.put(wanted, new ArrayList<AviewVariant>());
+              snpmap.put(wanted, new ArrayList<>());
               break;
             }
           }

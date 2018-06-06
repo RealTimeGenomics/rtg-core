@@ -19,7 +19,7 @@ import com.rtg.assembler.graph.implementation.GraphKmerAttribute;
 /**
  */
 public class NullTraversions extends GraphTraversions {
-  Traversion mEmpty = new Traversion(Collections.<Long>emptySet(), Collections.<Long>emptySet());
+  Traversion mEmpty = new Traversion(Collections.emptySet(), Collections.emptySet());
 
   NullTraversions() {
     super(new GraphKmerAttribute(0));

@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import com.rtg.assembler.graph.Contig;
 import com.rtg.assembler.graph.Graph;
@@ -223,7 +222,7 @@ final class GraphSorter {
     final Graph g = GraphReader.read(new StoreDirProxy(new File(args[0])));
     final File output = new File(args[1]);
     if (output.mkdir()) {
-      GraphWriter.write(GraphSorter.sortedGraph(g), new StoreDirProxy(output), "graphsorter", Collections.<UUID>emptySet());
+      GraphWriter.write(GraphSorter.sortedGraph(g), new StoreDirProxy(output), "graphsorter", Collections.emptySet());
     }
   }
 }

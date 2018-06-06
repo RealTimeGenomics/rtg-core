@@ -234,7 +234,7 @@ public class ConsensusTest extends AbstractCliTest {
   }
   private String graphString(Graph compact) throws IOException {
     final StoreDirString dir2 = new StoreDirString();
-    GraphWriter.writeWithDeleted(compact, dir2, "foo", Collections.<UUID>emptySet());
+    GraphWriter.writeWithDeleted(compact, dir2, "foo", Collections.emptySet());
     return dir2.toString();
   }
 }

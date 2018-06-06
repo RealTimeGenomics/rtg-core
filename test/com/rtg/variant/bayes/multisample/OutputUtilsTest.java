@@ -181,7 +181,7 @@ public class OutputUtilsTest extends TestCase {
   }
 
   public void testMergeEmpty() {
-    final List<Variant> merge = OutputUtils.merge(Collections.<Variant>emptyList(), Collections.<Variant>emptyList());
+    final List<Variant> merge = OutputUtils.merge(Collections.emptyList(), Collections.emptyList());
     assertEquals(0, merge.size());
   }
 
@@ -190,7 +190,7 @@ public class OutputUtilsTest extends TestCase {
     right.add(TestUtils.createVariant(0));
     right.add(TestUtils.createVariant(3));
 
-    final List<Variant> merge = OutputUtils.merge(Collections.<Variant>emptyList(), right);
+    final List<Variant> merge = OutputUtils.merge(Collections.emptyList(), right);
     assertEquals(2, merge.size());
     final Iterator<Variant> it = merge.iterator();
     assertEquals(0, it.next().getLocus().getStart());
@@ -203,7 +203,7 @@ public class OutputUtilsTest extends TestCase {
     left.add(TestUtils.createVariant(0));
     left.add(TestUtils.createVariant(3));
 
-    final List<Variant> merge = OutputUtils.merge(left, Collections.<Variant>emptyList());
+    final List<Variant> merge = OutputUtils.merge(left, Collections.emptyList());
     assertEquals(2, merge.size());
     final Iterator<Variant> it = merge.iterator();
     assertEquals(0, it.next().getLocus().getStart());

@@ -164,7 +164,7 @@ public class BlockMapping extends IntegralAbstract {
   public BlockInfo[] subBlock(SpeciesParams params, Frag[] frags, SpeciesMap speciesMap, long[] genomeLengths) {
     final ArrayList<ArrayList<Frag>> moddedFrags = new ArrayList<>(mBlocks.length);
     for (int k = 0; k < mBlocks.length; ++k) {
-      moddedFrags.add(new ArrayList<Frag>());
+      moddedFrags.add(new ArrayList<>());
     }
     for (final Frag f : frags) {
       moddedFrags.get(f.subBlock(mD)).add(f.subFrag(mC));

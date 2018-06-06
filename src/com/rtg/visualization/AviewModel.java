@@ -240,7 +240,7 @@ final class AviewModel {
       final Pair<File, String> named = parseNamedFileString(p.baselineFile().getPath());
       final File file = named.getA();
       final String name = named.getB();
-      final BaselineSet baseline = new BaselineSet(name, new LinkedHashMap<String, ArrayList<AviewVariant>>());
+      final BaselineSet baseline = new BaselineSet(name, new LinkedHashMap<>());
       mTracks.add(baseline);
       VariantHelper.loadSnpRange(baseline.sampleSnps(), file, region, p.wantedSamples());
     }
@@ -266,13 +266,13 @@ final class AviewModel {
   }
 
   private SnpSet loadCallSet(File vcfFile, String vcfName, AviewParams p, RegionRestriction region) throws IOException {
-    final SnpSet called = new CallSet(vcfName, new LinkedHashMap<String, ArrayList<AviewVariant>>());
+    final SnpSet called = new CallSet(vcfName, new LinkedHashMap<>());
     VariantHelper.loadSnpRange(called.sampleSnps(), vcfFile, region, p.wantedSamples());
     return called;
   }
 
   private BedSet loadBedSet(File bedFile, String bedName, RegionRestriction region) throws IOException {
-    final BedSet bedset = new BedSet(bedName, new ArrayList<BedRecord>());
+    final BedSet bedset = new BedSet(bedName, new ArrayList<>());
     final File index = new File(bedFile + TabixIndexer.TABIX_EXTENSION);
     try (BedReader r = BedReader.openBedReader(index.exists() ? region : null, bedFile, 0)) {
       while (r.hasNext()) {

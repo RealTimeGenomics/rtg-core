@@ -26,8 +26,8 @@ public class PathAlignerTest extends TestCase {
   private MutableGraph getGraph() {
     return GraphMapCliTest.makeGraph(1, new String[] {"AAAAAC", "CTAGTCA"}
       , new long[][] {{1, 2, 1, 2, 1, 2, 1, 2}}
-      , Collections.<String, String>emptyMap()
-      , Collections.<String, String>emptyMap()
+      , Collections.emptyMap()
+      , Collections.emptyMap()
       );
   }
 

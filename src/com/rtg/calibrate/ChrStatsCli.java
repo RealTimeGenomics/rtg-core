@@ -40,7 +40,6 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LineWriter;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
@@ -135,7 +134,7 @@ public class ChrStatsCli extends AbstractCli {
 
         final SAMFileHeader uberHeader = SamUtils.getUberHeader(genomeParams.reader(), samFiles);
         final Map<String, String> readGroupToSampleId = SamUtils.getReadGroupToSampleId(uberHeader);
-        final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(genomeParams.reader(), (RegionRestriction) null);
+        final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(genomeParams.reader(), null);
         final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, null);
         final Set<String> samples = expectedCoverages.samples();
         if (samples.isEmpty()) {

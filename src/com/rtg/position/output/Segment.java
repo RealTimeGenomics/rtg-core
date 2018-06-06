@@ -130,13 +130,7 @@ public class Segment extends IntegralAbstract implements Comparable<Segment> {
     if (this.mStart > that.mStart) {
       return +1;
     }
-    if (this.mEnd < that.mEnd) {
-      return -1;
-    }
-    if (this.mEnd > that.mEnd) {
-      return +1;
-    }
-    return 0;
+    return Integer.compare(this.mEnd, that.mEnd);
   }
 
   @Override

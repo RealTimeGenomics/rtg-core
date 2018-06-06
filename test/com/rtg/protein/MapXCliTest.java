@@ -330,30 +330,30 @@ public class MapXCliTest extends AbstractCliTest {
 
   public void testVariableLength() throws Exception {
     checkVariableLength(new String[] {"-Z", "-a", "2"},
-        new HashSet<>(Arrays.asList(new Integer[] {0, 1, 2, 3})), LENGTH);
+        new HashSet<>(Arrays.asList(0, 1, 2, 3)), LENGTH);
   }
   public void testMinReadLength() throws Exception {
     checkVariableLength(new String[] {"-Z", "-a", "2", "--min-dna-read-length", "70"},
-        new HashSet<>(Arrays.asList(new Integer[] {2, 3})), 158L);
+        new HashSet<>(Arrays.asList(2, 3)), 158L);
 
   }
   public void testStartRead() throws Exception {
     checkVariableLength(new String[] {"-Z", "-a", "2", "--start-read", "1"},
-        new HashSet<>(Arrays.asList(new Integer[] {1, 2, 3})), 218L);
+        new HashSet<>(Arrays.asList(1, 2, 3)), 218L);
 
   }
   public void testEndRead() throws Exception {
     checkVariableLength(new String[] {"-Z", "-a", "2", "--end-read", "3"},
-        new HashSet<>(Arrays.asList(new Integer[] {0, 1, 2})), 190L);
+        new HashSet<>(Arrays.asList(0, 1, 2)), 190L);
 
   }
   public void testReadRange() throws Exception {
     checkVariableLength(new String[] {"-Z", "-a", "2", "--start-read", "1", "--end-read", "3"},
-        new HashSet<>(Arrays.asList(new Integer[] {1, 2})), 130L);
+        new HashSet<>(Arrays.asList(1, 2)), 130L);
   }
   public void testNoCompress() throws Exception {
     checkVariableLength(new String[] {"-Z", "-a", "2", "--start-read", "1", "--end-read", "3", "--Xcompress-hashes", "false"},
-        new HashSet<>(Arrays.asList(new Integer[] {1, 2})), 130L);
+        new HashSet<>(Arrays.asList(1, 2)), 130L);
   }
   public void checkVariableLength(String[] args, Set<Integer> expectedMappings, long usageMetric) throws IOException {
     final File dir = FileUtils.createTempDir("mapx", "checkVariableLength");

@@ -15,7 +15,6 @@ package com.rtg.assembler;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.UUID;
 
 import com.rtg.assembler.graph.MutableGraph;
 import com.rtg.assembler.graph.implementation.GraphKmerAttribute;
@@ -94,7 +93,7 @@ public class AssembleCliTest extends AbstractParamsCliTest<AssembleParams> {
 
           final File inputGraph =  new File(tmpDir, "graph");
           assertTrue(inputGraph.mkdir());
-          GraphWriter.write(new GraphKmerAttribute(30), new StoreDirProxy(inputGraph), "foo" , Collections.<UUID>emptySet());
+          GraphWriter.write(new GraphKmerAttribute(30), new StoreDirProxy(inputGraph), "foo" , Collections.emptySet());
           final MemoryPrintStream mps = new MemoryPrintStream();
           CFlags flags =  new CFlags("foo", mps.printStream(), mps.printStream());
           AssembleCli.initLocalFlags(flags);

@@ -314,7 +314,7 @@ public class PopulationCallerTest extends TestCase {
   }
 
   public void testBaseCoverage() {
-    assertEquals(0, Utils.maxCoverage(new ArrayList<ModelInterface<?>>()));
+    assertEquals(0, Utils.maxCoverage(new ArrayList<>()));
   }
 
   public void testPloidy() throws InvalidParamsException, IOException {
@@ -651,7 +651,7 @@ public class PopulationCallerTest extends TestCase {
     ref[19] = 3;
     ref[20] = 1;
     freezeModels(models);
-    final Variant v = pc.makeCall("foo", 20, 21, ref, new ArrayList<ModelInterface<?>>(models), new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploid, diploid));
+    final Variant v = pc.makeCall("foo", 20, 21, ref, new ArrayList<>(models), new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploid, diploid));
     final String[] expected = {"A:G", "A:G", "A:G", "A:G", "G:G", "A:G", "G:G", "A:G", "A:G", "A:G"};
     for (int i = 0; i < v.getNumberOfSamples(); ++i) {
       final VariantSample sample = v.getSample(i);

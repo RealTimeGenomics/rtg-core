@@ -72,7 +72,7 @@ public class ModelTest extends TestCase {
   public void testPosterior0() {
     final double[] priors = {0.6, 0.1, 0.15, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final Model<?> mo = new MockModel<>(hypotheses, new StatisticsSnp(hypotheses.description()), null);
     assertTrue(mo.hypotheses() == hypotheses);
     assertEquals(4, mo.size());
@@ -91,7 +91,7 @@ public class ModelTest extends TestCase {
   public void testPosterior1() {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final double[] post = {0.1, 0.6, 0.25, 0.05};
     final Model<?> mo = new MockModel<>(hypotheses, new StatisticsSnp(hypotheses.description()), post);
     assertTrue(mo.hypotheses() == hypotheses);
@@ -123,7 +123,7 @@ public class ModelTest extends TestCase {
   public void testIncrement1a() {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.175, 0.25, 0.5, 0.075};
@@ -195,7 +195,7 @@ public class ModelTest extends TestCase {
   public void testIncrement1b() {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.175, 0.25, 0.5, 0.075};
@@ -226,7 +226,7 @@ public class ModelTest extends TestCase {
   public void testIncrement2() {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.175, 0.25, 0.5, 0.075};
@@ -248,7 +248,7 @@ public class ModelTest extends TestCase {
   public void testIncrementTriggerNoComplex() {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.175, 0.25, 0.5, 0.075};
@@ -278,7 +278,7 @@ public class ModelTest extends TestCase {
   public void testIncrementAmbiguous() {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.175, 0.25, 0.5, 0.075};
@@ -309,7 +309,7 @@ public class ModelTest extends TestCase {
   public void testIncrementBoring() {
     final double[] priors = {0.4, 0.1, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.5, 0.175, 0.25, 0.075};
@@ -334,7 +334,7 @@ public class ModelTest extends TestCase {
   public void testIncrement3() {
     final double[] priors = {0.4, 0.1, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
-    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
+    final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.5, 0.175, 0.25, 0.075};

@@ -115,9 +115,9 @@ public final class HashBlacklist {
 
   private static long dnaToLong(byte[] dna) {
     long ret = 0;
-    for (int i = 0; i < dna.length; ++i) {
+    for (final byte base : dna) {
       ret <<= 2;
-      ret |= (dna[i] - 1) & 0b11L;
+      ret |= (base - 1) & 0b11L;
     }
     return ret;
   }

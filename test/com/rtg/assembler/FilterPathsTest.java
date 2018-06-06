@@ -44,7 +44,7 @@ public class FilterPathsTest extends TestCase {
   private MutableGraph baseGraph() {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "count em all");
-    final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A"}, new long[][]{{1, 2}, {1, 3}, {2, 3}, {3, 4}, {1, 4}}, Collections.<String, String>emptyMap(), pathAttr);
+    final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A"}, new long[][]{{1, 2}, {1, 3}, {2, 3}, {3, 4}, {1, 4}}, Collections.emptyMap(), pathAttr);
     g.setPathAttribute(1, GraphKmerAttribute.READ_COUNT, "10");
     g.setPathAttribute(3, GraphKmerAttribute.READ_COUNT, "2");
     g.setPathAttribute(4, GraphKmerAttribute.READ_COUNT, "5");
@@ -107,7 +107,7 @@ public class FilterPathsTest extends TestCase {
   private MutableGraph simpleCross() {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "count em all");
-    final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA"}, new long[][]{{1, 2}, {3, 2}, {2, 4}, {2, 5}, {1, 2, 4}, {3, 2, 5}}, Collections.<String, String>emptyMap(), pathAttr);
+    final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA"}, new long[][]{{1, 2}, {3, 2}, {2, 4}, {2, 5}, {1, 2, 4}, {3, 2, 5}}, Collections.emptyMap(), pathAttr);
     g.setPathAttribute(5, GraphKmerAttribute.READ_COUNT, "10");
     g.setPathAttribute(6, GraphKmerAttribute.READ_COUNT, "10");
     return g;
@@ -133,7 +133,7 @@ public class FilterPathsTest extends TestCase {
   private MutableGraph ambiguousCross() {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "count em all");
-    final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA"}, new long[][]{{1, 2}, {3, 2}, {2, 4}, {2, 5}, {1, 2, 4}, {3, 2, 5}, {1, 2, 5}}, Collections.<String, String>emptyMap(), pathAttr);
+    final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA"}, new long[][]{{1, 2}, {3, 2}, {2, 4}, {2, 5}, {1, 2, 4}, {3, 2, 5}, {1, 2, 5}}, Collections.emptyMap(), pathAttr);
     g.setPathAttribute(5, GraphKmerAttribute.READ_COUNT, "10");
     g.setPathAttribute(6, GraphKmerAttribute.READ_COUNT, "10");
     return g;
@@ -148,7 +148,7 @@ public class FilterPathsTest extends TestCase {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "count em all");
     final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA", "AA"}
-        , new long[][]{{1, 2}, {3, 2}, {2, 4}, {4, 5}, {4, 6}, {1, 2, 4}, {3, 2, 4}, {1, 2, 4, 5}, {3, 2, 4, 6}, {3, 2, 4, 5}}, Collections.<String, String>emptyMap(), pathAttr);
+        , new long[][]{{1, 2}, {3, 2}, {2, 4}, {4, 5}, {4, 6}, {1, 2, 4}, {3, 2, 4}, {1, 2, 4, 5}, {3, 2, 4, 6}, {3, 2, 4, 5}}, Collections.emptyMap(), pathAttr);
     g.setPathAttribute(6, GraphKmerAttribute.READ_COUNT, "10");
     g.setPathAttribute(7, GraphKmerAttribute.READ_COUNT, "10");
     g.setPathAttribute(8, GraphKmerAttribute.READ_COUNT, "10");
@@ -167,7 +167,7 @@ public class FilterPathsTest extends TestCase {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "count em all");
     final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA", "AA"}
-        , new long[][]{{1, 2}, {3, 2}, {2, 4}, {4, 5}, {4, 6}, {1, 2, 4}, {3, 2, 4}, {1, 2, 4, 5}, {3, 2, 4, 6}, {3, 2, 4, 5}}, Collections.<String, String>emptyMap(), pathAttr);
+        , new long[][]{{1, 2}, {3, 2}, {2, 4}, {4, 5}, {4, 6}, {1, 2, 4}, {3, 2, 4}, {1, 2, 4, 5}, {3, 2, 4, 6}, {3, 2, 4, 5}}, Collections.emptyMap(), pathAttr);
     g.setPathAttribute(6, GraphKmerAttribute.READ_COUNT, "1");
     g.setPathAttribute(7, GraphKmerAttribute.READ_COUNT, "10");
     g.setPathAttribute(8, GraphKmerAttribute.READ_COUNT, "9");

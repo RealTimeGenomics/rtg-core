@@ -145,14 +145,14 @@ public class NumericRuleSet<T extends Number & Comparable<T>> extends RuleSet<T>
    * Add a no NaN rule for this rule set.
    */
   public void addNaNRule() {
-    mRules.add(new NaNRule<T>());
+    mRules.add(new NaNRule<>());
   }
 
   /**
    * Add a no infinity rule for this rule set.
    */
   public void addInfinityRule() {
-    mRules.add(new InfinityRule<T>());
+    mRules.add(new InfinityRule<>());
   }
 
   /**

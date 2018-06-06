@@ -92,8 +92,7 @@ public final class TaxStatsCli extends AbstractCli {
         throw new NoTalkbackSlimException("SDF does not contain taxonomy information");
       }
       final Map<String, Integer> sequenceLookupMap = TaxonomyUtils.loadTaxonomyMapping(reader);
-      final Set<Integer> lookupIds = new HashSet<>();
-      lookupIds.addAll(sequenceLookupMap.values());
+      final Set<Integer> lookupIds = new HashSet<>(sequenceLookupMap.values());
       mLookupIdsCount = lookupIds.size();
       mLookupSeqsCount = sequenceLookupMap.keySet().size();
       final Set<String> lookupSequences = sequenceLookupMap.keySet();
