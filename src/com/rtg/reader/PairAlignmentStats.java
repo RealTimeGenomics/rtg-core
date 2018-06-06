@@ -54,8 +54,10 @@ class PairAlignmentStats {
     t.addRow("Overlapping", String.valueOf(mOverlapping), perc(mOverlapping, mTotal));
     t.addRow("R1 read through", String.valueOf(mR1ReadThrough), perc(mR1ReadThrough, mTotal));
     t.addRow("R2 read through", String.valueOf(mR2ReadThrough), perc(mR2ReadThrough, mTotal));
-    t.addRow("R1 read into R2 probe", String.valueOf(mR1ReadIntoR2Probe), perc(mR1ReadIntoR2Probe, mTotal));
-    t.addRow("R2 read into R1 probe", String.valueOf(mR2ReadIntoR1Probe), perc(mR2ReadIntoR1Probe, mTotal));
+    if (mR1ReadIntoR2Probe > 0 || mR2ReadIntoR1Probe > 0) {
+      t.addRow("R1 read into R2 probe", String.valueOf(mR1ReadIntoR2Probe), perc(mR1ReadIntoR2Probe, mTotal));
+      t.addRow("R2 read into R1 probe", String.valueOf(mR2ReadIntoR1Probe), perc(mR2ReadIntoR1Probe, mTotal));
+    }
     return t.toString();
   }
 
