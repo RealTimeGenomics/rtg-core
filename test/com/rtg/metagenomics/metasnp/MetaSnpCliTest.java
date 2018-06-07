@@ -105,14 +105,14 @@ public class MetaSnpCliTest extends AbstractCliTest {
     return list;
   }
 
-  public void testXiOut() throws IOException {
+  public void testXiOut() {
     final ByteArrayOutputStream bas = new ByteArrayOutputStream();
     try (PrintStream out = new PrintStream(bas)) {
       MetaSnpCli.writeXi(new double[][]{{0.5, 0.5}, {0.2, 0.8}}, SimplePossibility.SINGLETON, out, Arrays.asList("foo", "bar"));
     }
     assertEquals("\tfoo\tbar" + StringUtils.LS + "Strain0\t0.500\t0.200" + StringUtils.LS + "Strain1\t0.500\t0.800" + StringUtils.LS, bas.toString());
   }
-  public void testXiOutNoSamples() throws IOException {
+  public void testXiOutNoSamples() {
     final ByteArrayOutputStream bas = new ByteArrayOutputStream();
     try (PrintStream out = new PrintStream(bas)) {
       MetaSnpCli.writeXi(new double[][]{{0.5, 0.5}, {0.2, 0.8}}, SimplePossibility.SINGLETON, out, null);

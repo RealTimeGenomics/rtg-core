@@ -46,7 +46,7 @@ public class CnvSummaryCliTest extends AbstractCliTest {
       );
   }
 
-  public void testErrors() throws IOException {
+  public void testErrors() {
     TestUtils.containsAll(checkHandleFlagsErr(), "Error: You must provide values for -i FILE -o FILE --summary-regions");
   }
 

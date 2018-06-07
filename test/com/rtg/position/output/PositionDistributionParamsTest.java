@@ -11,8 +11,6 @@
  */
 package com.rtg.position.output;
 
-import java.io.IOException;
-
 import com.rtg.util.TestUtils;
 
 import junit.framework.TestCase;
@@ -29,7 +27,7 @@ public class PositionDistributionParamsTest extends TestCase {
     return new PositionDistributionParams(maxGap);
   }
 
-  public void test1() throws IOException, ClassNotFoundException {
+  public void test1() {
 
     final PositionDistributionParams a1 = getParams(0.1, 0.01, 1);
     a1.integrity();
@@ -50,7 +48,7 @@ public class PositionDistributionParamsTest extends TestCase {
     assertEquals("subs=0.2 indelOpen=0.01 indelExtend=0.01 maxGap=1", e.toString());
   }
 
-  public void test2() throws IOException, ClassNotFoundException {
+  public void test2() {
 
     final PositionDistributionParams a1 = getParams(1);
     a1.integrity();

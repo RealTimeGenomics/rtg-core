@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 public class IndexSetTest extends TestCase {
 
   @Override
-  protected void tearDown() throws Exception {
+  protected void tearDown() {
     Diagnostic.setLogStream();
   }
 

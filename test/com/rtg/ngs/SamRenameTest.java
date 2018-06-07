@@ -95,7 +95,7 @@ public class SamRenameTest extends AbstractCliTest {
   }
 
   // commandline errors
-  public void testCliError1() throws InvalidParamsException, IOException {
+  public void testCliError1() throws InvalidParamsException {
     checkParamsError(new String[] {"notexists"}, "You must provide a value for -i SDF");
   }
 

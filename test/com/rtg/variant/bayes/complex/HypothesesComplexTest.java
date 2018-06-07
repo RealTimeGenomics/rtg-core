@@ -258,7 +258,7 @@ public class HypothesesComplexTest extends TestCase {
     checkHypothesis("ObviousSingleNtInsertionMatchesHeteroCall", dis);
   }
 
-  public void testObviousSingleNtReferenceId() throws Exception {
+  public void testObviousSingleNtReferenceId() {
     final AlignmentMatch mA = match("A", 20);
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     ml.add(mA);
@@ -287,7 +287,7 @@ public class HypothesesComplexTest extends TestCase {
     return match(sb.toString(), 20);
   }
 
-  public void testRandom() throws Exception {
+  public void testRandom() {
     for (int j = 0; j < 10; ++j) {
       final VariantParams vp = getVariantParams(RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0);
       final ArrayList<AlignmentMatch> ml = new ArrayList<>();

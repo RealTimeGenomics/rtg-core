@@ -29,7 +29,7 @@ public interface PairedTempFileWriter extends Closeable {
    * increasing. <code>Long.MAX_VALUE</code> should be used to indicate no more sequences.
    *
    * @param templateId a <code>long</code> value
-   * @throws IOException if an I/O Error occurs
+   * @throws IOException if an I/O error occurs.
    */
   void nextTemplateId(long templateId) throws IOException;
 
@@ -37,9 +37,8 @@ public interface PairedTempFileWriter extends Closeable {
    * Tells the alignment writer where mated results should be written.
    * Must be called before any calls to <code>pairResult</code>
    * @param matedOut output stream to send mated results to.
-   * @exception IOException if an I/O error occurs
    */
-  void initialiseMated(OutputStream matedOut) throws IOException;
+  void initialiseMated(OutputStream matedOut);
 
   /**
    * Write a mating for the left (lesser template position) hit of a
@@ -76,9 +75,8 @@ public interface PairedTempFileWriter extends Closeable {
    * @param unmatedOut output stream to send unmated results to.
    * @param unmatedBlockerLeft blocker to keep track of best score per read on left
    * @param unmatedBlockerRight blocker to keep track of best score per read on right
-   * @exception IOException if an I/O error occurs
    */
-  void initialiseUnmated(OutputStream unmatedOut, MapQScoringReadBlocker unmatedBlockerLeft, MapQScoringReadBlocker unmatedBlockerRight) throws IOException;
+  void initialiseUnmated(OutputStream unmatedOut, MapQScoringReadBlocker unmatedBlockerLeft, MapQScoringReadBlocker unmatedBlockerRight);
 
   /**
    * Write an unmated result

@@ -11,15 +11,13 @@
  */
 package com.rtg.variant.bayes.complex;
 
-import java.io.IOException;
-
 import junit.framework.TestCase;
 
 /**
  */
 public class SingleCountsTest extends TestCase {
 
-  public void test() throws IOException {
+  public void test() {
     final SingleCounts sc = new SingleCounts();
     assertEquals(0, sc.count());
     check(sc, "0:0.000");

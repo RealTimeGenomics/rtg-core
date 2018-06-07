@@ -13,7 +13,6 @@ package com.rtg.zooma;
 
 import java.io.File;
 import java.io.FileDescriptor;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -74,7 +73,7 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
   }
 
   @Override
-  protected int mainExec(OutputStream out, PrintStream err) throws IOException {
+  protected int mainExec(OutputStream out, PrintStream err) {
     //Diagnostic.setLogStream(err);
     final File indexFile = (File) mFlags.getValue(INDEX_FLAG);
     if (!indexFile.exists()) {

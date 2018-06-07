@@ -43,7 +43,7 @@ public class CreateParamsTest extends TestCase {
     return new CreateParams(size, hashBits, windowBits, 31, false, true, false, false);
   }
 
-  public void testEquals() throws Exception {
+  public void testEquals() {
     final CreateParams a1 = getParams(100, 2);
     final CreateParams a2 = getParams(100, 2);
     final CreateParams b = getParams(101, 2);
@@ -93,7 +93,7 @@ public class CreateParamsTest extends TestCase {
       + "\t\t0\t0\t0" + StringUtils.LS
       ;
 
-  public void test0() throws Exception {
+  public void test0() {
     final CreateParams ip = getParams(1L, 8);
     ip.integrity();
     assertEquals(1, ip.size());
@@ -142,7 +142,7 @@ public class CreateParamsTest extends TestCase {
       + "\t\t32\t256\tBit vector" + StringUtils.LS
       + "\t\t276\t\tTotal bytes" + StringUtils.LS;
 
-  public void test42() throws Exception {
+  public void test42() {
     final CreateParams ip = getParams(42L, 8);
     ip.integrity();
     assertEquals(42, ip.size());
@@ -189,7 +189,7 @@ public class CreateParamsTest extends TestCase {
       + "\t\t8\t64\tBit vector" + StringUtils.LS
       + "\t\t252\t\tTotal bytes" + StringUtils.LS;
 
-  public void test42a() throws Exception {
+  public void test42a() {
     final CreateParams ip = getParams(42L, 1);
     ip.integrity();
     assertEquals(42, ip.size());
@@ -219,7 +219,7 @@ public class CreateParamsTest extends TestCase {
       + "\t\t8\t64\tBit vector" + StringUtils.LS
       + "\t\t252\t\tTotal bytes" + StringUtils.LS;
 
-  public void test42b() throws Exception {
+  public void test42b() {
     final CreateParams ip = getParams(42L, 2);
     ip.integrity();
     assertEquals(42, ip.size());
@@ -249,7 +249,7 @@ public class CreateParamsTest extends TestCase {
       + "\t\t8\t64\tBit vector" + StringUtils.LS
       + "\t\t252\t\tTotal bytes" + StringUtils.LS;
 
-  public void test42c() throws Exception {
+  public void test42c() {
     final CreateParams ip = getParams(42L, 3);
     ip.integrity();
     assertEquals(42, ip.size());
@@ -279,7 +279,7 @@ public class CreateParamsTest extends TestCase {
       + "\t\t8\t64\tBit vector" + StringUtils.LS
       + "\t\t252\t\tTotal bytes" + StringUtils.LS;
 
-  public void test42d() throws Exception {
+  public void test42d() {
     final CreateParams ip = getParams(42L, 4);
     ip.integrity();
     assertEquals(42, ip.size());
@@ -309,7 +309,7 @@ public class CreateParamsTest extends TestCase {
       + "\t\t16\t128\tBit vector" + StringUtils.LS
       + "\t\t260\t\tTotal bytes" + StringUtils.LS;
 
-  public void test42e() throws Exception {
+  public void test42e() {
     final CreateParams ip = getParams(42L, 7);
     ip.integrity();
     assertEquals(42, ip.size());
@@ -339,7 +339,7 @@ public class CreateParamsTest extends TestCase {
       + "\t\t32\t256\tBit vector" + StringUtils.LS
       + "\t\t222\t\tTotal bytes" + StringUtils.LS;
 
-  public void test42f() throws Exception {
+  public void test42f() {
     final CreateParams ip = getParams(15L, 64);
     ip.integrity();
     assertEquals(15, ip.size());
@@ -369,7 +369,7 @@ public class CreateParamsTest extends TestCase {
       + "\t\t16\t128\tBit vector" + StringUtils.LS
       + "\t\t122\t\tTotal bytes" + StringUtils.LS;
 
-  public void test42g() throws Exception {
+  public void test42g() {
     final CreateParams ip = getParams(8L, 64);
     ip.integrity();
     assertEquals(8, ip.size());
@@ -399,7 +399,7 @@ public class CreateParamsTest extends TestCase {
       + "\t\t128\t1,024\tBit vector" + StringUtils.LS
       + "\t\t666\t\tTotal bytes" + StringUtils.LS;
 
-  public void test42z() throws Exception {
+  public void test42z() {
     final CreateParams ip = getParams(42L, 64);
     ip.integrity();
     assertEquals(42, ip.size());
@@ -423,7 +423,7 @@ public class CreateParamsTest extends TestCase {
   private static final long SIZE = (1L << 29) + 2;
   private static final long PLENGTH = (1L << 29) + 2;
 
-  public void testBig() throws Exception {
+  public void testBig() {
     final CreateParams ip = getParams(SIZE, 8);
     ip.integrity();
     assertEquals(SIZE, ip.size());

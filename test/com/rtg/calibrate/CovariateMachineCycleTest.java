@@ -12,7 +12,6 @@
 
 package com.rtg.calibrate;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -60,7 +59,7 @@ public class CovariateMachineCycleTest extends TestCase {
     return q;
   }
 
-  public void testFR() throws BadSuperCigarException, IOException {
+  public void testFR() {
     final Covariate var = new CovariateMachineCycle(0);
     final SAMReadGroupRecord rg = new SAMReadGroupRecord("FR");
     rg.setPlatform("Illumina");
@@ -113,7 +112,7 @@ public class CovariateMachineCycleTest extends TestCase {
 //    System.err.println("" + bos.toString());
   }
 
-  public void testFF() throws BadSuperCigarException, IOException {
+  public void testFF() {
     final Covariate var = new CovariateMachineCycle(0);
     final SAMReadGroupRecord rg = new SAMReadGroupRecord("FF");
     rg.setPlatform("Complete");
@@ -160,7 +159,7 @@ public class CovariateMachineCycleTest extends TestCase {
     assertEquals(10, c);
   }
 
-  public void testCGv1() throws BadSuperCigarException, IOException {
+  public void testCGv1() {
     final Covariate var = new CovariateMachineCycle(0);
     final SAMReadGroupRecord rg = new SAMReadGroupRecord("FF");
     rg.setPlatform("COMPLETE");

@@ -12,7 +12,6 @@
 
 package com.rtg.variant.bayes.multisample.cancer;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 import com.rtg.util.InvalidParamsException;
@@ -28,7 +27,7 @@ import junit.framework.TestCase;
  */
 public class AlleleSomaticPriorsFactoryTest extends TestCase {
 
-  public void test() throws InvalidParamsException, IOException {
+  public void test() throws InvalidParamsException {
     final DescriptionCommon desc = new DescriptionCommon("", "A", "B");
     final Hypotheses<DescriptionCommon> hyp = new MockHypotheses<>(desc, SimplePossibility.SINGLETON, true, new double[] {0.0, 0.0, 0.0}, 0);
     final double[][] qf = new AlleleSomaticPriorsFactory<>(hyp).somaticQ(0.5);

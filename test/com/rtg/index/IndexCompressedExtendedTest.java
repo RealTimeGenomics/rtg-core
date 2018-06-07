@@ -90,7 +90,7 @@ public class IndexCompressedExtendedTest extends TestCase {
    * Multiple entries for the same hash.
    * @throws IOException If an I/O error occurs
    */
-  public void testScanEmpty() throws IOException {
+  public void testScanEmpty() {
     final IndexCompressed hi = getIndex(10L, 67, 2);
     try {
       hi.scanAll(null);

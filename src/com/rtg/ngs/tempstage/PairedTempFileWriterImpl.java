@@ -268,12 +268,12 @@ public class PairedTempFileWriterImpl extends AbstractTempFileWriter implements 
   }
 
   @Override
-  public void initialiseMated(OutputStream matedOut) throws IOException {
+  public void initialiseMated(OutputStream matedOut) {
     mBinarizableRecordWriter = createSmartWriter(matedOut);
   }
 
   @Override
-  public void initialiseUnmated(final OutputStream unmatedOut, final MapQScoringReadBlocker unmatedBlockerFirst, final MapQScoringReadBlocker unmatedBlockerSecond) throws IOException {
+  public void initialiseUnmated(final OutputStream unmatedOut, final MapQScoringReadBlocker unmatedBlockerFirst, final MapQScoringReadBlocker unmatedBlockerSecond) {
     mUnmatedBlockerFirst = unmatedBlockerFirst;
     mUnmatedBlockerSecond = unmatedBlockerSecond;
     mBinarizableRecordUnmatedWriter = createSmartWriter(unmatedOut);

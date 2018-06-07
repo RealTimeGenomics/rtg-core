@@ -139,9 +139,8 @@ public final class BuildParams implements Params {
      * Creates a BuildParams using the current builder
      * configuration.
      * @return the new BuildParams
-     * @throws IOException If in I/O error occurs while finding out sizes of data
      */
-    public BuildParams create() throws IOException {
+    public BuildParams create() {
       if (mSequenceParams == null) {
         throw new NullPointerException("BuildParams requires SequenceParams to be set.");
       }

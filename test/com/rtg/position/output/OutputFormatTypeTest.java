@@ -65,23 +65,4 @@ public class OutputFormatTypeTest extends TestCase {
     }
   }
 
-  /** Check works ok with CFlags. */
-  /**
-   We don't seem to be doing this anywhere anymore
-  public void testCFlags() {
-    for (final OutputFormatType<?> type : OutputFormatType.values()) {
-      checkFlag(type.toString(), type);
-      checkFlag(type.toString().toLowerCase(Locale.getDefault()), type);
-    }
-    checkFlag("wOrD", OutputFormatType.WORD);
-  }
-
-  private void checkFlag(final String output, final OutputFormatType<?> expected) {
-    final CFlags flags = new CFlags();
-    flags.registerOptional('o', "output", OutputFormatType.class, "", "");
-    assertTrue(flags.setFlags(new String[] {"-o", output}));
-    final OutputFormatType<?> res = (OutputFormatType<?>) flags.getValue("output");
-    assertEquals(expected, res);
-  }
-   */
 }

@@ -199,7 +199,7 @@ public class ScoreMatrixTest extends AbstractNanoTest {
   }
   */
 
-  public void testTotalScoreLn() throws IOException {
+  public void testTotalScoreLn() {
     final Environment env = env();
     final AllPaths score = score(env);
     final double expected = -13.2824;
@@ -211,7 +211,7 @@ public class ScoreMatrixTest extends AbstractNanoTest {
     }
   }
 
-  public void testReadEndsAfterLn() throws IOException {
+  public void testReadEndsAfterLn() {
     final AllPaths score = score(env());
     if (score instanceof ScoreMatrix) {
       final ScoreMatrix sm = (ScoreMatrix) score;

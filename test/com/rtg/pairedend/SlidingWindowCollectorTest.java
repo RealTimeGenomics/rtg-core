@@ -147,7 +147,7 @@ public class SlidingWindowCollectorTest extends TestCase {
     }
 
     @Override
-    public void pairResultRight(final MatedHitInfo matedHitInfo) throws IOException {
+    public void pairResultRight(final MatedHitInfo matedHitInfo) {
       pairResult(matedHitInfo.mReadId, matedHitInfo.mFirstRight, matedHitInfo.mReverseComplementRight, matedHitInfo.mTemplateStartRight
       );
     }
@@ -505,7 +505,7 @@ public class SlidingWindowCollectorTest extends TestCase {
    */
   public void testMain() throws Exception {
 
-    /** Discard all alignment output. */
+    /* Discard all alignment output. */
     final PairedTempFileWriter samWriter = new PairedTempFileWriter() {
       @Override
       public boolean pairResultLeft(final MatedHitInfo matedHitInfo) {

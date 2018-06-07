@@ -115,7 +115,7 @@ public class HwEstimatorTest extends AbstractEstimatorTest {
     mModels = null;
   }
 
-  public void testEstimate() throws Exception {
+  public void testEstimate() {
     final HwEstimator e = new HwEstimator() {
 
       @Override
@@ -148,7 +148,7 @@ public class HwEstimatorTest extends AbstractEstimatorTest {
     assertNull(res.getPriorContainer().getBs());
   }
 
-  public void testComputePriors() throws Exception {
+  public void testComputePriors() {
     final HwEstimator hw = new HwEstimator();
 
     final PriorContainer<HypothesesPrior<Description>> pc = new PriorContainer<>(mHDH, null);

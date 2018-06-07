@@ -11,8 +11,6 @@
  */
 package com.rtg.ngs;
 
-import java.io.IOException;
-
 import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.TestUtils;
 
@@ -31,7 +29,7 @@ public class NgsFilterParamsTest extends TestCase {
     assertNotNull(a1.matedMaxMismatches());
   }
 
-  public void testEquals() throws IOException, ClassNotFoundException {
+  public void testEquals() {
     final NgsFilterParams a1 = getParams(10, 5, false, false, false);
     final NgsFilterParams a2 = getParams(10, 5, false, false, false);
     final NgsFilterParams b = getParams(10, 5, false, false, true);
@@ -43,7 +41,7 @@ public class NgsFilterParamsTest extends TestCase {
     TestUtils.equalsHashTest(new NgsFilterParams[][] {{a1, a2}, {b}, {d}, {e}, {f}, {g}, {h}});
   }
 
-  public void test0()  throws IOException, ClassNotFoundException {
+  public void test0() {
     final NgsFilterParams sp = getParams(10, 5, false, false, false);
     sp.integrity();
     assertEquals(5, sp.errorLimit());
@@ -64,7 +62,7 @@ public class NgsFilterParamsTest extends TestCase {
     );
   }
 
-  public void testSetPreFilter() throws IOException, ClassNotFoundException {
+  public void testSetPreFilter() {
     final NgsFilterParams fp = NgsFilterParams.builder().outputFilter(OutputFilter.NONE)
     .topN(10).errorLimit(5).unmatedMaxMismatches(IntegerOrPercentage.valueOf(4))
     //.matedMaxMismatches(IntegerOrPercentage.valueOf(7))

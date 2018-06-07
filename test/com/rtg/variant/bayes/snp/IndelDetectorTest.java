@@ -30,7 +30,7 @@ public class IndelDetectorTest extends TestCase {
     assertEquals(1, dis.nonTrivialInsertCount());
   }
 
-  public void test() throws Exception {
+  public void test() {
     check(0);
     check(1);
     check(2);

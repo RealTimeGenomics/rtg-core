@@ -14,8 +14,6 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import static com.rtg.util.StringUtils.LS;
 
-import java.io.IOException;
-
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
@@ -195,7 +193,7 @@ public class SomaticPriorsTest extends TestCase {
     assertEquals(1.0, sum, 1e-7);
   }
 
-  public void testHaploid() throws InvalidParamsException, IOException {
+  public void testHaploid() throws InvalidParamsException {
     final DescriptionCommon desc = new DescriptionCommon("", "A", "AA");
     final Hypotheses<DescriptionCommon> hyp = new MockHypotheses<>(desc, SimplePossibility.SINGLETON, true, new double[] {0.0, 0.0, 0.0}, 0);
     final double[][] initialPriors = {
@@ -215,7 +213,7 @@ public class SomaticPriorsTest extends TestCase {
     assertTrue(q[2][1] > q[2][0]); //AA->A > AA -> ""
   }
 
-  public void testDiploid() throws InvalidParamsException, IOException {
+  public void testDiploid() throws InvalidParamsException {
     final DescriptionCommon desc = new DescriptionCommon("", "A", "AA");
     final Hypotheses<DescriptionCommon> hyp = new MockHypotheses<>(desc, SimplePossibility.SINGLETON, false, new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, 0);
     //System.err.println(hyp.haploid());

@@ -12,7 +12,6 @@
 
 package com.rtg.assembler;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,7 +38,7 @@ public abstract class AbstractDeBruijnGraphTest extends TestCase {
     private static final Transform<String, Kmer> STRING2KMER = new String2Kmer();
 
     @Override
-    public void close() throws IOException {
+    public void close() {
     }
 
     private static class String2Kmer extends Transform<String, Kmer> {

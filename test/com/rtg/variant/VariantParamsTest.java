@@ -277,7 +277,7 @@ public class VariantParamsTest extends TestCase {
    * @throws InvalidParamsException
    * @throws IOException on IO error
    */
-  public void testDefaults() throws InvalidParamsException, IOException {
+  public void testDefaults() throws InvalidParamsException {
     final VariantParamsBuilder vpb = VariantParams.builder();
     final VariantParams params = vpb.create();
     assertEquals(1, params.ioThreads());
@@ -307,7 +307,7 @@ public class VariantParamsTest extends TestCase {
    * @throws InvalidParamsException
    * @throws IOException on IO error
    */
-  public void testNonDefaults() throws InvalidParamsException, IOException {
+  public void testNonDefaults() throws InvalidParamsException {
     final VariantParamsBuilder vpb = VariantParams.builder();
     vpb.ioThreads(4);
     vpb.defaultQuality(11);

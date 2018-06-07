@@ -14,8 +14,6 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
-import java.io.IOException;
-
 import com.rtg.launcher.CommonFlags;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
@@ -35,7 +33,7 @@ public class TumorOnlyCli extends SomaticCli {
   protected static final String SAMPLE_FLAG = "sample";
 
   @Override
-  protected GenomeRelationships grf() throws IOException {
+  protected GenomeRelationships grf() {
       assert mFlags.isSet(SAMPLE_FLAG);
 
       final GenomeRelationships ped = new GenomeRelationships();

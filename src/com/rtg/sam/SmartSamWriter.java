@@ -80,7 +80,7 @@ public class SmartSamWriter extends ReorderingQueue<SAMRecord> {
   }
 
   @Override
-  protected void flushRecord(SAMRecord rec) throws IOException {
+  protected void flushRecord(SAMRecord rec) {
     mOut.addAlignment(rec);
   }
 

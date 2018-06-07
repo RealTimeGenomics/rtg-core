@@ -20,7 +20,7 @@ public abstract class AbstractEditDistanceTest extends AbstractTest {
 
   protected abstract BidirectionalEditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty);
 
-  public void testStartPositionSet() throws Exception {
+  public void testStartPositionSet() {
     final byte[] read = DnaUtils.encodeString("acgta");
     final byte[] template = DnaUtils.encodeString("tttttacgtatc");
 

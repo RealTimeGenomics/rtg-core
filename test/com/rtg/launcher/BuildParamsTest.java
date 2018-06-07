@@ -88,7 +88,7 @@ public class BuildParamsTest extends TestCase {
     b.close();
   }
 
-  public void testEquals() throws IOException, ClassNotFoundException {
+  public void testEquals() throws IOException {
     final File filea = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams spa = SequenceParams.builder().directory(filea).create();
     spa.close();
@@ -209,7 +209,7 @@ public class BuildParamsTest extends TestCase {
     assertEquals(24, BuildParams.size(1000, 10, 25, 75, 1, 1)); // Check adding extra in when step > window
   }
 
-  public void testSizeBuild() throws IOException, ClassNotFoundException {
+  public void testSizeBuild() throws IOException {
     assertEquals(0, sizeCheck(0, 1, 1, SequenceMode.BIDIRECTIONAL));
     assertEquals(1, sizeCheck(1, 1, 1, SequenceMode.UNIDIRECTIONAL));
     assertEquals(2, sizeCheck(1, 1, 1, SequenceMode.BIDIRECTIONAL));

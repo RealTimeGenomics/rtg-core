@@ -66,7 +66,7 @@ public class BuildSearchParamsTest extends TestCase {
                                       .uniqueWords(true).count(count).build(build).create();
   }
 
-  public void testEquals() throws IOException, ClassNotFoundException {
+  public void testEquals() throws IOException {
     Diagnostic.setLogStream();
     final ProgramMode pma = ProgramMode.SLIMN;
     final ProgramMode pmb = ProgramMode.TSLIMX;

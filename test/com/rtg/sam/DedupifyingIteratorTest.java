@@ -153,7 +153,7 @@ public class DedupifyingIteratorTest extends AbstractTest {
     }
   }
 
-  /**
+  /*
   public void testSingleEnd() {
     final InputStream in = Resources.getResourceAsStream("com/rtg/sam/resources/duplicatesSE.sam");
     try {

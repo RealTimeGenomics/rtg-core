@@ -51,7 +51,7 @@ public abstract class AbstractHashLoopTest extends TestCase {
   }
 
   @Override
-  public void tearDown() throws Exception {
+  public void tearDown() {
     FileHelper.deleteAll(mDir);
     mDir = null;
   }

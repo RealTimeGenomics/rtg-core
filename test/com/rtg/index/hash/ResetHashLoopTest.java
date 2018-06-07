@@ -46,7 +46,7 @@ public class ResetHashLoopTest extends AbstractHashLoopTest {
 
   }
 
-  protected HashLoop getHashLoop(final int windowSize, int stepSize, final HashFunction function) throws IOException {
+  protected HashLoop getHashLoop(final int windowSize, int stepSize, final HashFunction function) {
     return new TestLoopResetHashLoop(windowSize, stepSize, function);
   }
 
@@ -72,7 +72,7 @@ public class ResetHashLoopTest extends AbstractHashLoopTest {
     }
   }
 
-  protected ResetHashLoop getHashLoop1a(final int windowSize, int stepSize, final int bits) throws IOException {
+  protected ResetHashLoop getHashLoop1a(final int windowSize, int stepSize, final int bits) {
     return new ResetHashLoop(windowSize,  stepSize, new ExactHashFunction(windowSize, bits), false) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
@@ -86,7 +86,7 @@ public class ResetHashLoopTest extends AbstractHashLoopTest {
   }
 
   protected HashLoop getHashLoop1(final int windowSize, int stepSize,
-      final int maxId, final int bits, final int[] count) throws IOException {
+      final int maxId, final int bits, final int[] count) {
     final HashLoop hashLoop;
     final int[] mi = new int[1];
     mi[0] = maxId;
@@ -132,7 +132,7 @@ public class ResetHashLoopTest extends AbstractHashLoopTest {
   }
 
   protected HashLoop getHashLoop3(final int windowSize, int stepSize,
-      final long[] expectedL, final int[] expectedI, final int bits) throws IOException {
+      final long[] expectedL, final int[] expectedI, final int bits) {
     final HashLoop hashLoop;
     final int[] count = new int[1];
     //System.err.println(" mode=" + mode + " type=" +  mode.type() + " bits=" + bits);

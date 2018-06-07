@@ -203,7 +203,7 @@ public abstract class ProteinIncrementalHashLoop extends HashLoop {
   }
 
   @Override
-  public void endAll() throws IOException {
+  public void endAll() {
     //default do nothing
   }
 }

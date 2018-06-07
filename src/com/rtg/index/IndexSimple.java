@@ -294,7 +294,7 @@ public class IndexSimple extends IndexBase {
   }
 
   @Override
-  public void scan(FinderHashValue finder) throws IOException {
+  public void scan(FinderHashValue finder) {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }

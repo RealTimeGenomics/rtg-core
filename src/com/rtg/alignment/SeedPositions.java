@@ -54,7 +54,7 @@ class SeedPositions {
     return mY2 - mY1;
   }
 
-  /**
+  /*
    * Dumps the seeds as a PPM file.
    *
    * @param seeds the list of seeds

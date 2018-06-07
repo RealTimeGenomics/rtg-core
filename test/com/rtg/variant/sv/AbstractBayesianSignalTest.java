@@ -59,7 +59,7 @@ public abstract class AbstractBayesianSignalTest extends TestCase {
   }
 
   @Override
-  public void setUp() throws Exception {
+  public void setUp() {
     Diagnostic.setLogStream();
   }
 

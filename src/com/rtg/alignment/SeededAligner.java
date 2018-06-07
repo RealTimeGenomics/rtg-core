@@ -125,14 +125,6 @@ final class SeededAligner implements UnidirectionalEditDistance {
   }
 
   /**
-   * Returns the seeds
-   * @return the list of seeds
-   */
-  /*public SeedPositions[] getSeeds() {
-    return mSeeds;
-  }*/
-
-  /**
    * Stores a value into a simple hash table
    *
    * @param value the value that is stored

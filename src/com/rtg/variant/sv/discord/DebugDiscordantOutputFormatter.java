@@ -15,7 +15,6 @@ package com.rtg.variant.sv.discord;
 import static com.rtg.util.StringUtils.LS;
 import static com.rtg.util.StringUtils.TAB;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import com.rtg.tabix.BlockCompressedLineReader;
@@ -46,7 +45,7 @@ public class DebugDiscordantOutputFormatter {
     }
 
     @Override
-    public BlockCompressedPositionReader getReader(InputStream is) throws IOException {
+    public BlockCompressedPositionReader getReader(InputStream is) {
       return new GenericPositionReader(new BlockCompressedLineReader(new BlockCompressedInputStream(is)), getOptions());
     }
   }

@@ -12,7 +12,6 @@
 package com.rtg.position.output;
 
 import java.io.File;
-import java.io.IOException;
 
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
@@ -28,7 +27,7 @@ public class PositionOutputParamsTest extends TestCase {
     return new PositionOutputParams(outdir, format, maxGap == null ? null : distr, null, zip, topN);
   }
 
-  public void testEquals() throws IOException, ClassNotFoundException {
+  public void testEquals() {
     final File fa = new File("a");
     final File fb = new File("b");
 
@@ -54,7 +53,7 @@ public class PositionOutputParamsTest extends TestCase {
     assertEquals(distr, pp.distribution());
   }
 
-  public void test() throws IOException, ClassNotFoundException {
+  public void test() {
     final File fa = new File("a");
     final PositionOutputParams a1 = getParams(fa, OutputFormatType.SEGMENT, null, false, 1);
     assertEquals("outputDir=a format=SEGMENT zip=" + Boolean.FALSE.toString() + " score threshold=" + Utils.realFormat(null) + " topN=1"  + " distribution={null}", a1.toString());

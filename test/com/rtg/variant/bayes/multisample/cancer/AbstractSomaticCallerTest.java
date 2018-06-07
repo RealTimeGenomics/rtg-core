@@ -248,7 +248,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     return new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).somaticParams(new SomaticParamsBuilder().somaticRate(0.001).create()).genomeRelationships(genomeRelationships).create();
   }
 
-  private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, VariantParams params) throws InvalidParamsException, IOException {
+  private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, VariantParams params) throws InvalidParamsException {
     final Variant v = getVariant(normal, cancer, params);
     final VariantOutputVcfFormatter formatter = getFormatter(params);
     assertEquals(expect, formatter.formatCall(v));

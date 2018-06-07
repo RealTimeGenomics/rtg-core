@@ -56,7 +56,7 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
    * @throws IOException If an IO error
    */
   public SamSingleEndOutputProcessor(NgsParams param, MapStatistics stats, boolean outputUnmapped) throws IOException {
-    super(param, stats, false, /** irrelevant */ false);
+    super(param, stats, false, /* irrelevant */ false);
     //super((int) param.build().reader().numberSequences(), stats);
     final long numSequences = param.buildFirstParams().numberSequences();
     mOutputUnmapped = outputUnmapped;

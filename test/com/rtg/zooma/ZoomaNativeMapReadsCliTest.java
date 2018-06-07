@@ -128,7 +128,7 @@ public class ZoomaNativeMapReadsCliTest extends AbstractCliTest {
     new ZoomaNativeMapReadsCliTest().runActualTest();
   }
 
-  public void test() throws IOException, InterruptedException {
+  public void test() throws IOException {
     if (NativeZooma.isEnabled()) {
       final Process p = SpawnJvm.spawn(ZoomaNativeMapReadsCliTest.class.getName());
       final String out = FileUtils.streamToString(p.getErrorStream());

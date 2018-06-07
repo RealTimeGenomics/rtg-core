@@ -12,7 +12,6 @@
 package com.rtg.variant.sv;
 
 import java.io.File;
-import java.io.IOException;
 
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -28,7 +27,7 @@ import junit.framework.TestCase;
 public class SvInterestingRegionExtractorTest extends TestCase {
 
   @Override
-  public void setUp() throws IOException {
+  public void setUp() {
     Diagnostic.setLogStream();
   }
 

@@ -57,7 +57,7 @@ public class StatisticsDoubleTest extends AbstractStatisticsTest {
     return match(ins, mapq, true, true);
   }
 
-  public void testTotals() throws Exception {
+  public void testTotals() {
     Diagnostic.setLogStream();
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     for (int i = 0; i < 3; ++i) {

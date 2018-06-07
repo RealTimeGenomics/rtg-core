@@ -12,7 +12,6 @@
 
 package com.rtg.variant.bayes.multisample.cancer;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.reeltwo.jumble.annotations.TestClass;
@@ -267,7 +266,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
   }
 
   @Override
-  public void close() throws IOException {
+  public void close() {
   }
 
   @Override

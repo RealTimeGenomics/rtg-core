@@ -74,7 +74,7 @@ public class BinaryTempFileRecordTest extends TestCase {
     assertFalse(bar.isSentinelRecord());
   }
 
-  public void testIOExceptionBug1592() throws IOException {
+  public void testIOExceptionBug1592() {
     final BinaryTempFileRecord bar = record();
     check(bar);
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();

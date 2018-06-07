@@ -39,7 +39,7 @@ import junit.framework.TestCase;
 public class TemplateCallImplementationTest extends TestCase {
 
   @Override
-  protected void tearDown() throws Exception {
+  protected void tearDown() {
     Diagnostic.setLogStream();
   }
 

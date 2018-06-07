@@ -46,7 +46,7 @@ public class ApplyReferenceTest extends TestCase {
     );
   }
 
-  public void testApplySplit() throws IOException {
+  public void testApplySplit() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(3, new String[]{"ACCCAGAGAC", "GACCAGTGTGACC"}, new long[][]{{1, 2}});
     final ApplyReference apply = new ApplyReference(graph, 4, 4, new IntegerOrPercentage(3));
     final List<ApplyReference.AlignmentState> alignments = apply.alignForward(DnaUtils.encodeString("ACCCAGAGACCAGTGTGACCAGTGACGT"), 5, new ContigPosition(1, 5, graph), new GraphTraversions(graph));
@@ -57,7 +57,7 @@ public class ApplyReferenceTest extends TestCase {
     assertEquals(12, alignmentState.mContigPosition);
     assertEquals(2, alignmentState.mChain.mContigId);
   }
-  public void testApplyBranch() throws IOException {
+  public void testApplyBranch() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(3, new String[]{"ACCCAGAGAC", "GACCAGTGTGACC", "GACCACCGTAACC"}, new long[][]{{1, 2}, {1, 3}});
     final ApplyReference apply = new ApplyReference(graph, 4, 4, new IntegerOrPercentage(3));
     final List<ApplyReference.AlignmentState> alignments = apply.alignForward(DnaUtils.encodeString("ACCCAGAGACCAGTGTGACCAGTGACGT"), 5, new ContigPosition(1, 5, graph), new GraphTraversions(graph));
@@ -68,7 +68,7 @@ public class ApplyReferenceTest extends TestCase {
     assertEquals(12, alignmentState.mContigPosition);
     assertEquals(2, alignmentState.mChain.mContigId);
   }
-  public void testApplyMulti() throws IOException {
+  public void testApplyMulti() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(3, new String[]{"ACCCAGAGAC", "GACCAGTGTGACC", "GACCAGGGTCACC"}, new long[][]{{1, 2}, {1, 3}});
     final ApplyReference apply = new ApplyReference(graph, 4, 4, new IntegerOrPercentage(3));
     final List<ApplyReference.AlignmentState> alignments = apply.alignForward(DnaUtils.encodeString("ACCCAGAGACCAGTGTGACCAGTGACGT"), 5, new ContigPosition(1, 5, graph), new GraphTraversions(graph));

@@ -75,7 +75,7 @@ public class AlignmentMatchTest extends TestCase {
     return hdr;
   }
 
-  public void testNoQualities() throws IOException {
+  public void testNoQualities() {
     Diagnostic.setLogStream();
     final SAMFileHeader hdr = getSAMFileHeader();
     final SAMRecord rec = new SAMRecord(hdr);
@@ -95,7 +95,7 @@ public class AlignmentMatchTest extends TestCase {
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
   }
 
-  public void testQualities() throws IOException {
+  public void testQualities() {
     Diagnostic.setLogStream();
     final SAMFileHeader hdr = getSAMFileHeader();
     final SAMRecord rec = new SAMRecord(hdr);

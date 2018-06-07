@@ -12,7 +12,6 @@
 
 package com.rtg.assembler;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 import com.rtg.index.FinderHashValue;
@@ -62,15 +61,10 @@ public class LowKDeBruijnGraph extends AbstractKDeBruijnGraph {
 
   @Override
   protected void transferCounts(final IndexExtended initialIndex, final IndexExtended countIndex) {
-    try {
-      final LocalFinderHashValue finder = new LocalFinderHashValue(countIndex);
-      initialIndex.scan(finder);
-      finder.atEnd();
-      countIndex.freeze();
-    } catch (final IOException e) {
-      throw new RuntimeException(e);
-    }
-
+    final LocalFinderHashValue finder = new LocalFinderHashValue(countIndex);
+    initialIndex.scan(finder);
+    finder.atEnd();
+    countIndex.freeze();
   }
 
   @Override

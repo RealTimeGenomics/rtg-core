@@ -164,7 +164,7 @@ public abstract class AbstractSplitTest extends AbstractNanoTest {
     }
 
     @Override
-    public void threadFinish() throws IOException {
+    public void threadFinish() {
     }
 
     /**
@@ -232,7 +232,7 @@ public abstract class AbstractSplitTest extends AbstractNanoTest {
     }
 
     @Override
-    public void threadFinish() throws IOException {
+    public void threadFinish() {
     }
     /**
      */

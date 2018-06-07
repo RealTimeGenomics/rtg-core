@@ -37,7 +37,7 @@ public class VariantAlignmentRecordPopulatorTest extends TestCase {
     assertEquals(41, r.getStart());
   }
 
-  public void test2() throws IOException {
+  public void test2() {
     final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0, "sample1", "sample2");
     final SAMRecord rec = new SAMRecord(new SAMFileHeader());
     rec.setAlignmentStart(42);

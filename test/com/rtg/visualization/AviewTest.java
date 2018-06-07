@@ -123,17 +123,17 @@ public class AviewTest extends AbstractCliTest {
     assertTrue(FileHelper.deleteAll(f));
   }
 
-  public void testNoColor() throws IOException, InterruptedException {
+  public void testNoColor() throws IOException {
     run("aview-nocolor.txt", SAM, "--no-color", "--region", "g1:10+2", "--no-dots");
   }
 
-  public void testColor() throws IOException, InterruptedException {
+  public void testColor() throws IOException {
     if (DisplayHelper.DEFAULT_MARKUP_TYPE != DisplayHelper.MarkupType.NONE) {
       run("aview-color.txt", SAM, "--region", "g1:11+4", "--no-dots", "--no-base-color");
     }
   }
 
-  public void testBaseColor() throws IOException, InterruptedException {
+  public void testBaseColor() throws IOException {
     if (DisplayHelper.DEFAULT_MARKUP_TYPE != DisplayHelper.MarkupType.NONE) {
       run("aview-basecolor.txt", SAM, "--region", "g1:11+4", "--no-dots");
     }
@@ -265,7 +265,7 @@ public class AviewTest extends AbstractCliTest {
   + "5" + T + "0" + T + "g1" + T + "11" + T + "255" + T + "8M" + T + "*" + T + "0" + T + "0" + T + "GTCAGCTA" + T + "````````" + T + "AS:i:1" + T + "IH:i:1" + T + "RG:Z:A" + LS
   ;
 
-  public void testRG() throws IOException, InterruptedException {
+  public void testRG() throws IOException {
     run("aview-rg.txt", SAM_RG, "--region", "g1:1+11", "--no-dots", "--sort-readgroup", "--no-color", "--print-readgroup", "--print-mapq", "--print-sample");
   }
 

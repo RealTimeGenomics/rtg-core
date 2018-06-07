@@ -16,9 +16,9 @@ package com.rtg.alignment;
  */
 public enum AlignerMode {
   /** pick an aligner automatically based on read group platform */
-  AUTO
+  AUTO,
   /** Use the table based single indel aligner, usually for Illumina reads */
-  , TABLE
+  TABLE,
   /** Use the general purpose aligner chain */
-  , GENERAL
+  GENERAL
 }

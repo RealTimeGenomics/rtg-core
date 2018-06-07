@@ -11,8 +11,6 @@
  */
 package com.rtg.calibrate;
 
-import java.io.IOException;
-
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.MockSequencesReader;
 import com.rtg.sam.ReadGroupUtils;
@@ -24,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class CalibratingSamRecordPopulatorTest extends TestCase {
 
-  public void test() throws IOException {
+  public void test() {
     final MockSequencesReader template = new MockSequencesReader(SequenceType.DNA, 5);
     final SAMRecord rec = new SAMRecord(null);
     rec.setAttribute(ReadGroupUtils.RG_ATTRIBUTE, "test");

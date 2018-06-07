@@ -94,7 +94,7 @@ public class PositionParamsTest extends TestCase {
     assertEquals("2147483646", PositionParams.zeroFormat(Integer.MAX_VALUE - 1, Integer.MAX_VALUE));
   }
 
-  public void testHash() throws IOException, ClassNotFoundException {
+  public void testHash() throws IOException {
     final ProgramMode pma = ProgramMode.SLIMN;
     final ReaderParams rp = new MockReaderParams(0, 0, pma.subjectMode());
     final ISequenceParams subjectaa = new MockSequenceParams(rp, 0, 0);
@@ -112,7 +112,7 @@ public class PositionParamsTest extends TestCase {
     assertTrue(a1.hashCode() != a2.hashCode());
   }
 
-  public void testEquals() throws IOException, ClassNotFoundException {
+  public void testEquals() throws IOException {
     final ProgramMode pma = ProgramMode.SLIMN;
     final ProgramMode pmb = ProgramMode.TSLIMX;
 

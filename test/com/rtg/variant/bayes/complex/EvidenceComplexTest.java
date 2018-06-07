@@ -11,7 +11,6 @@
  */
 package com.rtg.variant.bayes.complex;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -126,7 +125,7 @@ public class EvidenceComplexTest extends TestCase {
         );
   }
 
-  public void testObviousSingleNtInsertionMatchesHomoCall() throws Exception {
+  public void testObviousSingleNtInsertionMatchesHomoCall() {
     final SAMRecord samA = new SAMRecord(null);
     samA.setAlignmentStart(1);
     samA.setReadString("CCCCCAGGGGG");
@@ -154,7 +153,7 @@ public class EvidenceComplexTest extends TestCase {
         new Hyp(":A", -20.544));
   }
 
-  public void testEmptyMatches() throws Exception {
+  public void testEmptyMatches() {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
@@ -171,7 +170,7 @@ public class EvidenceComplexTest extends TestCase {
     checkPosterior(m, new Hyp("", -0.051 - sum));
   }
 
-  public void testAddingN() throws Exception {
+  public void testAddingN() {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     ml.add(HypothesesComplexTest.match("N", 20));
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
@@ -229,7 +228,7 @@ public class EvidenceComplexTest extends TestCase {
 
   }
 
-  public void testReadHypothesis() throws Exception {
+  public void testReadHypothesis() {
 
     //keeps in treeset
     // "" - ref
@@ -258,7 +257,7 @@ public class EvidenceComplexTest extends TestCase {
     assertEquals(4, readHyp2);
   }
 
-  public void testErrorZeroWhenAllMatchIsSameAsReference() throws Exception {
+  public void testErrorZeroWhenAllMatchIsSameAsReference() {
     final AlignmentMatch mG = HypothesesComplexTest.match("G", 20);
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     for (int i = 0; i < 10; ++i) {
@@ -273,7 +272,7 @@ public class EvidenceComplexTest extends TestCase {
     assertTrue(dc.integrity());
   }
 
-  public void testErrorRegression() throws Exception {
+  public void testErrorRegression() {
     final AlignmentMatch mG = HypothesesComplexTest.match("TTTTT", 20);
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     ml.add(mG);
@@ -287,7 +286,7 @@ public class EvidenceComplexTest extends TestCase {
     assertTrue(dc.integrity());
   }
 
-  public void testReadHypNull() throws Exception {
+  public void testReadHypNull() {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     ml.add(HypothesesComplexTest.match("TTTTTTTT", 20));
     ml.add(HypothesesComplexTest.match("AAAAAAAA", 20));
@@ -300,7 +299,7 @@ public class EvidenceComplexTest extends TestCase {
     assertEquals(Hypotheses.NO_HYPOTHESIS, dc.read());
   }
 
-  public void testObviousSingleNtInsertionMatchesHeteroCall() throws Exception {
+  public void testObviousSingleNtInsertionMatchesHeteroCall() {
     final AlignmentMatch mA = HypothesesComplexTest.match("A", 20);
     final AlignmentMatch mTT = HypothesesComplexTest.match("TT", 20);
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
@@ -331,7 +330,7 @@ public class EvidenceComplexTest extends TestCase {
         new Hyp(":TT", -682.155 - sum));
   }
 
-  public void testBugLongHyp() throws Exception {
+  public void testBugLongHyp() {
     final AlignmentMatch mA = HypothesesComplexTest.match("A", 20);
     final AlignmentMatch mTT = HypothesesComplexTest.match("TTTTTTTTTT", 20);
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
@@ -380,7 +379,7 @@ public class EvidenceComplexTest extends TestCase {
     return HypothesesComplexTest.match(sb.toString(), 20);
   }
 
-  public void testRandom() throws Exception {
+  public void testRandom() {
     for (int j = 0; j < 10; ++j) {
       final VariantParams vp = HypothesesComplexTest.getVariantParams(RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0);
       final ArrayList<AlignmentMatch> ml = new ArrayList<>();
@@ -406,7 +405,7 @@ public class EvidenceComplexTest extends TestCase {
   }
 
   // Test probability = 0.0 case
-  public void testFromConvergence() throws InvalidParamsException, IOException {
+  public void testFromConvergence() throws InvalidParamsException {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
 
     for (int i = 0; i < 8; ++i) {
@@ -441,7 +440,7 @@ public class EvidenceComplexTest extends TestCase {
   }
 
   // Test probability = 0.0 case including non-identity posterior
-  public void testFromConvergence2() throws InvalidParamsException, IOException {
+  public void testFromConvergence2() throws InvalidParamsException {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
 
     for (int i = 0; i < 8; ++i) {
@@ -476,7 +475,7 @@ public class EvidenceComplexTest extends TestCase {
   }
 
   // Test case that gave Infinite posterior
-  public void testBug() throws InvalidParamsException, IOException {
+  public void testBug() throws InvalidParamsException {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
 
     for (int i = 0; i < 9; ++i) {
@@ -682,7 +681,7 @@ public class EvidenceComplexTest extends TestCase {
     return new AlignmentMatch(new VariantAlignmentRecord(sam), "", null, RANDOM.nextInt(64), 0, 0, 10);
   }
 
-  public void testUnmapped() throws Exception {
+  public void testUnmapped() {
     final VariantParams vp = HypothesesComplexTest.getVariantParams(RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0);
     final AlignmentMatch match = unmappedMatch();
     HypothesesComplexTest.COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(Collections.singletonList(match), HypothesesComplexTest.COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);

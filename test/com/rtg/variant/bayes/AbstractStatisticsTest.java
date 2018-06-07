@@ -12,8 +12,6 @@
 
 package com.rtg.variant.bayes;
 
-import java.io.IOException;
-
 import com.rtg.reference.Ploidy;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.StaticThreshold;
@@ -59,7 +57,7 @@ public abstract class AbstractStatisticsTest extends TestCase {
     return new EvidenceQ(DescriptionSnp.SINGLETON, read, 0, 0, r, VariantUtils.phredToProb(score), forward, pairedRead, mated, false);
   }
 
-  public void testAmbiguity1() throws IOException {
+  public void testAmbiguity1() {
     checkAmbiguity(0.9999, true);
     checkAmbiguity(1.0001, false);
     checkAmbiguity(null, false);
@@ -97,7 +95,7 @@ public abstract class AbstractStatisticsTest extends TestCase {
     ss.addCountsToSample(vs, null, params);
   }
 
-  public void testCoverage() throws IOException {
+  public void testCoverage() {
     checkCoverage(true, 1);
     checkCoverage(false, 2);
   }
@@ -239,7 +237,7 @@ public abstract class AbstractStatisticsTest extends TestCase {
     assertEquals(1.4476, v.getHoeffdingUnmatedBiasAllele2(), 0.0001);
   }
 
-  public void testAmbiguityRatio() throws Exception {
+  public void testAmbiguityRatio() {
     Diagnostic.setLogStream();
     final Hypotheses<DescriptionCommon> hy = new MockHypotheses(1, false);
     final Statistics<?> stat = getStatistics(hy.description());

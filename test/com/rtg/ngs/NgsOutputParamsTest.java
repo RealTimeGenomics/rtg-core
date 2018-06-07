@@ -37,7 +37,7 @@ public class NgsOutputParamsTest extends TestCase {
     return NgsOutputParams.builder().progress(progress).outputDir(new File(logFile)).filterParams(filterParams).tabular(tabular).sorted(sorted).numberOfOutputFiles(numFiles).create();
   }
 
-  public void testEquals() throws IOException, ClassNotFoundException {
+  public void testEquals() {
     final NgsOutputParams a1 = getParams(10, 5, false, "log", false, false, true, true, 1);
     final NgsOutputParams a2 = getParams(10, 5, false, "log", false, false, true, true, 1);
     final NgsOutputParams c = getParams(10, 5, false, "foo", false, false, true, true, 1);
@@ -50,7 +50,7 @@ public class NgsOutputParamsTest extends TestCase {
     TestUtils.equalsHashTest(new NgsOutputParams[][] {{a1, a2}, {c}, {d}, {e}, {f}, {g}, {h}});
   }
 
-  public void testStreams() throws IOException, ClassNotFoundException {
+  public void testStreams() throws IOException {
     final File dir = File.createTempFile("NgsOutputParams", "streams");
     assertTrue(dir.delete());
     final NgsOutputParams params = getParams(10, 5, true, dir.getPath(), false, false, true, true, 1);
@@ -83,7 +83,7 @@ public class NgsOutputParamsTest extends TestCase {
     }
   }
 
-  public void test0()  throws IOException, ClassNotFoundException {
+  public void test0() {
     final NgsOutputParams sp = getParams(10, 5, true, "Foo", false, false, false, true, 1);
     sp.integrity();
     assertEquals(5, sp.errorLimit());

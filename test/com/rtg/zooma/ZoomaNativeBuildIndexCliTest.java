@@ -48,7 +48,7 @@ public class ZoomaNativeBuildIndexCliTest extends AbstractCliTest {
     new ZoomaNativeBuildIndexCliTest().runActualTest();
   }
 
-  public void test() throws IOException, InterruptedException {
+  public void test() throws IOException {
     if (NativeZooma.isEnabled()) {
       final Process p = SpawnJvm.spawn(ZoomaNativeBuildIndexCliTest.class.getName());
       final String out = FileUtils.streamToString(p.getErrorStream());

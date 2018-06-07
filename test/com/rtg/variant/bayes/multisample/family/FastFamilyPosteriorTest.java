@@ -12,7 +12,6 @@
 package com.rtg.variant.bayes.multisample.family;
 
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
     return new FastFamilyPosterior(family, priors, models, hdh);
   }
 
-  private void checkRandom(final PortableRandom r) throws IOException, InvalidParamsException {
+  private void checkRandom(final PortableRandom r) throws InvalidParamsException {
     final ModelInterface<?> father = getModel();
     final ModelInterface<?> mother = getModel();
     final List<ModelInterface<?>> models = new ArrayList<>();

@@ -24,7 +24,7 @@ public abstract class AbstractSimulatedReadNameParserTest extends TestCase {
 
   protected abstract String getMalformedReadName();
 
-  public void test() throws Exception {
+  public void test() {
     final SimulatedReadNameParser p = getParser();
     assertFalse(p.setReadInfo(getMalformedReadName(), 10));
 

@@ -12,7 +12,6 @@
 
 package com.rtg.variant.bayes.complex;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -60,7 +59,7 @@ public class StatisticsComplexTest extends TestCase {
     assertEquals(null, cmpx.ambiguityRatio());
   }
 
-  public void testHypothesisCorrection() throws IOException {
+  public void testHypothesisCorrection() {
     final VariantOutputOptions params = VariantParams.builder().create();
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate comtem = new ComplexTemplate(new byte[]{0, 0}, "foo", 0, 2);
@@ -92,7 +91,7 @@ public class StatisticsComplexTest extends TestCase {
   }
 
 
-  public void testIncompleteOverlap() throws IOException {
+  public void testIncompleteOverlap() {
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate comtem = new ComplexTemplate(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, "foo", 0, 10);
     comtem.setComplexContext(HypothesesComplex.createComplexDescription(Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), comtem, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
@@ -105,7 +104,7 @@ public class StatisticsComplexTest extends TestCase {
     assertEquals(0.632, stat.totalError(), 1e-3);
   }
 
-  public void testIncompleteOverlapOtherEnd() throws IOException {
+  public void testIncompleteOverlapOtherEnd() {
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate comtem = new ComplexTemplate(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, "foo", 0, 10);
     comtem.setComplexContext(HypothesesComplex.createComplexDescription(Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), comtem, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
@@ -118,7 +117,7 @@ public class StatisticsComplexTest extends TestCase {
     assertEquals(0.632, stat.totalError(), 1e-3);
   }
 
-  public void testExactCoverage() throws IOException {
+  public void testExactCoverage() {
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate comtem = new ComplexTemplate(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, "foo", 0, 10);
     comtem.setComplexContext(HypothesesComplex.createComplexDescription(Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), comtem, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
@@ -154,7 +153,7 @@ public class StatisticsComplexTest extends TestCase {
 
 
 
-  public void testCoverage() throws Exception {
+  public void testCoverage() {
     Diagnostic.setLogStream();
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     for (int i = 0; i < 3; ++i) {

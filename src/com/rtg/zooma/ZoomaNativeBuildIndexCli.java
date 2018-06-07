@@ -12,7 +12,6 @@
 package com.rtg.zooma;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -53,7 +52,7 @@ public class ZoomaNativeBuildIndexCli extends AbstractCli {
   }
 
   @Override
-  protected int mainExec(OutputStream out, PrintStream err) throws IOException {
+  protected int mainExec(OutputStream out, PrintStream err) {
     //Diagnostic.setLogStream(err);
     final File fastaFile = (File) mFlags.getValue(REF_FLAG);
     if (!fastaFile.exists()) {

@@ -67,7 +67,7 @@ public class CountParamsTest extends TestCase {
     }
   }
 
-  public void testEquals() throws IOException, ClassNotFoundException {
+  public void testEquals() {
     final File dira = new File("a");
     final File dirb = new File("b");
     final CountParams a1 = getParams(dira, 5, 2);
@@ -79,7 +79,7 @@ public class CountParamsTest extends TestCase {
     TestUtils.equalsHashTest(new CountParams[][] {{a1, a2}, {b}, {c}, {d}, {e}});
   }
 
-  public void test0()  throws IOException, ClassNotFoundException {
+  public void test0() {
     final CountParams sp = getParams(new File("Bar"), 5, 2);
     sp.integrity();
     assertEquals("Bar", sp.directory().toString());
@@ -89,7 +89,7 @@ public class CountParamsTest extends TestCase {
     assertEquals(" CountParams directory=Bar topN=5 minHits=2 max. file size=1000000000", sp.toString());
   }
 
-  public void test() throws IOException, ClassNotFoundException {
+  public void test() {
     final CountParams sp = getParams(new File("Bar"), 5, 2, 1001);
     sp.integrity();
     assertEquals("Bar", sp.directory().toString());

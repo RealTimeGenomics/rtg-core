@@ -12,7 +12,6 @@
 
 package com.rtg.variant.bayes.multisample;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.reeltwo.jumble.annotations.TestClass;
@@ -102,7 +101,7 @@ public abstract class AbstractMultisampleCaller implements MultisampleJointCalle
   protected abstract VariantParams getParams();
 
   @Override
-  public void close() throws IOException {
+  public void close() {
   }
 
   @Override

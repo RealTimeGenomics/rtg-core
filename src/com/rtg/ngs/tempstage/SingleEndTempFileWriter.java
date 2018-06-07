@@ -83,9 +83,8 @@ public class SingleEndTempFileWriter extends AbstractTempFileWriter {
    * Must be called before any calls to <code>alignmentResult</code>
    * @param alignmentsOut output stream to send unmated results to.
    * @param alignmentsBlocker blocker to keep track of best score per read
-   * @exception IOException if an I/O error occurs
    */
-  public void initialiseAlignments(final OutputStream alignmentsOut, final MapQScoringReadBlocker alignmentsBlocker) throws IOException {
+  public void initialiseAlignments(final OutputStream alignmentsOut, final MapQScoringReadBlocker alignmentsBlocker) {
     mUnmatedBlocker = alignmentsBlocker;
     mBinarizableRecordWriter = createSmartWriter(alignmentsOut);
     mTemplateId = -1;

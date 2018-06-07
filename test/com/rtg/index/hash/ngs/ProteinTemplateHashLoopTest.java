@@ -38,7 +38,7 @@ public class ProteinTemplateHashLoopTest extends TestCase {
     hashLoop1.hashCall(1, 1);
   }
 
-  public void testUnsupported() throws IOException {
+  public void testUnsupported() {
     final StringWriter sb = new StringWriter();
     final ReadCall rcall = new ReadCallMock(sb);
     final TemplateCall call = new TemplateCallMock(sb);

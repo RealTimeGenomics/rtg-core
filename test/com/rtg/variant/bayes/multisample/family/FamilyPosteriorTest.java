@@ -18,7 +18,6 @@ import static com.rtg.variant.dna.DNARangeAT.C;
 import static com.rtg.variant.dna.DNARangeAT.G;
 import static com.rtg.variant.dna.DNARangeAT.T;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,7 +89,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
    * Mother has A:A
    * Child has A:A
    */
-  public void testEqual() throws IOException, InvalidParamsException {
+  public void testEqual() throws InvalidParamsException {
     final Family family = FamilyCallerTest.makeFamily(FATHER, MOTHER, "c");
     final ModelInterface<?> father = getModel();
     final ModelInterface<?> mother = getModel();
@@ -130,7 +129,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
    * Mother has A:C
    * Child has A:C
    */
-  public void testCalculations1() throws IOException, InvalidParamsException {
+  public void testCalculations1() throws InvalidParamsException {
     final Family family = FamilyCallerTest.makeFamily(FATHER, MOTHER, "c");
     final ModelInterface<?> father = getModel();
     final ModelInterface<?> mother = getModel();
@@ -170,7 +169,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
      */
   }
 
-  AbstractFamilyPosterior makeFamily(String... members) throws Exception {
+  AbstractFamilyPosterior makeFamily(String... members) {
     assert members.length > 2;
     final String[] children = new String[members.length - 2];
     System.arraycopy(members, 2, children, 0, children.length);
@@ -300,7 +299,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
    * Child has A:C
    * Child has A:A
    */
-  public void testCalculations2() throws IOException, InvalidParamsException {
+  public void testCalculations2() throws InvalidParamsException {
     final Family family = FamilyCallerTest.makeFamily(FATHER, MOTHER, "c", "c2");
     final ModelInterface<?> father = getModel();
     final ModelInterface<?> mother = getModel();
@@ -348,7 +347,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
    * Child has A:C
    * Child has C:G
    */
-  public void testFullCats() throws IOException, InvalidParamsException {
+  public void testFullCats() throws InvalidParamsException {
     final Family family = FamilyCallerTest.makeFamily(FATHER, MOTHER, "c", "c2");
     final ModelInterface<?> father = getModel();
     final ModelInterface<?> mother = getModel();
@@ -412,7 +411,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     return childModel;
   }
 
-  public void testBorderChildCase() throws IOException, InvalidParamsException {
+  public void testBorderChildCase() throws InvalidParamsException {
     final int readCount = 30;
     final int callThreshold = getCallThreshold(readCount);
     // callThreshold is now the number of C reads required to convert an A call to A:C
@@ -459,7 +458,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     assertEquals("A:C", mHypotheses.name(bestChild1.hypothesis()));
   }
 
-  public void testBorderParentCase() throws IOException, InvalidParamsException {
+  public void testBorderParentCase() throws InvalidParamsException {
     final int readCount = 50;
     final int callThreshold = getCallThreshold(readCount);
     // callThreshold is now the number of C reads required to convert an A call to A:C
@@ -526,11 +525,11 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     assertTrue(firstScore.getDeNovoPosterior() > secondScore.getDeNovoPosterior());
   }
 
-  public void testPolyploid() throws Exception {
+  public void testPolyploid() {
 
   }
 
-  public void testAllNone() throws Exception {
+  public void testAllNone() {
     final ModelInterface<?> father = ModelNone.SINGLETON;
     final ModelInterface<?> mother = ModelNone.SINGLETON;
     final ModelInterface<?> child = ModelNone.SINGLETON;

@@ -82,7 +82,7 @@ public class SequenceParamsTest extends TestCase {
     return new MockSequenceParams(readerParams, start, end);
   }
 
-  public void testSubSequence0() throws IOException, ClassNotFoundException {
+  public void testSubSequence0() throws IOException {
     final ISequenceParams par = getParams(0, 4);
     final ISequenceParams sub = par.subSequence(new HashingRegion(1, 3));
     assertEquals(1, sub.region().getStart());
@@ -92,7 +92,7 @@ public class SequenceParamsTest extends TestCase {
     sub.close();
   }
 
-  public void testEquals() throws IOException, ClassNotFoundException {
+  public void testEquals() throws IOException {
     final File dira = getDir();
     final File dirb = getDir();
     final ISequenceParams a1 = SequenceParams.builder().directory(dira).mode(SequenceMode.BIDIRECTIONAL).region(new HashingRegion(0, 1)).create();
@@ -111,7 +111,7 @@ public class SequenceParamsTest extends TestCase {
     d.close();
   }
 
-  public void test0() throws IOException, ClassNotFoundException {
+  public void test0() throws IOException {
     final SequenceParams sp = getParams();
     assertEquals(LongRange.NONE, sp.readerRestriction());
     sp.integrity();
@@ -129,7 +129,7 @@ public class SequenceParamsTest extends TestCase {
 
   }
 
-  public void test1() throws IOException, ClassNotFoundException {
+  public void test1() throws IOException {
     final SequenceParams sp = getParams(2, 3);
     sp.integrity();
     final String dirStr = sp.directory().toString();
@@ -144,7 +144,7 @@ public class SequenceParamsTest extends TestCase {
     assertTrue(sp.toString(), sp.toString().startsWith("SequenceParams mode=BIDIRECTIONAL region=[(2:-1), (3:-1)] directory="));
   }
 
-  public void test1a() throws IOException, ClassNotFoundException {
+  public void test1a() throws IOException {
     final ISequenceParams sp0 = getParams();
     final ISequenceParams sp = getParams(sp0.readerParams(), 2, 3);
     final String dirStr = sp.directory().toString();
@@ -159,7 +159,7 @@ public class SequenceParamsTest extends TestCase {
     assertTrue(sp.toString().startsWith("SequenceParams mode=BIDIRECTIONAL region=[(2:-1), (3:-1)] directory="));
   }
 
-  public void test2() throws IOException, ClassNotFoundException {
+  public void test2() throws IOException {
     final ISequenceParams sp = getParams(2, 2);
     final String dirStr = sp.directory().toString();
     assertTrue(dirStr.contains("test") && dirStr.contains("unit"));

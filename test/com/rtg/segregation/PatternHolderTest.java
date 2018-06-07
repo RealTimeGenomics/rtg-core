@@ -22,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class PatternHolderTest extends TestCase {
 
-  public void test() throws MismatchingPloidyException {
+  public void test() {
     //1 10875805  11711404  11011111011 01110000000 X 9 3
     final PatternHolder bedPattern = PatternHolder.fromPatternStrings("11011111011", "01110000000", "X");
     assertEquals(" fa: 11011111011 mo: 01110000000", bedPattern.pattern().toString());
@@ -47,7 +47,7 @@ public class PatternHolderTest extends TestCase {
     assertTrue(Arrays.equals(expected, incompatibleChildren));
   }
 
-  public void testNew() throws MismatchingPloidyException {
+  public void testNew() {
     final PatternHolder bedPattern = PatternHolder.fromPatternStrings("000???0?0??", "00110001101", "N");
     assertTrue(bedPattern.isNew());
   }

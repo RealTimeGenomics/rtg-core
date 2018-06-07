@@ -13,8 +13,6 @@ package com.rtg.variant.bayes.snp;
 
 import static com.rtg.util.StringUtils.LS;
 
-import java.io.IOException;
-
 import com.rtg.util.InvalidParamsException;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.Variant;
@@ -88,7 +86,7 @@ public class EvidenceMatcherTest extends TestCase {
 
   }
 
-  public void test1() throws InvalidParamsException, IOException {
+  public void test1() throws InvalidParamsException {
     final ModelFactory<Description, ?> factory = new MockModelFactory();
     final byte[] template = {1, 2, 3, 4, 0};
     final EvidenceMatcher<ModelInterface<Description>> bm = new EvidenceMatcher<>(new ReferenceBasedBuffer<>(1, factory, template, 0), new EvidenceQFactory());

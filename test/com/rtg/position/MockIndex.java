@@ -116,7 +116,7 @@ public class MockIndex extends IntegralAbstract implements Index {
   }
 
   @Override
-  public void scan(FinderHashValue finder) throws IOException, IllegalStateException {
+  public void scan(FinderHashValue finder) throws IllegalStateException {
     //do nothing
   }
 

@@ -224,13 +224,13 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
   }
 
   @Override
-  protected IORunnable task(MetaPipelineParams params, OutputStream out) throws IOException {
+  protected IORunnable task(MetaPipelineParams params, OutputStream out) {
     mTask = new MetagenomicsWrapperTask(params, out, mUsageMetric, mLogStream, mErr);
     return mTask;
   }
 
   @Override
-  protected MetaPipelineParams makeParams() throws IOException {
+  protected MetaPipelineParams makeParams() {
     final MetaPipelineParamsBuilder builder = MetaPipelineParams.builder().name(mFlags.getName());
     final File output = (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
     final OutputParams outParams = new OutputParams(output, false, false);

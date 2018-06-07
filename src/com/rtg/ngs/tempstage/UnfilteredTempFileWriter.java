@@ -77,9 +77,8 @@ public class UnfilteredTempFileWriter extends AbstractTempFileWriter {
   /**
    * Initialise the unmated output
    * @param unmatedOut stream to output unmated to
-   * @throws IOException if an IOException occurs
    */
-  public void initialiseUnmated(final OutputStream unmatedOut) throws IOException {
+  public void initialiseUnmated(final OutputStream unmatedOut) {
     mBinarizableRecordUnmatedWriter = createSmartWriter(unmatedOut);
     mTemplateId = -1;
   }

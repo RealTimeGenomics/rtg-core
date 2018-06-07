@@ -39,12 +39,12 @@ public class SingleIndelSeededEditDistanceTest extends SingleIndelEditDistanceTe
   }
 
   @Override
-  public void testForwardNegative() throws Exception {
+  public void testForwardNegative() {
     //doesn't work well for short reads
   }
 
   @Override
-  public void testForwardNegative4() throws Exception {
+  public void testForwardNegative4() {
     //doesn't work well for short reads
   }
 
@@ -84,22 +84,22 @@ public class SingleIndelSeededEditDistanceTest extends SingleIndelEditDistanceTe
 
   //XXX Currently these tests below are totally wrong for seeded single indel. They should be looked at before this is used seriously.
   @Override
-  public void testInsertAtStart() throws Exception {
+  public void testInsertAtStart() {
   }
 
   @Override
-  public void testInsertAtEnd() throws Exception {
+  public void testInsertAtEnd() {
   }
 
   @Override
-  public void testInsertAtEndWithMismatchAtStart() throws Exception {
+  public void testInsertAtEndWithMismatchAtStart() {
   }
 
   @Override
-  public void testNoMismatchAfterIndelAtEnd() throws Exception {
+  public void testNoMismatchAfterIndelAtEnd() {
   }
 
   @Override
-  public void testMatchBeforeInsert() throws Exception {
+  public void testMatchBeforeInsert() {
   }
 }

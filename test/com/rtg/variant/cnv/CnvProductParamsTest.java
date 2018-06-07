@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 public class CnvProductParamsTest extends TestCase {
 
   /** Because we want it to be hard to be agile! yay */
-  public void testDefaults() throws IOException {
+  public void testDefaults() {
     final CnvProductParams.CnvProductParamsBuilder builder = CnvProductParams.builder();
     assertNotNull(builder);
     final CnvProductParams params = builder.create();

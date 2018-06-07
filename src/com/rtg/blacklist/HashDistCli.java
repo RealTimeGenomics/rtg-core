@@ -42,7 +42,7 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
   private static final String HASHMAP_SIZE_FACTOR = "hashmap-size-factor";
 
   @Override
-  protected IORunnable task(HashDistParams params, OutputStream out) throws IOException {
+  protected IORunnable task(HashDistParams params, OutputStream out) {
     return new HashDist(params, out, new NoStatistics(), new UsageMetric());
   }
 

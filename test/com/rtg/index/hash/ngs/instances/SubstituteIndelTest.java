@@ -34,7 +34,7 @@ public final class SubstituteIndelTest extends AbstractSplitTest {
   /**
    * Test the substitution testing code.
    */
-  private void checkSubstitute(final int n, final int expected, final String expStr, final int maxIndel) throws IOException {
+  private void checkSubstitute(final int n, final int expected, final String expStr, final int maxIndel) {
     final String testString = "acg";
     final SubstituteIndel sub = new SubstituteIndel(testString, maxIndel);
     final Collection<String> coll = sub.substitute(n);

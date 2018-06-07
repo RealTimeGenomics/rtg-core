@@ -285,7 +285,7 @@ public class MapFlagsTest extends TestCase {
     assertEquals(CommonFlagCategories.SENSITIVITY_TUNING, mFlags.getFlag(MapFlags.READ_FREQUENCY_FLAG).getCategory());
   }
 
-  public void testWord() throws Exception {
+  public void testWord() {
     checkInRange("--word", 0, 1);
   }
 
@@ -301,11 +301,11 @@ public class MapFlagsTest extends TestCase {
     all4combo("-c", -1, 1);
   }
 
-  public void testMaxFragmentSize() throws Exception {
+  public void testMaxFragmentSize() {
     checkInRange("--max-fragment-size", 0, 1);
   }
 
-  public void testMinFragmentSize() throws Exception {
+  public void testMinFragmentSize() {
     checkInRange("--min-fragment-size", -1, 0);
   }
 
@@ -321,7 +321,7 @@ public class MapFlagsTest extends TestCase {
     all4combo("--max-unmated-mismatches", -1, 0);
   }
 
-  private void all4combo(final String flag, final int value, final int minValue) throws Exception  {
+  private void all4combo(final String flag, final int value, final int minValue) {
     checkMapParams(new String[] {flag, "" + value}, new String[] {"The specified flag \"" + flag + "\" has invalid value \"" + value + "\". It should be greater than or equal to \"" + minValue + "\"."});
   }
 

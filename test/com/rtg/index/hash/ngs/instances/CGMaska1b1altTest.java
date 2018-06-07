@@ -167,7 +167,7 @@ public class CGMaska1b1altTest extends AbstractSplitTest {
   }
 
   //TODO get these tests working when there is always an overlap of 1 or more
-  /**
+  /*
    * Check that all 0, 1 substitutions on the string are found.
    */
   //  public void testAllSubstitutions7() {
@@ -177,7 +177,7 @@ public class CGMaska1b1altTest extends AbstractSplitTest {
   //    sub.substituteProtected(1);
   //  }
 
-  /**
+  /*
    * Check that all 0, 1 substitutions on the string are found.
    */
   //  public void testAllSubstitutions6() {
@@ -187,7 +187,7 @@ public class CGMaska1b1altTest extends AbstractSplitTest {
   //    sub.substituteProtected(1);
   //  }
 
-  /**
+  /*
    * Check that all 0, 1 substitutions on the string are found.
    */
   //  public void testAllSubstitutions5() {

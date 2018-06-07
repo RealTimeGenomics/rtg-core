@@ -60,7 +60,7 @@ public class HashCounterTest extends TestCase {
         final int threadNum = i;
         stp.execute(new IORunnable() {
           @Override
-          public void run() throws IOException {
+          public void run() {
             for (int j = threadNum; j < data.length; j += numThreads) {
               try {
                 hc.increment(data[j]);

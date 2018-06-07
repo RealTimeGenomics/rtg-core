@@ -20,8 +20,6 @@ import static com.rtg.mode.ProgramMode.SLIMX;
 import static com.rtg.mode.ProgramMode.TSLIMN;
 import static com.rtg.mode.ProgramMode.TSLIMX;
 
-import java.io.ObjectStreamException;
-
 import com.rtg.util.TestUtils;
 
 import junit.framework.TestCase;
@@ -84,7 +82,7 @@ public class ProgramModeTest extends TestCase {
     assertEquals(7, PHYLOGENY.ordinal());
   }
 
-  public void testReadResolve() throws ObjectStreamException {
+  public void testReadResolve() {
     assertEquals(DUSTER, DUSTER.readResolve());
     assertEquals(SLIMN_FLIP, SLIMN_FLIP.readResolve());
     for (Object t : ProgramMode.values()) {

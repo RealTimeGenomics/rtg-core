@@ -11,8 +11,6 @@
  */
 package com.rtg.variant.cnv.preprocess;
 
-import java.io.IOException;
-
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
@@ -59,7 +57,7 @@ public class GcNormalize implements DatasetProcessor {
   }
 
   @Override
-  public void process(RegionDataset dataset) throws IOException {
+  public void process(RegionDataset dataset) {
     final int gcCol = dataset.columnId(AddGc.PCT_GC_NAME);
     if (gcCol < 0) {
       throw new NoTalkbackSlimException("Dataset does not contain " + AddGc.PCT_GC_NAME + " column. " + dataset.getColumnNames());

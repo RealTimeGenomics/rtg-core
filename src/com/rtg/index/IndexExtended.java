@@ -43,9 +43,8 @@ public interface IndexExtended extends Index {
    * A call is done to <code>found(hash, value)</code> for each entry.
    * @param finder the finder
    * @throws IllegalStateException if index has not been frozen.
-   * @throws IOException if the finder produces such an exception.
    */
-  void scanAll(FinderHashValueExtended finder) throws IOException;
+  void scanAll(FinderHashValueExtended finder);
 
   /**
    * Determine whether the index contains the supplied hash code.

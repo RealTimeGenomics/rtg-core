@@ -76,7 +76,7 @@ public abstract class AbstractIncrementalHashLoopTest extends AbstractHashLoopTe
       }
 
       @Override
-      public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) throws IOException {
+      public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
         hashCall(hashForward, internalId, stepPosition);
         hashCall(hashReverse, internalId + 1, stepPosition);
       }
@@ -108,7 +108,7 @@ public abstract class AbstractIncrementalHashLoopTest extends AbstractHashLoopTe
     }
 
     @Override
-    public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) throws IOException {
+    public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
     }
   }
 

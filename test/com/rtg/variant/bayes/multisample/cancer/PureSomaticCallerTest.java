@@ -85,7 +85,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
    * @throws InvalidParamsException
    * @throws IOException
    */
-  public void testIdentical() throws InvalidParamsException, IOException {
+  public void testIdentical() throws InvalidParamsException {
     final byte refNt = DNARange.G;
     final int refCode = refNt - 1;
     final HypothesesPrior<Description> hypotheses = simpleHyps(0.7, refCode, Ploidy.HAPLOID);
@@ -118,7 +118,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
    * @throws InvalidParamsException
    * @throws IOException
    */
-  public void testCancer1() throws InvalidParamsException, IOException {
+  public void testCancer1() throws InvalidParamsException {
     final byte refNt = DNARange.G;
     final int refCode = refNt - 1;
     final HypothesesPrior<Description> hypotheses = simpleHyps(0.7, refCode, Ploidy.HAPLOID);

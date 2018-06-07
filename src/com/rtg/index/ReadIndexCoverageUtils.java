@@ -20,14 +20,7 @@ import com.rtg.util.StringUtils;
 public final class ReadIndexCoverageUtils {
 
   private ReadIndexCoverageUtils() {
-
   }
-
-  /** True if read rejection should be reported */
-  //public static final boolean REPORT_REJECTED_READS = Boolean.valueOf(System.getProperty("report.rejected.reads", "false"));
-
-  /** Reinsert rejected reads once identified */
-  //public static final boolean REINSERT_REJECTED_READS = Boolean.valueOf(System.getProperty("reinsert.rejected.reads", "false"));
 
   /**
    * Find reads which are not present in any of the indexes

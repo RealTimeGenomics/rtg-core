@@ -119,7 +119,7 @@ public class PopulationCallerTest extends TestCase {
     return new VariantOutputVcfFormatter(namesarr);
   }
 
-  public void testComparison() throws InvalidParamsException, IOException {
+  public void testComparison() throws InvalidParamsException {
     final GenomePriorParams params = new GenomePriorParamsBuilder().create();
     final VariantParams vParams = new VariantParamsBuilder().maxCoverageFilter(new StaticThreshold(15)).genomeRelationships(new GenomeRelationships()).create();
     final PopulationCaller pc = new PopulationCaller(vParams);
@@ -144,7 +144,7 @@ public class PopulationCallerTest extends TestCase {
     testCall(str, "GQ", "30", "23", "40", "7");
   }
 
-  public void testComparisonAmbiguousRatio() throws InvalidParamsException, IOException {
+  public void testComparisonAmbiguousRatio() throws InvalidParamsException {
     final GenomePriorParams params = new GenomePriorParamsBuilder().create();
     final VariantParams vParams = new VariantParamsBuilder().maxAmbiguity(0.03).maxCoverageFilter(new StaticThreshold(50)).genomePriors(params).genomeRelationships(new GenomeRelationships()).create();
     final PopulationCaller pc = new PopulationCaller(vParams);
@@ -168,7 +168,7 @@ public class PopulationCallerTest extends TestCase {
     testCall(str, "AR", "0.091", "0.000", "0.000", "0.000");
   }
 
-  public void testN() throws InvalidParamsException, IOException {
+  public void testN() throws InvalidParamsException {
     final GenomePriorParams params = new GenomePriorParamsBuilder().create();
     final VariantParams vParams = new VariantParamsBuilder().maxCoverageFilter(new StaticThreshold(15)).genomePriors(params).create();
     final PopulationCaller pc = new PopulationCaller(vParams);
@@ -186,7 +186,7 @@ public class PopulationCallerTest extends TestCase {
     assertNotNull(v);
   }
 
-  public void testShortCircuit() throws InvalidParamsException, IOException {
+  public void testShortCircuit() throws InvalidParamsException {
     final GenomePriorParams params = new GenomePriorParamsBuilder().create();
     final VariantParams vParams = new VariantParamsBuilder().maxCoverageFilter(new StaticThreshold(15)).genomePriors(params).create();
     final PopulationCaller pc = new PopulationCaller(vParams);
@@ -204,7 +204,7 @@ public class PopulationCallerTest extends TestCase {
     assertNull(v);
   }
 
-  public void testUninteresting() throws InvalidParamsException, IOException {
+  public void testUninteresting() throws InvalidParamsException {
     final GenomePriorParams params = new GenomePriorParamsBuilder().create();
     final VariantParams vParams = new VariantParamsBuilder().maxCoverageFilter(new StaticThreshold(15)).genomePriors(params).create();
     final PopulationCaller pc = new PopulationCaller(vParams);
@@ -221,7 +221,7 @@ public class PopulationCallerTest extends TestCase {
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt)));
     assertNull(v);
   }
-  public void testAllShortCurcuit() throws InvalidParamsException, IOException {
+  public void testAllShortCurcuit() throws InvalidParamsException {
     final GenomePriorParams params = new GenomePriorParamsBuilder().create();
     final VariantParams vParams = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).maxCoverageFilter(new StaticThreshold(15)).genomePriors(params).create();
     final PopulationCaller pc = new PopulationCaller(vParams);
@@ -240,7 +240,7 @@ public class PopulationCallerTest extends TestCase {
     assertFalse(v.isInteresting());
   }
 
-  public void testAll() throws InvalidParamsException, IOException {
+  public void testAll() throws InvalidParamsException {
     final GenomePriorParams params = new GenomePriorParamsBuilder().create();
     final VariantParams vParams = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).maxCoverageFilter(new StaticThreshold(15)).genomePriors(params).create();
     final PopulationCaller pc = new PopulationCaller(vParams);
@@ -261,7 +261,7 @@ public class PopulationCallerTest extends TestCase {
     assertTrue(v.getNonIdentityPosterior() < 0.0);
   }
 
-  public void testAllInteresting() throws InvalidParamsException, IOException {
+  public void testAllInteresting() throws InvalidParamsException {
     final GenomePriorParams params = new GenomePriorParamsBuilder().create();
     final VariantParams vParams = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).maxCoverageFilter(new StaticThreshold(15)).genomePriors(params).create();
     final PopulationCaller pc = new PopulationCaller(vParams);
@@ -282,7 +282,7 @@ public class PopulationCallerTest extends TestCase {
     assertTrue(v.getNonIdentityPosterior() > 0.0);
   }
 
-  public void testAmbiguity() throws InvalidParamsException, IOException {
+  public void testAmbiguity() throws InvalidParamsException {
     final GenomePriorParams params = new GenomePriorParamsBuilder().create();
     final VariantParams vParams = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).maxAmbiguity(0.3).maxCoverageFilter(new StaticThreshold(50)).genomePriors(params).genomeRelationships(new GenomeRelationships()).create();
     final PopulationCaller pc = new PopulationCaller(vParams);
@@ -317,7 +317,7 @@ public class PopulationCallerTest extends TestCase {
     assertEquals(0, Utils.maxCoverage(new ArrayList<>()));
   }
 
-  public void testPloidy() throws InvalidParamsException, IOException {
+  public void testPloidy() throws InvalidParamsException {
     final GenomePriorParams params = new GenomePriorParamsBuilder().create();
     final VariantParams vParams = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).maxAmbiguity(0.3).maxCoverageFilter(new StaticThreshold(50)).genomePriors(params).genomeRelationships(new GenomeRelationships()).create();
     final PopulationCaller pc = new PopulationCaller(vParams);

@@ -66,7 +66,7 @@ public abstract class BoundedOutputStream extends OutputStream {
   }
 
   @Override
-  public void write(byte[] b, int off, int len) throws IOException {
+  public void write(byte[] b, int off, int len) {
     mBuffer.write(b, off, len);
   }
 
@@ -77,7 +77,7 @@ public abstract class BoundedOutputStream extends OutputStream {
   }
 
   @Override
-  public void write(int arg0) throws IOException {
+  public void write(int arg0) {
     mBuffer.write(arg0);
   }
 
