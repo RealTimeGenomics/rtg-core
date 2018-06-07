@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import com.reeltwo.jumble.annotations.TestClass;
@@ -234,12 +233,7 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
   @Override
   public List<AlleleCounts> getCounts(final String templateName, int start, int end) {
     final List<AlleleCounts> sloppyCounts = getSloppyCounts(templateName, Math.max(0, start - mMaxRefLength), end);
-    for (final Iterator<AlleleCounts> it = sloppyCounts.iterator(); it.hasNext();) {
-      final AlleleCounts ac = it.next();
-      if (ac.position() + ac.refLength() <= start) {
-        it.remove();
-      }
-    }
+    sloppyCounts.removeIf(ac -> ac.position() + ac.refLength() <= start);
     return sloppyCounts;
   }
 

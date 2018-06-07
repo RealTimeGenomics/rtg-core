@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.launcher.HashingRegion;
@@ -78,7 +77,7 @@ public class UnfilteredSingleEndOutputProcessor extends AbstractSdfOutputProcess
       }
     }
     // Merge the child output files into one
-    Collections.sort(mChildren, new TopNPairedEndOutputProcessorSync.RegionFileComparator());
+    mChildren.sort(new TopNPairedEndOutputProcessorSync.RegionFileComparator());
 
     final File[] outputFiles = new File[mChildren.size()];
     for (int i = 0; i < outputFiles.length; ++i) {

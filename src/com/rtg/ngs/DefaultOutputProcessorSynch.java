@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -79,7 +78,7 @@ public class DefaultOutputProcessorSynch implements OutputProcessor {
   @Override
   public void finish() throws IOException {
 
-    Collections.sort(mChildren, new DefaultOutputProcessorComparator());
+    mChildren.sort(new DefaultOutputProcessorComparator());
     final File[] outputFiles = new File[mChildren.size()];
     for (int i = 0; i < outputFiles.length; ++i) {
       outputFiles[i] = mChildren.get(i).getFile();

@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -132,7 +131,7 @@ public class UnfilteredPairedEndOutputProcessor extends AbstractSdfOutputProcess
         mSingleThreadChild.threadFinish();
       }
     }
-    Collections.sort(mChildren, new RegionFileComparator());
+    mChildren.sort(new RegionFileComparator());
 
     final File[] outputFiles = new File[mChildren.size()];
     for (int i = 0; i < outputFiles.length; ++i) {

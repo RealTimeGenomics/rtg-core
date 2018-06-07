@@ -15,7 +15,6 @@ package com.rtg.variant.coverage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.rtg.bed.BedRecord;
@@ -101,7 +100,7 @@ public class CoverageBedWriter extends CoverageProcessor {
   }
 
   private void flush() throws IOException {
-    Collections.sort(mBuffered, IntervalComparator.SINGLETON);
+    mBuffered.sort(IntervalComparator.SINGLETON);
     for (BedRecord rec : mBuffered) {
       mOut.write(rec);
     }
