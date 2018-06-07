@@ -31,7 +31,8 @@ public class PairAlignmentStatsTest {
     first.mOverlapping = 40;
     first.mNoAlignment = 50;
     first.mPoorAlignment = 60;
-    first.mTotal = 70;
+    first.mTotalInput = 70;
+    first.mTotalOutput = 69;
     second.mR1ReadThrough = 100;
     second.mR2ReadThrough = 200;
     second.mR2ReadIntoR1Probe = 300;
@@ -39,7 +40,8 @@ public class PairAlignmentStatsTest {
     second.mOverlapping = 400;
     second.mNoAlignment = 500;
     second.mPoorAlignment = 600;
-    second.mTotal = 700;
+    second.mTotalInput = 700;
+    second.mTotalOutput = 695;
 
     accumulator.accumulate(first);
     accumulator.accumulate(second);
@@ -51,7 +53,8 @@ public class PairAlignmentStatsTest {
     assertEquals(440, accumulator.mOverlapping);
     assertEquals(550, accumulator.mNoAlignment);
     assertEquals(660, accumulator.mPoorAlignment);
-    assertEquals(770, accumulator.mTotal);
+    assertEquals(770, accumulator.mTotalInput);
+    assertEquals(764, accumulator.mTotalOutput);
 
   }
 

@@ -16,6 +16,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.function.Predicate;
 
+import com.rtg.util.Histogram;
+
 import htsjdk.samtools.util.RuntimeIOException;
 
 /**
@@ -26,6 +28,8 @@ class AsyncFastqPairWriter extends AbstractAsyncChunkWriter<FastqPair> {
   private final FastqWriter mLeft;
   private final FastqWriter mRight;
   private final Predicate<FastqPair> mAccept;
+  private final Histogram mLeftLengths;
+  private final Histogram mRightLengths;
 
 
   AsyncFastqPairWriter(FastqWriter r1, FastqWriter r2) {
@@ -33,10 +37,16 @@ class AsyncFastqPairWriter extends AbstractAsyncChunkWriter<FastqPair> {
   }
 
   AsyncFastqPairWriter(FastqWriter r1, FastqWriter r2, Predicate<FastqPair> accept) {
+    this(r1, r2, accept, null, null);
+  }
+
+  AsyncFastqPairWriter(FastqWriter r1, FastqWriter r2, Predicate<FastqPair> accept, Histogram leftHist, Histogram rightHist) {
     super(10000);
     mLeft = r1;
     mRight = r2;
     mAccept = accept;
+    mLeftLengths = leftHist;
+    mRightLengths = rightHist;
   }
 
   @Override
@@ -54,6 +64,12 @@ class AsyncFastqPairWriter extends AbstractAsyncChunkWriter<FastqPair> {
   @Override
   protected void synchronouslyWrite(FastqPair pair) {
     try {
+      if (mLeftLengths != null) {
+        mLeftLengths.increment(pair.r1().length());
+      }
+      if (mRightLengths != null) {
+        mRightLengths.increment(pair.r2().length());
+      }
       synchronouslyWrite(mLeft, pair.r1());
       synchronouslyWrite(mRight, pair.r2());
     } catch (IOException e) {

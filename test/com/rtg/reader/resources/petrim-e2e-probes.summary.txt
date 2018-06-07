@@ -1,9 +1,10 @@
-          Total pairs  50        
-         No alignment   9  18.00%
-       Poor alignment  10  20.00%
-          Overlapping  31  62.00%
-      R1 read through  10  20.00%
-      R2 read through   1   2.00%
-R1 read into R2 probe  15  30.00%
-R2 read into R1 probe  25  50.00%
+    Total input pairs  50         
+         No alignment   9   18.00%
+       Poor alignment  10   20.00%
+          Overlapping  31   62.00%
+      R1 read through  10   20.00%
+      R2 read through   1    2.00%
+R1 read into R2 probe  15   30.00%
+R2 read into R1 probe  25   50.00%
+   Total output pairs  50  100.00%
 

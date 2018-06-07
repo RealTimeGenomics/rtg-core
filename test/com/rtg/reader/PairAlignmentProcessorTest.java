@@ -59,7 +59,7 @@ public class PairAlignmentProcessorTest {
     assertEquals(1, stats.mR2ReadIntoR1Probe);
     assertEquals(1, stats.mR1ReadThrough);
     assertEquals(1, stats.mR2ReadThrough);
-    assertEquals(2, stats.mTotal);
+    assertEquals(2, stats.mTotalInput);
   }
   private String fasta(String name, String sequence) {
     return ">" + name + "\n" + sequence + "\n";

@@ -162,7 +162,7 @@ public class PairAligner {
     // Start talking in alignment speak.
     // Template is the R1
     // Read is the R2
-    mStats.mTotal++;
+    mStats.mTotalInput++;
     final int maxLength = Math.max(r1.length(), r2.length());
     final int[] actions = mEd.calculateEditDistance(r2.getBases(), r2.length(), r1.getBases(), 0, Integer.MAX_VALUE, maxLength + 1, false);
     if (actions == null) {

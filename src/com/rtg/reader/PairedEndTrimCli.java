@@ -42,6 +42,7 @@ import com.rtg.ngs.MapFlags;
 import com.rtg.ngs.MapParamsHelper;
 import com.rtg.ngs.NgsParams;
 import com.rtg.sam.SamFilterOptions;
+import com.rtg.util.Histogram;
 import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
@@ -186,18 +187,25 @@ public class PairedEndTrimCli extends AbstractCli {
       } else {
         p = o -> true;
       }
-      try (final AsyncFastqPairWriter w = new AsyncFastqPairWriter(left, right, p)) {
+      final Histogram r1Lengths = new Histogram();
+      final Histogram r2Lengths = new Histogram();
+      try (final AsyncFastqPairWriter w = new AsyncFastqPairWriter(left, right, p, r1Lengths, r2Lengths)) {
         final BatchReorderingWriter<FastqPair> batchWriter = new BatchReorderingWriter<>(w);
         final Function<Batch<FastqPair>, FutureTask<?>> listRunnableFunction = batch -> new FutureTask<>(new PairAlignmentProcessor(stats, batchWriter, batch, getPairAligner()), null);
         final BatchProcessor<FastqPair> fastqPairBatchProcessor = new BatchProcessor<>(listRunnableFunction, threads, batchSize);
         fastqPairBatchProcessor.process(FastqTrim.maybeSubsample(mFlags, new FastqPairIterator(new FastqIterator(r1fq), new FastqIterator(r2fq))));
       }
-      t.stop(stats.mTotal);
+      t.stop(stats.mTotalInput);
       t.log();
-      final String overlapDist = "#overlap-length\tcount" + LS + stats.mOverlapDist.getAsTsv(false);
-      final String fragDist = "#fragment-length\tcount" + LS + stats.mFragLengths.getAsTsv(false);
+      stats.mTotalOutput = r1Lengths.sum();
+      final String overlapDist = stats.mOverlapDist.getAsTsv(false, "overlap-length");
+      final String fragDist = stats.mFragLengths.getAsTsv(false, "fragment-length");
+      final String r1LengthDist = r1Lengths.getAsTsv(false, "read-length");
+      final String r2LengthDist = r2Lengths.getAsTsv(false, "read-length");
       Diagnostic.developerLog("Overlap Distribution" + LS + overlapDist);
       Diagnostic.developerLog("Fragment Length Distribution" + LS + fragDist);
+      Diagnostic.developerLog("R1 Read Length Distribution" + LS + r1LengthDist);
+      Diagnostic.developerLog("R2 Read Length Distribution" + LS + r2LengthDist);
       Diagnostic.userLog(stats.printSummary());
       if (!FileUtils.isStdio(baseOutput)) {
         final BaseFile txtBase = FileUtils.getBaseFile(baseFile.getBaseFile(), false, ".txt");
@@ -207,6 +215,8 @@ public class PairedEndTrimCli extends AbstractCli {
         final BaseFile tsvBase = FileUtils.getBaseFile(baseFile.getBaseFile(), false, ".tsv");
         FileUtils.stringToFile(overlapDist, tsvBase.suffixedFile(".overlap-lengths"));
         FileUtils.stringToFile(fragDist, tsvBase.suffixedFile(".fragment-lengths"));
+        FileUtils.stringToFile(r1LengthDist, tsvBase.suffixedFile(".left-read-lengths"));
+        FileUtils.stringToFile(r2LengthDist, tsvBase.suffixedFile(".right-read-lengths"));
       }
     }
     return 0;
