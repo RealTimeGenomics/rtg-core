@@ -45,12 +45,6 @@ public final class ScoreInterfaceMemoIonT implements ScoreInterfaceMemoInterface
     if (me.machineType() != null && me.machineType().isCG()) {
       throw new UnsupportedOperationException();
     }
-    AllPaths s;
-    s = mCache.get(me);
-    if (s == null) {
-      s = new ScoreFastUnderflowHomopolymer(me, mHomoParamsSimple, mHomoParamsLog);
-      mCache.put(me, s);
-    }
-    return s;
+    return mCache.computeIfAbsent(me, m -> new ScoreFastUnderflowHomopolymer(m, mHomoParamsSimple, mHomoParamsLog));
   }
 }

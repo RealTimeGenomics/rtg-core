@@ -65,7 +65,7 @@ public class AlleleCounts {
    * @return allele count, or -1 if allele does not exist
    */
   public int count(String allele) {
-    return mCounts.containsKey(allele) ? mCounts.get(allele) : -1;
+    return mCounts.getOrDefault(allele, -1);
   }
 
   /**

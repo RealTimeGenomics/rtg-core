@@ -381,11 +381,7 @@ public class MapReport extends MapSummaryReport {
         for (int i = gram.min(); i < gram.max(); ++i) {
           final long val = gram.getValue(i);
           if (val != 0) {
-            Values vals = mMap.get(i);
-            if (vals == null) {
-              vals = new Values(grams.length);
-              mMap.put(i, vals);
-            }
+            final Values vals = mMap.computeIfAbsent(i, k -> new Values(grams.length));
             vals.setValue(j, val);
             max = Math.max(max, i);
             min = Math.min(min, i);

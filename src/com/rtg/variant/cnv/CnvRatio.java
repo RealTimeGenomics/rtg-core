@@ -186,7 +186,7 @@ public final class CnvRatio {
     mSeqStart = -1;
     mState = State.OUT;
     mSeqId = seqId;
-    mNRegionExcludes = mNRegions.containsKey(seqId) ? mNRegions.get(seqId) : EmptyRegion.EMPTY_REGION;
+    mNRegionExcludes = mNRegions.getOrDefault(seqId, EmptyRegion.EMPTY_REGION);
     mDivDelRegionExcludes = RegionUtils.findGermlineDeletesUnderMean(refLine, mDivFactor, mNRegionExcludes, mExtraPenaltyOff);
     mMulDelRegionExcludes = RegionUtils.findGermlineDeletesOverMean(refLine, mMulFactor, mNRegionExcludes, mExtraPenaltyOff);
     mLSM = new LeastSquaresModel(mSeqId, 2, mMeanReadLength / mBucketSize, mConstant, mExtraPenaltyOff, mSimpleOut);

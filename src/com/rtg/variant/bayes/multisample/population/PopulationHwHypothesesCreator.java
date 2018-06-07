@@ -117,11 +117,7 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
 
         if (COMPLEX_SSP) {
           //System.err.println("total alleles: " + totalCount2 + ", simple? " + simple);
-          ArrayList<AlleleCounts> list = mAlleleCounts.get(referenceName);
-          if (list == null) {
-            list = new ArrayList<>();
-            mAlleleCounts.put(referenceName, list);
-          }
+          final ArrayList<AlleleCounts> list = mAlleleCounts.computeIfAbsent(referenceName, k -> new ArrayList<>());
           list.add(alleleCounts);
         }
 

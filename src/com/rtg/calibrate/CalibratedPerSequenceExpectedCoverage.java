@@ -65,11 +65,7 @@ public class CalibratedPerSequenceExpectedCoverage {
           Diagnostic.userLog("Average coverage for sample " + sampleName + " is " + Utils.realFormat(currentCov, 2));
           for (final Map.Entry<String, Integer> entry : sequenceLengths.entrySet()) {
             final String seqName = entry.getKey();
-            Map<String, Double> samples = mSequenceSampleCoverages.get(seqName);
-            if (samples == null) {
-              samples = new HashMap<>();
-              mSequenceSampleCoverages.put(seqName, samples);
-            }
+            final Map<String, Double> samples = mSequenceSampleCoverages.computeIfAbsent(seqName, k -> new HashMap<>());
             samples.put(sampleName, currentCov);
           }
           currentSum += currentCov;
@@ -100,11 +96,7 @@ public class CalibratedPerSequenceExpectedCoverage {
             final double currentCov = (seqLength == 0) ? 0 : (double) map.get(seqName).getTotalLength() / seqLength;
             final String sampleName = e.getKey();
             Diagnostic.userLog("Average coverage across sequence " + seqName + " for sample " + sampleName + " is " + Utils.realFormat(currentCov, 2));
-            Map<String, Double> samples = mSequenceSampleCoverages.get(seqName);
-            if (samples == null) {
-              samples = new HashMap<>();
-              mSequenceSampleCoverages.put(seqName, samples);
-            }
+            final Map<String, Double> samples = mSequenceSampleCoverages.computeIfAbsent(seqName, k -> new HashMap<>());
             samples.put(sampleName, currentCov);
             currentSum += currentCov;
             if (currentCov > currentMax) {

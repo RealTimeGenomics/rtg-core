@@ -69,12 +69,12 @@ public class EditDistanceChainTest extends TestCase {
 //    System.err.println(stats);
     TestUtils.containsAll(stats,
         "EditDistanceChainTest statistics, readlen: 1000 maxScore: 50",
-        "ED#         Null#   MaxOk   MaxBad  TooLow  Correct TooHigh Total   AvUsecs".replaceAll("  *", "\t"),
-        /*NoIndel*/ " 41      0       0       0       0      0       41 ".replaceAll("  *", "\t"),
-        /*LowerB*/ " 41      0      0       0       0       0       41 ".replaceAll("  *", "\t"),
-        /*HopSte*/ " 41      0       0       0       0      0       41 ".replaceAll("  *", "\t"),
-        /*Seeded*/ " 0      0       0       0       41      0       41 ".replaceAll("  *", "\t"),
-        /*GotohE*/ " 0       0      0       0       41      0       41 ".replaceAll("  *", "\t")
+        "ED#         Null#   MaxOk   MaxBad  TooLow  Correct TooHigh Total   AvUsecs".replaceAll(" +", "\t"),
+        /*NoIndel*/ " 41      0       0       0       0      0       41 ".replaceAll(" +", "\t"),
+        /*LowerB*/ " 41      0      0       0       0       0       41 ".replaceAll(" +", "\t"),
+        /*HopSte*/ " 41      0       0       0       0      0       41 ".replaceAll(" +", "\t"),
+        /*Seeded*/ " 0      0       0       0       41      0       41 ".replaceAll(" +", "\t"),
+        /*GotohE*/ " 0       0      0       0       41      0       41 ".replaceAll(" +", "\t")
         );
   }
 }

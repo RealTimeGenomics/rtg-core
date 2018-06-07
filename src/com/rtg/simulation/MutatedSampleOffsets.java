@@ -132,12 +132,7 @@ public final class MutatedSampleOffsets {
   }
 
   private Pair<MutatedOffsets, MutatedOffsets> getOrCreateOffsetPair(String chromosomeName) {
-    Pair<MutatedOffsets, MutatedOffsets> ret = mOffsets.get(chromosomeName);
-    if (ret == null) {
-      ret = new Pair<>(new MutatedOffsets(), new MutatedOffsets());
-      mOffsets.put(chromosomeName, ret);
-    }
-    return ret;
+    return mOffsets.computeIfAbsent(chromosomeName, k -> new Pair<>(new MutatedOffsets(), new MutatedOffsets()));
   }
 
   /**

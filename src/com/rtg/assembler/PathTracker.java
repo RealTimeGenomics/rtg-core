@@ -52,12 +52,7 @@ public class PathTracker {
 
   void increment(List<Long> path) {
     final List<Long> normalized = normalize(path);
-    final Integer existing = mPathCounts.get(normalized);
-    if (existing == null) {
-      mPathCounts.put(normalized, 1);
-    } else {
-      mPathCounts.put(normalized, existing + 1);
-    }
+    mPathCounts.merge(normalized, 1, (a, b) -> a + b);
 
   }
 
