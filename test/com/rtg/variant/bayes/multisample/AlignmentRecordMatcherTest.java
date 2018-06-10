@@ -22,6 +22,7 @@ import com.rtg.variant.match.AlignmentMatch;
  */
 public class AlignmentRecordMatcherTest extends CigarSubsequenceTest {
 
+  @Override
   protected AlignmentMatch getAlignmentMatch(VariantAlignmentRecord rec, int start, int end, VariantParams params) {
     return new AlignmentRecordMatcher(rec).getMatch(null, start, end, params);
   }

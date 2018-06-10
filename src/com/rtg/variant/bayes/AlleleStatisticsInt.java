@@ -107,6 +107,7 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
    * @param index whose value to get.
    * @return the accumulated quality.
    */
+  @Override
   public double qa(final int index) {
     return mQualityProduct[index];
   }

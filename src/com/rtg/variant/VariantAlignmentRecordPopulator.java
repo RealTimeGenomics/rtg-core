@@ -29,8 +29,8 @@ import htsjdk.samtools.SAMRecord;
 public class VariantAlignmentRecordPopulator implements Populator<VariantAlignmentRecord> {
 
   private final HashMap<String, Integer> mGenomeToInteger;
-  private MachineErrorChooserInterface mChooser;
-  private int mMinBaseQuality;
+  private final MachineErrorChooserInterface mChooser;
+  private final int mMinBaseQuality;
   private final boolean mMaskHomopolymer;
   private long mMaskedRecords;
   private long mTotalRecords;

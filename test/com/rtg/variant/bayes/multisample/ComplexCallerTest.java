@@ -164,6 +164,7 @@ public class ComplexCallerTest extends TestCase {
     public void flush(int start, int end) {
       // do nothing
     }
+    @Override
     public int flushedTo() {
       return 0;
     }

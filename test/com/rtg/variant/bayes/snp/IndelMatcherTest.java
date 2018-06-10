@@ -25,7 +25,7 @@ public class IndelMatcherTest extends TestCase {
   public void test() {
     final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();
     final byte[] template = {1, 2, 3, 4, 0};
-    final IndelMatcher m = new IndelMatcher(new ReferenceBasedBuffer<>(1 - 0, IndelDetectorFactory.SINGLETON, template, 0));
+    final IndelMatcher m = new IndelMatcher(new ReferenceBasedBuffer<>(1, IndelDetectorFactory.SINGLETON, template, 0));
     assertNotNull(m);
     final double phred = 0.0001;
     m.match(0, new EvidenceIndel(phred, EvidenceIndel.INSERT, 0));
@@ -75,7 +75,7 @@ public class IndelMatcherTest extends TestCase {
   private Variant getVariant(int type) {
     final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();
     final byte[] template = {1, 2, 3, 4, 4, 0};
-    final IndelMatcher m = new IndelMatcher(new ReferenceBasedBuffer<>(1 - 0, IndelDetectorFactory.SINGLETON, template, 0));
+    final IndelMatcher m = new IndelMatcher(new ReferenceBasedBuffer<>(1, IndelDetectorFactory.SINGLETON, template, 0));
     assertNotNull(m);
     final double phred = 0.0001;
     m.match(0, null);

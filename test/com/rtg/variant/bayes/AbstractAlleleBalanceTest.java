@@ -70,7 +70,7 @@ public abstract class AbstractAlleleBalanceTest extends TestCase {
 
     private final int mCoverage;
     private final double mError;
-    private AlleleStatisticsInt mMockCounts;
+    private final AlleleStatisticsInt mMockCounts;
 
     /**
      * @param description about which statistics are being collected.

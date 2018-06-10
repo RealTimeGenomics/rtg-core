@@ -156,7 +156,7 @@ public final class TestSamOutput {
       rec.setProperPairFlag(false);
       final boolean first = r.nextBoolean();
       rec.setFirstOfPairFlag(first);
-      rec.setSecondOfPairFlag(first ^ true);
+      rec.setSecondOfPairFlag(!first);
       rec.setMateUnmappedFlag(false);
       rec.setInferredInsertSize(r.nextInt(2000));
       rec.setProperPairFlag(true);

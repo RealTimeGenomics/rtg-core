@@ -61,6 +61,7 @@ public class ChrStatsCliTest extends AbstractCliTest {
     }
   }
 
+  @Override
   public void testDescription() {
     assertEquals(ChrStatsCli.DESCRIPTION, getCli().description());
   }

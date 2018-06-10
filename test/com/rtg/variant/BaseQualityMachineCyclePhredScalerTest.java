@@ -126,7 +126,6 @@ public class BaseQualityMachineCyclePhredScalerTest extends TestCase {
           assertEquals(String.format("readPos:%d, claimed quality: %d", j, i), i, bqps.getScaledPhred((byte) i, j, Arm.LEFT));
         }
       }
-      ;
     }
   }
 
