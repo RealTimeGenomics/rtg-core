@@ -44,10 +44,7 @@ public enum CovariateEnum {
    * @return covariates
    */
   public static Covariate[] getCovariates(List<CovariateEnum> vals, final SAMFileHeader header) {
-    final TreeSet<CovariateEnum> s = new TreeSet<>();
-    for (final CovariateEnum e : vals) {
-      s.add(e);
-    }
+    final TreeSet<CovariateEnum> s = new TreeSet<>(vals);
     final Covariate[] cs = new Covariate[s.size()];
     int i = 0;
     for (final CovariateEnum type : s) {

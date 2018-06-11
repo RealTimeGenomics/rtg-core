@@ -35,15 +35,12 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
 
   @Override
   protected AbstractFamilyPosterior getFamilyPosterior(List<ModelInterface<?>> models, Family family) {
-      final GenomePriorParams priors = mPriors;
-      final List<ModelInterface<?>> list = new ArrayList<>();
-      for (final ModelInterface<?> m : models) {
-        list.add(m);
-      }
-      for (ModelInterface<?> model : models) {
-        model.freeze();
-      }
-      return new FastFamilyPosterior(family, priors, list, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, null, mHypotheses));
+    final GenomePriorParams priors = mPriors;
+    final List<ModelInterface<?>> list = new ArrayList<>(models);
+    for (ModelInterface<?> model : models) {
+      model.freeze();
+    }
+    return new FastFamilyPosterior(family, priors, list, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, null, mHypotheses));
   }
 
   @Override
