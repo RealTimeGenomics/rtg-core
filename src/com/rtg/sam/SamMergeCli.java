@@ -94,6 +94,7 @@ public class SamMergeCli extends AbstractCli {
     SamFilterOptions.registerInvertCriteriaFlag(mFlags);
     SamFilterOptions.registerSubsampleFlags(mFlags);
     SamFilterOptions.registerMaskFlags(mFlags);
+    SamFilterOptions.registerMinReadLength(mFlags);
     SamFilterOptions.registerMinMapQFlag(mFlags);
     SamFilterOptions.registerMaxHitsFlag(mFlags, 'c');
     SamFilterOptions.registerMaxASMatedFlag(mFlags, 'm');
