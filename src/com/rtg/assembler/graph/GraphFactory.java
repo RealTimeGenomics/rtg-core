@@ -24,22 +24,12 @@ public interface GraphFactory {
   /**
    * Factory that uses the default graph implementation.
    */
-  GraphFactory DEFAULT = new GraphFactory() {
-    @Override
-    public MutableGraph makeGraph(int contigOverlap, Map<String, String> contigAttributes, Map<String, String> pathAttributes) {
-      return new GraphImplementation(contigOverlap, contigAttributes, pathAttributes);
-    }
-  };
+  GraphFactory DEFAULT = GraphImplementation::new;
 
   /**
    * Factory that constructs a graph with efficient support for the <code>kMerFreq</code> attribute
    */
-  GraphFactory KMER = new GraphFactory() {
-    @Override
-    public MutableGraph makeGraph(int contigOverlap, Map<String, String> contigAttributes, Map<String, String> pathAttributes) {
-      return new GraphKmerAttribute(contigOverlap, contigAttributes, pathAttributes);
-    }
-  };
+  GraphFactory KMER = GraphKmerAttribute::new;
 
   /**
    * Construct a new MutableGraph given the contig and path attributes.
