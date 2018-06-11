@@ -18,6 +18,7 @@ import com.rtg.reader.Arm;
 import com.rtg.util.License;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
+import com.rtg.util.diagnostic.Diagnostic;
 
 
 /**
@@ -74,8 +75,15 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   void appendValue(StringBuilder sb, MapStatisticsField key, String msg, int formatLength) {
+    appendValue(sb, key, msg, formatLength, false);
+  }
+
+  void appendValue(StringBuilder sb, MapStatisticsField key, String msg, int formatLength, boolean skipIfZero) {
     final long leftValue = value(key, Arm.LEFT);
     final long rightValue = value(key, Arm.RIGHT);
+    if (skipIfZero && leftValue == 0 && rightValue == 0) {
+      return;
+    }
     final long bothValue = totalValue(key);
     final double percent = totalValueAsPercent(key);
 
@@ -111,15 +119,14 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
 
   @Override
   protected String getStatistics() {
-    return getStatistics(false);
+    return getStatistics(true);
   }
 
   protected String getStatistics(boolean includeDevLog) {
-    final long total = totalValue(MapStatisticsField.TOTAL_READS);
-    final int formatLength = Math.max(MAX_HEADER_LENGTH, String.format("%d", total).length());
-    final StringBuilder sb = new StringBuilder();
-    //adding extra newLine in case Progress is on
-    sb.append(StringUtils.LS);
+    final long totalReads = totalValue(MapStatisticsField.TOTAL_READS);
+    final int formatLength = Math.max(MAX_HEADER_LENGTH, String.format("%d", totalReads).length());
+    final StringBuilder sb = new StringBuilder(StringUtils.LS); //adding extra newLine in case Progress is on
+    final StringBuilder devsb = new StringBuilder(StringUtils.LS);
 
     // header
     appendHeader(sb, formatLength);
@@ -142,31 +149,26 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
     appendValue(sb, MapStatisticsField.UNMAPPED_UNMATED_TOO_MANY, "unmapped with no matings and too many good hits (XC = E)", formatLength);
     appendValue(sb, MapStatisticsField.UNMAPPED_NO_HITS, "unmapped with no hits (XC = A)", formatLength);
 
-    if (includeDevLog && License.isDeveloper()) {
-      final long countLeftMissing = value(MapStatisticsField.MISSING, Arm.LEFT);
-      final long countRightMissing = value(MapStatisticsField.MISSING, Arm.RIGHT);
-      if (countLeftMissing != 0 || countRightMissing != 0) {
-        appendValue(sb, MapStatisticsField.MISSING, "arms missing", formatLength);
-      }
-    }
     // always print total
     appendValue(sb, MapStatisticsField.TOTAL_READS, "total", formatLength);
 
-    if (includeDevLog && License.isDeveloper()) {
-      final long totalReads = totalValue(MapStatisticsField.TOTAL_READS);
+    if (License.isDeveloper()) {
+      appendValue(sb, MapStatisticsField.MISSING, "arms missing", formatLength, true);
+      appendValue(devsb, MapStatisticsField.IGNORED, "arms ignored", formatLength, true);
+
       final long matedReads = totalValue(MapStatisticsField.MATED_AMBIG_READS)
       + value(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT);
       final long mappedReads = totalReads - mBothUnmapped;
       final long unmatedReads = mappedReads - matedReads;
       final int formatLength2 = String.format("%d", totalReads).length();
+      devsb.append(READ_HEADER).append(StringUtils.LS);
+      appendValue(devsb, totalReads, totalReads, "total reads", formatLength2);
+      appendValue(devsb, matedReads, totalReads, "mated reads", formatLength2);
+      appendValue(devsb, unmatedReads, totalReads, "unmated reads", formatLength2);
+      appendValue(devsb, mappedReads, totalReads, "mapped reads", formatLength2);
+      appendValue(devsb, mBothUnmapped, totalReads, "unmapped reads", formatLength2);
 
-      sb.append(StringUtils.LS);
-      sb.append(READ_HEADER).append(StringUtils.LS);
-      appendValue(sb, totalReads, totalReads, "total reads", formatLength2);
-      appendValue(sb, matedReads, totalReads, "mated reads", formatLength2);
-      appendValue(sb, unmatedReads, totalReads, "unmated reads", formatLength2);
-      appendValue(sb, mappedReads, totalReads, "mapped reads", formatLength2);
-      appendValue(sb, mBothUnmapped, totalReads, "unmapped reads", formatLength2);
+      Diagnostic.developerLog(devsb.toString());
     }
     return sb.toString();
   }

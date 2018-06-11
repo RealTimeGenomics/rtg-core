@@ -12,6 +12,8 @@
 package com.rtg.ngs;
 
 import static com.rtg.index.hash.ngs.ReadDecoder.PAIRED_END;
+import static com.rtg.ngs.ReadStatusTracker.SHORT_FIRST;
+import static com.rtg.ngs.ReadStatusTracker.SHORT_SECOND;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +39,7 @@ import com.rtg.ngs.tempstage.AbstractTempFileWriter;
 import com.rtg.ngs.tempstage.PairedTempFileWriterImpl;
 import com.rtg.ngs.tempstage.SingleEndTempFileWriter;
 import com.rtg.reader.NamesInterface;
+import com.rtg.reader.SequencesReader;
 import com.rtg.sam.SamFilterParams;
 import com.rtg.sam.SamMerger;
 import com.rtg.sam.SamUtils;
@@ -83,6 +86,9 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     mReportMerger = new MapReportData.Merger();
     mParams = param;
     mUnmappedTracker = new ReadStatusTrackerSync(sequences, stats);
+    if (param.outputParams().ignoreShort()) {
+      setShortReadFlags(mUnmappedTracker, param, paired);
+    }
     if (paired && outputUnmated) {
       mAugmenterMerger = mParams.outputParams().svprep() ? new UnmatedAugmenter.Merger() : null;
       mStatsMerger = mParams.outputParams().svprep() ? new ReadGroupStatsCalculator.Merger() : null;
@@ -92,6 +98,40 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     }
     mPaired = paired;
     mRegions = new ArrayList<>();
+  }
+
+  // Record which reads are shorter than the indexable length - these may be ignored from statistics and output
+  private static void setShortReadFlags(ReadStatusTracker tracker, NgsParams param, boolean paired) throws IOException {
+    final int threshold = minReadLength(param.maskParams());
+    Diagnostic.developerLog("Flagging all reads shorter than " + threshold);
+    int l = 0;
+    int r = 0;
+    final SequencesReader r1 = param.buildFirstParams().reader();
+    final int len1 = (int) r1.numberSequences();
+    for (int i = 0; i < len1; i++) {
+      if (r1.length(i) < threshold) {
+        tracker.addStatus(i, SHORT_FIRST);
+        l++;
+      }
+    }
+    if (paired) {
+      final SequencesReader r2 = param.buildSecondParams().reader();
+      final int len2 = (int) r2.numberSequences();
+      for (int i = 0; i < len2; i++) {
+        if (r2.length(i) < threshold) {
+          tracker.addStatus(i, SHORT_SECOND);
+          r++;
+        }
+      }
+    }
+    Diagnostic.developerLog("Flagged all reads shorter than " + threshold + "nt. " + l + " left, " + r + " right");
+  }
+  private static int minReadLength(NgsMaskParams mp) {
+    try {
+      return mp.getWordSize();
+    } catch (UnsupportedOperationException e) {
+      return 1; // For any unknown word size options, only ignore zero length reads
+    }
   }
 
   protected abstract FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, NamesInterface templateNames, File outFile) throws IOException;
@@ -233,9 +273,12 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
   }
 
   private void writeUnmappedRecord(UnmappedSamRecordFactory unmappedSamRecordFactory, RecordToWriter rtw, int read, boolean first, boolean mateUnmapped) {
-    final SAMRecord rec = unmappedSamRecordFactory.unmappedResult(read, first, mUnmappedTracker.getXCAttribute(read, first), mateUnmapped);
-    final UnmappedSamAlignmentWriter unmappedSamAlignmentWriter = rtw.getWriter(rec);
-    unmappedSamAlignmentWriter.unmappedRecord(rec);
+    final boolean ignore = mParams.outputParams().ignoreShort() && mUnmappedTracker.getStatus(read, first ? SHORT_FIRST : SHORT_SECOND);
+    if (!ignore) {
+      final SAMRecord rec = unmappedSamRecordFactory.unmappedResult(read, first, mUnmappedTracker.getXCAttribute(read, first), mateUnmapped);
+      final UnmappedSamAlignmentWriter unmappedSamAlignmentWriter = rtw.getWriter(rec);
+      unmappedSamAlignmentWriter.unmappedRecord(rec);
+    }
   }
 
   private interface RecordToWriter {

@@ -124,6 +124,7 @@ public class MapCli extends ParamsCli<NgsParams>  {
     .filterParams(filterParams)
     .outputUnmated(!flags.isSet(MapFlags.NO_UNMATED))
     .outputUnmapped(!flags.isSet(MapFlags.NO_UNMAPPED))
+    .ignoreShort(flags.isSet(MapFlags.NO_SHORT))
     .tabular(false)
     .bam(!flags.isSet(MapFlags.SAM_FLAG))
     .unify(!flags.isSet(MapFlags.DONT_UNIFY_FLAG))
@@ -199,6 +200,7 @@ public class MapCli extends ParamsCli<NgsParams>  {
     flags.registerOptional(MapFlags.OUTPUT_UNFILTERED, "output all alignments meeting thresholds instead of applying mating and N limits").setCategory(CommonFlagCategories.REPORTING);
 
     //x flags
+    flags.registerOptional(MapFlags.NO_SHORT, "do not count or output reads shorter than the word size").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(MapFlags.X_LONG_READ, "use the non-default version for long read").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(MapFlags.MASK_FLAG, String.class, CommonFlags.STRING, "mask class name").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MapFlags.COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", Boolean.TRUE).setCategory(CommonFlagCategories.UTILITY);

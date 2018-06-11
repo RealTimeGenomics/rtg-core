@@ -12,30 +12,19 @@
 package com.rtg.ngs;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
+import com.rtg.AbstractTest;
 import com.rtg.reader.Arm;
 import com.rtg.util.TestUtils;
-import com.rtg.util.diagnostic.Diagnostic;
-
-import junit.framework.TestCase;
 
 /**
  */
-public class PairedEndMapStatisticsTest extends TestCase {
+public class PairedEndMapStatisticsTest extends AbstractTest {
 
   public void testPrintStatistics() throws Exception {
     final PairedEndMapStatistics testStats = new PairedEndMapStatistics(true, null);
-    final ByteArrayOutputStream log = new ByteArrayOutputStream();
-    final PrintStream ps = new PrintStream(log);
-    Diagnostic.setLogStream(ps);
-    try {
-      testStats.printStatistics(null);
-    } finally {
-      //closes log
-      Diagnostic.setLogStream();
-    }
-    assertEquals("", log.toString());
+    testStats.printStatistics(null);
+
     testStats.set(MapStatisticsField.TOTAL_READS, Arm.LEFT, 1000L);
     testStats.set(MapStatisticsField.TOTAL_READS, Arm.RIGHT, 234L);
     testStats.set(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.RIGHT, 567L);

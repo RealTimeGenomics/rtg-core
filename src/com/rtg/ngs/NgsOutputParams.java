@@ -114,6 +114,9 @@ public class NgsOutputParams extends IntegralAbstract {
 
   private final ReferenceRegions mCalibrateRegions;
 
+  private final boolean mIgnoreShort;
+
+
   /**
    * @param builder the builder object.
    */
@@ -128,6 +131,7 @@ public class NgsOutputParams extends IntegralAbstract {
     mSam = builder.mSam;
     mSdf = builder.mSdf;
     mUnify = builder.mUnify;
+    mIgnoreShort = builder.mIgnoreShort;
     mKeepIntermediate = builder.mKeepIntermediate;
     mMergeMatchResults = builder.mMergeMatchResults;
     mMergeAlignmentResults = builder.mMergeAlignmentResults;
@@ -399,6 +403,14 @@ public class NgsOutputParams extends IntegralAbstract {
    */
   public boolean unify() {
     return mUnify;
+  }
+
+  /**
+   * @return whether sequences that are shorter than the word size (i.e. un-indexable or zero length)
+   * should be ignored from output and statistics
+   */
+  public boolean ignoreShort() {
+    return mIgnoreShort;
   }
 
   /**

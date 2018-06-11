@@ -62,6 +62,8 @@ public class NgsOutputParamsBuilder {
     .errorLimit(MapFlags.MAX_SCORE)
     .create();
 
+  protected boolean mIgnoreShort = false;
+
   //this is to set if we dont want to delete intermediate files
   protected boolean mKeepIntermediate = false;
 
@@ -176,6 +178,16 @@ public class NgsOutputParamsBuilder {
    */
   public NgsOutputParamsBuilder unify(final boolean val) {
     mUnify = val;
+    return this;
+  }
+
+  /**
+   * Ignore reads shorter than index word size from output and statistics
+   * @param val the value
+   * @return this builder, so calls can be chained.
+   */
+  public NgsOutputParamsBuilder ignoreShort(final boolean val) {
+    mIgnoreShort = val;
     return this;
   }
 

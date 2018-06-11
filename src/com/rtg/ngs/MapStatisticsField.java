@@ -14,6 +14,7 @@ package com.rtg.ngs;
 /**
 */
 public enum MapStatisticsField {
+
   /** Key for statistic total number of reads, expected value in form {@link Long} */
   TOTAL_READS,
   /** Key for statistic total number of unique mated reads, expected value in form {@link Long} */
@@ -43,5 +44,9 @@ public enum MapStatisticsField {
 
   //Bad stats
   /** Key for statistic total number of missing reads from first in pair, expected value in form {@link Long} */
-  MISSING
+  MISSING,
+
+  /** Key for statistic total number of ignored(short) reads, expected value in form {@link Long} */
+  IGNORED,
+
 }

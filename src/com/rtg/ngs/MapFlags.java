@@ -42,6 +42,8 @@ public final class MapFlags {
   public static final String COMPRESS_HASHES_FLAG = "Xcompress-hashes";
   /** Max top results flag. */
   public static final String MAX_TOP_RESULTS_FLAG = "max-top-results";
+  /** don't report short (un-indexable) reads */
+  public static final String NO_SHORT = "Xdiscard-short-reads";
   /** don't report unmapped */
   public static final String NO_UNMAPPED = "no-unmapped";
   /** don't report unmated */

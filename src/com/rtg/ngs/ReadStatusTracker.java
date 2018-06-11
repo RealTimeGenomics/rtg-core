@@ -60,6 +60,10 @@ public class ReadStatusTracker implements ReadStatusListener {
   public static final int UNIQUELY_MAPPED_FIRST = 0x10000;
   /** Uniquely mapped second arm */
   public static final int UNIQUELY_MAPPED_SECOND = 0x20000;
+  /** Zero-length (or shorter than threshold) first arm */
+  public static final int SHORT_FIRST = 0x40000;
+  /** Zero-length (or shorter than threshold) second arm */
+  public static final int SHORT_SECOND = 0x80000;
 
 
   static final int MAPPING_STATUS_MASK = UNMATED_FIRST | UNMATED_SECOND | MATED_FIRST | MATED_SECOND | UNMAPPED_FIRST | UNMAPPED_SECOND;
@@ -158,6 +162,12 @@ public class ReadStatusTracker implements ReadStatusListener {
     if ((st & UNMATED_COMPUTE_ALIGNMENT_SECOND) != 0) {
       str.append("UNMATED_COMPUTE_ALIGNMENT_SECOND ");
     }
+    if ((st & SHORT_FIRST) != 0) {
+      str.append("SHORT_FIRST ");
+    }
+    if ((st & SHORT_SECOND) != 0) {
+      str.append("SHORT_SECOND ");
+    }
     return str.toString();
   }
 
@@ -167,93 +177,100 @@ public class ReadStatusTracker implements ReadStatusListener {
         final int mappingStatus = mReadIdStatus[r] & MAPPING_STATUS_MASK;
         final int status = mReadIdStatus[r];
         boolean leftNoHit = false;
-
-        mStatistics.increment(MapStatisticsField.TOTAL_READS, Arm.LEFT);
-        if (isSet(status, MATED_FIRST)) {
-          if (isSet(status, UNIQUELY_MAPPED_FIRST)) {
-            mStatistics.increment(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT);
-          } else {
-            mStatistics.increment(MapStatisticsField.MATED_AMBIG_READS, Arm.LEFT);
-          }
-        } else if (isSet(status, UNMATED_FIRST)) {
-          if (isSet(status, UNIQUELY_MAPPED_FIRST)) {
-            mStatistics.increment(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT);
-          } else {
-            mStatistics.increment(MapStatisticsField.UNMATED_AMBIG_READS, Arm.LEFT);
-          }
+        if (isSet(status, SHORT_FIRST)) {
+          mStatistics.increment(MapStatisticsField.IGNORED, Arm.LEFT);
         } else {
-          leftNoHit = true;
-          if (isSet(status, BLOCKED_FIRST)) {
-            mStatistics.increment(MapStatisticsField.UNMAPPED_BLOCKED, Arm.LEFT);
-          } else if (isSet(status, MATED) && !(isSet(status, BLOCKED_FIRST) || isSet(status, BLOCKED_SECOND))) {
-            if (!isSet(status, MATED_ALIGN_SCORE)) {
-              mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_POOR, Arm.LEFT);
+          mStatistics.increment(MapStatisticsField.TOTAL_READS, Arm.LEFT);
+          if (isSet(status, MATED_FIRST)) {
+            if (isSet(status, UNIQUELY_MAPPED_FIRST)) {
+              mStatistics.increment(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT);
             } else {
-              mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_TOO_MANY, Arm.LEFT);
+              mStatistics.increment(MapStatisticsField.MATED_AMBIG_READS, Arm.LEFT);
+            }
+          } else if (isSet(status, UNMATED_FIRST)) {
+            if (isSet(status, UNIQUELY_MAPPED_FIRST)) {
+              mStatistics.increment(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT);
+            } else {
+              mStatistics.increment(MapStatisticsField.UNMATED_AMBIG_READS, Arm.LEFT);
             }
           } else {
-            if (allhits) {
-              if (isSet(status, MATCHED_FIRST) && isSet(status, UNMATED_COMPUTE_ALIGNMENT_FIRST)) {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.LEFT);
+            leftNoHit = true;
+            if (isSet(status, BLOCKED_FIRST)) {
+              mStatistics.increment(MapStatisticsField.UNMAPPED_BLOCKED, Arm.LEFT);
+            } else if (isSet(status, MATED) && !(isSet(status, BLOCKED_FIRST) || isSet(status, BLOCKED_SECOND))) {
+              if (!isSet(status, MATED_ALIGN_SCORE)) {
+                mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_POOR, Arm.LEFT);
+              } else {
+                mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_TOO_MANY, Arm.LEFT);
+              }
+            } else {
+              if (allhits) {
+                if (isSet(status, MATCHED_FIRST) && isSet(status, UNMATED_COMPUTE_ALIGNMENT_FIRST)) {
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.LEFT);
+                } else {
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT);
+                }
+              } else if (isSet(status, MATCHED_FIRST)) {
+                if (!isSet(status, UNMATED_COMPUTE_ALIGNMENT_FIRST)) {
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_TOPN, Arm.LEFT);
+                } else if (!isSet(status, UNMATED_ALIGN_SCORE_FIRST)) {
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.LEFT);
+                } else {
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_TOO_MANY, Arm.LEFT);
+                }
               } else {
                 mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT);
               }
-            } else if (isSet(status, MATCHED_FIRST)) {
-              if (!isSet(status, UNMATED_COMPUTE_ALIGNMENT_FIRST)) {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_TOPN, Arm.LEFT);
-              } else if (!isSet(status, UNMATED_ALIGN_SCORE_FIRST)) {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.LEFT);
-              } else {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_TOO_MANY, Arm.LEFT);
-              }
-            } else {
-              mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT);
             }
           }
         }
         if (pairedEnd) {
-          mStatistics.increment(MapStatisticsField.TOTAL_READS, Arm.RIGHT);
-          if (isSet(status, MATED_SECOND)) {
-            if (isSet(status, UNIQUELY_MAPPED_SECOND)) {
-              mStatistics.increment(MapStatisticsField.MATED_UNIQUE_READS, Arm.RIGHT);
-            } else {
-              mStatistics.increment(MapStatisticsField.MATED_AMBIG_READS, Arm.RIGHT);
-            }
-          } else if (isSet(status, UNMATED_SECOND)) {
-            if (isSet(status, UNIQUELY_MAPPED_SECOND)) {
-              mStatistics.increment(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.RIGHT);
-            } else {
-              mStatistics.increment(MapStatisticsField.UNMATED_AMBIG_READS, Arm.RIGHT);
-            }
+          if (isSet(status, SHORT_SECOND)) {
+            mStatistics.increment(MapStatisticsField.IGNORED, Arm.RIGHT);
           } else {
-            if (leftNoHit) {
-              ((PairedEndMapStatistics) mStatistics).incrementBothUnmapped();
-            }
-            if (isSet(status, BLOCKED_SECOND)) {
-              mStatistics.increment(MapStatisticsField.UNMAPPED_BLOCKED, Arm.RIGHT);
-            } else if (isSet(status, MATED) && !(isSet(status, BLOCKED_FIRST) || isSet(status, BLOCKED_SECOND))) {
-              if (!isSet(status, MATED_ALIGN_SCORE)) {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_POOR, Arm.RIGHT);
+            mStatistics.increment(MapStatisticsField.TOTAL_READS, Arm.RIGHT);
+            if (isSet(status, MATED_SECOND)) {
+              if (isSet(status, UNIQUELY_MAPPED_SECOND)) {
+                mStatistics.increment(MapStatisticsField.MATED_UNIQUE_READS, Arm.RIGHT);
               } else {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_TOO_MANY, Arm.RIGHT);
+                mStatistics.increment(MapStatisticsField.MATED_AMBIG_READS, Arm.RIGHT);
+              }
+            } else if (isSet(status, UNMATED_SECOND)) {
+              if (isSet(status, UNIQUELY_MAPPED_SECOND)) {
+                mStatistics.increment(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.RIGHT);
+              } else {
+                mStatistics.increment(MapStatisticsField.UNMATED_AMBIG_READS, Arm.RIGHT);
               }
             } else {
-              if (allhits) {
-                if (isSet(status, MATCHED_SECOND) && isSet(status, UNMATED_COMPUTE_ALIGNMENT_SECOND)) {
-                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.RIGHT);
+              if (leftNoHit) {
+                ((PairedEndMapStatistics) mStatistics).incrementBothUnmapped();
+              }
+              if (isSet(status, BLOCKED_SECOND)) {
+                mStatistics.increment(MapStatisticsField.UNMAPPED_BLOCKED, Arm.RIGHT);
+              } else if (isSet(status, MATED) && !(isSet(status, BLOCKED_FIRST) || isSet(status, BLOCKED_SECOND))) {
+                if (!isSet(status, MATED_ALIGN_SCORE)) {
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_POOR, Arm.RIGHT);
+                } else {
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_TOO_MANY, Arm.RIGHT);
+                }
+              } else {
+                if (allhits) {
+                  if (isSet(status, MATCHED_SECOND) && isSet(status, UNMATED_COMPUTE_ALIGNMENT_SECOND)) {
+                    mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.RIGHT);
+                  } else {
+                    mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.RIGHT);
+                  }
+                } else if (isSet(status, MATCHED_SECOND)) {
+                  if (!isSet(status, UNMATED_COMPUTE_ALIGNMENT_SECOND)) {
+                    mStatistics.increment(MapStatisticsField.UNMAPPED_TOPN, Arm.RIGHT);
+                  } else if (!isSet(status, UNMATED_ALIGN_SCORE_SECOND)) {
+                    mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.RIGHT);
+                  } else {
+                    mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_TOO_MANY, Arm.RIGHT);
+                  }
                 } else {
                   mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.RIGHT);
                 }
-              } else if (isSet(status, MATCHED_SECOND)) {
-                if (!isSet(status, UNMATED_COMPUTE_ALIGNMENT_SECOND)) {
-                  mStatistics.increment(MapStatisticsField.UNMAPPED_TOPN, Arm.RIGHT);
-                } else if (!isSet(status, UNMATED_ALIGN_SCORE_SECOND)) {
-                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.RIGHT);
-                } else {
-                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_TOO_MANY, Arm.RIGHT);
-                }
-              } else {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.RIGHT);
               }
             }
           }

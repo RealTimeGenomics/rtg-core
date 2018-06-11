@@ -24,6 +24,7 @@ public class SingleEndMapStatistics extends AbstractStatistics implements MapSta
   protected static final String HEADER = "READ MAPPINGS";
 
   private long mMissing = 0;
+  private long mIgnored = 0;
   private long mMatedUnique = 0;
   private long mMatedAmbig = 0;
   private long mUnmatedUnique = 0;
@@ -59,6 +60,7 @@ public class SingleEndMapStatistics extends AbstractStatistics implements MapSta
     case UNMAPPED_UNMATED_POOR: mUnmappedUnmatedPoor++; break;
     case UNMAPPED_UNMATED_TOO_MANY: mUnmappedUnmatedTooMany++; break;
     case MISSING: mMissing++ ; break;
+    case IGNORED: mIgnored++; break;
     case TOTAL_READS: mTotal++; break;
     default:
       throw new RuntimeException();
@@ -110,6 +112,7 @@ public class SingleEndMapStatistics extends AbstractStatistics implements MapSta
   public void reset() {
     mUnmappedNoHits = 0;
     mMissing = 0;
+    mIgnored = 0;
     mMatedUnique = 0;
     mMatedAmbig = 0;
     mUnmatedUnique = 0;
@@ -144,6 +147,7 @@ public class SingleEndMapStatistics extends AbstractStatistics implements MapSta
     case UNMAPPED_UNMATED_POOR: res = mUnmappedUnmatedPoor; break;
     case UNMAPPED_UNMATED_TOO_MANY: res = mUnmappedUnmatedTooMany; break;
     case MISSING: res = mMissing; break;
+    case IGNORED: res = mIgnored; break;
     case TOTAL_READS: res = mTotal; break;
     default:
       res = -1;
