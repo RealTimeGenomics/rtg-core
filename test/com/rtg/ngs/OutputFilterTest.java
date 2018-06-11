@@ -126,31 +126,22 @@ public class OutputFilterTest extends TestCase {
       final NgsOutputParams ngsop = NgsOutputParams.builder().progress(false).outputDir(out).filterParams(filterParams).create();
       final SequenceParams param = SequenceParams.builder().directory(seq).useMemReader(true).loadNames(true).create();
       try (NgsParams ngsp = NgsParams.builder().numberThreads(1).buildFirstParams(param).searchParams(param).buildSecondParams(param).outputParams(ngsop).maskParams("amask").maxFragmentLength(1000).minFragmentLength(10).create()) {
-        final TopNPairedEndOutputProcessorSync topeq = (TopNPairedEndOutputProcessorSync) ngsop.outFilter().makeProcessor(ngsp, null);
-        try {
+        try (TopNPairedEndOutputProcessorSync topeq = (TopNPairedEndOutputProcessorSync) ngsop.outFilter().makeProcessor(ngsp, null)) {
           topeq.threadClone(HashingRegion.NONE).threadFinish();
           assertNotNull(topeq);
           topeq.finish();
-        } finally {
-          topeq.close();
         }
         assertFalse(new File(out, "unmated.sam").exists());
         assertFalse(new File(out, "unmapped.sam").exists());
 
-        final NgsParams ngsp2 = NgsParams.builder().numberThreads(2).buildFirstParams(param).searchParams(param).buildSecondParams(param).outputParams(ngsop).maxFragmentLength(1000).minFragmentLength(10).create();
-        try {
-          final OutputProcessor op = ngsop.outFilter().makeProcessor(ngsp2, null);
-          try {
+        try (NgsParams ngsp2 = NgsParams.builder().numberThreads(2).buildFirstParams(param).searchParams(param).buildSecondParams(param).outputParams(ngsop).maxFragmentLength(1000).minFragmentLength(10).create()) {
+          try (OutputProcessor op = ngsop.outFilter().makeProcessor(ngsp2, null)) {
             op.threadClone(HashingRegion.NONE).threadFinish();
             assertTrue(op instanceof TopNPairedEndOutputProcessorSync);
             op.finish();
-          } finally {
-            op.close();
           }
           assertFalse(new File(out, "unmated.sam").exists());
           assertFalse(new File(out, "unmapped.sam").exists());
-        } finally {
-          ngsp2.close();
         }
       } catch (final RuntimeException e) {
         fail(e.getMessage());
@@ -180,15 +171,12 @@ public class OutputFilterTest extends TestCase {
         topnPE.close();
       }
 
-      final NgsParams ngsp2 = NgsParams.builder().numberThreads(2).buildFirstParams(param).searchParams(param).buildSecondParams(param).outputParams(ngsop).maxFragmentLength(1000).minFragmentLength(10).create();
-      try {
+      try (NgsParams ngsp2 = NgsParams.builder().numberThreads(2).buildFirstParams(param).searchParams(param).buildSecondParams(param).outputParams(ngsop).maxFragmentLength(1000).minFragmentLength(10).create()) {
         final OutputProcessor op = ngsop.outFilter().makeProcessor(ngsp2, null);
         op.threadClone(HashingRegion.NONE).threadFinish();
         assertTrue(op instanceof TopNPairedEndOutputProcessorSync);
         op.finish();
         op.close();
-      } finally {
-        ngsp2.close();
       }
     } finally {
       assertTrue(FileHelper.deleteAll(seq));
@@ -354,13 +342,10 @@ public class OutputFilterTest extends TestCase {
         .searchParams(SequenceParams.builder().loadNames(true).directory(input2).useMemReader(true).create())
         .proteinScoringMatrix(new ProteinScoringMatrix())
         .create()) {
-        final OutputProcessor p = OutputFilter.SAM_UNFILTERED.makeProcessor(params, null);
-        try {
+        try (OutputProcessor p = OutputFilter.SAM_UNFILTERED.makeProcessor(params, null)) {
           p.threadClone(HashingRegion.NONE).threadFinish();
           assertTrue(p instanceof UnfilteredPairedEndOutputProcessor);
           p.finish();
-        } finally {
-          p.close();
         }
       }
       assertTrue(new File(tmp, "alignments.sam").exists());

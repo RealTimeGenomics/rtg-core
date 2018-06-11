@@ -106,12 +106,10 @@ public class CnvRegionTest extends TestCase {
         final File outputDirectory = new File(mDir, "out");
         final File twinDirectory = new File(mDir, "twin");
 
-        final SdfWriter output = new SdfWriter(outputDirectory, Constants.MAX_FILE_SIZE,
-          PrereadType.UNKNOWN, false, true, false, dsr.type());
-        try {
-          final SdfWriter twin = new SdfWriter(twinDirectory, Constants.MAX_FILE_SIZE,
-            PrereadType.UNKNOWN, false, true, false, dsr.type());
-          try {
+        try (SdfWriter output = new SdfWriter(outputDirectory, Constants.MAX_FILE_SIZE,
+          PrereadType.UNKNOWN, false, true, false, dsr.type())) {
+          try (SdfWriter twin = new SdfWriter(twinDirectory, Constants.MAX_FILE_SIZE,
+            PrereadType.UNKNOWN, false, true, false, dsr.type())) {
             final CnvSimulator cs = new CnvSimulator(dsr, output, twin, new FileOutputStream(cnvs), new NotRandomRandom(), mPriors, 10, Integer.MAX_VALUE);
             cs.generate();
             final String csstr = cs.toString();
@@ -125,12 +123,7 @@ public class CnvRegionTest extends TestCase {
               ps.flush();
               ps.close();
             }
-          } finally {
-            twin.close();
           }
-        } finally {
-
-          output.close();
         }
         final String cnvfilestr = FileUtils.fileToString(cnvs);
         //System.err.println(cnvfilestr);
@@ -146,16 +139,10 @@ public class CnvRegionTest extends TestCase {
         assertEquals("", bos.toString());
 
         final int totalLength = CnvSimulatorTest.calculateTotalLength(cnvfilestr);
-        final SequencesReader outputReader = SequencesReaderFactory.createDefaultSequencesReader(outputDirectory);
-        try {
-          final SequencesReader twinReader = SequencesReaderFactory.createDefaultSequencesReader(twinDirectory);
-          try {
+        try (SequencesReader outputReader = SequencesReaderFactory.createDefaultSequencesReader(outputDirectory)) {
+          try (SequencesReader twinReader = SequencesReaderFactory.createDefaultSequencesReader(twinDirectory)) {
             assertEquals(totalLength, outputReader.totalLength() + twinReader.totalLength());
-          } finally {
-            twinReader.close();
           }
-        } finally {
-          outputReader.close();
         }
       }
     } finally {

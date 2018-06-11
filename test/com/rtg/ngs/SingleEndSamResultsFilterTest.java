@@ -69,8 +69,7 @@ public class SingleEndSamResultsFilterTest extends TestCase {
   }
 
   public void writeTempFile(File out) throws IOException {
-    final TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true));
-    try {
+    try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true))) {
       final BinaryTempFileRecord bar = new BinaryTempFileRecord(false, false, false, false);
 
 //      + "3\t16\t0\t28734\t30\t35M\t=\t0\t0\tACCT\t<<<<\tAS:i:0\tNM:i:1\n"
@@ -115,8 +114,6 @@ public class SingleEndSamResultsFilterTest extends TestCase {
 
       bar.setSentinelRecord();
       trw.writeRecord(bar);
-    } finally {
-      trw.close();
     }
   }
 

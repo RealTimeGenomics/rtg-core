@@ -40,23 +40,17 @@ public class BinaryTempFileRecordTest extends TestCase {
     final BinaryTempFileRecord bar = record();
     check(bar);
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    final TempRecordWriterNio writer = new TempRecordWriterNio(baos);
-    try {
+    try (TempRecordWriterNio writer = new TempRecordWriterNio(baos)) {
       writer.writeRecord(bar);
       bar.setSentinelRecord();
       writer.writeRecord(bar);
-    } finally {
-      writer.close();
     }
     assertTrue(bar.isSentinelRecord());
-    final TempRecordReaderNio dis = new TempRecordReaderNio(new ByteArrayInputStream(baos.toByteArray()), new TempRecordReader.RecordFactory(false, true, false, false));
-    try {
+    try (TempRecordReaderNio dis = new TempRecordReaderNio(new ByteArrayInputStream(baos.toByteArray()), new TempRecordReader.RecordFactory(false, true, false, false))) {
       final BinaryTempFileRecord rec;
       assertNotNull(rec = dis.readRecord());
       check(rec);
       assertNull(dis.readRecord());
-    } finally {
-      dis.close();
     }
   }
 

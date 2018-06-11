@@ -139,8 +139,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
       }
       assertNotNull(w.getBlocker());
 
-      final TempRecordReaderNio dis = new TempRecordReaderNio(new FileInputStream(out), new TempRecordReader.RecordFactory(true, false, false, false));
-      try {
+      try (TempRecordReaderNio dis = new TempRecordReaderNio(new FileInputStream(out), new TempRecordReader.RecordFactory(true, false, false, false))) {
         BinaryTempFileRecord rec = dis.readRecord();
         assertNotNull(rec);
         checkRecord(rec, 0, 99, 0, 1, "12=1D14=", 37, 66, 2);
@@ -148,8 +147,6 @@ public class PairedTempFileWriterImplTest extends TestCase {
         assertNotNull(rec);
         checkRecord(rec, 0, 147, 0, 37, "30=", 1, -66, 0);
         assertNull(dis.readRecord());
-      } finally {
-        dis.close();
       }
     } finally {
       CommandLine.clearCommandArgs();
@@ -171,9 +168,8 @@ public class PairedTempFileWriterImplTest extends TestCase {
     final NgsOutputParams op = NgsOutputParams.builder().filterParams(NgsFilterParams.builder().outputFilter(OutputFilter.PAIRED_END).create()).create();
     final NgsParams param = NgsParams.builder().buildFirstParams(SequenceParams.builder().directory(left).useMemReader(true).create()).buildSecondParams(SequenceParams.builder().directory(right).useMemReader(true).create()).searchParams(SequenceParams.builder().directory(template).loadNames(true).useMemReader(true).create()).maxFragmentLength(1000).minFragmentLength(0).outputParams(op).create();
 
-    final PairedTempFileWriterImpl w = createPairedWriter(param, out, true);
     final MatedHitInfo mh = new MatedHitInfo();
-    try {
+    try (PairedTempFileWriterImpl w = createPairedWriter(param, out, true)) {
       w.nextTemplateId(1);
       w.pairResultLeft(populate(mh, 0, false, true, 26, false, 0));
       try {
@@ -182,8 +178,6 @@ public class PairedTempFileWriterImplTest extends TestCase {
       } catch (final IllegalArgumentException e) {
         // ok
       }
-    } finally {
-      w.close();
     }
   }
 
@@ -270,8 +264,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
     sr = SharedResources.generateSharedResources(param);
     w = new PairedTempFileWriterImpl(param, sril, sr);
     final File out = File.createTempFile("sam", "out", mDir);
-    final FileOutputStream toBeSure = new FileOutputStream(out);
-    try {
+    try (FileOutputStream toBeSure = new FileOutputStream(out)) {
       try {
         w.initialiseMated(toBeSure);
         w.nextTemplateId(0);
@@ -281,8 +274,6 @@ public class PairedTempFileWriterImplTest extends TestCase {
       } finally {
         w.close();
       }
-    } finally {
-      toBeSure.close();
     }
     TempRecordReaderNio dis = new TempRecordReaderNio(new FileInputStream(out), new TempRecordReader.RecordFactory(true, false, false, false));
     try {
@@ -365,9 +356,8 @@ public class PairedTempFileWriterImplTest extends TestCase {
 
     final NgsParams param = getCommonTestParams(left, right, template, IntegerOrPercentage.valueOf(5), IntegerOrPercentage.valueOf(5));
 
-    final PairedTempFileWriterImpl w = createPairedWriter(param, out, true);
     final MatedHitInfo mh = new MatedHitInfo();
-    try {
+    try (PairedTempFileWriterImpl w = createPairedWriter(param, out, true)) {
       try {
         w.pairResultLeft(populate(mh, 0, false, true, 0, true, 0));
         fail();
@@ -376,12 +366,9 @@ public class PairedTempFileWriterImplTest extends TestCase {
       }
       pairResults3(w);
       w.nextTemplateId(Long.MAX_VALUE);
-    } finally {
-      w.close();
     }
 
-    final TempRecordReaderNio dis = new TempRecordReaderNio(new FileInputStream(out), new TempRecordReader.RecordFactory(true, false, false, false));
-    try {
+    try (TempRecordReaderNio dis = new TempRecordReaderNio(new FileInputStream(out), new TempRecordReader.RecordFactory(true, false, false, false))) {
       BinaryTempFileRecord rec1;
       for (int i = 6; i <= 15; ++i) {
         rec1 = dis.readRecord();
@@ -394,8 +381,6 @@ public class PairedTempFileWriterImplTest extends TestCase {
         checkRecord(rec1, 0, 131, 0, i, "3=", 1, -(i + 2), 0);
       }
       assertNull(dis.readRecord());
-    } finally {
-      dis.close();
     }
   }
 
@@ -491,8 +476,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
       final SharedResources sr = SharedResources.generateSharedResources(param);
       final ReadStatusListener sril = new UselessStatusIdListener();
       final PairedTempFileWriterImpl w = new PairedTempFileWriterImpl(param, sril, sr);
-      final FileOutputStream toBeSure = new FileOutputStream(out);
-      try {
+      try (FileOutputStream toBeSure = new FileOutputStream(out)) {
         w.initialiseMated(toBeSure);
         try {
           pairResults3(w);
@@ -524,8 +508,6 @@ public class PairedTempFileWriterImplTest extends TestCase {
           assertNull(w.mSecondReader);
           assertNull(w.mFirstReader);
         }
-      } finally {
-        toBeSure.close();
       }
 
 
@@ -655,8 +637,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
       assertEquals(",0:UNMATED_COMPUTE_ALIGNMENT_SECOND ,0:UNMATED_ALIGN_SCORE_SECOND ", sril.mStatusString);
       sril.mStatusString = "";
     }
-    final TempRecordReaderNio dis = new TempRecordReaderNio(new ByteArrayInputStream(baosunmated.toByteArray()), new TempRecordReader.RecordFactory(true, false, false, false));
-    try {
+    try (TempRecordReaderNio dis = new TempRecordReaderNio(new ByteArrayInputStream(baosunmated.toByteArray()), new TempRecordReader.RecordFactory(true, false, false, false))) {
       BinaryTempFileRecord rec = dis.readRecord();
       assertNotNull(rec);
       checkRecord(rec, 0, 65, 0, 1, "12=1D14=", 0, 0, 2);
@@ -664,8 +645,6 @@ public class PairedTempFileWriterImplTest extends TestCase {
       assertNotNull(rec);
       checkRecord(rec, 0, 145, 0, 37, "30=", 0, 0, 0);
       assertNull(dis.readRecord());
-    } finally {
-      dis.close();
     }
   }
 
@@ -702,14 +681,11 @@ public class PairedTempFileWriterImplTest extends TestCase {
     } finally {
       w.close();
     }
-    final TempRecordReaderNio dis = new TempRecordReaderNio(new ByteArrayInputStream(baosunmated.toByteArray()), new TempRecordReader.RecordFactory(true, false, false, false));
-    try {
+    try (TempRecordReaderNio dis = new TempRecordReaderNio(new ByteArrayInputStream(baosunmated.toByteArray()), new TempRecordReader.RecordFactory(true, false, false, false))) {
       final BinaryTempFileRecord rec = dis.readRecord();
       assertNotNull(rec);
       checkRecord(rec, 0, 65, 0, 1, "12=1D14=", 0, 0, 2);
       assertNull(dis.readRecord());
-    } finally {
-      dis.close();
     }
   }
 
@@ -785,8 +761,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
     } finally {
       Diagnostic.setLogStream();
     }
-    final TempRecordReaderNio dis = new TempRecordReaderNio(new FileInputStream(out), new TempRecordReader.RecordFactory(true, false, false, false));
-    try {
+    try (TempRecordReaderNio dis = new TempRecordReaderNio(new FileInputStream(out), new TempRecordReader.RecordFactory(true, false, false, false))) {
       BinaryTempFileRecord rec = dis.readRecord();
       assertNotNull(rec);
       checkRecord(rec, 0, 131, 0, 7, "3=", 1, null, null);
@@ -800,8 +775,6 @@ public class PairedTempFileWriterImplTest extends TestCase {
       assertNotNull(rec);
       checkRecord(rec, 0, 131, 0, 10, "3=", 1, null, null);
       assertNull(dis.readRecord());
-    } finally {
-      dis.close();
     }
 
 

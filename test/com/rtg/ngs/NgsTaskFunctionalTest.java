@@ -336,14 +336,12 @@ public class NgsTaskFunctionalTest extends TestCase {
     //System.err.println("hitsDir=" + hitsDir);
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     final Appendable err = new StringWriter();
-    final SequencesReader sr = ReaderTestUtils.getReaderDNA(BUG_READS, subjectsDir, null);
-    try {
-      final SequencesReader qr = ReaderTestUtils.getReaderDNA(BUG_TEMPLATE, queriesDir, null);
-      try {
+    try (SequencesReader sr = ReaderTestUtils.getReaderDNA(BUG_READS, subjectsDir, null)) {
+      try (SequencesReader qr = ReaderTestUtils.getReaderDNA(BUG_TEMPLATE, queriesDir, null)) {
         final SequenceParams subjectParams = SequenceParams.builder().directory(subjectsDir).mode(SequenceMode.UNIDIRECTIONAL).create();
         final SequenceParams queryParams = SequenceParams.builder().directory(queriesDir).create();
         final NgsFilterParams filterParams = NgsFilterParams.builder().outputFilter(OutputFilter.NONE).topN(10).errorLimit(5).create();
-        final NgsOutputParams outputParams = new NgsTestUtils.OverriddenNgsOutputParams(NgsTestUtils.OverriddenNgsOutputParams.builder().outStream(out).progress(false).outputDir(new File(hitsDir, "log")).filterParams(filterParams));
+        final NgsOutputParams outputParams = new OverriddenNgsOutputParams(OverriddenNgsOutputParams.builder().outStream(out).progress(false).outputDir(new File(hitsDir, "log")).filterParams(filterParams));
         final NgsParams params = NgsParams.builder().indexFilter(new FixedRepeatFrequencyFilterMethod(5)).buildFirstParams(subjectParams).searchParams(queryParams).outputParams(outputParams).maskParams(mask).create(); //less than the number of reads
         final NgsTask ngs = getNgs(params);
         final NgsParams par = ngs.parameters();
@@ -353,11 +351,7 @@ public class NgsTaskFunctionalTest extends TestCase {
         assertEquals(NgsTestUtils.HEADER + EXPECTED_BUG, out.toString() + err.toString());
         queryParams.close();
         subjectParams.close();
-      } finally {
-        qr.close();
       }
-    } finally {
-      sr.close();
     }
   }
 

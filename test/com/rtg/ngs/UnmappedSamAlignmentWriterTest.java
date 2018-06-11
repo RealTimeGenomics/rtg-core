@@ -80,13 +80,10 @@ public class UnmappedSamAlignmentWriterTest extends TestCase {
       final SharedResources sr = SharedResources.generateSharedResources(param);
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
       try {
-        final UnmappedSamAlignmentWriter w = new UnmappedSamAlignmentWriter(param.outputParams().tempFilesDirectory(), sr.getHeader());
         final UnmappedSamRecordFactory fact = new UnmappedSamRecordFactory(param, sr);
-        try {
+        try (UnmappedSamAlignmentWriter w = new UnmappedSamAlignmentWriter(param.outputParams().tempFilesDirectory(), sr.getHeader())) {
           w.initialiseUnmapped(bos, false, true, true);
           w.unmappedRecord(fact.unmappedResult(0, true, (char) 1, false));
-        } finally {
-          w.close();
         }
       } finally {
         bos.close();

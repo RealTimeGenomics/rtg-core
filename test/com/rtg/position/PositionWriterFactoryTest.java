@@ -46,8 +46,7 @@ public class PositionWriterFactoryTest extends TestCase {
       try (ByteArrayOutputStream b = new ByteArrayOutputStream()) {
         //final PositionOutputParams params = new PositionOutputParams(new File("foobar"), OutputFormatType.MAP, null, Double.valueOf(0.0), false, 5);
         final NgsOutputParams outparams = new NgsTestUtils.OverriddenNgsOutputParams(NgsTestUtils.OverriddenNgsOutputParams.builder().outStream(b).outputDir(dir));
-        final DefaultOutputProcessorSynch dops = new DefaultOutputProcessorSynch(NgsParams.builder().outputParams(outparams).create());
-        try {
+        try (DefaultOutputProcessorSynch dops = new DefaultOutputProcessorSynch(NgsParams.builder().outputParams(outparams).create())) {
           final NgsPositionWriterFactory fact = new NgsPositionWriterFactory(dops);
 
           final SequencesReader reader = new MockArraySequencesReader(SequenceType.DNA, new int[]{30, 31, 48});
@@ -57,8 +56,6 @@ public class PositionWriterFactoryTest extends TestCase {
           final PositionWriter pw = fact.makeNgs(subjectParams, null, subjectParams, HashingRegion.NONE);
           assertNotNull(pw);
           assertTrue(pw instanceof OutputProcessorWrapper);
-        } finally {
-          dops.close();
         }
       }
     } finally {

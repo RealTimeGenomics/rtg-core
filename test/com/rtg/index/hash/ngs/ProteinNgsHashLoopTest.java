@@ -85,14 +85,10 @@ public class ProteinNgsHashLoopTest extends TestCase {
       ReaderTestUtils.getReaderProtein(">b\n" + template + "\n>c\n" + template + "\n>d\n" + template + "\n>e\n" + template, templateDir).close();
       final ProteinNgsHashLoop loop = new ProteinNgsHashLoop(adjLength, adjLength);
       final FakeProteinMask mask = new FakeProteinMask(new Skeleton(adjLength, adjLength, 0, 0, 1), new FakeReadCall(), new ImplementHashFunctionTest.TemplateCallMock());
-      final ISequenceParams readParams = SequenceParams.builder().directory(readDir).mode(SequenceMode.TRANSLATED).create();
-      try {
+      try (ISequenceParams readParams = SequenceParams.builder().directory(readDir).mode(SequenceMode.TRANSLATED).create()) {
         loop.readLoop(readParams, mask, ReadEncoder.SINGLE_END, false);
-      } finally {
-        readParams.close();
       }
-      final ISequenceParams templateParams = SequenceParams.builder().directory(templateDir).mode(SequenceMode.PROTEIN).create();
-      try {
+      try (ISequenceParams templateParams = SequenceParams.builder().directory(templateDir).mode(SequenceMode.PROTEIN).create()) {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final PrintStream ps = new PrintStream(baos);
 
@@ -111,16 +107,11 @@ public class ProteinNgsHashLoopTest extends TestCase {
         } finally {
           Diagnostic.setLogStream();
         }
-      } finally {
-        templateParams.close();
       }
 
       final FakeProteinMask mask2 = new FakeProteinMask(new Skeleton(adjLength, adjLength, 0, 0, 1), new FakeReadCall(), new ImplementHashFunctionTest.TemplateCallMock());
-      final ISequenceParams templateParams2 = SequenceParams.builder().directory(templateDir).mode(SequenceMode.PROTEIN).region(new HashingRegion(0, 0)).create();
-      try {
+      try (ISequenceParams templateParams2 = SequenceParams.builder().directory(templateDir).mode(SequenceMode.PROTEIN).region(new HashingRegion(0, 0)).create()) {
         loop.templateLoopMultiCore(templateParams2, mask2, 4, 10);
-      } finally {
-        templateParams.close();
       }
       assertEquals(0, mask2.mClones);
     } finally {

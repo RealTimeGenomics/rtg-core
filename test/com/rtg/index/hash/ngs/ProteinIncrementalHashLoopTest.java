@@ -47,8 +47,7 @@ public class ProteinIncrementalHashLoopTest extends TestCase {
       ReaderTestUtils.getReaderProtein(">b\n" + template, templateDir).close();
       final FakeProteinMask mask = new FakeProteinMask(new Skeleton(adjLength, adjLength, 0, 0, 1), new ReadCallMock(new StringWriter()), new ImplementHashFunctionTest.TemplateCallMock());
       final int[] res = new int[3];
-      final ISequenceParams readParams = SequenceParams.builder().directory(readDir).mode(SequenceMode.TRANSLATED).create();
-      try {
+      try (ISequenceParams readParams = SequenceParams.builder().directory(readDir).mode(SequenceMode.TRANSLATED).create()) {
         final ProteinIncrementalHashLoop loop = new ProteinIncrementalHashLoop(adjLength, adjLength, mask) {
           @Override
           public void hashCall(final int internalId, final int endPosition) {
@@ -75,8 +74,6 @@ public class ProteinIncrementalHashLoopTest extends TestCase {
         } finally {
           Diagnostic.setLogStream();
         }
-      } finally {
-        readParams.close();
       }
       assertEquals(6, res[0]);
       assertEquals(15, res[1]);
@@ -99,31 +96,25 @@ public class ProteinIncrementalHashLoopTest extends TestCase {
       ReaderTestUtils.getReaderDNA(">a\n" + read, readDir, null).close();
       ReaderTestUtils.getReaderProtein(">b\n" + template, templateDir).close();
       final FakeProteinMask mask = new FakeProteinMask(new Skeleton(adjLength, adjLength, 0, 0, 1), new ReadCallMock(new StringWriter()), new ImplementHashFunctionTest.TemplateCallMock());
-      final ISequenceParams readParams = SequenceParams.builder().directory(readDir).mode(SequenceMode.TRANSLATED).create();
-      try {
-        final ProteinIncrementalHashLoop loop = new ProteinIncrementalHashLoop(adjLength, adjLength, mask) {
+      final ProteinIncrementalHashLoop loop = new ProteinIncrementalHashLoop(adjLength, adjLength, mask) {
 
-          @Override
-          public void hashCall(final int internalId, final int endPosition) {
-          }
-
-          @Override
-          public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
-          }
-        };
-
-        try {
-          loop.hashCall(3L, 0, 0);
-          fail();
-        } catch (final UnsupportedOperationException uoe) {
-          assertEquals("Don't have a hash to supply here", uoe.getMessage());
+        @Override
+        public void hashCall(final int internalId, final int endPosition) {
         }
-      } finally {
-        readParams.close();
+
+        @Override
+        public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
+        }
+      };
+
+      try {
+        loop.hashCall(3L, 0, 0);
+        fail();
+      } catch (final UnsupportedOperationException uoe) {
+        assertEquals("Don't have a hash to supply here", uoe.getMessage());
       }
     } finally {
       assertTrue(FileHelper.deleteAll(dir));
     }
-
   }
 }

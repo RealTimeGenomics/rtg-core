@@ -63,11 +63,8 @@ public class NBlockDetectorTest extends TestCase {
       ReaderTestUtils.getReaderDNA(SEQUENCES, sdf, null).close();
       final File output = new File(dir, "output");
       try (FileOutputStream fos = new FileOutputStream(output)) {
-        final SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(sdf);
-        try {
+        try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(sdf)) {
           NBlockDetector.detectNs(reader, 3, fos);
-        } finally {
-          reader.close();
         }
       }
       assertEquals(EXPECTED, FileUtils.fileToString(output));

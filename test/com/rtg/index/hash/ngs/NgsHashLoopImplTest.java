@@ -275,8 +275,7 @@ public final class NgsHashLoopImplTest extends TestCase {
   public void test2() throws IOException {
     Diagnostic.setLogStream();
     try (ReaderParams tem = getTemplate(TEM_2)) {
-      final ReaderParams reads = getReads(READS_2);
-      try {
+      try (ReaderParams reads = getReads(READS_2)) {
         final NgsHashLoopImpl hl = new NgsHashLoopImpl(reads.reader().numberSequences(), true, 0L, 0x3L);
         hl.integrity();
 
@@ -318,8 +317,6 @@ public final class NgsHashLoopImplTest extends TestCase {
         //System.err.println(pr.replaceAll("\r", "\\r").replaceAll("\n", "\\n"));
         assertTrue(pr.contains("For read \"r1\" the length (4) does not agree with the length expected for all reads (36). It will be ignored."));
         assertTrue(pr.contains("For read \"r2\" the length (4) does not agree with the length expected for all reads (36). It will be ignored."));
-      } finally {
-        reads.close();
       }
     }
   }
