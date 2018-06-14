@@ -120,7 +120,7 @@ public class MultisampleUtilsTest extends TestCase {
     assertEquals("G", is.get(2).toString());
 
     final VariantParams p = VariantParams.builder().genomePriors("human").create();
-    ComplexTemplate context = new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 8 - 1, 8 - 1);
+    final ComplexTemplate context = new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 8 - 1, 8 - 1);
     context.setComplexContext(HypothesesComplex.createComplexDescription(is, context, null, p.pruneHypotheses(), p.maxComplexHypotheses()), SimplePossibility.SINGLETON);
     final HypothesesComplex hc = HypothesesComplex.makeComplexHypotheses(context, false, p);
     final HashSet<String> haphypoexp = new HashSet<>();
@@ -167,7 +167,7 @@ public class MultisampleUtilsTest extends TestCase {
     assertEquals("~TC", is.get(2).toString());
     assertEquals("~A", is.get(3).toString());
     final VariantParams p = VariantParams.builder().genomePriors("human").create();
-    ComplexTemplate context = new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 8 - 1, 11 - 1);
+    final ComplexTemplate context = new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 8 - 1, 11 - 1);
     context.setComplexContext(HypothesesComplex.createComplexDescription(is, context, null, p.pruneHypotheses(), p.maxComplexHypotheses()), SimplePossibility.SINGLETON);
     final HypothesesComplex hc = HypothesesComplex.makeComplexHypotheses(context, false, p);
     assertEquals(1, hc.size()); //just the ref, rest are unfixed
@@ -195,7 +195,7 @@ public class MultisampleUtilsTest extends TestCase {
     assertEquals("", is.get(2).toString());
     assertEquals("", is.get(3).toString());
     final VariantParams p = VariantParams.builder().genomePriors("human").create();
-    ComplexTemplate context = new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 6 - 1, 7 - 1);
+    final ComplexTemplate context = new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 6 - 1, 7 - 1);
     context.setComplexContext(HypothesesComplex.createComplexDescription(is, context, null, p.pruneHypotheses(), p.maxComplexHypotheses()), SimplePossibility.SINGLETON);
     final HypothesesComplex hc = HypothesesComplex.makeComplexHypotheses(context, false, p);
     assertEquals(3, hc.size());

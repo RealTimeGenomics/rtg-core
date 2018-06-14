@@ -51,7 +51,7 @@ public class BreakpointConstraintTest extends TestCase {
     final ReadGroupStats rgs = new MockReadGroupStats(mean);
     rgs.setNumDeviations(4.0);
     final MockSam rec = new MockSam();
-    int shift = 1; // BreakpointConstraint used to assume 1-based coordinates, now 0-based so adjust all coords
+    final int shift = 1; // BreakpointConstraint used to assume 1-based coordinates, now 0-based so adjust all coords
     rec.setReferenceName(xSeq);
     rec.setAlignmentStart(x + 1 + shift); // To 1-based
     rec.setAlignmentEnd(x + 7 + shift);   // 0-based excl == 1-based incl

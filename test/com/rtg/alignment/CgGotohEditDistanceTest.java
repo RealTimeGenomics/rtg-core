@@ -179,7 +179,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
   // Strip the template numbering in the top and bottom lines.
   public String stripTopBottom(String edStr) {
     final String[] actualLines = edStr.split(LS);
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     for (int i = 1; i < actualLines.length - 1; ++i) {
       sb.append(actualLines[i]).append(LS);
     }

@@ -11,8 +11,6 @@
  */
 package com.rtg.ngs;
 
-import static com.rtg.ngs.MapStatisticsField.TOTAL_READS;
-
 import java.io.File;
 
 import com.rtg.reader.Arm;
@@ -81,7 +79,7 @@ public class MapFilterPairedMapStatistics extends PairedEndMapStatistics {
 
   @Override
   protected String getStatistics(boolean includeDevLog) {
-    final long total = totalValue(TOTAL_READS);
+    final long total = totalValue(MapStatisticsField.TOTAL_READS);
     final int formatLength = Math.max(MAX_HEADER_LENGTH, String.format("%d", total).length());
     final StringBuilder sb = new StringBuilder();
     //adding extra newLine in case Progress is on

@@ -105,7 +105,7 @@ public class Sam2BamTest extends AbstractCliTest {
 
   public void testInnerClass() throws IOException {
     try (final TestDirectory dir = new TestDirectory("bamconverter")) {
-      String err = checkMainInitBadFlags("non-existingfile", "-o", "something");
+      final String err = checkMainInitBadFlags("non-existingfile", "-o", "something");
       TestUtils.containsAll(err, "non-existingfile");
 
       TestUtils.containsAllUnwrapped(checkMainInitBadFlags(dir.getPath(), "-o", "something"), dir.getPath());

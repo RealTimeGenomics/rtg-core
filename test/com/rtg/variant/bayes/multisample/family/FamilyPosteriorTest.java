@@ -506,7 +506,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
   private int getCallThreshold(int readCount) {
     int callThreshold = 0;
     while (true) {
-      ModelInterface<?> childModel = createModel(readCount, callThreshold);
+      final ModelInterface<?> childModel = createModel(readCount, callThreshold);
       final Variant v = ModelTest.makeCalls(childModel, "blah", 0, 1, new byte[] {}, VariantParams.builder().callLevel(VariantOutputLevel.ALL).create());
       if (!v.getSample(0).getName().equals("A:A")) {
         break;
