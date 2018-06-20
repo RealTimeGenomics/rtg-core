@@ -13,34 +13,32 @@
 package com.rtg.report;
 
 import java.io.File;
+import java.io.IOException;
 
-import com.rtg.util.diagnostic.Diagnostic;
-
-import junit.framework.TestCase;
+import com.rtg.AbstractTest;
 
 /**
  */
-public abstract class AbstractReportTest extends TestCase {
+public abstract class AbstractReportTest extends AbstractTest {
 
   private String mHeadlessState = null;
 
   @Override
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     super.setUp();
-    Diagnostic.setLogStream();
     mHeadlessState = System.getProperty("java.awt.headless");
     System.setProperty("java.awt.headless", Boolean.TRUE.toString());
   }
 
   @Override
-  public void tearDown() throws Exception {
-    super.tearDown();
+  public void tearDown() throws IOException {
     if (mHeadlessState != null) {
       System.setProperty("java.awt.headless", mHeadlessState);
       mHeadlessState = null;
     } else {
       System.clearProperty("java.awt.headless");
     }
+    super.tearDown();
   }
 
   abstract Report getReport();

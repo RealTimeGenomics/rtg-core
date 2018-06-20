@@ -439,7 +439,6 @@ public class KronaSpeciesReportWriter {
 
   void copyResources() throws IOException {
     mReportHelper.copyResources("com/rtg/report/resources/rtg.css",
-                                      "com/rtg/report/resources/rtg_logo.png",
                                       "com/rtg/metagenomics/krona/resources/krona-2.0.js",
                                       "com/rtg/metagenomics/krona/resources/hidden.png",
                                       "com/rtg/metagenomics/krona/resources/loading.gif");

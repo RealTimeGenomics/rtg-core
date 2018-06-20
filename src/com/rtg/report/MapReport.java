@@ -14,6 +14,7 @@ package com.rtg.report;
 
 import java.awt.Color;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -21,9 +22,11 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -152,7 +155,7 @@ public class MapReport extends MapSummaryReport {
     super.reportContent(helper, body, inputDirs);
 
     if (inputDirs.length == 1) {
-      body.append(reportSummary(helper, new File(inputDirs[0], CommonFlags.SUMMARY_FILE), 0));
+      body.append(reportSummary(helper, new File(inputDirs[0], CommonFlags.SUMMARY_FILE)));
     }
     if (inputDirs.length > 0) {
       if (reporter.isPairedEnd()) {
@@ -174,7 +177,7 @@ public class MapReport extends MapSummaryReport {
       }
       if (inputDirs.length > 1) {
         for (int i = 0; i < inputDirs.length; ++i) {
-          body.append(reportSummary(helper, new File(inputDirs[i], CommonFlags.SUMMARY_FILE), i));
+          body.append(reportSummary(helper, new File(inputDirs[i], CommonFlags.SUMMARY_FILE)));
         }
       }
     }
@@ -208,7 +211,7 @@ public class MapReport extends MapSummaryReport {
     return hists;
   }
 
-  private String reportSummary(HtmlReportHelper helper, File summaryFile, int fileIndex) throws IOException {
+  private String reportSummary(HtmlReportHelper helper, File summaryFile) throws IOException {
     if (!summaryFile.exists()) {
       return "";
     }
@@ -249,11 +252,9 @@ public class MapReport extends MapSummaryReport {
 
     final DataTable dTable = new DataTable(titles.toArray(new String[titles.size()]), grams);
     final String sectionTitle = "Summary";
-    final File png = new File(helper.getResourcesDir(), sectionTitle + "_" + fileIndex +  ".png");
+    final ByteArrayOutputStream png = new ByteArrayOutputStream();
     dTable.toGraphImage(png, PlotType.BOX);
-    //final File sOutFile = FileUtils.stringToFile(summaryText.toString(), new File(outputDir, sectionTitle + "_" + fileIndex + ".html"));
-    //return getHtmlChunk(sectionTitle + " for " + summaryFile.getParent(), png, sOutFile);
-    return getHtmlChunk(helper, sectionTitle + " for " + summaryFile.getParent(), png, summaryText.toString());
+    return getHtmlChunk(helper, sectionTitle + " for " + summaryFile.getParent(), png.toByteArray(), summaryText.toString());
   }
 
   private String reportDistribution(HtmlReportHelper helper, MapReportData reporter, String sectionTitle, DistributionType... dt) throws IOException {
@@ -286,24 +287,27 @@ public class MapReport extends MapSummaryReport {
     } else {
       pType = PlotType.BOX;
     }
-    File png = null;
+    byte[] png = null;
     String table = null;
     if (dt[0].showImage()) {
-      png = new File(helper.getResourcesDir(), sectionTitle.replace(' ', '-') + ".png");
-      dTable.toGraphImage(png, pType);
+      final ByteArrayOutputStream pos = new ByteArrayOutputStream();
+      dTable.toGraphImage(pos, pType);
+      png = pos.toByteArray();
     }
     if (dt[0].showData()) {
       table = dTable.toHtmlTable(pType);
     }
-    return getHtmlChunkF(helper, sectionTitle, png, table);
+    return getHtmlChunkF(sectionTitle, png, table);
   }
 
-  private String getHtmlChunkF(HtmlReportHelper helper, final String sectionTitle, final File image, final String text) {
+  private String getHtmlChunkF(final String sectionTitle, final byte[] image, final String text) {
     final StringBuilder html = new StringBuilder();
     html.append("<h3 style=\"clear: both\">").append(sectionTitle).append("</h3>").append(StringUtils.LS);
     html.append("<div style=\"max-width: 954px; overflow: auto\">").append(StringUtils.LS);
     if (image != null) {
-      html.append("<div style=\"float: left; padding-right: 5px\"><img src=\"").append(helper.getResourcesDirName()).append("/").append(image.getName()).append("\"></div>").append(StringUtils.LS);
+      html.append("<div style=\"float: left; padding-right: 5px\">");
+      html.append(getImageHtml(image));
+      html.append("</div>").append(StringUtils.LS);
     }
     if (text != null) {
       html.append(text).append(StringUtils.LS);
@@ -312,8 +316,21 @@ public class MapReport extends MapSummaryReport {
     return html.toString();
   }
 
-  private String getHtmlChunk(HtmlReportHelper helper, final String sectionTitle, final File image, final String text) {
-    return "<h3>" + sectionTitle + "</h3>" + StringUtils.LS + "<table><tr>" + StringUtils.LS + "<td valign=\"top\"><img src=\"" + helper.getResourcesDirName() + "/" + image.getName() + "\"></td>" + StringUtils.LS + "<td valign=\"top\"><pre>" + helper.getResourcesDirName() + "/" + text + "</pre></td>" + StringUtils.LS + "</tr></table>" + StringUtils.LS;
+  private String getHtmlChunk(HtmlReportHelper helper, final String sectionTitle, final byte[] image, final String text) {
+    final StringBuilder html = new StringBuilder();
+    html.append("<h3>").append(sectionTitle).append("</h3>").append(StringUtils.LS).append("<table><tr>").append(StringUtils.LS).append("<td valign=\"top\">");
+    html.append(getImageHtml(image));
+    html.append("</td>").append(StringUtils.LS).append("<td valign=\"top\"><pre>").append(helper.getResourcesDirName()).append("/").append(text).append("</pre></td>").append(StringUtils.LS).append("</tr></table>").append(StringUtils.LS);
+    return html.toString();
+  }
+
+  private String getImageHtml(byte[] image) {
+    final StringBuilder html = new StringBuilder();
+    html.append("<img src=\"");
+    final String base64 = Base64.getEncoder().encodeToString(image);
+    html.append("data:image/png;base64,").append(base64);
+    html.append("\">");
+    return html.toString();
   }
 
   /**
@@ -478,6 +495,12 @@ public class MapReport extends MapSummaryReport {
     }
 
     void toGraphImage(File output, PlotType type) throws IOException {
+      try (OutputStream os = FileUtils.createOutputStream(output)) {
+        toGraphImage(os, type);
+      }
+    }
+
+    void toGraphImage(OutputStream output, PlotType type) throws IOException {
       final Plot2D[] plot = new Plot2D[mSize];
       final Datum2D[][] data = new Datum2D[mSize][];
       for (int i = 0; i < mSize; ++i) {

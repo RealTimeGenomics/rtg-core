@@ -76,7 +76,7 @@ public class SimilarityReport implements Report {
     }
 
     final HtmlReportHelper hrh = new HtmlReportHelper(outputDir, "index");
-    hrh.copyResources(ReportUtils.resourceArray("rtg_logo.png", "rtg.css", "blank.png")); //copy resources up here to create the report files sub dir as well
+    hrh.copyResources(ReportUtils.resourceArray("rtg.css", "blank.png")); //copy resources up here to create the report files sub dir as well
 
     final StringBuilder menu = new StringBuilder();
 
@@ -223,13 +223,16 @@ public class SimilarityReport implements Report {
         table.append("<th><a title=\"").append(name).append("\">").append(truncName).append("</a></th>");
       }
       table.append("</tr>");
+      final String blank = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9wCFwElLbLIrBcAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAADklEQVQY02NgGAWDEwAAAZoAAQuinR8AAAAASUVORK5CYII=";
       for (Heats h : heats) {
         table.append("<tr>").append("<td>").append(h.getName()).append("</td>");
         for (int i = 0; i < numSamples; ++i) {
           final String hex = String.format(Locale.ROOT, "%1$02x", 255 - (255 * (h.getValue(i) - min)) / (max - min > 0 ? max - min : 1));
           final String hex2 = String.format(Locale.ROOT, "%1$02x", 255 * (h.getValue(i) - min) / (max - min > 0 ? max - min : 1));
           table.append("<td style=\"background-color: #").append(hex).append(hex2)
-          .append("00\"><img src=\"blank.png\" width=\"100\" height=\"15\" title=\"")
+          .append("00\"><img src=\"");
+          table.append(blank);
+          table.append("\" width=\"100\" height=\"15\" title=\"")
           .append(h.getValue(i)).append("\" /></td>");
         }
         table.append("</tr>").append(StringUtils.LS);

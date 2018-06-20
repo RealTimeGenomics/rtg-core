@@ -94,7 +94,7 @@ public class MapSummaryReport implements Report {
 
   private void writeReport(File outputDir, File... inputDirs) throws IOException {
     final HtmlReportHelper helper = new HtmlReportHelper(outputDir, REPORT_NAME);
-    helper.copyResources(ReportUtils.TEMPLATE_DIR + "/rtg_logo.png", ReportUtils.TEMPLATE_DIR + "/rtg.css"); //copy resources up here to create the report files sub dir as well
+    helper.copyResources(ReportUtils.TEMPLATE_DIR + "/rtg.css"); //copy resources up here to create the report files sub dir as well
     final StringBuilder body = new StringBuilder();
 
     reportContent(helper, body, inputDirs);

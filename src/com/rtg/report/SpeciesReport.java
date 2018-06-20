@@ -107,7 +107,7 @@ public final class SpeciesReport implements Report {
     }
 
     final HtmlReportHelper hrh = new HtmlReportHelper(outputDir, "index");
-    hrh.copyResources(ReportUtils.resourceArray("rtg_logo.png", "rtg.css", "table.js",
+    hrh.copyResources(ReportUtils.resourceArray("rtg.css", "table.js",
                       "table.css", "07_ascending.gif", "07_descending.gif")); //copy resources up here to create the report files sub dir as well
 
     final StringBuilder sampleNameMap = new StringBuilder();

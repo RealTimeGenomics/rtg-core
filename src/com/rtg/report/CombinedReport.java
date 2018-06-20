@@ -111,7 +111,7 @@ public class CombinedReport {
 
 
     final HtmlReportHelper helper = new HtmlReportHelper(mOutput, "index");
-    helper.copyResources(ReportUtils.resourceArray("rtg_logo.png", "rtg.css", "check.png", "cross.png"));
+    helper.copyResources(ReportUtils.resourceArray("rtg.css"));
     // write html
     final HashMap<String, String> replace = new HashMap<>();
     replace.put("__TITLE__", "Metagenomics Data Summary Report");

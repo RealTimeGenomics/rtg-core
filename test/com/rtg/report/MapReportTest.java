@@ -64,13 +64,8 @@ public class MapReportTest extends AbstractReportTest {
       }
 
       final File reportFilesDir = new File(out, "index_files");
-      assertTrue(new File(reportFilesDir, "Alignment-Score-Distribution.png").exists());
-      assertTrue(new File(reportFilesDir, "Read-Length-Distribution.png").exists());
-      assertTrue(new File(reportFilesDir, "Mapping-Counts-By-Status.png").exists());
-      assertTrue(new File(reportFilesDir, "Mapping-Orientation.png").exists());
-      assertTrue(new File(reportFilesDir, "Mapping-Quality-(MAPQ)-Distribution.png").exists());
+      assertTrue(reportFilesDir.exists());
       assertTrue(new File(reportFilesDir, "rtg.css").exists());
-      assertTrue(new File(reportFilesDir, "rtg_logo.png").exists());
     }
   }
 }
