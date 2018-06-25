@@ -28,6 +28,7 @@ import com.rtg.util.io.FileUtils;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileWriter;
+import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 
 /**
@@ -42,6 +43,7 @@ public class SamMerger {
   private final SamFilterParams mFilterParams;
   private final boolean mAddProgramRecord;
   private final boolean mDeleteInputFiles;
+  private boolean mRenameWithRg;
 
   /**
    * @param createIndex true to create index for output files
@@ -60,6 +62,10 @@ public class SamMerger {
     this.mFilterParams = filterParams;
     this.mAddProgramRecord = addProgramRecord;
     this.mDeleteInputFiles = deleteInputFiles;
+  }
+
+  void setRenameWithRg(boolean rename) {
+    mRenameWithRg = rename;
   }
 
   /**
@@ -106,6 +112,9 @@ public class SamMerger {
             if (mLegacy) {
               SamUtils.convertToLegacyCigar(rec);
             }
+            if (mRenameWithRg) {
+              renameWithReadGroupId(rec);
+            }
             writer.addAlignment(rec);
           }
         }
@@ -147,5 +156,13 @@ public class SamMerger {
         }
       }
     }
+  }
+
+  private static void renameWithReadGroupId(SAMRecord rec) {
+    final SAMReadGroupRecord readGroup = rec.getReadGroup();
+    if (readGroup == null || readGroup.getId() == null) {
+      return;
+    }
+    rec.setReadName(readGroup.getId() + "-" + rec.getReadName());
   }
 }

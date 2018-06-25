@@ -46,6 +46,7 @@ public class SamMergeCli extends AbstractCli {
 
   private static final String LEGACY_CIGARS = "legacy-cigars";
   private static final String X_ALTERNATE_SAM_HEADER = "Xalternate-sam-header";
+  private static final String X_RENAME_WITH_RG = "Xrename-read-with-rg";
 
   private static class SamFileMergeValidator implements Validator {
     @Override
@@ -90,6 +91,7 @@ public class SamMergeCli extends AbstractCli {
     mFlags.registerOptional('o', OUTPUT_FLAG, File.class, FILE, "name for output SAM/BAM file. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(LEGACY_CIGARS, "if set, produce legacy cigars (using M rather than X or =) in output").setCategory(UTILITY);
     mFlags.registerOptional(NO_HEADER, "prevent SAM/BAM header from being written").setCategory(UTILITY);
+    mFlags.registerOptional(X_RENAME_WITH_RG, "rename reads by prepending with their read group ID").setCategory(UTILITY);
     mFlags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, FILE, "treat all SAM records as having the supplied header").setCategory(UTILITY);
     SamFilterOptions.registerInvertCriteriaFlag(mFlags);
     SamFilterOptions.registerSubsampleFlags(mFlags);
@@ -128,6 +130,7 @@ public class SamMergeCli extends AbstractCli {
 
     final Collection<File> inputFiles = new CommandLineFiles(INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS, CommandLineFiles.NOT_DIRECTORY).getFileList(mFlags);
     final SamMerger merger = new SamMerger(createIndex, gzip, legacy, numberThreads, filterParams, true, false);
+    merger.setRenameWithRg(mFlags.isSet(X_RENAME_WITH_RG));
     final SamCalibrationInputs inputs = new SamCalibrationInputs(inputFiles, true);
     final SAMFileHeader uberHeader;
     if (mFlags.isSet(X_ALTERNATE_SAM_HEADER)) {
