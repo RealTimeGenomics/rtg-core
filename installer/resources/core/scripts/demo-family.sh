@@ -31,7 +31,7 @@ if ! mkdir demo-family; then
     echo "Could not create a working directory for demo data.  Do you have write permission here?" >&2
     exit 1
 fi
-cd demo-family
+cd demo-family || exit 1
 
 echo "Checking RTG is executable" >&2
 if ! "$RTG" version >/dev/null; then
@@ -49,7 +49,7 @@ fi
 function pause() {
     if [ ! "$NOWAIT" ]; then
         echo
-        read -ep "Press enter to continue..."
+        read -epr "Press enter to continue..."
         echo
     fi
 }
@@ -61,9 +61,9 @@ else
 fi
 
 function docommand() {
-    echo "\$ $@" | "${filter[@]}"
+    echo "\$ $*" | "${filter[@]}"
     "$@" 2>&1 | "${filter[@]}"
-    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+    if [ "${PIPESTATUS[0]}" -ne 0 ]; then
         cat<<EOF >&2
 
 Something unexpected happened during the demo. 
@@ -351,17 +351,16 @@ sample.
 EOF
 pause
 #readsim_opts="--machine=illumina_pe -L 100 -R 100 -m 200 -M 400 --coverage 10 --qual-range 2-20 --Xmnp-event-rate=0.02 --Xinsert-event-rate=0.005 --Xdelete-event-rate=0.005"
-readsim_opts="--machine=illumina_pe -L 100 -R 100 -m 200 -M 400 --qual-range 2-20 --Xmnp-event-rate=0.02 --Xinsert-event-rate=0.0005 --Xdelete-event-rate=0.0005"
-rgcommon="PL:ILLUMINA\tPI:300\tDS:Simulated dataset"
+readsim_opts=("--machine=illumina_pe" -L 100 -R 100 -m 200 -M 400 --qual-range 2-20 "--Xmnp-event-rate=0.02" "--Xinsert-event-rate=0.0005" "--Xdelete-event-rate=0.0005")
+rgcommon="PL:ILLUMINA\\tPI:300\\tDS:Simulated dataset"
 seed=5643
 for genome in father mother son2 daughter1 daughter2; do
-    seed=$[seed + 5]
-    docommand "$RTG" readsim --input genome-$genome.sdf --output reads-$genome.sdf --seed $seed --sam-rg "@RG\tID:rg_$genome\tSM:$genome\t$rgcommon" --coverage 10 $readsim_opts|| exit 1
+    seed=$((seed + 5))
+    docommand "$RTG" readsim --input genome-$genome.sdf --output reads-$genome.sdf --seed $seed --sam-rg "@RG\\tID:rg_$genome\\tSM:$genome\\t$rgcommon" --coverage 10 "${readsim_opts[@]}" || exit 1
 done
-for genome in son1; do
-    seed=$[seed + 5]
-    docommand "$RTG" readsim --input genome-$genome.sdf --output reads-$genome.sdf --seed $seed --sam-rg "@RG\tID:rg_$genome\tSM:$genome\t$rgcommon" --coverage 5 $readsim_opts|| exit 1
-done
+genome=son1
+seed=$((seed + 5))
+docommand "$RTG" readsim --input genome-$genome.sdf --output reads-$genome.sdf --seed $seed --sam-rg "@RG\\tID:rg_$genome\\tSM:$genome\\t$rgcommon" --coverage 5 "${readsim_opts[@]}" || exit 1
 pause
 
 cat<<EOF
