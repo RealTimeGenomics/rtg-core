@@ -298,6 +298,9 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
       final int loc = r.getAlignmentStart() - 1;
       final RangeList<UnmappedSamAlignmentWriter> unmappedSamAlignmentWriterRangeList = mLookup.get(referenceIndex);
       final List<UnmappedSamAlignmentWriter> unmappedSamAlignmentWriters = unmappedSamAlignmentWriterRangeList.find(loc);
+      if (unmappedSamAlignmentWriters == null) {
+        throw new RuntimeException("No unmapped writer found for region: " + r.getReferenceName() + ":" + r.getAlignmentStart() + " for read: " + r.getReadName() + " " + r.getReadString());
+      }
       return unmappedSamAlignmentWriters.get(0);
     }
   }

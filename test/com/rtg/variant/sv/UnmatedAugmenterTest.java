@@ -13,11 +13,19 @@
 package com.rtg.variant.sv;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.rtg.launcher.AbstractNanoTest;
+import com.rtg.reference.ReferenceGenome;
+import com.rtg.reference.Sex;
 import com.rtg.util.StringUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
+import com.rtg.util.machine.MachineOrientation;
+import com.rtg.util.machine.PairOrientation;
 import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -155,6 +163,77 @@ public class UnmatedAugmenterTest extends AbstractNanoTest {
     assertEquals(mateReferenceName, rec.getMateReferenceName());
     assertEquals(alignmentStart, rec.getMateAlignmentStart());
     assertEquals(insertSize, rec.getInferredInsertSize());
+  }
+
+
+  private static final String PSEUDO_REF_2 = "version 1\n"
+    + "either\tdef\tdiploid\tlinear\n"
+    + "male    seq     chrX    haploid linear  chrY\n"
+    + "male    seq     chrY    haploid linear  chrX\n"
+    + "female  seq     chrX    diploid linear\n"
+    + "female  seq     chrY    none    linear\n"
+    + "#PAR1 pseudoautosomal region\n"
+    + "male    dup     chrX:10001-2781479      chrY:10001-2781479\n"
+    + "#PAR2 pseudoautosomal region\n"
+    + "male    dup     chrX:155701383-156030895        chrY:56887903-57217415\n";
+
+  public ReferenceGenome makeReferenceGenome() throws IOException {
+    final Map<String, Integer> names = new HashMap<>();
+    names.put("chrX", 156040895);
+    names.put("chrY", 57227415);
+    return new ReferenceGenome(names, new StringReader(PSEUDO_REF_2), Sex.MALE);
+  }
+
+  private SAMRecord makeRec(SAMFileHeader header) {
+    final SAMRecord rec = new SAMRecord(header);
+    rec.setReadString(StringUtils.repeat("a", 150));
+    rec.setReadUnmappedFlag(true);
+    rec.setMateUnmappedFlag(false);
+    rec.setReadName("0");
+    rec.setReferenceName("chrY");
+    return rec;
+  }
+
+  public void testUnmappedPlacement() throws IOException {
+    final SAMFileHeader header = new SAMFileHeader();
+    header.addSequence(new SAMSequenceRecord("chrX", 156040895));
+    header.addSequence(new SAMSequenceRecord("chrY", 57227415));
+
+    final ReferenceGenome r = makeReferenceGenome();
+
+    int mateStart = 2781680;
+    int mateEnd = 2781830;
+    final int parEnd = 2781479; // One based inclusive end position of the PAR region
+    for (int i = -1; i < 2; i++) {
+      SAMRecord rec = makeRec(header);
+      final int expStart = parEnd - i;
+      final int flen = 350 + i;
+      final String expChr = expStart <= parEnd ? "chrX" : "chrY";
+      UnmatedAugmenter.setPlacement(rec, null, MachineOrientation.FR, PairOrientation.R1, mateStart, mateEnd, flen);
+      assertEquals("chrY", rec.getReferenceName());
+      assertEquals(expStart, rec.getAlignmentStart());
+      rec = makeRec(header);
+      UnmatedAugmenter.setPlacement(rec, r, MachineOrientation.FR, PairOrientation.R1, mateStart, mateEnd, flen);
+      assertEquals(expChr, rec.getReferenceName());
+      assertEquals(expStart, rec.getAlignmentStart());
+    }
+
+    mateStart = 9800;
+    mateEnd = 9950;
+    final int parStart = 10001; // One based start position of the PAR region
+    for (int i = -1; i < 2; i++) {
+      SAMRecord rec = makeRec(header);
+      final int expStart = parStart + i;
+      final int flen = 351 + i;
+      final String expChr = expStart >= parStart ? "chrX" : "chrY";
+      UnmatedAugmenter.setPlacement(rec, null, MachineOrientation.FR, PairOrientation.F1, mateStart, mateEnd, flen);
+      assertEquals("chrY", rec.getReferenceName());
+      assertEquals(expStart, rec.getAlignmentStart());
+      rec = makeRec(header);
+      UnmatedAugmenter.setPlacement(rec, r, MachineOrientation.FR, PairOrientation.F1, mateStart, mateEnd, flen);
+      assertEquals(expChr, rec.getReferenceName());
+      assertEquals(expStart, rec.getAlignmentStart());
+    }
   }
 
 }

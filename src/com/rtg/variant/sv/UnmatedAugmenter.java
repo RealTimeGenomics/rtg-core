@@ -38,6 +38,7 @@ import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.machine.MachineOrientation;
 import com.rtg.util.machine.MachineType;
 import com.rtg.util.machine.PairOrientation;
 
@@ -102,8 +103,8 @@ public final class UnmatedAugmenter {
   // Contains minimal mate alignment information
   private static class CutRecord {
     final int mRefIndex;
-    final int mAlignStart;
-    final int mAlignEnd;
+    final int mAlignStart; // One-based inclusive
+    final int mAlignEnd;   // One-based inclusive
     final boolean mReverse;
     final int mAlignmentScore;
 
@@ -368,16 +369,17 @@ public final class UnmatedAugmenter {
       final MachineType mt = mRgMachineTypes.get(rg);
 
       if (mt != null) {
+        final MachineOrientation machineOrientation = mt.orientation();
         final PairOrientation mateOrientation;
         if (mate.mReverse) {
           mateOrientation = record.getFirstOfPairFlag() ? PairOrientation.R2 : PairOrientation.R1;
         } else {
           mateOrientation = record.getFirstOfPairFlag() ? PairOrientation.F2 : PairOrientation.F1;
         }
-        final PairOrientation po = mt.orientation().getMateOrientation(mateOrientation);
-        if (po != null) {
+        final PairOrientation readOrientation = machineOrientation.getMateOrientation(mateOrientation);
+        if (readOrientation != null) {
           record.setReferenceIndex(mate.mRefIndex);
-          if (PairOrientation.F1 == po || PairOrientation.F2 == po) {
+          if (PairOrientation.F1 == readOrientation || PairOrientation.F2 == readOrientation) {
             record.setReadNegativeStrandFlag(false);
           } else {
             record.setReadNegativeStrandFlag(true);
@@ -403,29 +405,36 @@ public final class UnmatedAugmenter {
           } else {
             throw new NoTalkbackSlimException("Could not determine mean fragment size for placing unmapped records.");
           }
-          int alignmentStart;
-          if (mt.orientation().isMateUpstream(mateOrientation)) {
-            alignmentStart = Math.max(1, mate.mAlignStart + thisFragmentLength - record.getReadLength());
-          } else {
-            alignmentStart = Math.max(1, mate.mAlignEnd - 1 - thisFragmentLength);
-          }
-          final int refLength = record.getHeader().getSequence(record.getReferenceIndex()).getSequenceLength();
-          if (referenceGenome != null) {
-            // If our projected position is in the duplicated PAR region, port to the canonical location
-            final ReferenceSequence rs = referenceGenome.sequence(record.getReferenceName());
-            if (rs.hasDuplicates()) {
-              for (Pair<RegionRestriction, RegionRestriction> dup : rs.duplicates()) {
-                if (dup.getB().contains(record.getReferenceName(), Math.min(refLength, alignmentStart))) {
-                  alignmentStart = dup.getA().getStart() + (alignmentStart - dup.getB().getStart());
-                  record.setReferenceName(dup.getA().getSequenceName());
-                }
-              }
-            }
-          }
-          record.setAlignmentStart(Math.min(refLength, alignmentStart));
+
+          setPlacement(record, referenceGenome, machineOrientation, mateOrientation, mate.mAlignStart, mate.mAlignEnd, thisFragmentLength);
         }
       }
     }
+  }
+
+  static void setPlacement(SAMRecord record, ReferenceGenome referenceGenome, MachineOrientation machineOrientation, PairOrientation mateOrientation, int mateStart, int mateEnd, int fragmentLength) {
+    // NOTE mateStart and mateEnd are using SAM coordinates (one based, end inclusive)
+    int alignmentStart;
+    if (machineOrientation.isMateUpstream(mateOrientation)) {
+      alignmentStart = Math.max(1, mateStart + fragmentLength - record.getReadLength());
+    } else {
+      alignmentStart = Math.max(1, mateEnd - 1 - fragmentLength);
+    }
+    final int refLength = record.getHeader().getSequence(record.getReferenceIndex()).getSequenceLength();
+    if (referenceGenome != null) {
+      // If our projected position is in the duplicated PAR region, port to the canonical location
+      final ReferenceSequence rs = referenceGenome.sequence(record.getReferenceName());
+      if (rs.hasDuplicates()) {
+        for (Pair<RegionRestriction, RegionRestriction> dup : rs.duplicates()) {
+          if (dup.getB().contains(record.getReferenceName(), Math.min(refLength, alignmentStart) - 1)) {
+            alignmentStart = dup.getA().getStart() + (alignmentStart - dup.getB().getStart());
+            record.setReferenceName(dup.getA().getSequenceName());
+          }
+        }
+      }
+    }
+    alignmentStart = Math.min(refLength, alignmentStart);
+    record.setAlignmentStart(alignmentStart);
   }
 
 }
