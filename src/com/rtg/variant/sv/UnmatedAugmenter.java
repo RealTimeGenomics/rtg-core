@@ -413,11 +413,11 @@ public final class UnmatedAugmenter {
   }
 
   static void setPlacement(SAMRecord record, ReferenceGenome referenceGenome, MachineOrientation machineOrientation, PairOrientation mateOrientation, int mateStart, int mateEnd, int fragmentLength) {
-    int alignmentStart; // One based
+    int alignmentStart;
     if (machineOrientation.isMateUpstream(mateOrientation)) {
-      alignmentStart = Math.max(1, mateStart + 1 + fragmentLength - record.getReadLength());
+      alignmentStart = Math.max(0, mateStart + fragmentLength - record.getReadLength());
     } else {
-      alignmentStart = Math.max(1, mateEnd - 1 - fragmentLength);
+      alignmentStart = Math.max(0, mateEnd - fragmentLength);
     }
     final int refLength = record.getHeader().getSequence(record.getReferenceIndex()).getSequenceLength();
     if (referenceGenome != null) {
@@ -425,7 +425,7 @@ public final class UnmatedAugmenter {
       final ReferenceSequence rs = referenceGenome.sequence(record.getReferenceName());
       if (rs.hasDuplicates()) {
         for (Pair<RegionRestriction, RegionRestriction> dup : rs.duplicates()) {
-          if (dup.getB().contains(record.getReferenceName(), Math.min(refLength, alignmentStart) - 1)) {
+          if (dup.getB().contains(record.getReferenceName(), Math.min(refLength, alignmentStart))) {
             alignmentStart = dup.getA().getStart() + (alignmentStart - dup.getB().getStart());
             record.setReferenceName(dup.getA().getSequenceName());
           }
@@ -433,7 +433,7 @@ public final class UnmatedAugmenter {
       }
     }
     alignmentStart = Math.min(refLength, alignmentStart);
-    record.setAlignmentStart(alignmentStart);
+    record.setAlignmentStart(alignmentStart + 1);
   }
 
 }

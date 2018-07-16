@@ -201,13 +201,22 @@ public class UnmatedAugmenterTest extends AbstractNanoTest {
 
     final ReferenceGenome r = makeReferenceGenome();
 
+    // Sanity checks
+    final SAMRecord rec2 = makeRec(header);
+    UnmatedAugmenter.setPlacement(rec2, null, MachineOrientation.FR, PairOrientation.R1, 10000, 10150, 150);
+    assertEquals("chrY", rec2.getReferenceName());
+    assertEquals(10001, rec2.getAlignmentStart());
+    UnmatedAugmenter.setPlacement(rec2, null, MachineOrientation.FR, PairOrientation.F1, 10000, 10150, 150);
+    assertEquals("chrY", rec2.getReferenceName());
+    assertEquals(10001, rec2.getAlignmentStart());
+
     int mateStart = 2781679;
     int mateEnd = 2781830;
     final int parEnd = 2781479; // One based inclusive end position of the PAR region
     for (int i = -1; i < 2; i++) {
       SAMRecord rec = makeRec(header);
       final int expStart = parEnd - i;
-      final int flen = 350 + i;
+      final int flen = 352 + i;
       final String expChr = expStart <= parEnd ? "chrX" : "chrY";
       UnmatedAugmenter.setPlacement(rec, null, MachineOrientation.FR, PairOrientation.R1, mateStart, mateEnd, flen);
       assertEquals("chrY", rec.getReferenceName());
