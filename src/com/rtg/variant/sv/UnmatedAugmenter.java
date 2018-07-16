@@ -103,14 +103,14 @@ public final class UnmatedAugmenter {
   // Contains minimal mate alignment information
   private static class CutRecord {
     final int mRefIndex;
-    final int mAlignStart; // One-based inclusive
-    final int mAlignEnd;   // One-based inclusive
+    final int mAlignStart;
+    final int mAlignEnd;
     final boolean mReverse;
     final int mAlignmentScore;
 
     CutRecord(SAMRecord r) {
       mRefIndex = r.getReferenceIndex();
-      mAlignStart = r.getAlignmentStart();
+      mAlignStart = r.getAlignmentStart() - 1;
       mAlignEnd = r.getAlignmentEnd();
       mReverse = r.getReadNegativeStrandFlag();
       mAlignmentScore = as(r);
@@ -325,7 +325,7 @@ public final class UnmatedAugmenter {
       if (pair != null) { //NOTE: pair is only put in map if nh == 1
         mAugmentedUnmated++;
         record.setMateReferenceIndex(pair.mRefIndex);
-        record.setMateAlignmentStart(pair.mAlignStart);
+        record.setMateAlignmentStart(pair.mAlignStart + 1);
         record.setMateNegativeStrandFlag(pair.mReverse);
         record.setMateUnmappedFlag(false);
         final int as = pair.mAlignmentScore;
@@ -334,7 +334,7 @@ public final class UnmatedAugmenter {
         }
         record.setAttribute(SamUtils.ATTRIBUTE_MATE_END, pair.mAlignEnd);
         if (pair.mRefIndex == record.getReferenceIndex()) {
-          final int tlen = InsertHelper.tlen(record.getFirstOfPairFlag(), record.getAlignmentStart(), record.getAlignmentEnd() - record.getAlignmentStart() + 1, pair.mAlignStart, pair.mAlignEnd - pair.mAlignStart + 1);
+          final int tlen = InsertHelper.tlen(record.getFirstOfPairFlag(), record.getAlignmentStart(), record.getAlignmentEnd() - record.getAlignmentStart() + 1, pair.mAlignStart + 1, pair.mAlignEnd - pair.mAlignStart);
           record.setInferredInsertSize(tlen);
         } else {
           record.setInferredInsertSize(0);
@@ -359,7 +359,7 @@ public final class UnmatedAugmenter {
     if (mate != null) { //other side was mapped NOTE: mate only in map if nh==1
       mAugmentedUnmapped++;
       record.setMateReferenceIndex(mate.mRefIndex);
-      record.setMateAlignmentStart(mate.mAlignStart);
+      record.setMateAlignmentStart(mate.mAlignStart + 1);
       record.setMateNegativeStrandFlag(mate.mReverse);
       record.setMateUnmappedFlag(false);
       record.setAttribute(SamUtils.ATTRIBUTE_MATE_END, mate.mAlignEnd);
@@ -413,10 +413,9 @@ public final class UnmatedAugmenter {
   }
 
   static void setPlacement(SAMRecord record, ReferenceGenome referenceGenome, MachineOrientation machineOrientation, PairOrientation mateOrientation, int mateStart, int mateEnd, int fragmentLength) {
-    // NOTE mateStart and mateEnd are using SAM coordinates (one based, end inclusive)
-    int alignmentStart;
+    int alignmentStart; // One based
     if (machineOrientation.isMateUpstream(mateOrientation)) {
-      alignmentStart = Math.max(1, mateStart + fragmentLength - record.getReadLength());
+      alignmentStart = Math.max(1, mateStart + 1 + fragmentLength - record.getReadLength());
     } else {
       alignmentStart = Math.max(1, mateEnd - 1 - fragmentLength);
     }

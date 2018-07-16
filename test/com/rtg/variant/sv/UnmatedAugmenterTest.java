@@ -201,7 +201,7 @@ public class UnmatedAugmenterTest extends AbstractNanoTest {
 
     final ReferenceGenome r = makeReferenceGenome();
 
-    int mateStart = 2781680;
+    int mateStart = 2781679;
     int mateEnd = 2781830;
     final int parEnd = 2781479; // One based inclusive end position of the PAR region
     for (int i = -1; i < 2; i++) {
@@ -218,7 +218,7 @@ public class UnmatedAugmenterTest extends AbstractNanoTest {
       assertEquals(expStart, rec.getAlignmentStart());
     }
 
-    mateStart = 9800;
+    mateStart = 9799;
     mateEnd = 9950;
     final int parStart = 10001; // One based start position of the PAR region
     for (int i = -1; i < 2; i++) {
