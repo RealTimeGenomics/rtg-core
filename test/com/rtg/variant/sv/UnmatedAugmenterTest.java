@@ -243,6 +243,18 @@ public class UnmatedAugmenterTest extends AbstractNanoTest {
       assertEquals(expChr, rec.getReferenceName());
       assertEquals(expStart, rec.getAlignmentStart());
     }
+
+    final int refLength = header.getSequence("chrY").getSequenceLength();
+    mateStart = refLength - 202;
+    mateEnd = mateStart + 150;
+    for (int i = -1; i < 2; i++) {
+      final SAMRecord rec = makeRec(header);
+      final int expStart = i >= 0 ? refLength : (refLength + i);
+      final int flen = 351 + i;
+      UnmatedAugmenter.setPlacement(rec, null, MachineOrientation.FR, PairOrientation.F1, mateStart, mateEnd, flen);
+      assertEquals("chrY", rec.getReferenceName());
+      assertEquals(expStart, rec.getAlignmentStart());
+    }
   }
 
 }
