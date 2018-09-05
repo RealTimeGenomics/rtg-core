@@ -44,8 +44,7 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
 
 /**
- * Module wrapper for the standard read type generators
- *
+ * Simulate copy number variants.
  */
 public final class CnvSimulatorCli extends LoggedCli {
 
