@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import com.rtg.calibrate.SamCalibrationInputs;
 import com.rtg.launcher.AbstractCli;
@@ -102,6 +103,7 @@ public class SamMergeCli extends AbstractCli {
     SamFilterOptions.registerMaxHitsFlag(mFlags, 'c');
     SamFilterOptions.registerMaxASMatedFlag(mFlags, 'm');
     SamFilterOptions.registerMaxASUnmatedFlag(mFlags, 'u');
+    SamFilterOptions.registerSelectReadGroup(mFlags, 'r');
     SamFilterOptions.registerExcludeMatedFlag(mFlags);
     SamFilterOptions.registerExcludeUnmatedFlag(mFlags);
     SamFilterOptions.registerExcludeUnmappedFlag(mFlags);
@@ -140,7 +142,16 @@ public class SamMergeCli extends AbstractCli {
     } else {
       uberHeader = SamUtils.getUberHeader(template, inputs.getSamFiles());
     }
-    merger.mergeSamFiles(inputs.getSamFiles(), inputs.getCalibrationFiles(), output, out, template, uberHeader, !mFlags.isSet(NO_HEADER), true);
+    final SAMFileHeader outHeader;
+    if (mFlags.isSet(NO_HEADER)) {
+      outHeader = null;
+    } else {
+      outHeader = uberHeader.clone();
+      if (filterParams.selectReadGroups() != null) {
+        outHeader.setReadGroups(outHeader.getReadGroups().stream().filter(r -> filterParams.selectReadGroups().contains(r.getId()) ^ filterParams.invertFilters()).collect(Collectors.toList()));
+      }
+    }
+    merger.mergeSamFiles(inputs.getSamFiles(), inputs.getCalibrationFiles(), output, out, template, uberHeader, outHeader, true);
     return 0;
   }
 
