@@ -82,6 +82,23 @@ public class SamMerger {
    * @throws java.io.IOException if an IO error occurs
    */
   public void mergeSamFiles(Collection<File> samFiles, Collection<File> calibrationFiles, File output, OutputStream out, SequencesReader reference, SAMFileHeader header, boolean writeHeader, boolean terminateBlockedGzip) throws IOException {
+    mergeSamFiles(samFiles, calibrationFiles, output, out, reference, header, writeHeader ? header : null, terminateBlockedGzip);
+  }
+
+  /**
+   * Merges given SAM and/or BAM files into one using parameters given to this merger.
+   *
+   * @param samFiles files to merge
+   * @param calibrationFiles corresponding calibration files to merge (may be empty)
+   * @param output output file, or "-" to use supplied output stream
+   * @param out output stream to write sam to (if {@code output} is "-"), otherwise statistics are written here. may be null
+   * @param reference must be non-null for CRAM support
+   * @param inHeader use this header instead of any found in the input SAM/BAM files (useful if file has no header, or needs changing).
+   * @param outHeader use this header on output files (or null to skip writing any header)
+   * @param terminateBlockedGzip true if BAM or block compressed SAM should have terminator block
+   * @throws java.io.IOException if an IO error occurs
+   */
+  public void mergeSamFiles(Collection<File> samFiles, Collection<File> calibrationFiles, File output, OutputStream out, SequencesReader reference, SAMFileHeader inHeader, SAMFileHeader outHeader, boolean terminateBlockedGzip) throws IOException {
     final boolean isStdio = FileUtils.isStdio(output);
     if (!isStdio) {
       if (calibrationFiles.size() > 0) {
@@ -96,15 +113,17 @@ public class SamMerger {
     final long recordsIn;
     final long recordsOut;
     final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
-    final SamReadingContext context = new SamReadingContext(samFiles, mNumberThreads, mFilterParams, header, reference);
+    final SamReadingContext context = new SamReadingContext(samFiles, mNumberThreads, mFilterParams, inHeader, reference);
     try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, pf)) {
-      header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
-      if (mAddProgramRecord) {
-        SamUtils.addProgramRecord(header);
+      if (outHeader != null) {
+        outHeader.setSortOrder(SAMFileHeader.SortOrder.coordinate);
+        if (mAddProgramRecord) {
+          SamUtils.addProgramRecord(outHeader);
+        }
+        SamUtils.updateRunId(outHeader);
       }
-      SamUtils.updateRunId(header);
 
-      try (SamOutput so = SamOutput.getSamOutput(output, out, header, mGzip, true, writeHeader, terminateBlockedGzip, mCreateIndex, reference)) {
+      try (SamOutput so = SamOutput.getSamOutput(output, out, outHeader == null ? inHeader : outHeader, mGzip, true, outHeader != null, terminateBlockedGzip, mCreateIndex, reference)) {
         alignmentOutputFile = so.getOutFile();
         try (SAMFileWriter writer = so.getWriter()) {
           while (it.hasNext()) {
