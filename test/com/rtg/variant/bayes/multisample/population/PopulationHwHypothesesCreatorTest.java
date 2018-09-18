@@ -18,17 +18,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.mode.DNA;
 import com.rtg.sam.SamRangeUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.RegionRestriction;
-import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
 import com.rtg.variant.AlleleCountsFileConverter;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.GenomePriorParamsBuilder;
@@ -43,11 +42,9 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.bayes.snp.ModelSnpFactory;
 import com.rtg.variant.match.AlignmentMatch;
 
-import junit.framework.TestCase;
-
 /**
  */
-public class PopulationHwHypothesesCreatorTest extends TestCase {
+public class PopulationHwHypothesesCreatorTest extends AbstractNanoTest {
 
   private static final String TAB = "\t";
   private static final String VCF = ""
@@ -62,26 +59,9 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
       + "1" + TAB + "18" + TAB + "rs117577454" + TAB + "C" + TAB + "G" + TAB + "100" + TAB + "BLAH" + TAB + "." + TAB + "GT:AP" + TAB + "0|1:0.075,0.060" + TAB + "1|0:0.640,0.000" + TAB + "0|0:0.115,0.015" + TAB + "0|0:0.020,0.000" + TAB + "0|0:0.060,0.000" + "\n"
       + "1" + TAB + "19" + TAB + "rs117577454" + TAB + "CTGAGG" + TAB + "C,CTGAAG" + TAB + "100" + TAB + "PASS" + TAB + "XRX" + TAB + "GT:AP" + TAB + "0|0:0.075,0.060" + TAB + "1|2:0.640,0.000" + TAB + "0|0:0.115,0.015" + TAB + "0|0:0.020,0.000" + TAB + "0|0:0.060,0.000" + "\n";
 
-  NanoRegression mNano = null;
-
-  @Override
-  public void setUp() {
-    Diagnostic.setLogStream();
-    mNano = new NanoRegression(this.getClass(), false);
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
 
   public void test() throws IOException, UnindexableDataException, InvalidParamsException {
-    final File dir = FileUtils.createTempDir("populationhw", "test");
-    try {
+    try (final TestDirectory dir = new TestDirectory("populationhw")) {
       final File out = new File(dir, "snps.vcf.gz");
       FileHelper.stringToGzFile(VCF, out);
 
@@ -113,14 +93,11 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
       System.err.println("5 " + pwh.getCounts("1", 15, 30));
       System.err.println("6 " + pwh.getCounts("1", 1, 10));
        */
-    } finally {
-      FileHelper.deleteAll(dir);
     }
   }
 
   public void testGetCounts() throws IOException, UnindexableDataException, InvalidParamsException {
-    final File dir = FileUtils.createTempDir("populationhw", "test");
-    try {
+    try (final TestDirectory dir = new TestDirectory("populationhw")) {
       final File out = new File(dir, "snps.vcf.gz");
       FileHelper.stringToGzFile(VCF, out);
 
@@ -144,8 +121,6 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
       assertEquals(1, pwh.getCounts("1", 23, 30).size());
       assertEquals(0, pwh.getCounts("1", 24, 30).size());
       assertEquals(0, pwh.getCounts("1", 25, 30).size());
-    } finally {
-      FileHelper.deleteAll(dir);
     }
   }
 
@@ -416,8 +391,7 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
         + "Chr1    24000   .       A       G       .       PASS    DP=1794;XRX     GT:DP:RE:RQ:GQ  0/0:99:0.743:889.8:889.5        0/1:30:0.148:90.9:90.5  0/0:23:0.116:0.0:71.0   0/1:120:0.645:440.3:440.3       0/1:92:0.510:253.7:253.7        0/0:61:0.463:363.3:8.7  0/0:97:0.459:0.0:294.2  0/0:106:1.664:342.7:342.7       0/0:88:0.392:0.0:261.7  0/1:103:0.478:1222.8:713.0      0/1:32:0.149:103.3:44.4 0/0:95:0.429:361.3:12.5 0/1:20:1.073:10.7:10.7  0/0:25:0.099:46.9:46.9  0/0:26:1.103:0.0:72.9   0/0:87:0.399:313.8:313.8        0/0:230:1.436:0.0:683.8 0/0:92:1.479:1028.0:741.5       0/1:27:0.363:102.3:102.3        0/0:30:0.144:40.2:40.2  0/1:89:3.536:211.2:211.2        0/1:29:0.199:31.7:31.7\n".replaceAll(" +", "\t")
         + "Chr1    24007   .       G       A       .       PASS    DP=1794;XRX     GT:DP:RE:RQ:GQ  1/0:99:0.743:889.8:889.5        0/0:30:0.148:90.9:90.5  0/0:23:0.116:0.0:71.0   0/0:120:0.645:440.3:440.3       0/0:92:0.510:253.7:253.7        1/0:61:0.463:363.3:8.7  0/0:97:0.459:0.0:294.2  1/0:106:1.664:342.7:342.7       0/0:88:0.392:0.0:261.7  0/0:103:0.478:1222.8:713.0      0/0:32:0.149:103.3:44.4 1/0:95:0.429:361.3:12.5 0/0:20:1.073:10.7:10.7  1/0:25:0.099:46.9:46.9  0/0:26:1.103:0.0:72.9   1/0:87:0.399:313.8:313.8        0/0:230:1.436:0.0:683.8 1/0:92:1.479:1028.0:741.5       0/0:27:0.363:102.3:102.3        1/0:30:0.144:40.2:40.2  0/0:89:3.536:211.2:211.2        0/0:29:0.199:31.7:31.7\n".replaceAll(" +", "\t");
 
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("populationhw")) {
       final File sspf = new File(tmpDir, "ssps.vcf.gz");
       BgzipFileHelper.bytesToBgzipFile((VCFHEADER + ssps).getBytes(), sspf);
 
@@ -437,9 +411,6 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
       final List<AlleleCounts> acs = pop.getCounts("Chr1", 24000, 25000);
       assertEquals(1, acs.size());
       assertEquals(24006, acs.get(0).position());
-
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 
@@ -447,8 +418,7 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
     final String ssps = ""
         + "Chr1    24000   .       A       GT       .       PASS    DP=1794;XRX     GT:DP:RE:RQ:GQ  0/0:99:0.743:889.8:889.5        0/1:30:0.148:90.9:90.5  0/0:23:0.116:0.0:71.0   0/1:120:0.645:440.3:440.3       0/1:92:0.510:253.7:253.7        0/0:61:0.463:363.3:8.7  0/0:97:0.459:0.0:294.2  0/0:106:1.664:342.7:342.7       0/0:88:0.392:0.0:261.7  0/1:103:0.478:1222.8:713.0      0/1:32:0.149:103.3:44.4 0/0:95:0.429:361.3:12.5 0/1:20:1.073:10.7:10.7  0/0:25:0.099:46.9:46.9  0/0:26:1.103:0.0:72.9   0/0:87:0.399:313.8:313.8        0/0:230:1.436:0.0:683.8 0/0:92:1.479:1028.0:741.5       0/1:27:0.363:102.3:102.3        0/0:30:0.144:40.2:40.2  0/1:89:3.536:211.2:211.2        0/1:29:0.199:31.7:31.7\n".replaceAll(" +", "\t");
 
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("populationhw")) {
       final File sspf = new File(tmpDir, "ssps.vcf.gz");
       BgzipFileHelper.bytesToBgzipFile((VCFHEADER + ssps).getBytes(), sspf);
 
@@ -467,8 +437,6 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
 
       acs = pop.getCounts("Chr1", 23000, 24000);
       assertEquals(1, acs.size());      //we want the insert in the bucket before 24000
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 }
