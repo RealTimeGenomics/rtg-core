@@ -53,6 +53,22 @@ public class AlleleCounts {
   }
 
   /**
+   * @return reference allele frequency, or 1.0 if all counts are zero
+   */
+  public double refAlleleFrequency() {
+    int sum = 0;
+    int refcount = 0;
+    for (Map.Entry<String, Integer> entry : mCounts.entrySet()) {
+      final int c = entry.getValue();
+      sum += c;
+      if (mReferenceAllele.equals(entry.getKey())) {
+        refcount = c;
+      }
+    }
+    return sum == 0 ? 1.0 : (double) refcount / sum;
+  }
+
+  /**
    * @return zero based template position of variants
    */
   public int position() {

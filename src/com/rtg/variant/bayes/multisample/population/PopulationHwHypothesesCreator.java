@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.DNA;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -46,6 +48,9 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
   static final boolean COMPLEX_SSP = true; //Boolean.valueOf(System.getProperty("rtg.ssp.complex", "true"));
 
   private static final int MAX_VARIANT_LENGTH = 100; //Integer.valueOf(System.getProperty("rtg.ssp.complexlength", "100"));
+
+  // Ignore complex triggering from population variants where alternative alleles are rare
+  private static final double MIN_NON_REF_FREQUENCY = GlobalFlags.getDoubleValue(CoreGlobalFlags.VARIANT_POPULATION_PRIORS_MIN_AF);
 
   private final HashMap<String, HashMap<Integer, HaploidDiploidHypotheses<HypothesesPrior<Description>>>> mMap = new HashMap<>();
 
@@ -92,7 +97,8 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
 
     try (AlleleCountsFileReader acr = AlleleCountsFileReader.openAlleleCountReader(inputFile, ranges)) {
       int totalCount = 0;
-      int loadedCount = 0;
+      int retainedCount = 0;
+      int simpleCount = 0;
       int skippedDueToLength = 0;
 
       final HwEstimator hwEstimator = new HwEstimator();
@@ -115,9 +121,12 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
         }
 
         if (COMPLEX_SSP) {
-          //System.err.println("total alleles: " + totalCount2 + ", simple? " + simple);
-          final ArrayList<AlleleCounts> list = mAlleleCounts.computeIfAbsent(referenceName, k -> new ArrayList<>());
-          list.add(alleleCounts);
+          if ((1.0 - alleleCounts.refAlleleFrequency()) >= MIN_NON_REF_FREQUENCY) {
+            //System.err.println("total alleles: " + totalCount2 + ", simple? " + simple);
+            final ArrayList<AlleleCounts> list = mAlleleCounts.computeIfAbsent(referenceName, k -> new ArrayList<>());
+            list.add(alleleCounts);
+            ++retainedCount;
+          }
         }
 
         // simple snps from here on
@@ -135,7 +144,7 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
 
           final HaploidDiploidHypotheses<HypothesesPrior<Description>> newHyp = createHapDipHypotheses(HypothesesNone.SINGLETON, mHaploid.defaultHypotheses(c.getReferenceIndex()), mDiploid.defaultHypotheses(c.getReferenceIndex()), c, hwEstimator);
 
-          ++loadedCount;
+          ++simpleCount;
           final HashMap<Integer, HaploidDiploidHypotheses<HypothesesPrior<Description>>> current;
           if (mMap.containsKey(referenceName)) {
             current = mMap.get(referenceName);
@@ -147,8 +156,10 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
           current.put(zPos, newHyp);
         }
       }
-      Diagnostic.developerLog("Population-prior loading skipped " + skippedDueToLength + " variants due to length > " + MAX_VARIANT_LENGTH);
-      Diagnostic.developerLog("Population-prior loaded " + loadedCount + " / " + totalCount + " variants");
+      Diagnostic.developerLog("Population-prior loaded " + totalCount + " variants");
+      Diagnostic.developerLog("Population-prior ignored " + skippedDueToLength + " variants due to length > " + MAX_VARIANT_LENGTH);
+      Diagnostic.developerLog("Population-prior retained " + retainedCount + " as complex triggers (non-ref frequency >= " + MIN_NON_REF_FREQUENCY + ")");
+      Diagnostic.developerLog("Population-prior retained " + simpleCount + " as simple priors");
     }
     return maxRefLength;
   }

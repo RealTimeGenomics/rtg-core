@@ -62,6 +62,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   public static final String ASSEMBLER_INSERT_DEVIATIONS_FLAG = "com.rtg.assembler.insertdeviations";
   /** Mask homopolymer bases near ends of alignments before using in variant calling */
   public static final String VARIANT_MASK_HOMOPOLYMER = "com.rtg.variant.mask-homopolymer";
+  /** The minimum (non-ref) allele frequency for a population priors site to be used */
+  public static final String VARIANT_POPULATION_PRIORS_MIN_AF = "com.rtg.variant.bayes.multisample.population-priors-min-af";
   /** The maximum number of hypotheses that can comfortably be handled by the complex caller */
   public static final String COMPLEX_CALLER_MAX_HYPOTH_FLAG = "com.rtg.variant.bayes.multisample.ComplexCaller.max-hypoth";
   /** Complex region extraction include indel lengths in interesting separation */
@@ -159,6 +161,7 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
 
     // variant calling
     registerFlag(VARIANT_MASK_HOMOPOLYMER, Boolean.class, Boolean.FALSE);
+    registerFlag(VARIANT_POPULATION_PRIORS_MIN_AF, Double.class, 0.01);
 
     // Complex caller
     registerFlag(COMPLEX_CALLER_MAX_HYPOTH_FLAG, Integer.class, 20);
