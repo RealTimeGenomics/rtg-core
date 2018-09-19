@@ -23,7 +23,7 @@ import com.rtg.assembler.graph.MutableGraph;
 import com.rtg.assembler.graph.Path;
 import com.rtg.assembler.graph.PathsIterator;
 import com.rtg.util.integrity.Exam;
-import com.rtg.variant.dna.DNARange;
+import com.rtg.mode.DNARange;
 
 import junit.framework.TestCase;
 

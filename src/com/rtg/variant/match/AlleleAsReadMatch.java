@@ -13,7 +13,7 @@ package com.rtg.variant.match;
 
 import com.rtg.mode.DnaUtils;
 import com.rtg.variant.NoQualityException;
-import com.rtg.variant.dna.DNARangeNAT;
+import com.rtg.mode.DNARangeNAT;
 
 /**
  * Match object where reference is returned via read methods. Nothing is

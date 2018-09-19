@@ -13,10 +13,10 @@
 package com.rtg.variant.bayes.multisample.family;
 
 
-import static com.rtg.variant.dna.DNARangeAT.A;
-import static com.rtg.variant.dna.DNARangeAT.C;
-import static com.rtg.variant.dna.DNARangeAT.G;
-import static com.rtg.variant.dna.DNARangeAT.T;
+import static com.rtg.mode.DNARangeAT.A;
+import static com.rtg.mode.DNARangeAT.C;
+import static com.rtg.mode.DNARangeAT.G;
+import static com.rtg.mode.DNARangeAT.T;
 
 import java.util.ArrayList;
 import java.util.List;

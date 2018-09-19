@@ -26,7 +26,7 @@ import com.rtg.util.array.intindex.IntChunks;
 import com.rtg.util.array.longindex.LongChunks;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
-import com.rtg.variant.dna.DNARange;
+import com.rtg.mode.DNARange;
 
 /**
  * Uses index arrays. Not very object oriented but trades this with memory and speed efficiency.

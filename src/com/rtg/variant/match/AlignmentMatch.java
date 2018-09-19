@@ -18,8 +18,8 @@ import com.rtg.util.integrity.Integrity;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.PhredScaler;
 import com.rtg.variant.VariantAlignmentRecord;
-import com.rtg.variant.dna.DNARange;
-import com.rtg.variant.dna.DNARangeNAT;
+import com.rtg.mode.DNARange;
+import com.rtg.mode.DNARangeNAT;
 import com.rtg.variant.util.VariantUtils;
 
 /**

@@ -16,7 +16,7 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.assembler.graph.Contig;
 import com.rtg.mode.DNA;
 import com.rtg.util.StringUtils;
-import com.rtg.variant.dna.DNARange;
+import com.rtg.mode.DNARange;
 
 /**
 */

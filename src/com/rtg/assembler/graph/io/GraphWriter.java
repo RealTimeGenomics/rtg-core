@@ -29,7 +29,7 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.assembler.graph.Graph;
 import com.rtg.util.MD5Utils;
 import com.rtg.util.store.StoreDirectory;
-import com.rtg.variant.dna.DNARange;
+import com.rtg.mode.DNARange;
 
 /**
  * Write a graph to a directory in version 0.0 of the standard file format.

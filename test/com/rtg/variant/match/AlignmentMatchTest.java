@@ -16,12 +16,12 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.rtg.mode.DNARangeAT;
 import com.rtg.reader.FastaUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.ReadGroupMachineErrorChooser;
 import com.rtg.variant.VariantAlignmentRecord;
-import com.rtg.variant.dna.DNARangeNAT;
 import com.rtg.variant.util.VariantUtils;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -87,8 +87,8 @@ public class AlignmentMatchTest extends TestCase {
     ins.integrity();
     assertEquals("CGT", ins.toString());
     assertEquals(3, ins.length());
-    assertEquals(DNARangeNAT.C, ins.read(0));
-    assertEquals(DNARangeNAT.T, ins.read(2));
+    assertEquals(DNARangeAT.C, ins.read(0));
+    assertEquals(DNARangeAT.T, ins.read(2));
     assertEquals(VariantUtils.phredToProb(20), ins.baseError(0), 1E-14);
     assertEquals(VariantUtils.phredToProb(20), ins.baseError(1), 1E-14);
     assertEquals(VariantUtils.phredToProb(20), ins.baseError(2), 1E-14);

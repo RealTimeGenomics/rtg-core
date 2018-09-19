@@ -26,7 +26,7 @@ import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.snp.EvidenceQ;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
-import com.rtg.variant.dna.DNARange;
+import com.rtg.mode.DNARange;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 import junit.framework.TestCase;

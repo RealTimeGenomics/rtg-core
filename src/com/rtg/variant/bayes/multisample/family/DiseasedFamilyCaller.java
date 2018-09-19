@@ -29,7 +29,7 @@ import com.rtg.variant.bayes.multisample.HypothesisScore;
 import com.rtg.variant.bayes.multisample.MultisampleJointCaller;
 import com.rtg.variant.bayes.multisample.Utils;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
-import com.rtg.variant.dna.DNARange;
+import com.rtg.mode.DNARange;
 import com.rtg.variant.util.VariantUtils;
 
 /**

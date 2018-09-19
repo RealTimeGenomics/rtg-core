@@ -15,7 +15,7 @@ package com.rtg.assembler.graph.implementation;
 import com.rtg.assembler.graph.Contig;
 import com.rtg.mode.DNA;
 import com.rtg.util.integrity.IntegralAbstract;
-import com.rtg.variant.dna.DNARange;
+import com.rtg.mode.DNARange;
 
 /**
  */

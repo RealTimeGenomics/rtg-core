@@ -13,7 +13,7 @@
 package com.rtg.assembler.graph.implementation;
 
 import com.rtg.assembler.graph.Contig;
-import com.rtg.variant.dna.DNARange;
+import com.rtg.mode.DNARange;
 
 import junit.framework.TestCase;
 

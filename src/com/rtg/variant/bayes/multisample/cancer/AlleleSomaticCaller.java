@@ -30,7 +30,7 @@ import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
-import com.rtg.variant.dna.DNARange;
+import com.rtg.mode.DNARange;
 import com.rtg.variant.util.VariantUtils;
 
 /**

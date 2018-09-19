@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.rtg.mode.DNARange;
+import com.rtg.mode.DNARangeAT;
 import com.rtg.reference.Ploidy;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.variant.GenomePriorParams;
@@ -41,8 +43,6 @@ import com.rtg.variant.bayes.snp.HypothesesNone;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.bayes.snp.HypothesesSnp;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
-import com.rtg.variant.dna.DNARange;
-import com.rtg.variant.dna.DNARangeAT;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
