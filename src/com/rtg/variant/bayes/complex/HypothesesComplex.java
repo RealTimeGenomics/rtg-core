@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.launcher.globals.GlobalFlags;
@@ -208,14 +208,14 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
 
   /**
    * Create the complex description from the alignment matches, site-specific priors etc
-   * @param matches all alignment matches
+   * @param readMatches all alignment matches
    * @param reference used to create reference description if not present in the matches
    * @param ssp site-specific priors for additional description entries
    * @param pruneMatches if set, prune full description
    * @param maxHypotheses maximum number of descriptions
    * @return the description
    */
-  public static DescriptionComplex createComplexDescription(List<AlignmentMatch> matches, ComplexTemplate reference, SiteSpecificPriors ssp, boolean pruneMatches, int maxHypotheses) {
+  public static DescriptionComplex createComplexDescription(List<AlignmentMatch> readMatches, ComplexTemplate reference, SiteSpecificPriors ssp, boolean pruneMatches, int maxHypotheses) {
 
     // turn ssps into alleleAsRef matches
     final ArrayList<Match> sspMatches = new ArrayList<>();
@@ -245,23 +245,20 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     //    }
     //    final Match ref = new AlleleAsReadMatch(reference.replaceBytes(), refCount);
 
+    // Extract unique hypotheses from the matches, discarding those that contain
+    // an N or do not span the entire region of interest.
+    final List<AlignmentMatch> filteredMatches = readMatches.stream().filter(m -> m.mapError() < Model.AMBIGUITY_THRESHOLD && !m.readString().contains("N") && m.isFixedLeft() && m.isFixedRight()).collect(Collectors.toList());
     final Match ref = new AlleleAsReadMatch(reference.replaceBytes());
     final ArrayList<Match> res;
     if (pruneMatches) { //TODO eventually, do this in all cases (if deemed acceptable)
-      res = createPrunedDescription(matches, ref, sspMatches, maxHypotheses);
+      res = createPrunedDescription(filteredMatches, ref, sspMatches, maxHypotheses);
     } else {
-      // Extract unique hypotheses from the matches, discarding those that contain
-      // an N or do not span the entire region of interest. TreeSet is used to
-      // ensure a consistent ordering of hypotheses in the result.
+      // TreeSet is used to ensure a consistent ordering of hypotheses in the result.
       final TreeSet<Match> matchSet = new TreeSet<>(new OrdinalMatchComparator());
       if (!ref.readString().contains("N")) {
         matchSet.add(ref);
       }
-      for (final Match m : matches) {
-        if (m.mapError() < Model.AMBIGUITY_THRESHOLD && !m.readString().contains("N") && m.isFixedLeft() && m.isFixedRight()) {
-          matchSet.add(m);
-        }
-      }
+      matchSet.addAll(filteredMatches);
       res = new ArrayList<>(matchSet);
       res.addAll(sspMatches);
     }
@@ -296,47 +293,41 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
 
   private static class MatchCount {
     final Match mMatch;
-    final int mCount;
-    MatchCount(Match match, int count) {
+    int mCount;
+    int mId;
+    MatchCount(Match match) {
       mMatch = match;
-      mCount = count;
     }
     Match match() {
       return mMatch;
     }
-
+    void increment() {
+      ++mCount;
+    }
     int count() {
       return mCount;
     }
-
+    void setId(int i) {
+      mId = i;
+    }
   }
 
   private static ArrayList<Match> createPrunedDescription(List<AlignmentMatch> matches, Match ref, ArrayList<Match> sspMatches, int maxHypotheses) {
-    final TreeMap<Match, Integer> matchMap = new TreeMap<>(new OrdinalMatchComparator());
+    final TreeMap<String, MatchCount> matchMap = new TreeMap<>();
 
     final boolean refOk = !ref.readString().contains("N");
     if (refOk) {
-      matchMap.put(ref, 0);
+      matchMap.put(ref.readString(), new MatchCount(ref));
     }
 
     for (final Match match : sspMatches) {
-      matchMap.put(match, 0);
+      matchMap.put(match.readString(), new MatchCount(match));
     }
 
-    // Extract unique hypotheses from the matches, discarding those that contain
-    // an N or do not span the entire region of interest. TreeSet is used to
-    // ensure a consistent ordering of hypotheses in the result.
-    int totalCoverage = 0;
-    for (final Match m : matches) {
-      if (m.mapError() < Model.AMBIGUITY_THRESHOLD && !m.readString().contains("N") && m.isFixedLeft() && m.isFixedRight()) {
-        if (matchMap.containsKey(m)) {
-          int i = matchMap.get(m);
-          matchMap.put(m, ++i);
-        } else {
-          matchMap.put(m, 1);
-        }
-        ++totalCoverage;
-      }
+    // Extract unique hypotheses from the matches
+    // TreeSet is used to ensure a consistent ordering of hypotheses in the result.
+    for (final AlignmentMatch m : matches) {
+      matchMap.computeIfAbsent(m.readString(), ms -> new MatchCount(m)).increment();
     }
 
     if (matchMap.size() == 0) {
@@ -344,9 +335,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     }
 
     final List<MatchCount> sorted = new ArrayList<>(matchMap.size());
-    for (Entry<Match, Integer> entry : matchMap.entrySet()) {
-      sorted.add(new MatchCount(entry.getKey(), entry.getValue()));
-    }
+    sorted.addAll(matchMap.values());
     sorted.sort(new MatchCountComparator());
 
     final int size = sorted.size();
@@ -361,7 +350,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
 
       //if the 6th hypothesis is below the cutoff pick a cutoff that will include it.
       if (size > MIN_HYPOTH) {
-
+        final int totalCoverage = matches.size();
         if (sorted.get(size - MIN_HYPOTH).count() == 1 && totalCoverage > size * HYPOTH_COUNTS_MULT) {
           cutoff = 2;
         } else if (sorted.get(size - MIN_HYPOTH).count() < cutoff) {
