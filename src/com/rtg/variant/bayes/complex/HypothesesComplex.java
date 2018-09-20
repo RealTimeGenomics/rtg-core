@@ -15,7 +15,6 @@ package com.rtg.variant.bayes.complex;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -265,7 +264,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     return new DescriptionComplex(res);
   }
 
- /**
+  /**
    * Sort by frequency of match descending then in {@code OrdinalMatchComparator}
    */
   private static class MatchCountComparator implements Comparator<MatchCount>, Serializable {
@@ -293,8 +292,9 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
 
   private static class MatchCount {
     final Match mMatch;
-    int mCount;
-    int mId;
+    private int mCount;
+    private int mId = -1;
+    private int mVaf = 0;
     MatchCount(Match match) {
       mMatch = match;
     }
@@ -307,12 +307,22 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     int count() {
       return mCount;
     }
-    void setId(int i) {
-      mId = i;
+    void setId(int id) {
+      mId = id;
+    }
+    int getId() {
+      return mId;
+    }
+    void setVaf(int vaf) {
+      mVaf = vaf;
+    }
+    int getVaf() {
+      return mVaf;
     }
   }
 
   private static ArrayList<Match> createPrunedDescription(List<AlignmentMatch> matches, Match ref, ArrayList<Match> sspMatches, int maxHypotheses) {
+    // TreeSet is used to ensure a consistent ordering of hypotheses in the result.
     final TreeMap<String, MatchCount> matchMap = new TreeMap<>();
 
     final boolean refOk = !ref.readString().contains("N");
@@ -325,8 +335,9 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     }
 
     // Extract unique hypotheses from the matches
-    // TreeSet is used to ensure a consistent ordering of hypotheses in the result.
+    int maxGenome = 0;
     for (final AlignmentMatch m : matches) {
+      maxGenome = Math.max(maxGenome, m.alignmentRecord().getGenome());
       matchMap.computeIfAbsent(m.readString(), ms -> new MatchCount(m)).increment();
     }
 
@@ -334,48 +345,83 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
       return new ArrayList<>();
     }
 
-    final List<MatchCount> sorted = new ArrayList<>(matchMap.size());
-    sorted.addAll(matchMap.values());
+    final List<MatchCount> sorted = new ArrayList<>(matchMap.values());
     sorted.sort(new MatchCountComparator());
 
     final int size = sorted.size();
-    final int biggestVal = sorted.get(size - 1).count();
+    final int highCount = sorted.get(0).count();
+    final int lowCount = sorted.get(size - 1).count();
     if (matchMap.size() > 0) {
       //filter low count hypotheses if there are sufficient different hypotheses
       //use the last hypothesis to determine cutoff value ( div 6? )
-
-      int cutoff = biggestVal / HYPOTH_CUTOFF_DIV;
-
       //keep at least 6 hypotheses then find the cutoff value below that (taking into account the value of the 6th hypothesis)
-
       //if the 6th hypothesis is below the cutoff pick a cutoff that will include it.
+      final int cutoff;
       if (size > MIN_HYPOTH) {
+        final int cutoff1 = lowCount / HYPOTH_CUTOFF_DIV;
         final int totalCoverage = matches.size();
         if (sorted.get(size - MIN_HYPOTH).count() == 1 && totalCoverage > size * HYPOTH_COUNTS_MULT) {
           cutoff = 2;
-        } else if (sorted.get(size - MIN_HYPOTH).count() < cutoff) {
+        } else if (sorted.get(size - MIN_HYPOTH).count() < cutoff1) {
           cutoff = sorted.get(size - MIN_HYPOTH).count();
+        } else {
+          cutoff = cutoff1;
         }
       } else {
         cutoff = Integer.MIN_VALUE;
       }
       //System.err.println("cutoff: " + cutoff);
+//      for (MatchCount mc : sorted) {
+//        Diagnostic.developerLog("HypothesesComplex: " + (mc.count() < cutoff ? "removed" : "keeping") + " " + mc.match() + " count=" + mc.count());
+//      }
+      sorted.removeIf(m -> m.count() < cutoff);
+    }
 
-      final Iterator<MatchCount> it = sorted.iterator();
-      while (it.hasNext()) {
-        final MatchCount e = it.next();
-        if (e.count() < cutoff) {
-          //          System.err.println("removing; " + e.getKey() + " LL " + e.getValue());
-          it.remove();
-        } else {
-          //          System.err.println("keeping: " + e.getKey() + " :: " + e.getValue());
+    if (sorted.size() > maxHypotheses) {
+      // Sort by mean VAF in the genomes observed in, and keep the top maxHypotheses
+      final int numHyps = sorted.size();
+      final int numGenomes = maxGenome + 1;
+
+      int i = 0;
+      for (MatchCount mc : sorted) {
+        mc.setId(i++);
+      }
+      final int[][] ads = new int[numGenomes][numHyps];
+      final int[] dps = new int[numGenomes];
+      for (final AlignmentMatch m : matches) {
+        final MatchCount mc = matchMap.get(m.readString());
+        if (mc.getId() != -1) {
+          final int g = m.alignmentRecord().getGenome();
+          ++ads[g][mc.getId()];
+          ++dps[g];
         }
       }
+
+      final int[] seenIn = new int[sorted.size()];
+      final int[] sumVaf = new int[sorted.size()];
+      for (int h = 0; h < numHyps; ++h) {
+        for (int g = 0; g < numGenomes; ++g) {
+          if (ads[g][h] > 1) {
+            ++seenIn[h];
+            sumVaf[h] += ads[g][h] * 100 / (dps[g] + 1);
+          }
+        }
+        if (seenIn[h] > 0) {
+          sorted.get(h).setVaf(sumVaf[h] / seenIn[h]);
+        }
+      }
+      sorted.sort(Comparator.comparingInt(o -> -o.getVaf()));
+
+//      int j = 0;
+//      for (MatchCount mc : sorted) {
+//        Diagnostic.developerLog("HypothesesComplex: " + (++j <= maxHypotheses ? "keeping" : "removed") + " " + mc.match() + " vaf=" + mc.getVaf());
+//      }
     }
+
     final List<MatchCount> keep = sorted.subList(0, Math.min(maxHypotheses, sorted.size()));
     if (keep.size() < size) {
       Diagnostic.developerLog("Hypotheses extracted from " + matches.size() + " matches, with counts ranging from "
-                              + sorted.get(0).count() + " to " + biggestVal
+                              + highCount + " to " + lowCount
                               + " pruned from " + size + " to " + keep.size());
     }
     final ArrayList<Match> result = new ArrayList<>();
