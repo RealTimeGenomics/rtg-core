@@ -224,11 +224,11 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
   }
 
   /**
-   * Construct a new alignment record populated from a SAM record.
+   * Construct a new alignment record populated from a SAM record. This is really a convenience for unit tests.
    * @param record SAM record
    */
   public VariantAlignmentRecord(final SAMRecord record) {
-    this(record, record.getReferenceIndex(), new DefaultMachineErrorChooser(), 0);
+    this(record, 0, new DefaultMachineErrorChooser(), 0);
   }
 
   //XXX note we actually modify the contents of mBases in SuperCigarParser.updateReadWithTemplate
