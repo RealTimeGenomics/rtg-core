@@ -490,6 +490,9 @@ public class SegmentCli extends LoggedCli {
       final Segment highest = orderByDeltaEnergyLimit.pollFirst();
       final Segment left = highest.left();
       final Segment right = highest.right();
+      if (left == null || right == null) {
+        break;
+      }
       if (right.bins() == 1 && mFlags.isSet(ABSORB_SINGLETONS_FLAG)) {
         // Absorb right into left, pushing down the boundary change on the right
         final Segment newLeft = Segment.absorbRight(left, right);
