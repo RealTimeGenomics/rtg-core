@@ -203,7 +203,7 @@ public class VariantOutputVcfFormatterTest extends AbstractNanoTest {
     final Variant v = new Variant(locus, createSample(Ploidy.DIPLOID, "C:", false, 18.96, VariantSample.DeNovoStatus.UNSPECIFIED, null));
     v.setIndel(0);
     final String s = formatter.formatCall(v);
-    assertEquals("templateName\t82349\t.\tC\tCC\t.\tPASS\t.\tGT:GQ\t1/0:82\n", s);
+    assertEquals("templateName\t82349\t.\tC\tCC\t.\tPASS\t.\tGT:GQ\t0/1:82\n", s);
   }
 
   public void testComplexX() {
@@ -284,7 +284,7 @@ public class VariantOutputVcfFormatterTest extends AbstractNanoTest {
     final VariantLocus locus = new VariantLocus("templateName", 82349, 82351, "CT", 'C');
     final Variant v = new Variant(locus, createSample(Ploidy.DIPLOID, "TAC:CT", false, 0.14, VariantSample.DeNovoStatus.UNSPECIFIED, null));
     final String s = formatter.formatCall(v);
-    assertEquals("templateName\t82350\t.\tCT\tTAC\t.\tPASS\t.\tGT:GQ\t1/0:3\n", s);
+    assertEquals("templateName\t82350\t.\tCT\tTAC\t.\tPASS\t.\tGT:GQ\t0/1:3\n", s);
   }
 
   public void testComplexDelete3() {

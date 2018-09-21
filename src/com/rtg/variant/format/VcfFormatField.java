@@ -13,6 +13,7 @@
 package com.rtg.variant.format;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -74,6 +75,7 @@ public enum VcfFormatField {
             for (int k = 0; k < cats.length; ++k) {
               gts[k] = addAltAllele(cats[k], ref, previousNt, rec);
             }
+            Arrays.sort(gts);
           }
         } else {
           gts = ploidy == Ploidy.HAPLOID ? HAPLOID_MISSING_GT : DIPLOID_MISSING_GT;
