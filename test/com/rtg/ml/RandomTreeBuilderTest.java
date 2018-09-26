@@ -75,10 +75,10 @@ public class RandomTreeBuilderTest extends AbstractBuildClassifierTest {
     buildAndEval(b, data, testdata, 0.85);
 
     config(b, "true", "random", "false");
-    buildAndEval(b, data, testdata, 0.82);
+    buildAndEval(b, data, testdata, 0.81);
 
     config(b, "true", "random", "true");
-    buildAndEval(b, data, testdata, 0.88);
+    buildAndEval(b, data, testdata, 0.85);
   }
 
   private void config(BuildClassifier b, String ent, String prop, String split) {

@@ -367,6 +367,9 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
     for (int i = 0; i < available.length; ++i) {
       available[i] = i;
     }
+    if (subsetSize >= total) {
+      return available;
+    }
     final int[] result = new int[subsetSize];
     int max = total;
     for (int i = 0; i < result.length; ++i) {
