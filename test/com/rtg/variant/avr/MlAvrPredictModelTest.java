@@ -75,8 +75,8 @@ public class MlAvrPredictModelTest extends AbstractPredictModelTest<MlAvrPredict
       amb.setModelParameters(params);
 
       amb.build(
-          new VcfDataset(posVcf, 0, true, true, 1.0),
-          new VcfDataset(negVcf, 0, false, true, 1.0)
+          new VcfDataset(posVcf, 0, VcfDataset.Classifications.ALL_POSITIVE, true, 1.0),
+          new VcfDataset(negVcf, 0, VcfDataset.Classifications.ALL_NEGATIVE, true, 1.0)
       );
 
       final File model = new File(dir, "model.avr");

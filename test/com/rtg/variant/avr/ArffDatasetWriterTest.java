@@ -58,20 +58,23 @@ public class ArffDatasetWriterTest extends AbstractModelBuilderTest<ArffDatasetW
     assertNull(amb.getModel());
 
     try (final TestDirectory dir = new TestDirectory()) {
-      final File posVcf = new File(dir, "pos.vcf");
-      FileHelper.resourceToFile("com/rtg/variant/avr/resources/positives.vcf", posVcf);
-      final File negVcf = new File(dir, "neg.vcf");
-      FileHelper.resourceToFile("com/rtg/variant/avr/resources/negatives.vcf", negVcf);
+      final File posVcf = FileHelper.resourceToFile("com/rtg/variant/avr/resources/positives.vcf", new File(dir, "pos.vcf"));
+      final File negVcf = FileHelper.resourceToFile("com/rtg/variant/avr/resources/negatives.vcf", new File(dir, "neg.vcf"));
 
       amb.build(
-        new VcfDataset(posVcf, 0, true, false, 2.0),
-        new VcfDataset(negVcf, 0, false, false, 1.0)
+        new VcfDataset(posVcf, 0, VcfDataset.Classifications.ALL_POSITIVE, false, 2.0),
+        new VcfDataset(negVcf, 0, VcfDataset.Classifications.ALL_NEGATIVE, false, 2.0)
       );
 
       final File file = new File(dir, "model.arff");
       amb.save(file);
-
       mNano.check("arff-dataset.arff", FileHelper.fileToString(file));
+
+      final File bothVcf = FileHelper.resourceToFile("com/rtg/variant/avr/resources/posandneg.vcf", new File(dir, "posandneg.vcf"));
+      amb.build(new VcfDataset(bothVcf, 0, VcfDataset.Classifications.ANNOTATED, false, 2.0));
+      final File bothfile = new File(dir, "modelboth.arff");
+      amb.save(bothfile);
+      mNano.check("arff-dataset.arff", FileHelper.fileToString(bothfile).replaceAll("modelboth", "model"));
     }
   }
 }

@@ -102,30 +102,33 @@ public abstract class AbstractModelBuilderTest<T extends AbstractModelBuilder<?>
     assertNull(amb.getModel());
 
     try (final TestDirectory dir = new TestDirectory()) {
-      final File posVcf = new File(dir, "pos.vcf");
-      FileHelper.resourceToFile("com/rtg/variant/avr/resources/positives.vcf", posVcf);
-      final File negVcf = new File(dir, "neg.vcf");
-      FileHelper.resourceToFile("com/rtg/variant/avr/resources/negatives.vcf", negVcf);
+      final File posVcf = FileHelper.resourceToFile("com/rtg/variant/avr/resources/positives.vcf", new File(dir, "pos.vcf"));
+      final File negVcf = FileHelper.resourceToFile("com/rtg/variant/avr/resources/negatives.vcf", new File(dir, "neg.vcf"));
 
       amb.build(
-          new VcfDataset(posVcf, 0, true, false, 1.0),
-          new VcfDataset(negVcf, 0, false, false, 1.0)
+          new VcfDataset(posVcf, 0, VcfDataset.Classifications.ALL_POSITIVE, false, 1.0),
+          new VcfDataset(negVcf, 0, VcfDataset.Classifications.ALL_NEGATIVE, false, 1.0)
       );
 
       final File file = new File(dir, "model.avr");
       amb.save(file);
 
       final AbstractPredictModel apm = amb.getModel();
+      checkModel(apm, getModelFactory(file).getModel());
 
-      final AbstractPredictModel apm2;
-      apm2 = getModelFactory(file).getModel();
+      final File bothVcf = FileHelper.resourceToFile("com/rtg/variant/avr/resources/posandneg.vcf", new File(dir, "posandneg.vcf"));
+      amb.build(new VcfDataset(bothVcf, 0, VcfDataset.Classifications.ANNOTATED, false, 1.0));
 
-      assertNotNull(apm2);
-      assertEquals("AVR", apm2.getField());
-      assertEquals(apm.toString(), apm2.toString());
-      //System.err.println(apm2.toString());
-      assertEquals(apm.getClass(), apm2.getClass());
+      final File bothfile = new File(dir, "modelboth.avr");
+      amb.save(bothfile);
+      checkModel(apm, getModelFactory(bothfile).getModel());
     }
   }
 
+  private void checkModel(AbstractPredictModel apm, AbstractPredictModel model) {
+    assertNotNull(model);
+    assertEquals("AVR", model.getField());
+    assertEquals(apm.toString(), model.toString());
+    assertEquals(apm.getClass(), model.getClass());
+  }
 }

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import com.rtg.ml.Attribute;
 import com.rtg.ml.BuildClassifier;
@@ -33,6 +34,8 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.avr.AttributeExtractor.IncompatibleHeaderException;
 import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfRecord;
+import com.rtg.vcf.eval.WithInfoEvalSynchronizer;
 import com.rtg.vcf.header.FormatField;
 import com.rtg.vcf.header.InfoField;
 import com.rtg.vcf.header.VcfHeader;
@@ -111,8 +114,18 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
             throw new NoTalkbackSlimException("The input VCF header is missing required fields:" + StringUtils.LS + ihe.getMessage());
           }
           final Dataset dataset = new Dataset(attributes);
-          while (reader.hasNext()) {
-            dataset.addInstance(new Instance(ae.getInstance(reader.next(), vcfDataset.getSampleNum()), vcfDataset.isPositive(), vcfDataset.getInstanceWeight()));
+          if (vcfDataset.classifications() == VcfDataset.Classifications.ANNOTATED) {
+            if (reader.getHeader().getInfoField(WithInfoEvalSynchronizer.INFO_CALL) == null) {
+              throw new NoTalkbackSlimException("The input VCF header is missing required INFO field: CALL");
+            }
+            while (reader.hasNext()) {
+              final VcfRecord rec = reader.next();
+              getClassification(rec).ifPresent(isPos -> dataset.addInstance(new Instance(ae.getInstance(rec, vcfDataset.getSampleNum()), isPos, vcfDataset.getInstanceWeight())));
+            }
+          } else {
+            while (reader.hasNext()) {
+              dataset.addInstance(new Instance(ae.getInstance(reader.next(), vcfDataset.getSampleNum()), vcfDataset.isPositive(), vcfDataset.getInstanceWeight()));
+            }
           }
           synchronized (datasets) {
             datasets.put(vcfDataset, dataset);
@@ -140,7 +153,7 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
       dataset.reweight();
     }
 
-    final Double errorRate = Double.valueOf(mParameters.getProperty(PARAMETER_ML_INJECT_NOISE, "-1"));
+    final double errorRate = Double.parseDouble(mParameters.getProperty(PARAMETER_ML_INJECT_NOISE, "-1"));
     if (errorRate > 0.0) {
       Diagnostic.userLog("Injecting noise at rate " + errorRate);
       dataset.injectMissing(errorRate);
@@ -153,6 +166,23 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
     Diagnostic.info("Total weight of negative examples: " + Utils.realFormat(dataset.totalNegativeWeight(), 2));
     Diagnostic.info(new AttributeExtractor(createAnnotations(), attributes).missingValuesReport(dataset));
     return dataset;
+  }
+
+  /**
+   * Determines classification status for a record based on vcfeval style annotation.
+   *
+   * @param rec the input record
+   * @return true if the instance is a positive example, false for negative example, or null if no recognized status annotation is present
+   */
+  private Optional<Boolean> getClassification(VcfRecord rec) {
+    final ArrayList<String> annots = rec.getInfo().get(WithInfoEvalSynchronizer.INFO_CALL);
+    final String status = (annots != null && annots.size() == 1) ? annots.get(0) : null;
+    if (WithInfoEvalSynchronizer.STATUS_TP.equals(status)) {
+      return Optional.of(true);
+    } else if (WithInfoEvalSynchronizer.STATUS_FP.equals(status)) {
+      return Optional.of(false);
+    }
+    return Optional.empty();
   }
 
   protected void scanVcfHeaders(VcfDataset... vcfDatasets) throws IOException {

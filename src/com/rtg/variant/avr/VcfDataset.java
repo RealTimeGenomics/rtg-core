@@ -18,9 +18,18 @@ import java.io.File;
  */
 public class VcfDataset {
 
+  enum Classifications {
+    /** Treat all instances in this dataset as positive examples */
+    ALL_POSITIVE,
+    /** Treat all instances in this dataset as negative examples */
+    ALL_NEGATIVE,
+    /** Determine class label for each instance based on INFO annotations */
+    ANNOTATED
+  }
+
   private final File mVcfFile;
   private final int mSampleNum;
-  private final boolean mIsPositive;
+  private final Classifications mClassType;
   private final double mInstanceWeight;
   private final boolean mReweight;
 
@@ -28,14 +37,14 @@ public class VcfDataset {
    * Constructor
    * @param vcfFile the file containing training variants
    * @param sampleNum the index of the sample from which to obtain format-level attributes
-   * @param isPositive true if the dataset contains positive examples
+   * @param classType specifies how to determine the classification for instances in this dataset
    * @param reweight true if positive and negative instances should be equalized in weight
    * @param instanceWeight the weight to assign to instances from this dataset.
    */
-  public VcfDataset(File vcfFile, int sampleNum, boolean isPositive, boolean reweight, double instanceWeight) {
+  public VcfDataset(File vcfFile, int sampleNum, Classifications classType, boolean reweight, double instanceWeight) {
     mVcfFile = vcfFile;
     mSampleNum = sampleNum;
-    mIsPositive = isPositive;
+    mClassType = classType;
     mReweight = reweight;
     mInstanceWeight = instanceWeight;
   }
@@ -49,7 +58,14 @@ public class VcfDataset {
   }
 
   public boolean isPositive() {
-    return mIsPositive;
+    return mClassType == Classifications.ALL_POSITIVE;
+  }
+
+  /**
+   * @return the method that should be used to determine the class label of each instance in the dataset.
+   */
+  public Classifications classifications() {
+    return mClassType;
   }
 
   public boolean isReweight() {
@@ -63,7 +79,7 @@ public class VcfDataset {
   @Override
   public String toString() {
     return "VcfDataset "
-      + (mIsPositive ? "POS" : "NEG")
+      + mClassType
       + " reweight=" + mReweight
       + " sample=" + mSampleNum
       + " weight=" + mInstanceWeight

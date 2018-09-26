@@ -46,6 +46,7 @@ public class BuilderCli extends AbstractCli {
   private static final String OUTPUT_FLAG = "output";
   private static final String POSITIVE_VCF_FLAG = "positive";
   private static final String NEGATIVE_VCF_FLAG = "negative";
+  private static final String ANNOTATED_VCF_FLAG = "annotated";
   private static final String SAMPLE_FLAG = "sample";
   private static final String INFO_ANNOTATIONS_FLAG = "info-annotations";
   private static final String FORMAT_ANNOTATIONS_FLAG = "format-annotations";
@@ -73,8 +74,9 @@ public class BuilderCli extends AbstractCli {
     mFlags.setDescription("Create an AVR model from positive and negative training examples.");
 
     mFlags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "output AVR model").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired('p', POSITIVE_VCF_FLAG, File.class, CommonFlags.FILE, "VCF file containing positive training examples").setCategory(INPUT_OUTPUT).setMaxCount(Integer.MAX_VALUE);
-    mFlags.registerRequired('n', NEGATIVE_VCF_FLAG, File.class, CommonFlags.FILE, "VCF file containing negative training examples").setCategory(INPUT_OUTPUT).setMaxCount(Integer.MAX_VALUE);
+    mFlags.registerOptional('p', POSITIVE_VCF_FLAG, File.class, CommonFlags.FILE, "VCF file containing positive training examples").setCategory(INPUT_OUTPUT).setMaxCount(Integer.MAX_VALUE);
+    mFlags.registerOptional('n', NEGATIVE_VCF_FLAG, File.class, CommonFlags.FILE, "VCF file containing negative training examples").setCategory(INPUT_OUTPUT).setMaxCount(Integer.MAX_VALUE);
+    mFlags.registerOptional('a', ANNOTATED_VCF_FLAG, File.class, CommonFlags.FILE, "VCF file containing training examples annotated with CALL=TP/FP").setCategory(INPUT_OUTPUT).setMaxCount(Integer.MAX_VALUE);
 
     mFlags.registerOptional('s', SAMPLE_FLAG, String.class, CommonFlags.STRING, "the name of the sample to select (required when using multi-sample VCF files)").setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(INFO_ANNOTATIONS_FLAG, String.class, CommonFlags.STRING, "INFO fields to use in model").setCategory(SENSITIVITY_TUNING).setMaxCount(Integer.MAX_VALUE).enableCsv();
@@ -98,6 +100,10 @@ public class BuilderCli extends AbstractCli {
       @Override
       public boolean isValid(CFlags flags) {
         if (!flags.checkOr(INFO_ANNOTATIONS_FLAG, FORMAT_ANNOTATIONS_FLAG, QUAL_ANNOTATION_FLAG, DERIVED_ANNOTATIONS_FLAG)) {
+          return false;
+        }
+        if (!flags.isSet(ANNOTATED_VCF_FLAG) && !(flags.isSet(POSITIVE_VCF_FLAG) && flags.isSet(NEGATIVE_VCF_FLAG))) {
+          flags.setParseMessage("Must either supply annotated training VCF or both positive and negative training VCFs");
           return false;
         }
         return true;
@@ -150,13 +156,15 @@ public class BuilderCli extends AbstractCli {
     final ArrayList<VcfDataset> datasets = new ArrayList<>();
     for (Object o : mFlags.getValues(POSITIVE_VCF_FLAG)) {
       final File posVcf = (File) o;
-      final int posSampleNumber = getSampleNumber(posVcf, sampleName);
-      datasets.add(new VcfDataset(posVcf, posSampleNumber, true, !mFlags.isSet(X_POS_WEIGHT), (Double) mFlags.getValue(X_POS_WEIGHT)));
+      datasets.add(new VcfDataset(posVcf, getSampleNumber(posVcf, sampleName), VcfDataset.Classifications.ALL_POSITIVE, !mFlags.isSet(X_POS_WEIGHT), (Double) mFlags.getValue(X_POS_WEIGHT)));
     }
     for (Object o : mFlags.getValues(NEGATIVE_VCF_FLAG)) {
       final File negVcf = (File) o;
-      final int negSampleNumber = getSampleNumber(negVcf, sampleName);
-      datasets.add(new VcfDataset(negVcf, negSampleNumber, false,  !mFlags.isSet(X_NEG_WEIGHT), (Double) mFlags.getValue(X_NEG_WEIGHT)));
+      datasets.add(new VcfDataset(negVcf, getSampleNumber(negVcf, sampleName), VcfDataset.Classifications.ALL_NEGATIVE,  !mFlags.isSet(X_NEG_WEIGHT), (Double) mFlags.getValue(X_NEG_WEIGHT)));
+    }
+    for (Object o : mFlags.getValues(ANNOTATED_VCF_FLAG)) {
+      final File aVcf = (File) o;
+      datasets.add(new VcfDataset(aVcf, getSampleNumber(aVcf, sampleName), VcfDataset.Classifications.ANNOTATED, !mFlags.isSet(X_NEG_WEIGHT), (Double) mFlags.getValue(X_NEG_WEIGHT)));
     }
 
     try {
