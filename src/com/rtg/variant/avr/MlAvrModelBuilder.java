@@ -14,6 +14,7 @@ package com.rtg.variant.avr;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -196,7 +197,8 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
         for (final InfoField field : header.getInfoLines()) {
           final String fieldId = field.getId();
           final InfoField existing = mCurrentInfos.get(fieldId);
-          if (existing != null && !field.equals(existing)) {
+          // Check for header field inconsistencies (just those we think we're going to use during the build)
+          if (existing != null && Arrays.binarySearch(mInfoAttributes, field.getId()) >= 0 && !field.equals(existing)) {
             throw new NoTalkbackSlimException("Info field " + fieldId + " has different definitions in different input VCFs");
           }
           mCurrentInfos.put(fieldId, field);
@@ -204,7 +206,8 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
         for (final FormatField field : header.getFormatLines()) {
           final String fieldId = field.getId();
           final FormatField existing = mCurrentFormats.get(fieldId);
-          if (existing != null && !field.equals(existing)) {
+          // Check for header field inconsistencies (just those we think we're going to use during the build)
+          if (existing != null && Arrays.binarySearch(mFormatAttributes, field.getId()) >= 0 && !field.equals(existing)) {
             throw new NoTalkbackSlimException("Format field " + fieldId + " has different definitions in different input VCFs");
           }
           mCurrentFormats.put(field.getId(), field);
