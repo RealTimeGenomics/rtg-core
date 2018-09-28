@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
@@ -33,7 +32,6 @@ import com.rtg.launcher.LoggedCli;
 import com.rtg.util.ThreadAware;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
-import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.annotation.DerivedAnnotations;
@@ -96,19 +94,16 @@ public class BuilderCli extends AbstractCli {
     CommonFlags.initThreadsFlag(mFlags);
     mFlags.registerOptional(X_MODEL_TYPE_FLAG, ModelType.class, "TYPE", "specify the type of AVR model to build", ModelType.ML).setCategory(UTILITY);
     mFlags.registerOptional(X_DUMP_MODEL_FLAG, "dump model contents").setCategory(INPUT_OUTPUT);
-    mFlags.setValidator(new Validator() {
-      @Override
-      public boolean isValid(CFlags flags) {
-        if (!flags.checkOr(INFO_ANNOTATIONS_FLAG, FORMAT_ANNOTATIONS_FLAG, QUAL_ANNOTATION_FLAG, DERIVED_ANNOTATIONS_FLAG)) {
-          return false;
-        }
-        if (!flags.isSet(ANNOTATED_VCF_FLAG) && !(flags.isSet(POSITIVE_VCF_FLAG) && flags.isSet(NEGATIVE_VCF_FLAG))) {
-          flags.setParseMessage("Must either supply annotated training VCF or both positive and negative training VCFs");
-          return false;
-        }
-        return true;
-      }
-    });
+    mFlags.setValidator(flags -> flags.checkOr(INFO_ANNOTATIONS_FLAG, FORMAT_ANNOTATIONS_FLAG, QUAL_ANNOTATION_FLAG, DERIVED_ANNOTATIONS_FLAG)
+      && checkTrainingLabels(flags));
+  }
+
+  private boolean checkTrainingLabels(CFlags flags) {
+    if (!flags.isSet(ANNOTATED_VCF_FLAG) && !(flags.isSet(POSITIVE_VCF_FLAG) && flags.isSet(NEGATIVE_VCF_FLAG))) {
+      flags.setParseMessage("When not using annotated training VCFs, both positive and negative training VCFs are required");
+      return false;
+    }
+    return true;
   }
 
 
@@ -186,8 +181,7 @@ public class BuilderCli extends AbstractCli {
   private String[] getStrings(String flag) {
     final String[] derivedAttributes;
     if (mFlags.isSet(flag)) {
-      final List<String> derived = mFlags.getValues(flag).stream().map(Object::toString).collect(Collectors.toList());
-      derivedAttributes = derived.toArray(new String[derived.size()]);
+      derivedAttributes = mFlags.getValues(flag).stream().map(Object::toString).toArray(String[]::new);
     } else {
       derivedAttributes = new String[0];
     }
