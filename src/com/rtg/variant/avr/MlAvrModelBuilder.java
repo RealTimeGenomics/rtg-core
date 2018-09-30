@@ -107,7 +107,7 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
     for (final VcfDataset vcfDataset : vcfDatasets) {
       stp.execute(() -> {
         Diagnostic.userLog("Loading " + vcfDataset);
-        try (final VcfReader reader = VcfReader.openVcfReader(vcfDataset.getVcfFile())) {
+        try (final VcfReader reader = VcfReader.openVcfReader(vcfDataset.getVcfFile(), vcfDataset.ranges())) {
           final AttributeExtractor ae = new AttributeExtractor(createAnnotations(), attributes);
           try {
             ae.checkHeader(reader.getHeader());

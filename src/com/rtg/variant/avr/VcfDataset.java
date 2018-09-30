@@ -13,6 +13,8 @@ package com.rtg.variant.avr;
 
 import java.io.File;
 
+import com.rtg.util.intervals.ReferenceRanges;
+
 /**
  * Encapsulates a single-VCF training dataset
  */
@@ -32,6 +34,7 @@ public class VcfDataset {
   private final Classifications mClassType;
   private final double mInstanceWeight;
   private final boolean mReweight;
+  private ReferenceRanges<String> mRanges;
 
   /**
    * Constructor
@@ -42,7 +45,21 @@ public class VcfDataset {
    * @param instanceWeight the weight to assign to instances from this dataset.
    */
   public VcfDataset(File vcfFile, int sampleNum, Classifications classType, boolean reweight, double instanceWeight) {
+    this(vcfFile, sampleNum, classType, reweight, instanceWeight, null);
+  }
+
+  /**
+   * Constructor
+   * @param vcfFile the file containing training variants
+   * @param sampleNum the index of the sample from which to obtain format-level attributes
+   * @param classType specifies how to determine the classification for instances in this dataset
+   * @param reweight true if positive and negative instances should be equalized in weight
+   * @param instanceWeight the weight to assign to instances from this dataset.
+   * @param ranges regions to load training variants from, or null for no restriction
+   */
+  public VcfDataset(File vcfFile, int sampleNum, Classifications classType, boolean reweight, double instanceWeight, ReferenceRanges<String> ranges) {
     mVcfFile = vcfFile;
+    mRanges = ranges;
     mSampleNum = sampleNum;
     mClassType = classType;
     mReweight = reweight;
@@ -66,6 +83,13 @@ public class VcfDataset {
    */
   public Classifications classifications() {
     return mClassType;
+  }
+
+  /**
+   * @return the training data regions, if any
+   */
+  public ReferenceRanges<String> ranges() {
+    return mRanges;
   }
 
   public boolean isReweight() {
