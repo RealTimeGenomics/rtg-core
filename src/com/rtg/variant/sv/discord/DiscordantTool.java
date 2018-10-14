@@ -136,7 +136,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       mBamWriter.close();
       mBamWriter = null;
       try {
-        BamIndexer.saveBamIndex(mBamFile, new File(mBamFile.getParent(), mBamFile.getName() + BamIndexer.BAM_INDEX_EXTENSION));
+        BamIndexer.saveBamIndex(mBamFile, BamIndexer.indexFileName(mBamFile));
       } catch (final UnindexableDataException e) {
         Diagnostic.warning("Cannot produce index for: " + mBamFile + ": " + e.getMessage());
       }
@@ -401,7 +401,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
 
   private void indexTsv(File file) throws IOException {
     try {
-      new TabixIndexer(file, new File(file.getParent(), file.getName() + TabixIndexer.TABIX_EXTENSION)).saveIndex(new DebugDiscordantOutputFormatter.DebugIndexerFactory());
+      new TabixIndexer(file).saveIndex(new DebugDiscordantOutputFormatter.DebugIndexerFactory());
     } catch (final UnindexableDataException e) {
       Diagnostic.warning("Cannot produce TABIX index for: " + file + ": " + e.getMessage());
     }
@@ -412,7 +412,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
     indexing.start();
     final File file = mParams.outFile(BED_FILENAME);
     try {
-      new TabixIndexer(file, new File(file.getParent(), file.getName() + TabixIndexer.TABIX_EXTENSION)).saveBedIndex();
+      new TabixIndexer(file).saveBedIndex();
     } catch (final UnindexableDataException e) {
       Diagnostic.warning("Cannot produce TABIX index for: " + file + ": " + e.getMessage());
     }

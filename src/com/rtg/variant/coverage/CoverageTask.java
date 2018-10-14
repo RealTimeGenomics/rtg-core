@@ -143,9 +143,9 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
       final File file = mParams.outFile();
       try {
         if (mParams.bedOutput() || mParams.bedgraphOutput()) {
-          new TabixIndexer(file, new File(file.getParent(), file.getName() + TabixIndexer.TABIX_EXTENSION)).saveBedIndex();
+          new TabixIndexer(file).saveBedIndex();
         } else {
-          new TabixIndexer(file, new File(file.getParent(), file.getName() + TabixIndexer.TABIX_EXTENSION)).saveTsvIndex();
+          new TabixIndexer(file).saveTsvIndex();
         }
       } catch (final UnindexableDataException e) {
         Diagnostic.warning("Cannot produce TABIX index for: " + file + ": " + e.getMessage());

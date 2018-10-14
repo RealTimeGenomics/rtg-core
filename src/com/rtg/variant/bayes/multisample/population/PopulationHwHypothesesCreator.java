@@ -73,7 +73,7 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
     mHaploid = haploidFactory;
     mDiploid = diploidFactory;
     mDescription = DescriptionSnp.SINGLETON;
-    if (!new File(input.getPath() + TabixIndexer.TABIX_EXTENSION).exists()) {
+    if (!TabixIndexer.indexFileName(input).exists()) {
       throw new IllegalArgumentException("Requires tabix indexed input file");
     }
     mMaxRefLength = load(input, ranges);

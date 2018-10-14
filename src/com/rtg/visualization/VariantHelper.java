@@ -42,8 +42,7 @@ final class VariantHelper {
     // First look up the array of sample indexes we want to get from this file
     final ArrayList<Integer> actualSamples = new ArrayList<>();
     final ArrayList<String> actualSampleNames = new ArrayList<>();
-    final File index = new File(input + TabixIndexer.TABIX_EXTENSION);
-    try (VcfReader r = VcfReader.openVcfReader(input, index.exists() ? region : null)) {
+    try (VcfReader r = VcfReader.openVcfReader(input, TabixIndexer.indexFileName(input).exists() ? region : null)) {
 
       // We have names available
       final List<String> sampleNames = r.getHeader().getSampleNames();

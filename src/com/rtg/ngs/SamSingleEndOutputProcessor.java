@@ -156,10 +156,10 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
       indexTimer.start();
       try {
         if (params.outputParams().bam()) {
-          indexFile = new File(outFile.getParentFile(), outFile.getName() + BamIndexer.BAM_INDEX_EXTENSION);
+          indexFile = BamIndexer.indexFileName(outFile);
           BamIndexer.saveBamIndexNoHeader(outFile, indexFile, hasHeader, numSequences);
         } else {
-          indexFile = new File(outFile.getParentFile(), outFile.getName() + TabixIndexer.TABIX_EXTENSION);
+          indexFile = TabixIndexer.indexFileName(outFile);
           new TabixIndexer(outFile, indexFile).saveSamIndex();
         }
       } catch (final UnindexableDataException e) {

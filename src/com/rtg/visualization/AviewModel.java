@@ -273,8 +273,7 @@ final class AviewModel {
 
   private BedSet loadBedSet(File bedFile, String bedName, RegionRestriction region) throws IOException {
     final BedSet bedset = new BedSet(bedName, new ArrayList<>());
-    final File index = new File(bedFile + TabixIndexer.TABIX_EXTENSION);
-    try (BedReader r = BedReader.openBedReader(index.exists() ? region : null, bedFile, 0)) {
+    try (BedReader r = BedReader.openBedReader(TabixIndexer.indexFileName(bedFile).exists() ? region : null, bedFile, 0)) {
       while (r.hasNext()) {
         final BedRecord current = r.next();
         // Explicitly check the position in case this is from an untabixed source.
