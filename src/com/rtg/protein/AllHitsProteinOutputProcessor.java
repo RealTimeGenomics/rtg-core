@@ -73,7 +73,7 @@ public class AllHitsProteinOutputProcessor extends ProteinOutputProcessor {
         }
         final File[] files = alignmentFileList.toArray(new File[alignmentFileList.size()]);
         if (quickcat) {
-          FileUtils.catInSync(mOutFile, false, files);
+          FileUtils.copyRaw(mOutFile, files);
         } else {
           try (OutputStream out = FileUtils.createOutputStream(mOutFile)) {
             TsvUtils.tsvCat(gztemp, out, files);

@@ -398,7 +398,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
       indexFiles[i] = AbstractMulticoreFilterConcat.indexFileName(f, mParams.outputParams().bam());
       calibrationFiles[i] = new File(f.getParent(), f.getName() + CommonFlags.RECALIBRATE_EXTENSION);
     }
-    FileUtils.catInSync(finalOutputFile, !keepTempFiles, regionFiles.toArray(new File[regionFiles.size()]));
+    FileUtils.copyRaw(finalOutputFile, !keepTempFiles, regionFiles.toArray(new File[regionFiles.size()]));
     if (mParams.outputParams().outputIndex() && (mParams.outputParams().isCompressOutput() || mParams.outputParams().bam())) {
       AbstractMulticoreFilterConcat.mergeIndexes(mParams, finalOutputFile, indexFiles, dataFileSizes);
     }

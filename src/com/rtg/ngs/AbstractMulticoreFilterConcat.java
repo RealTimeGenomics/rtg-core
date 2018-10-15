@@ -216,7 +216,7 @@ public abstract class AbstractMulticoreFilterConcat {
       int cur = 0;
       final boolean keepTempFiles = GlobalFlags.isSet(CoreGlobalFlags.MAP_KEEP_TEMPORARY_FILES);
       Diagnostic.progress(mThreadNamePrefix + "ResultsConcat: Starting " + tot + " Jobs");
-      FileUtils.catInSync(outFile, !keepTempFiles, intermediate);
+      FileUtils.copyRaw(outFile, !keepTempFiles, intermediate);
       Diagnostic.progress(mThreadNamePrefix + "ResultsConcat: " + ++cur + "/" + tot + " Jobs Finished");
       if (createIndex) {
         mergeIndexes(mParams, outFile, intermediateIndexes, dataFileSizes);
