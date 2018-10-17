@@ -296,7 +296,8 @@ public final class CoreCommand {
     // Simulation
     ToolsCommand.GENOMESIM,                                           // Reference simulation
     ToolsCommand.CGSIM, ToolsCommand.READSIM, READSIMEVAL,                         // Read simulation
-    ToolsCommand.POPSIM, ToolsCommand.SAMPLESIM, ToolsCommand.CHILDSIM, ToolsCommand.DENOVOSIM, ToolsCommand.SAMPLEREPLAY, // Variant simulation
+    ToolsCommand.POPSIM, ToolsCommand.SAMPLESIM, ToolsCommand.CHILDSIM, ToolsCommand.DENOVOSIM, ToolsCommand.PEDSAMPLESIM, // Variant simulation
+    ToolsCommand.SAMPLEREPLAY,               // Variant simulation
     CNVSIM,                                  // Structural variant simulation
 
     // Utility
