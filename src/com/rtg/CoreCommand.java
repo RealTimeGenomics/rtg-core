@@ -77,176 +77,176 @@ public final class CoreCommand {
   private CoreCommand() { }
 
   /** For formatting complete genomics data files for use by RtgCore */
-  static final Command CG2SDF = new Command(new Cg2Sdf(), CommandCategory.FORMAT, ReleaseLevel.GA);
+  static final Command CG2SDF = new LicensedCommand(new Cg2Sdf(), CommandCategory.FORMAT, ReleaseLevel.GA);
 
   /** For converting SDF formatted complete genomics reads back into CG TSV format */
-  static final Command SDF2CG = new Command(new Sdf2Cg(), CommandCategory.FORMAT, ReleaseLevel.BETA);
+  static final Command SDF2CG = new LicensedCommand(new Sdf2Cg(), CommandCategory.FORMAT, ReleaseLevel.BETA);
 
   /** Trimming of paired-end reads in FASTQ based on overlap */
-  static final Command PETRIM = new Command(new PairedEndTrimCli(), CommandCategory.FORMAT, ReleaseLevel.GA);
+  static final Command PETRIM = new LicensedCommand(new PairedEndTrimCli(), CommandCategory.FORMAT, ReleaseLevel.GA);
 
   /** For converting RtgCore's data format into FASTA/QUALA format */
-  static final Command SDF2QUALA = new Command(new Sdf2Quala(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
+  static final Command SDF2QUALA = new LicensedCommand(new Sdf2Quala(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
 
   /** For generating k-mer count histograms and blacklists */
-  static final Command HASHDIST = new Command(new HashDistCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
+  static final Command HASHDIST = new LicensedCommand(new HashDistCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
 
   /** Read mapping with new and old technology mixed */
-  static final Command MAP = new Command(new MapCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
+  static final Command MAP = new LicensedCommand(new MapCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
 
   /** Read mapping very constrained options, geared towards selecting reads to filter */
-  static final Command MAPF = new Command(new MapFCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
+  static final Command MAPF = new LicensedCommand(new MapFCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
 
   /** CG reads mapping */
-  static final Command CGMAP = new Command(new CgMapCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
+  static final Command CGMAP = new LicensedCommand(new CgMapCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
 
   /** Build index for zooma native mapping */
-  static final Command ZOOMA_BUILD = new Command(new ZoomaNativeBuildIndexCli(), CommandCategory.MAPPING, ReleaseLevel.ALPHA);
+  static final Command ZOOMA_BUILD = new LicensedCommand(new ZoomaNativeBuildIndexCli(), CommandCategory.MAPPING, ReleaseLevel.ALPHA);
 
   /** Map using zooma native code */
-  static final Command ZOOMA_MAP = new Command(new ZoomaNativeMapReadsCli(), CommandCategory.MAPPING, ReleaseLevel.ALPHA);
+  static final Command ZOOMA_MAP = new LicensedCommand(new ZoomaNativeMapReadsCli(), CommandCategory.MAPPING, ReleaseLevel.ALPHA);
 
   /** Do a coverage count from mappings */
-  static final Command COVERAGE = new Command(new CoverageCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
+  static final Command COVERAGE = new LicensedCommand(new CoverageCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
 
   /** Runs stand alone re-calibration */
-  static final Command CALIBRATE = new Command(new RecalibrateCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
+  static final Command CALIBRATE = new LicensedCommand(new RecalibrateCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
 
   /** Runs Ngs and Alignment*/
-  static final Command MAPX = new Command(new MapXCli(), CommandCategory.PROTEIN, ReleaseLevel.GA);
+  static final Command MAPX = new LicensedCommand(new MapXCli(), CommandCategory.PROTEIN, ReleaseLevel.GA);
 
   /** Assemble reads into longer contigs */
-  static final Command ASSEMBLE = new Command(new AssembleCli(), CommandCategory.ASSEMBLY, ReleaseLevel.BETA);
+  static final Command ASSEMBLE = new LicensedCommand(new AssembleCli(), CommandCategory.ASSEMBLY, ReleaseLevel.BETA);
 
   /** Assemble reads into longer contigs */
-  static final Command ADDPACBIO = new Command(new PacBioCli(), CommandCategory.ASSEMBLY, ReleaseLevel.BETA);
+  static final Command ADDPACBIO = new LicensedCommand(new PacBioCli(), CommandCategory.ASSEMBLY, ReleaseLevel.BETA);
 
 
   /** Runs variant calling*/
-  static final Command SINGLETON = new Command(new SingletonCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
+  static final Command SINGLETON = new LicensedCommand(new SingletonCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs mendelian family variant calling. */
-  static final Command MULTI_FAMILY = new Command(new FamilyCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
+  static final Command MULTI_FAMILY = new LicensedCommand(new FamilyCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs somatic variant calling. */
-  static final Command MULTI_SOMATIC = new Command(new SomaticCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
+  static final Command MULTI_SOMATIC = new LicensedCommand(new SomaticCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs somatic variant calling. */
-  static final Command TUMOR_ONLY = new Command(new TumorOnlyCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+  static final Command TUMOR_ONLY = new LicensedCommand(new TumorOnlyCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
 
   /** Runs the mondo population/pedigree variant caller. */
-  static final Command MULTI_POPULATION = new Command(new PopulationCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
+  static final Command MULTI_POPULATION = new LicensedCommand(new PopulationCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs the lineage/single parent pedigree variant caller. */
-  static final Command MULTI_LINEAGE = new Command(new LineageCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
+  static final Command MULTI_LINEAGE = new LicensedCommand(new LineageCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
 
   /** Runs AVR model builder. */
-  static final Command AVRBUILD = new Command(new BuilderCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
+  static final Command AVRBUILD = new LicensedCommand(new BuilderCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs AVR model builder. */
-  static final Command AVRPREDICT = new Command(new PredictCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
+  static final Command AVRPREDICT = new LicensedCommand(new PredictCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Search for family phasing using segregation analysis */
-  static final Command PHASINGSEARCH = new Command(new SegregationVcfSearch(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+  static final Command PHASINGSEARCH = new LicensedCommand(new SegregationVcfSearch(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
 
   /** Evaluate calls against segregation phasing */
-  static final Command PHASINGEVAL = new Command(new SegregationCheckerCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+  static final Command PHASINGEVAL = new LicensedCommand(new SegregationCheckerCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
 
   /** Preprocess SAM files for use with the SV tool */
-  static final Command SVPREP = new Command(new UnmatedAugmenterCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
+  static final Command SVPREP = new LicensedCommand(new UnmatedAugmenterCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
 
   /** Run the structural variant detection tool */
-  static final Command SV = new Command(new SvToolCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
+  static final Command SV = new LicensedCommand(new SvToolCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
 
   /** Run the discordant read structural variant detection tool */
-  static final Command DISCORD = new Command(new DiscordantToolCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
+  static final Command DISCORD = new LicensedCommand(new DiscordantToolCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
 
-  static final Command FUSIONFILTER = new Command(new FusionFilter(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+  static final Command FUSIONFILTER = new LicensedCommand(new FusionFilter(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
 
   /** Runs CNV calling */
-  static final Command CNV = new Command(new CnvCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
+  static final Command CNV = new LicensedCommand(new CnvCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs CNV segmentation. */
-  static final Command SEGMENT = new Command(new SegmentCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+  static final Command SEGMENT = new LicensedCommand(new SegmentCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
 
   /** Runs CNV panel building. */
-  static final Command CNVPANELBUILD = new Command(new CnvPonBuildCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+  static final Command CNVPANELBUILD = new LicensedCommand(new CnvPonBuildCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
 
   /** Runs CNV region summary report. */
-  static final Command CNVSUMMARY = new Command(new CnvSummaryCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+  static final Command CNVSUMMARY = new LicensedCommand(new CnvSummaryCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
 
 
   /** Metagenomics species analysis */
-  static final Command SPECIES = new Command(new SpeciesCli(), CommandCategory.METAGENOMICS, ReleaseLevel.GA);
+  static final Command SPECIES = new LicensedCommand(new SpeciesCli(), CommandCategory.METAGENOMICS, ReleaseLevel.GA);
 
   /** Metagenomics analysis of multiple heterogeneous samples */
-  static final Command METASNP = new Command(new MetaSnpCli(), CommandCategory.METAGENOMICS, ReleaseLevel.ALPHA);
+  static final Command METASNP = new LicensedCommand(new MetaSnpCli(), CommandCategory.METAGENOMICS, ReleaseLevel.ALPHA);
 
   /** groups similar species, also produces similarity matrices */
-  static final Command SIMILARITY = new Command(new SimilarityCli(), CommandCategory.METAGENOMICS, ReleaseLevel.GA);
+  static final Command SIMILARITY = new LicensedCommand(new SimilarityCli(), CommandCategory.METAGENOMICS, ReleaseLevel.GA);
 
   /** Metagenomics composition pipeline wrapper scripting module */
-  static final Command COMPOSITIONMETA = new Command(new CompositionMetaPipelineCli(), CommandCategory.PIPELINES, ReleaseLevel.BETA);
+  static final Command COMPOSITIONMETA = new LicensedCommand(new CompositionMetaPipelineCli(), CommandCategory.PIPELINES, ReleaseLevel.BETA);
 
   /** Metagenomics composition pipeline wrapper scripting module */
-  static final Command FUNCTIONALMETA = new Command(new FunctionalMetaPipelineCli(), CommandCategory.PIPELINES, ReleaseLevel.BETA);
+  static final Command FUNCTIONALMETA = new LicensedCommand(new FunctionalMetaPipelineCli(), CommandCategory.PIPELINES, ReleaseLevel.BETA);
 
   /** Metagenomics composition + functional pipeline wrapper scripting module */
-  static final Command METAGENOMICS = new Command(new MetagenomicsWrapperCli(), CommandCategory.PIPELINES, ReleaseLevel.BETA);
+  static final Command METAGENOMICS = new LicensedCommand(new MetagenomicsWrapperCli(), CommandCategory.PIPELINES, ReleaseLevel.BETA);
 
   /** Evaluate read mappings and produce ROC. */
-  static final Command READSIMEVAL = new Command(new ReadSimEvalCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
+  static final Command READSIMEVAL = new LicensedCommand(new ReadSimEvalCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
   /** Generate a copy of a genome with a bunch of CNV mutations */
-  static final Command CNVSIM = new Command(new CnvSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.ALPHA);
+  static final Command CNVSIM = new LicensedCommand(new CnvSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.ALPHA);
 
   /** Classic searching with positions, also supports gaps */
-  static final Command AVIEW = new Command(new Aview(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command AVIEW = new LicensedCommand(new Aview(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Splits an SDF file into parts */
-  static final Command SDFSPLIT = new Command(new SdfSplitter(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command SDFSPLIT = new LicensedCommand(new SdfSplitter(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Create a BAM file from a SAM file  */
-  static final Command SAM2BAM = new Command(new Sam2Bam(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command SAM2BAM = new LicensedCommand(new Sam2Bam(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Convert a paired SAM/BAM file to FASTQ */
-  static final Command SAM2FASTQ = new Command(new SamToFastq(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
+  static final Command SAM2FASTQ = new LicensedCommand(new SamToFastq(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
 
   /** Rename read-id field in mapping output */
-  static final Command SAMMERGE = new Command(new SamMergeCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command SAMMERGE = new LicensedCommand(new SamMergeCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Print statistics about a sam file */
-  static final Command SAMSTATS = new Command(new SamValidatorCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command SAMSTATS = new LicensedCommand(new SamValidatorCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Rename read-id field in mapping output */
-  static final Command SAMRENAME = new Command(new SamRename(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command SAMRENAME = new LicensedCommand(new SamRename(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** strip probes for mapped bam */
-  static final Command SAMSTRIPPROBES = new Command(new DeProbeCli(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
+  static final Command SAMSTRIPPROBES = new LicensedCommand(new DeProbeCli(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
 
   /** Rename read-id field in mapping output */
-  static final Command MAPXRENAME = new Command(new MapxRename(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command MAPXRENAME = new LicensedCommand(new MapxRename(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Do checking of coverage levels from calibration information */
-  static final Command CHRSTATS = new Command(new ChrStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command CHRSTATS = new LicensedCommand(new ChrStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** SNP intersection class */
-  static final Command SNPINTERSECT = new Command(new SnpIntersection(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
+  static final Command SNPINTERSECT = new LicensedCommand(new SnpIntersection(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
 
   /** NCBI Taxonomy reader */
-  static final Command NCBI2TAX = new Command(new NcbiTaxDumpReaderCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command NCBI2TAX = new LicensedCommand(new NcbiTaxDumpReaderCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Taxonomy manipulation */
-  static final Command TAXFILTER = new Command(new TaxFilterCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command TAXFILTER = new LicensedCommand(new TaxFilterCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Taxonomy verifier */
-  static final Command TAXSTATS = new Command(new TaxStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command TAXSTATS = new LicensedCommand(new TaxStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Runs AVR model status. */
-  static final Command AVRSTATS = new Command(new AvrStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command AVRSTATS = new LicensedCommand(new AvrStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Usage tracking server */
-  static final Command USAGESERVER = new Command(new UsageServerCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
+  static final Command USAGESERVER = new LicensedCommand(new UsageServerCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** List modules and their license status. */
   static final LicenseCommand LICENSE = new LicenseCommand();
