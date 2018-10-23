@@ -456,9 +456,6 @@ public class SegmentCli extends LoggedCli {
   private Collection<Segment> split(final Collection<SegmentChain> sg, final double deltaEnergyLimit) throws IOException {
     // Keep splitting until the energy limit or until the maximum number of segments,
     // whichever comes first.
-    if (sg.isEmpty()) {
-      return Collections.emptyList();
-    }
     final int minSegments = (Integer) mFlags.getValue(MIN_SEGMENTS_FLAG);
     final int maxSegments = (Integer) mFlags.getValue(MAX_SEGMENTS_FLAG);
     final Map<String, Long> seqNameMap = ReaderUtils.getSequenceNameMap(mReference);
@@ -484,29 +481,31 @@ public class SegmentCli extends LoggedCli {
     for (final SegmentChain chain : sg) {
       orderByDeltaEnergyLimit.addAll(chain);
     }
-    while (orderByDeltaEnergyLimit.size() < maxSegments) {
-      final double dE = orderByDeltaEnergyLimit.first().deltaEnergy();
-      if (dE < deltaEnergyLimit && orderByDeltaEnergyLimit.size() >= minSegments) {
-        break; // Nothing further to be done, reached beta limit
-      }
-      // Split the top segment
-      final Segment highest = orderByDeltaEnergyLimit.pollFirst();
-      final Segment left = highest.left();
-      final Segment right = highest.right();
-      if (left == null || right == null) {
-        break;
-      }
-      if (right.bins() == 1 && mFlags.isSet(ABSORB_SINGLETONS_FLAG)) {
-        // Absorb right into left, pushing down the boundary change on the right
-        final Segment newLeft = Segment.absorbRight(left, right);
-        orderByDeltaEnergyLimit.add(newLeft); // right is discarded
-      } else if (left.bins() == 1 && mFlags.isSet(ABSORB_SINGLETONS_FLAG)) {
-        // Absorb left into right, pushing down the boundary change on the left
-        final Segment newRight = Segment.absorbLeft(left, right);
-        orderByDeltaEnergyLimit.add(newRight); // left is discarded
-      } else {
-        orderByDeltaEnergyLimit.add(left);
-        orderByDeltaEnergyLimit.add(right);
+    if (!orderByDeltaEnergyLimit.isEmpty()) {
+      while (orderByDeltaEnergyLimit.size() < maxSegments) {
+        final double dE = orderByDeltaEnergyLimit.first().deltaEnergy();
+        if (dE < deltaEnergyLimit && orderByDeltaEnergyLimit.size() >= minSegments) {
+          break; // Nothing further to be done, reached beta limit
+        }
+        // Split the top segment
+        final Segment highest = orderByDeltaEnergyLimit.pollFirst();
+        final Segment left = highest.left();
+        final Segment right = highest.right();
+        if (left == null || right == null) {
+          break;
+        }
+        if (right.bins() == 1 && mFlags.isSet(ABSORB_SINGLETONS_FLAG)) {
+          // Absorb right into left, pushing down the boundary change on the right
+          final Segment newLeft = Segment.absorbRight(left, right);
+          orderByDeltaEnergyLimit.add(newLeft); // right is discarded
+        } else if (left.bins() == 1 && mFlags.isSet(ABSORB_SINGLETONS_FLAG)) {
+          // Absorb left into right, pushing down the boundary change on the left
+          final Segment newRight = Segment.absorbLeft(left, right);
+          orderByDeltaEnergyLimit.add(newRight); // left is discarded
+        } else {
+          orderByDeltaEnergyLimit.add(left);
+          orderByDeltaEnergyLimit.add(right);
+        }
       }
     }
 
