@@ -456,6 +456,9 @@ public class SegmentCli extends LoggedCli {
   private Collection<Segment> split(final Collection<SegmentChain> sg, final double deltaEnergyLimit) throws IOException {
     // Keep splitting until the energy limit or until the maximum number of segments,
     // whichever comes first.
+    if (sg.isEmpty()) {
+      return Collections.emptyList();
+    }
     final int minSegments = (Integer) mFlags.getValue(MIN_SEGMENTS_FLAG);
     final int maxSegments = (Integer) mFlags.getValue(MAX_SEGMENTS_FLAG);
     final Map<String, Long> seqNameMap = ReaderUtils.getSequenceNameMap(mReference);
