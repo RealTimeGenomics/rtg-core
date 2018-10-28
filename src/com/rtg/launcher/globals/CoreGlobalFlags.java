@@ -192,7 +192,7 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     registerFlag(SV_IGNORE_RGSTATS_VERSION);
     registerFlag(SV_DISCORD_DEBUG_PER_RECORD);
 
-    registerFlag(SEGMENT_MIN_LOG_RATIO, Double.class, Double.NEGATIVE_INFINITY);
+    registerFlag(SEGMENT_MIN_LOG_RATIO, Double.class, -6.0);
 
     registerFlag(COVERAGE_DP, Integer.class, 2);
 
