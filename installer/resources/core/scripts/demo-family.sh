@@ -49,7 +49,7 @@ fi
 function pause() {
     if [ ! "$NOWAIT" ]; then
         echo
-        read -epr "Press enter to continue..."
+        read -erp "Press enter to continue..."
         echo
     fi
 }
