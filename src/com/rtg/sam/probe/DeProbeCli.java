@@ -188,7 +188,7 @@ public class DeProbeCli extends LoggedCli {
                 if (!stripped) {
                   record.setAttribute("XS", "failed");
                 } else if (probeBasedDropping && record.getReadBases().length < hitProbe.getMinReadLength()) {
-                  filterRead(record);
+                  SamUtils.convertToUnmapped(record);
                   shortReads++;
                 }
               }
@@ -264,13 +264,6 @@ public class DeProbeCli extends LoggedCli {
     writeStrandFile(new File(outputDirectory(), POS_COUNTS_NAME), mPosRanges);
     writeStrandFile(new File(outputDirectory(), NEG_COUNTS_NAME), mNegRanges);
     return 0;
-  }
-
-  static void filterRead(SAMRecord record) {
-    //end positions are 1 based exclusive
-    record.setCigarString("*");
-    record.setReadUnmappedFlag(true);
-    record.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, null);
   }
 
   private void logStats(boolean extraSoftClip, boolean minBases, int totalRecords12, int softClippedRecords12, int shortReads) {

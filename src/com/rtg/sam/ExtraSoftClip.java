@@ -91,9 +91,7 @@ public final class ExtraSoftClip {
     }
     if (matchCount <= MIN_ANCHOR) {
       //System.err.println("Setting record to unmapped with insufficient matches " + matchCount + " -- "  + record.getSAMString());
-      record.setReadUnmappedFlag(true);
-      record.setCigarString("*");
-      record.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, null);
+      SamUtils.convertToUnmapped(record);
       return true;
     }
     return false;
@@ -144,8 +142,7 @@ public final class ExtraSoftClip {
     }
     if (matchCount <= MIN_ANCHOR) {
       //System.err.println("Setting record to unmapped with insufficient matches " + matchCount + " -- "  + record.getSAMString());
-      record.setReadUnmappedFlag(true);
-      record.setCigarString("*");
+      SamUtils.convertToUnmapped(record);
       return true;
     }
     return false;

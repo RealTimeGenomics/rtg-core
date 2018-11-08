@@ -28,16 +28,9 @@ public final class MinLengthFilter {
    */
   public static boolean filterShortReads(SAMRecord record, int minReadLength) {
     if (record.getAlignmentEnd() - record.getAlignmentStart() + 1 < minReadLength) {
-      filterRead(record);
+      SamUtils.convertToUnmapped(record);
       return true;
     }
     return false;
-  }
-
-  static void filterRead(SAMRecord record) {
-    //end positions are 1 based exclusive
-    record.setCigarString("*");
-    record.setReadUnmappedFlag(true);
-    record.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, null);
   }
 }
