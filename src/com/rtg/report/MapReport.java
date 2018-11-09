@@ -241,7 +241,7 @@ public class MapReport extends MapSummaryReport {
               if (tParts[tParts.length - 1].endsWith(")")) {
                 titles.add("  " + tParts[0] + " " + tParts[tParts.length - 3] + " " + tParts[tParts.length - 2] + " " + tParts[tParts.length - 1]);
               } else {
-                titles.add("  " + tParts[0] + " " + tParts[tParts.length - 2] + " " + tParts[tParts.length - 1]);
+                titles.add("  " + title);
               }
             }
           }
