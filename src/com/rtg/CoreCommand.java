@@ -33,6 +33,7 @@ import com.rtg.reader.SamToFastq;
 import com.rtg.reader.Sdf2Cg;
 import com.rtg.reader.Sdf2Quala;
 import com.rtg.reader.SdfSplitter;
+import com.rtg.reader.SoftClip2Fastq;
 import com.rtg.sam.Sam2Bam;
 import com.rtg.sam.SamMergeCli;
 import com.rtg.sam.SamValidatorCli;
@@ -212,6 +213,9 @@ public final class CoreCommand {
   /** Convert a paired SAM/BAM file to FASTQ */
   static final Command SAM2FASTQ = new LicensedCommand(new SamToFastq(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
 
+  /** Convert long soft-clipped alignments to FASTQ */
+  static final Command SOFTCLIP2FASTQ = new LicensedCommand(new SoftClip2Fastq(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
+
   /** Rename read-id field in mapping output */
   static final Command SAMMERGE = new LicensedCommand(new SamMergeCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
@@ -304,7 +308,7 @@ public final class CoreCommand {
     ToolsCommand.BGZIP, ToolsCommand.INDEX, ToolsCommand.EXTRACT, AVIEW,                        // General purpose
     ToolsCommand.SDFSTATS, SDFSPLIT, ToolsCommand.SDFSUBSET, ToolsCommand.SDFSUBSEQ,            // SDF related
     SAM2BAM, SAMMERGE, SAMSTATS, SAMRENAME, SAMSTRIPPROBES, MAPXRENAME,  // Mapping related
-    CHRSTATS, SAM2FASTQ,
+    CHRSTATS, SAM2FASTQ, SOFTCLIP2FASTQ,
     ToolsCommand.MENDELIAN,
     ToolsCommand.VCFSTATS, ToolsCommand.VCFMERGE,                       // VCF related
     ToolsCommand.VCFFILTER, ToolsCommand.VCFANNOTATE, ToolsCommand.VCFSUBSET,

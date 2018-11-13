@@ -68,6 +68,8 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, CoreCommand.MAPF.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.READSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SAM2BAM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SAM2FASTQ.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SOFTCLIP2FASTQ.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SAMRENAME.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SAMMERGE.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.MAPXRENAME.mainInit(new String[0], baos, ps));
