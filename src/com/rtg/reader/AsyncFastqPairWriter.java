@@ -78,7 +78,7 @@ class AsyncFastqPairWriter extends AbstractAsyncChunkWriter<FastqPair> {
   }
 
   private void synchronouslyWrite(FastqWriter w, FastqSequence read) throws IOException {
-    w.write(read.getName(), read.getBases(), read.getQualities(), read.getBases().length);
+    w.write(read);
   }
 
   @Override
