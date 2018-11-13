@@ -494,22 +494,20 @@ public final class MapParamsHelper {
           final SequenceParams[] sp = samTask.get();
           assert sp.length == 2;
           ngsParamsBuilder.buildFirstParams(sp[0]);
-          if (sp[1] != null) {
-            ngsParamsBuilder.buildSecondParams(sp[1]);
-          }
+          ngsParamsBuilder.buildSecondParams(sp[1]);
         } else {
-          final FutureTask<SequenceParams> leftTask = new FutureTask<>(new SequenceParamsCallableFasta(build, desc, buildRegion, buildSecond != null ? PrereadArm.LEFT : PrereadArm.UNKNOWN, names, suffixes, useQuality, readsMode));
+          final FutureTask<SequenceParams[]> leftTask = new FutureTask<>(new SequenceParamsCallableFasta(build, desc, buildRegion, buildSecond != null ? PrereadArm.LEFT : PrereadArm.UNKNOWN, names, suffixes, useQuality, readsMode));
           executor.execute(leftTask);
-          FutureTask<SequenceParams> rightTask = null;
           if (buildSecond != null) {
             final RightSimpleNames rNames = names == null ? null : new RightSimpleNames(names);
             final RightSimpleNames rSuffixes = suffixes == null ? null : new RightSimpleNames(suffixes);
-            rightTask = new FutureTask<>(new SequenceParamsCallableFasta(buildSecond, desc, buildRegion, PrereadArm.RIGHT, rNames, rSuffixes, useQuality, readsMode));
+            final FutureTask<SequenceParams[]> rightTask = new FutureTask<>(new SequenceParamsCallableFasta(buildSecond, desc, buildRegion, PrereadArm.RIGHT, rNames, rSuffixes, useQuality, readsMode));
             executor.execute(rightTask);
-          }
-          ngsParamsBuilder.buildFirstParams(leftTask.get());
-          if (rightTask != null) {
-            ngsParamsBuilder.buildSecondParams(rightTask.get());
+            ngsParamsBuilder.buildFirstParams(leftTask.get()[0]);
+            ngsParamsBuilder.buildSecondParams(rightTask.get()[0]);
+          } else {
+            ngsParamsBuilder.buildFirstParams(leftTask.get()[0]);
+            ngsParamsBuilder.buildSecondParams(leftTask.get()[1]);
           }
         }
         ngsParamsBuilder.searchParams(templateTask.get());
@@ -618,18 +616,17 @@ public final class MapParamsHelper {
     }
   }
 
-  static final class SequenceParamsCallableFasta implements Callable<SequenceParams> {
-    private final File mBuild;
+  abstract static class AbstractSequenceParamsCallable implements Callable<SequenceParams[]> {
+    protected final File mBuild;
+    protected final DataSourceDescription mInputDescription;
     private final boolean mUseMemReader;
-    private final DataSourceDescription mInputDescription;
     private final LongRange mReaderRestriction;
     private final SimpleNames mNames;
     private final SimpleNames mSuffixes;
-    private final PrereadArm mArm;
     private final SequenceMode mMode;
     private final boolean mUseQuality;
 
-    SequenceParamsCallableFasta(File build, DataSourceDescription desc, LongRange readerRestriction, PrereadArm arm, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) {
+    AbstractSequenceParamsCallable(File build, DataSourceDescription desc, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) {
       // C'tor for reads
       mBuild = build;
       mUseMemReader = true;
@@ -637,49 +634,17 @@ public final class MapParamsHelper {
       mInputDescription = desc;
       mNames = names;
       mSuffixes = suffixes;
-      mArm = arm;
       mMode = mode;
       mUseQuality = useQuality;
     }
 
-    @Override
-    public SequenceParams call() throws IOException {
-      final SequenceDataSource ds = FormatCli.getDnaDataSource(Collections.singletonList(mBuild), mInputDescription, mArm, false, false, null, false);
-      final SequencesWriter sw = new SequencesWriter(ds, null, PrereadType.UNKNOWN, true);
-      sw.setSdfId(new SdfId(0));
-      final SequencesReader reader = sw.processSequencesInMemory(mBuild, mUseQuality, mNames, mSuffixes,  mReaderRestriction);
-      return SequenceParams.builder().readerParam(new DefaultReaderParams(reader, mReaderRestriction, mMode)).useMemReader(mUseMemReader).mode(mMode).readerRestriction(mReaderRestriction).create(); // Reads
-    }
-  }
-
-  static final class SequenceParamsCallableSam implements Callable<SequenceParams[]> {
-    private final File mBuild;
-    private final boolean mUseMemReader;
-    private final DataSourceDescription mInputFormat;
-    private final LongRange mReaderRestriction;
-    private final SimpleNames mNames;
-    private final SimpleNames mSuffixes;
-    private final SequenceMode mMode;
-    private final boolean mUseQuality;
-    private final SamSequenceReaderParams mSamParams;
-
-    SequenceParamsCallableSam(File build, DataSourceDescription desc, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode, SamSequenceReaderParams samParams) { // C'tor for reads
-      mBuild = build;
-      mUseMemReader = true;
-      mReaderRestriction = readerRestriction;
-      mInputFormat = desc;
-      mNames = names;
-      mSuffixes = suffixes;
-      mMode = mode;
-      mUseQuality = useQuality;
-      mSamParams = samParams;
-    }
+    abstract SequenceDataSource getDataSource();
 
     @Override
     public SequenceParams[] call() throws Exception {
-      final SequenceDataSource ds = FormatCli.getDnaDataSource(Collections.singletonList(mBuild), mInputFormat, null, mSamParams.unorderedLoad(), mSamParams.flattenPairs(), null, false);
+      final SequenceDataSource ds = getDataSource();
       final SequencesReader[] readers;
-      if (mInputFormat.isInterleaved()) {
+      if (mInputDescription.isInterleaved()) {
         final AlternatingSequencesWriter asw = new AlternatingSequencesWriter(ds, null, PrereadType.UNKNOWN, true);
         asw.setSdfId(new SdfId(0));
         asw.setCheckDuplicateNames(true);
@@ -697,6 +662,30 @@ public final class MapParamsHelper {
         }
       }
       return sp;
+    }
+  }
+
+  static final class SequenceParamsCallableFasta extends AbstractSequenceParamsCallable {
+    private final PrereadArm mArm;
+    SequenceParamsCallableFasta(File build, DataSourceDescription desc, LongRange readerRestriction, PrereadArm arm, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) {
+      super(build, desc, readerRestriction, names, suffixes, useQuality, mode);
+      mArm = arm;
+    }
+    @Override
+    SequenceDataSource getDataSource() {
+      return FormatCli.getDnaDataSource(Collections.singletonList(mBuild), mInputDescription, mArm, false, false, null, false);
+    }
+  }
+
+  static final class SequenceParamsCallableSam extends AbstractSequenceParamsCallable {
+    private final SamSequenceReaderParams mSamParams;
+    SequenceParamsCallableSam(File build, DataSourceDescription desc, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode, SamSequenceReaderParams samParams) { // C'tor for reads
+      super(build, desc, readerRestriction, names, suffixes, useQuality, mode);
+        mSamParams = samParams;
+    }
+    @Override
+    SequenceDataSource getDataSource() {
+      return FormatCli.getDnaDataSource(Collections.singletonList(mBuild), mInputDescription, null, mSamParams.unorderedLoad(), mSamParams.flattenPairs(), null, false);
     }
   }
 

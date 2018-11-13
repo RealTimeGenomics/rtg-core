@@ -92,7 +92,7 @@ public final class MapFlags {
 
   private MapFlags() { }
 
-  static final String[] FORMAT_OPTIONS = {FormatCli.SDF_FORMAT, FormatCli.FASTA_FORMAT, FormatCli.FASTQ_FORMAT, FormatCli.SAM_SE_FORMAT, FormatCli.SAM_PE_FORMAT};
+  static final String[] FORMAT_OPTIONS = {FormatCli.SDF_FORMAT, FormatCli.FASTA_FORMAT, FormatCli.FASTQ_FORMAT, FormatCli.INTERLEAVED_FASTQ_FORMAT, FormatCli.SAM_SE_FORMAT, FormatCli.SAM_PE_FORMAT};
 
 
   //private static final String INSERT_SIZE_FLAG = "insert-size";

@@ -45,7 +45,7 @@ import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
-import com.rtg.util.test.FileHelper;
+import com.rtg.util.io.TestDirectory;
 
 import htsjdk.samtools.SAMReadGroupRecord;
 
@@ -63,9 +63,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
     Diagnostic.setLogStream(err.printStream());
     final NgsParamsBuilder npb = new NgsParamsBuilder().stepSize(3);
     final CFlags flags = new CFlags();
-
-    final File tmpDir = FileUtils.createTempDir("mapparamshelper", "common");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
       MapFlags.initInputFormatFlags(flags);
       MapFlags.initMapIOFlags(flags);
       MapFlags.initSharedFlagsOnly(flags);
@@ -107,15 +105,11 @@ public class MapParamsHelperTest extends AbstractCliTest {
       } catch (InvalidParamsException ipe) {
         assertEquals("Step size (4) must be less than or equal to max read length (3)", ipe.getMessage());
       }
-    } finally {
-      Diagnostic.setLogStream();
-      FileHelper.deleteAll(tmpDir);
     }
   }
 
   public void testLongCGErrorMessage() throws Exception {
-    final File mainOut = FileUtils.createTempDir("rammap", "test");
-    try {
+    try (final TestDirectory mainOut = new TestDirectory()) {
       final File left = new File(mainOut, "left");
       final String inputDnaSequence = "@test\nacgtacgtacgtacgtacgtacgtacgtacgtacg\n+\n###################################";
       ReaderTestUtils.getReaderDNAFastqCG(inputDnaSequence, left, PrereadArm.LEFT);
@@ -140,11 +134,8 @@ public class MapParamsHelperTest extends AbstractCliTest {
         assertEquals(ErrorType.IS_A_CG_SDF, ipe.getErrorType());
 //    assertTrue(mps.toString().contains("The file \"" + mainOut.getPath() + "\" contains Complete Genomics reads, please use \"cgmap\" module to map these reads."));
       }
-    } finally {
-      Diagnostic.setLogStream();
-      assertTrue(FileHelper.deleteAll(mainOut));
     }
-}
+  }
 
   public void testMaskParams() {
     final MemoryPrintStream mps = new MemoryPrintStream();
@@ -271,8 +262,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
   }
 
   public void testPopulateAlignmentScoresDefaultsIonTorrent() throws Exception {
-    final File outer = FileUtils.createTempDir("rammap", "end2end");
-    try {
+    try (final TestDirectory outer = new TestDirectory()) {
         final String rgstring = "@RG\tID:L23\tSM:NA123\tPL:IONTORRENT\n";
         final File header = new File(outer, "header");
         FileUtils.stringToFile(rgstring, header);
@@ -297,13 +287,10 @@ public class MapParamsHelperTest extends AbstractCliTest {
 
         assertEquals(new IntegerOrPercentage("10%"), npb.mMatedMaxMismatches); //I think this behaviour is dumb, but so be it.
         assertEquals(new IntegerOrPercentage("10%"), npb.mUnmatedMaxMismatches);
-    } finally {
-      assertTrue(FileHelper.deleteAll(outer));
     }
   }
   public void testPopulateAlignmentScoresIonTorrent() throws Exception {
-    final File outer = FileUtils.createTempDir("rammap", "end2end");
-    try {
+    try (final TestDirectory outer = new TestDirectory()) {
       final String rgstring = "@RG\tID:L23\tSM:NA123\tPL:IONTORRENT\n";
       final File header = new File(outer, "header");
       FileUtils.stringToFile(rgstring, header);
@@ -328,16 +315,13 @@ public class MapParamsHelperTest extends AbstractCliTest {
 
       assertEquals(new IntegerOrPercentage("4%"), npb.mMatedMaxMismatches); //I think this behaviour is dumb, but so be it.
       assertEquals(new IntegerOrPercentage("3%"), npb.mUnmatedMaxMismatches);
-    } finally {
-      assertTrue(FileHelper.deleteAll(outer));
     }
   }
 
   public void testSequenceParamsCallableSdf() throws Exception {
-    final MemoryPrintStream mps = new MemoryPrintStream();
-    Diagnostic.setLogStream(mps.printStream());
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
+      final MemoryPrintStream mps = new MemoryPrintStream();
+      Diagnostic.setLogStream(mps.printStream());
       final File template = new File(tmpDir, "template");
       ReaderTestUtils.getReaderDNA(">template\nacgt", template, null);
 
@@ -383,25 +367,22 @@ public class MapParamsHelperTest extends AbstractCliTest {
           sp.close();
         }
       }
-    } finally {
-      Diagnostic.setLogStream();
-      assertTrue(FileHelper.deleteAll(tmpDir));
     }
   }
 
   private static final DataSourceDescription FASTQ_DS = new DataSourceDescription(SourceFormat.FASTQ, QualityFormat.SANGER, false, false, false);
 
   public void testSequenceParamsCallableFasta() throws Exception {
-    final MemoryPrintStream mps = new MemoryPrintStream();
-    Diagnostic.setLogStream(mps.printStream());
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
+      final MemoryPrintStream mps = new MemoryPrintStream();
+      Diagnostic.setLogStream(mps.printStream());
+      final String inputDnaSequence = "@test\nacgtacgtacgtacgtacgtacgtacgtacgtacg\n+\n###################################\n";
       final File left = new File(tmpDir, "left");
-      final String inputDnaSequence = "@test\nacgtacgtacgtacgtacgtacgtacgtacgtacg\n+\n###################################";
       FileUtils.stringToFile(inputDnaSequence, left);
 
       final SequenceParamsCallableFasta spc = new MapParamsHelper.SequenceParamsCallableFasta(left, FASTQ_DS, LongRange.NONE, PrereadArm.LEFT,  null, null, true, SequenceMode.UNIDIRECTIONAL);
-      final SequenceParams sp = spc.call();
+      final SequenceParams sp = spc.call()[0];
+      assertNull(spc.call()[1]);
       assertEquals(SequenceMode.UNIDIRECTIONAL, sp.mode());
       assertTrue(sp.readerParams().toString().contains("usememory=" + true));
       assertFalse(mps.toString().contains("Sequence names passed checksum"));
@@ -414,24 +395,35 @@ public class MapParamsHelperTest extends AbstractCliTest {
 
       mps.reset();
       final SequenceParamsCallableFasta spc2 = new MapParamsHelper.SequenceParamsCallableFasta(left, FASTQ_DS, LongRange.NONE, PrereadArm.RIGHT,  null, null, true, SequenceMode.UNIDIRECTIONAL);
-      final SequenceParams sp2 = spc2.call();
+      final SequenceParams sp2 = spc2.call()[0];
+      assertNull(spc2.call()[1]);
       assertEquals(SequenceMode.UNIDIRECTIONAL, sp2.mode());
       assertFalse(mps.toString().contains("Sequence names passed checksum"));
       assertTrue(mps.toString().contains("Processing right arm \"" + left.getPath()));
-      assertEquals(PrereadArm.UNKNOWN, sp.reader().getArm());
+      assertEquals(PrereadArm.UNKNOWN, sp2.reader().getArm());
       assertEquals(left, sp2.reader().path());
 
-    } finally {
-      Diagnostic.setLogStream();
-      assertTrue(FileHelper.deleteAll(tmpDir));
+      final File both = new File(tmpDir, "both.fq");
+      FileUtils.stringToFile(inputDnaSequence + inputDnaSequence, both);
+      mps.reset();
+      final DataSourceDescription fastqIntDs = new DataSourceDescription(SourceFormat.FASTQ, QualityFormat.SANGER, true, true, false);
+      final SequenceParamsCallableFasta spc3 = new MapParamsHelper.SequenceParamsCallableFasta(both, fastqIntDs, LongRange.NONE, PrereadArm.UNKNOWN,  null, null, true, SequenceMode.UNIDIRECTIONAL);
+      final SequenceParams sp3l = spc3.call()[0];
+      final SequenceParams sp3r = spc3.call()[1];
+      assertEquals(SequenceMode.UNIDIRECTIONAL, sp3l.mode());
+      assertEquals(SequenceMode.UNIDIRECTIONAL, sp3r.mode());
+      assertFalse(mps.toString().contains("Sequence names passed checksum"));
+      assertEquals(PrereadArm.LEFT, sp3l.reader().getArm());
+      assertEquals(PrereadArm.RIGHT, sp3r.reader().getArm());
+      assertEquals(both, sp3l.reader().path());
+      assertEquals(both, sp3r.reader().path());
     }
   }
 
   public void testSequenceParamsCallableSam() throws Exception {
-    final MemoryPrintStream mps = new MemoryPrintStream();
-    Diagnostic.setLogStream(mps.printStream());
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
+      final MemoryPrintStream mps = new MemoryPrintStream();
+      Diagnostic.setLogStream(mps.printStream());
       final File input = new File(tmpDir, "input");
       String inputSequence = SamBamSequenceDataSourceTest.SAM_HEADER + String.format(SamBamSequenceDataSourceTest.SAM_LINE_SINGLE, SAM_NL, "read0", "ACTG", "5555");
       FileUtils.stringToFile(inputSequence, input);
@@ -466,9 +458,6 @@ public class MapParamsHelperTest extends AbstractCliTest {
       assertEquals(input, sp2[0].reader().path());
       assertEquals(input, sp2[1].reader().path());
 
-    } finally {
-      Diagnostic.setLogStream();
-      assertTrue(FileHelper.deleteAll(tmpDir));
     }
   }
 
