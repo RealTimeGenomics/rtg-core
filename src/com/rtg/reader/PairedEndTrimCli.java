@@ -120,24 +120,10 @@ public class PairedEndTrimCli extends AbstractCli {
     @Override
     public boolean isValid(CFlags flags) {
       final File baseOutput = (File) flags.getValue(OUTPUT_FLAG);
-      final boolean gzip = !flags.isSet(NO_GZIP);
-      final BaseFile baseFile = FastqUtils.baseFile(baseOutput, gzip);
-      if (flags.isSet(INTERLEAVE)) {
-        if (!CommonFlags.validateOutputFile(flags, baseFile.file())) {
-          return false;
-        }
-
-      } else {
-        if (FileUtils.isStdio(baseOutput)) {
-          flags.setParseMessage("Sending non-interleaved paired-end data to stdout is not supported.");
-          return false;
-        }
-        if (!(CommonFlags.validateOutputFile(flags, baseFile.suffixedFile("_1")) && CommonFlags.validateOutputFile(flags, baseFile.suffixedFile("_2")))) {
-          return false;
-        }
-      }
+      final BaseFile baseFile = FastqUtils.baseFile(baseOutput, !flags.isSet(NO_GZIP));
       return CommonFlags.validateInputFile(flags, LEFT)
         && CommonFlags.validateInputFile(flags, RIGHT)
+        && validatedPairedOutputFiles(flags, baseOutput, baseFile)
         && flags.checkInRange(BATCH_SIZE, 1, Integer.MAX_VALUE)
         && flags.checkInRange(MIN_OVERLAP, 1, Integer.MAX_VALUE)
         && flags.checkInRange(MIN_IDENTITY, 1, 100)
@@ -148,6 +134,23 @@ public class PairedEndTrimCli extends AbstractCli {
         && flags.checkNand(MIDPOINT_TRIM, MIDPOINT_MERGE)
         && flags.checkNand(DISCARD_EMPTY_PAIRS, DISCARD_EMPTY_READS);
     }
+  }
+
+  static boolean validatedPairedOutputFiles(CFlags flags, File baseOutput, BaseFile baseFile) {
+    if (flags.isSet(INTERLEAVE)) {
+      if (!CommonFlags.validateOutputFile(flags, baseFile.file())) {
+        return false;
+      }
+    } else {
+      if (FileUtils.isStdio(baseOutput)) {
+        flags.setParseMessage("Sending non-interleaved paired-end data to stdout is not supported.");
+        return false;
+      }
+      if (!(CommonFlags.validateOutputFile(flags, baseFile.suffixedFile("_1")) && CommonFlags.validateOutputFile(flags, baseFile.suffixedFile("_2")))) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override
