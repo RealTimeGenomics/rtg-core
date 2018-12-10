@@ -26,13 +26,13 @@ class IntColumn extends NumericColumn {
   }
 
   @Override
-  void add(String strValue) {
+  protected double toDouble(String strValue) {
     double value;
     try {
       value = Integer.parseInt(strValue);
     } catch (NumberFormatException e) {
       value = Double.NaN;
     }
-    add(value);
+    return value;
   }
 }

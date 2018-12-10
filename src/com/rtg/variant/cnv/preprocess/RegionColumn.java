@@ -27,4 +27,9 @@ public class RegionColumn extends ObjectColumn<SequenceNameLocus> {
   void add(String value) {
     add(new RegionRestriction(value));
   }
+
+  @Override
+  void add(int i, String value) {
+    add(i, new RegionRestriction(value));
+  }
 }

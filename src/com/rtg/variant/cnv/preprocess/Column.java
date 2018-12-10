@@ -41,7 +41,18 @@ public abstract class Column implements Cloneable {
    */
   public abstract int size();
 
+  /**
+   * Add a value
+   * @param value the value to add
+   */
   abstract void add(String value);
+
+  /**
+   * Add a value at a specific index
+   * @param i the index of the entry to insert at
+   * @param value the value to add
+   */
+  abstract void add(int i, String value);
 
   /**
    * Removes the element at the specified position in this list.

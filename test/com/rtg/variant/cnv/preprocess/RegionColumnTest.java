@@ -25,5 +25,7 @@ public class RegionColumnTest extends TestCase {
     col.add("42:43+2");
     assertEquals(1, col.size());
     assertEquals("42:43-44", col.toString(0));
+    col.add(0, "42:45+2");
+    assertEquals("42:43-44", col.toString(1));
   }
 }

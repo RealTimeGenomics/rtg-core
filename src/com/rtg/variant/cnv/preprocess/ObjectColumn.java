@@ -53,6 +53,15 @@ public abstract class ObjectColumn<T> extends Column {
     mData.add(value);
   }
 
+  /**
+   * Add a value at a specific index
+   * @param i the index of the entry to insert at
+   * @param value the value to add
+   */
+  void add(int i, T value) {
+    mData.add(i, value);
+  }
+
   void set(Collection<T> values) {
     mData = new ArrayList<>();
     mData.addAll(values);

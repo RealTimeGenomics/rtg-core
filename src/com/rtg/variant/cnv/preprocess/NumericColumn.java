@@ -70,13 +70,22 @@ public class NumericColumn extends Column {
 
   @Override
   void add(String strValue) {
+    add(toDouble(strValue));
+  }
+
+  @Override
+  void add(int i, String strValue) {
+    add(i, toDouble(strValue));
+  }
+
+  protected double toDouble(String strValue) {
     double value;
     try {
       value = Double.parseDouble(strValue);
     } catch (NumberFormatException e) {
       value = Double.NaN;
     }
-    add(value);
+    return value;
   }
 
   @Override
@@ -96,6 +105,25 @@ public class NumericColumn extends Column {
       mData = Arrays.copyOf(mData, (int) (1 + mSize * 1.3));
     }
     mData[mSize++] = value;
+  }
+
+  /**
+   * Add a value at a specific index
+   * @param i the index of the entry to insert at
+   * @param value the value to add
+   */
+  public void add(int i, double value) {
+    if (i > mSize) {
+      throw new ArrayIndexOutOfBoundsException();
+    }
+    if (mSize == mData.length) {
+      mData = Arrays.copyOf(mData, (int) (1 + mSize * 1.3));
+    }
+    if (i < mSize) {
+      System.arraycopy(mData, i, mData, i + 1, mSize - i);
+    }
+    mData[i] = value;
+    mSize++;
   }
 
   void set(double[] values) {

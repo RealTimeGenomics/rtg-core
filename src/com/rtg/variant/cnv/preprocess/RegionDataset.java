@@ -293,6 +293,18 @@ public class RegionDataset {
   }
 
   /**
+   * Adds a new empty data row at a specific position
+   * @param row the row index to insert at
+   * @param region the region
+   */
+  public void add(int row, SequenceNameLocus region) {
+    mRegions.add(row, region);
+    for (int i = 0; i < mColumns.size(); ++i) {
+      column(i).add(row, "");
+    }
+  }
+
+  /**
    * Removes the specified data row
    * @param row the row index
    */
@@ -427,5 +439,4 @@ public class RegionDataset {
     }
     return new BedRecord(r.getSequenceName(), r.getStart(), r.getEnd(), annots);
   }
-
 }
