@@ -131,6 +131,21 @@ public class RegionDataset {
     identityIndex(mColumns.size());
   }
 
+  /**
+   * Construct a new dataset with supplied regions but no data columns.
+   * @param regions the region column.
+   */
+  public RegionDataset(RegionColumn regions) {
+    mRegions = new RegionColumn("region");
+    for (SequenceNameLocus r : regions.values()) {
+      mRegions.add(r);
+    }
+  }
+
+  public RegionDataset copy() {
+    return filter(i -> true);
+  }
+
 
   /**
    * Sets the names of each column being provided in input data when calling add.
@@ -205,6 +220,19 @@ public class RegionDataset {
    */
   public <T extends Column> T addColumn(T column) {
     mColumns.add(column);
+    mColumnIndexes = null;
+    return column;
+  }
+
+  /**
+   * Add the specified column at the given position
+   * @param pos position to add the column at
+   * @param column column to add
+   * @param <T> type of the column
+   * @return the added column
+   */
+  public <T extends Column> T addColumn(int pos, T column) {
+    mColumns.add(pos, column);
     mColumnIndexes = null;
     return column;
   }

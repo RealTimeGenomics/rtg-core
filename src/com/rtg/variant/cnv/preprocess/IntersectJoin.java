@@ -21,7 +21,7 @@ import com.rtg.util.intervals.IntervalComparator;
 import com.rtg.util.intervals.SequenceNameLocus;
 
 /**
- * Joins two datasets dropping non matching regions
+ * Joins two datasets dropping non matching regions.
  */
 public class IntersectJoin extends SimpleJoin {
 
@@ -29,28 +29,45 @@ public class IntersectJoin extends SimpleJoin {
     super(in);
   }
 
-  IntersectJoin(RegionDataset dataset, String prefix) {
+  /**
+   * Constructor
+   * @param dataset the dataset to join
+   * @param prefix a prefix applied to the joined columns
+   */
+  public IntersectJoin(RegionDataset dataset, String prefix) {
     super(dataset, prefix);
+  }
+
+  /**
+   * Constructor
+   * @param dataset the dataset to join
+   * @param prefix a prefix applied to the joined columns
+   * @param addFirst if true, any joined columns appear first
+   * @param allowDuplicateColumns if false, do not add any column which already exists in the destination dataset (based on name, incorporating prefix)
+   */
+  public IntersectJoin(RegionDataset dataset, String prefix, boolean addFirst, boolean allowDuplicateColumns) {
+    super(dataset, prefix, addFirst, allowDuplicateColumns);
   }
 
   @Override
   public void process(RegionDataset dataset) throws IOException {
     // Drop rows where sequences mismatch
+    RegionDataset src = mDataset.copy();
     final Set<String> sequences = getSequenceNames(dataset);
-    final Set<String> seq2 = getSequenceNames(mDataset);
+    final Set<String> seq2 = getSequenceNames(src);
     final int initial = sequences.size();
     sequences.retainAll(seq2);
     if (sequences.size() != initial) {
       filterSequences(dataset, sequences);
     }
     if (sequences.size() != seq2.size()) {
-      filterSequences(mDataset, sequences);
+      filterSequences(src, sequences);
     }
 
     // Drop rows where regions mismatch
-    filterRegions(mDataset, dataset);
+    filterRegions(src, dataset);
 
-    super.process(dataset);
+    simpleJoin(src, dataset);
   }
 
   // Filter dataset to only keep rows with regions in common

@@ -63,6 +63,7 @@ import com.rtg.variant.cnv.preprocess.AddLog;
 import com.rtg.variant.cnv.preprocess.AddRatio;
 import com.rtg.variant.cnv.preprocess.Column;
 import com.rtg.variant.cnv.preprocess.GcNormalize;
+import com.rtg.variant.cnv.preprocess.IntersectJoin;
 import com.rtg.variant.cnv.preprocess.NumericColumn;
 import com.rtg.variant.cnv.preprocess.RegionColumn;
 import com.rtg.variant.cnv.preprocess.RegionDataset;
@@ -230,65 +231,73 @@ public class SegmentCli extends LoggedCli {
 
     Diagnostic.userLog("Loading case");
     final File caseFile = (File) mFlags.getValue(CASE_FLAG);
-    final RegionDataset caseData = RegionDataset.readFromBed(caseFile, Collections.singletonList(new NumericColumn(coverageColumnName)));
+    RegionDataset caseData = RegionDataset.readFromBed(caseFile, Collections.singletonList(new NumericColumn(coverageColumnName)));
     if (caseData.columnId(coverageColumnName) == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + caseFile);
     }
     mCaseCoverageCol = caseData.columnId(coverageColumnName);
     caseData.column(mCaseCoverageCol).setName("case_cover_raw");
 
-
     Diagnostic.userLog("Loading control");
     final File controlFile = (File) mFlags.getValue(CONTROL_FLAG);
-    final RegionDataset controlData = RegionDataset.readFromBed(controlFile, Collections.singletonList(new NumericColumn(coverageColumnName)));
+    RegionDataset controlData = RegionDataset.readFromBed(controlFile, Collections.singletonList(new NumericColumn(coverageColumnName)));
     if (controlData.columnId(coverageColumnName) == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + controlData);
     }
     controlData.getColumns().removeIf((Column col) -> !col.getName().equals(coverageColumnName));
+    mControlCoverageCol = controlData.columns() - 1;
+    controlData.column(mControlCoverageCol).setName("ctrl_cover_raw");
 
-
-    Diagnostic.userLog("Joining");
-    new SimpleJoin(controlData, "control").process(caseData);
-    RegionDataset filtered = caseData;
-    mControlCoverageCol = filtered.columns() - 1;
-    filtered.column(mControlCoverageCol).setName("ctrl_cover_raw");
-
-
-    if (mFlags.isSet(MIN_CTRL_COV_FLAG)) {
-      // Apply minimum abosolute control coverage filter
-      final double minCtrlCoverage = (Double) mFlags.getValue(MIN_CTRL_COV_FLAG);
-      final NumericColumn cc1 = filtered.asNumeric(mControlCoverageCol);
-      filtered = filtered.filter(row -> cc1.get(row) >= minCtrlCoverage);
-      Diagnostic.userLog("Filtered with minimum control coverage " + minCtrlCoverage + ", dataset has " + filtered.size() + " rows");
-    }
-
-    final NumericColumn cc2 = filtered.asNumeric(mCaseCoverageCol);
-    filtered = filtered.filter(row -> cc2.get(row) >= minCaseCoverage);
-    Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", dataset has " + filtered.size() + " rows");
-
+    final RegionDataset gcDataset = new RegionDataset(controlData.regions());
     if (gcbins > 1) {
       Diagnostic.userLog("Computing per-region GC values");
-      new AddGc(mReference).process(filtered);
+      new AddGc(mReference).process(gcDataset);
+    }
+
+    if (mFlags.isSet(MIN_CTRL_COV_FLAG)) {
+      // Apply minimum absolute control coverage filter
+      final double minCtrlCoverage = (Double) mFlags.getValue(MIN_CTRL_COV_FLAG);
+      final NumericColumn cc1 = controlData.asNumeric(mControlCoverageCol);
+      controlData = controlData.filter(row -> cc1.get(row) >= minCtrlCoverage);
+      Diagnostic.userLog("Filtered with minimum control coverage " + minCtrlCoverage + ", control dataset has " + controlData.size() + " rows");
+    }
+
+    final NumericColumn cc2 = caseData.asNumeric(mCaseCoverageCol);
+    caseData = caseData.filter(row -> cc2.get(row) >= minCaseCoverage);
+    Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", case dataset has " + caseData.size() + " rows");
+
+    if (gcbins > 1) {
       Diagnostic.userLog("Applying GC correction using " + gcbins + " bins");
-      new GcNormalize(mCaseCoverageCol, gcbins, "case_cover_gcnorm").process(filtered);
-      mCaseCoverageCol = filtered.columns() - 1;
-      new GcNormalize(mControlCoverageCol, gcbins, "ctrl_cover_gcnorm").process(filtered);
-      mControlCoverageCol = filtered.columns() - 1;
+      new IntersectJoin(gcDataset, "", true, false).process(caseData);
+      mCaseCoverageCol = caseData.columns() - 1;
+      new GcNormalize(mCaseCoverageCol, gcbins, "case_cover_gcnorm").process(caseData);
+      mCaseCoverageCol = caseData.columns() - 1;
+
+      new IntersectJoin(gcDataset, "", true, false).process(controlData);
+      mControlCoverageCol = controlData.columns() - 1;
+      new GcNormalize(mControlCoverageCol, gcbins, "ctrl_cover_gcnorm").process(controlData);
+      mControlCoverageCol = controlData.columns() - 1;
     }
 
     Diagnostic.userLog("Applying weighted median normalization");
-    new WeightedMedianNormalize(mCaseCoverageCol, "case_cover_wmednorm").process(filtered);
-    mCaseCoverageCol = filtered.columns() - 1;
-    new WeightedMedianNormalize(mControlCoverageCol, "ctrl_cover_wmednorm").process(filtered);
-    mControlCoverageCol = filtered.columns() - 1;
+    new WeightedMedianNormalize(mCaseCoverageCol, "case_cover_wmednorm").process(caseData);
+    mCaseCoverageCol = caseData.columns() - 1;
+    new WeightedMedianNormalize(mControlCoverageCol, "ctrl_cover_wmednorm").process(controlData);
+    mControlCoverageCol = controlData.columns() - 1;
 
     if (!mFlags.isSet(MIN_CTRL_COV_FLAG)) {
       // Apply minimum normalized control coverage if appropriate
       final double minNormCtrlCoverage = (Double) mFlags.getValue(MIN_NORM_CTRL_COV_FLAG);
-      final NumericColumn cc1 = filtered.asNumeric(mControlCoverageCol);
-      filtered = filtered.filter(row -> cc1.get(row) >= minNormCtrlCoverage);
-      Diagnostic.userLog("Filtered with minimum normalized control coverage " + minNormCtrlCoverage + ", dataset has " + filtered.size() + " rows");
+      final NumericColumn cc1 = controlData.asNumeric(mControlCoverageCol);
+      controlData = controlData.filter(row -> cc1.get(row) >= minNormCtrlCoverage);
+      Diagnostic.userLog("Filtered with minimum normalized control coverage " + minNormCtrlCoverage + ", control dataset has " + controlData.size() + " rows");
     }
+
+    Diagnostic.userLog("Joining");
+    new IntersectJoin(controlData, "").process(caseData);
+    final RegionDataset filtered = caseData;
+    mControlCoverageCol = filtered.columns() - 1;
+    Diagnostic.userLog("Joined dataset has " + filtered.size() + " rows");
 
     Diagnostic.userLog("Computing ratio");
     //checkNonZero(filtered, caseCoverageCol);
@@ -313,7 +322,7 @@ public class SegmentCli extends LoggedCli {
 
     Diagnostic.userLog("Loading case");
     final File caseFile = (File) mFlags.getValue(CASE_FLAG);
-    final RegionDataset caseData = RegionDataset.readFromBed(caseFile, Collections.singletonList(new NumericColumn(coverageColumnName)));
+    RegionDataset caseData = RegionDataset.readFromBed(caseFile, Collections.singletonList(new NumericColumn(coverageColumnName)));
     if (caseData.columnId(coverageColumnName) == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + caseFile);
     }
@@ -324,42 +333,48 @@ public class SegmentCli extends LoggedCli {
 
     Diagnostic.userLog("Loading panel file");
     final File panelFile = (File) mFlags.getValue(PANEL_FLAG);
-    final RegionDataset panelData = RegionDataset.readFromBed(panelFile, Collections.singletonList(new NumericColumn(panelCoverageColumnName)));
+    RegionDataset panelData = RegionDataset.readFromBed(panelFile, Collections.singletonList(new NumericColumn(panelCoverageColumnName)));
     if (panelData.columnId(panelCoverageColumnName) == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + panelCoverageColumnName + " in " + panelData);
     }
     panelData.getColumns().removeIf((Column col) -> !panelCoverageColumnName.equals(col.getName()));
+    mControlCoverageCol = panelData.columns() - 1;
+    panelData.column(mControlCoverageCol).setName("pon_cover_wmednorm");
 
-
-    Diagnostic.userLog("Joining");
-    new SimpleJoin(panelData, "panel").process(caseData);
-    RegionDataset filtered = caseData;
-    mControlCoverageCol = filtered.columns() - 1;
-    filtered.column(mControlCoverageCol).setName("pon_cover_wmednorm");
-    Diagnostic.userLog("Joined dataset has " + filtered.size() + " rows");
 
     // Min coverage filters
-    final NumericColumn cc1 = filtered.asNumeric(mControlCoverageCol);
-    filtered = filtered.filter(row -> cc1.get(row) >= minPanelCoverage);
-    Diagnostic.userLog("Filtered with minimum panel coverage " + minPanelCoverage + ", dataset has " + filtered.size() + " rows");
+    final NumericColumn cc1 = panelData.asNumeric(mControlCoverageCol);
+    panelData = panelData.filter(row -> cc1.get(row) >= minPanelCoverage);
+    Diagnostic.userLog("Filtered with minimum panel coverage " + minPanelCoverage + ", panel dataset has " + panelData.size() + " rows");
 
-    final NumericColumn cc2 = filtered.asNumeric(mCaseCoverageCol);
-    filtered = filtered.filter(row -> cc2.get(row) >= minCaseCoverage);
-    Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", dataset has " + filtered.size() + " rows");
+    final NumericColumn cc2 = caseData.asNumeric(mCaseCoverageCol);
+    caseData = caseData.filter(row -> cc2.get(row) >= minCaseCoverage);
+    Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", case dataset has " + caseData.size() + " rows");
 
     if (gcbins > 1) {
+      final RegionDataset gcDataset = new RegionDataset(caseData.regions());
       Diagnostic.userLog("Computing per-region GC values");
-      new AddGc(mReference).process(filtered);
+      new AddGc(mReference).process(gcDataset);
+
       Diagnostic.userLog("Applying GC correction using " + gcbins + " bins");
-      new GcNormalize(mCaseCoverageCol, gcbins, "case_cover_gcnorm").process(filtered);
-      mCaseCoverageCol = filtered.columns() - 1;
+      new SimpleJoin(gcDataset, "", true, false).process(caseData);
+      mCaseCoverageCol = caseData.columns() - 1;
+      new GcNormalize(mCaseCoverageCol, gcbins, "case_cover_gcnorm").process(caseData);
+      mCaseCoverageCol = caseData.columns() - 1;
       // Panel is already gc normalized
     }
 
     Diagnostic.userLog("Applying weighted median normalization");
-    new WeightedMedianNormalize(mCaseCoverageCol, "case_cover_wmednorm").process(filtered);
-    mCaseCoverageCol = filtered.columns() - 1;
+    new WeightedMedianNormalize(mCaseCoverageCol, "case_cover_wmednorm").process(caseData);
+    mCaseCoverageCol = caseData.columns() - 1;
     // Panel is already median normalized
+
+
+    Diagnostic.userLog("Joining");
+    new IntersectJoin(panelData, "").process(caseData);
+    final RegionDataset filtered = caseData;
+    mControlCoverageCol = filtered.columns() - 1;
+    Diagnostic.userLog("Joined dataset has " + filtered.size() + " rows");
 
     Diagnostic.userLog("Computing ratio");
     //checkNonZero(filtered, caseCoverageCol);

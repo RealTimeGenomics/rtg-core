@@ -26,16 +26,20 @@ public class SimpleJoin implements DatasetProcessor {
 
   protected final String mPrefix;
   protected final RegionDataset mDataset;
+  protected final boolean mFirst;
+  protected final boolean mAllowDuplicateColumns;
 
   SimpleJoin(File in) throws IOException {
+    this(RegionDataset.readFromBed(getFile(in)), getPrefix(in));
+  }
+
+  private static File getFile(File in) {
+    return new File(StringUtils.split(in.toString(), '=', 2)[0]);
+  }
+
+  private static String getPrefix(File in) {
     final String[] split = StringUtils.split(in.toString(), '=', 2);
-    final File file = new File(split[0]);
-    if (split.length > 1 && split[1].length() > 0) {
-      mPrefix = split[1].trim() + "_";
-    } else {
-      mPrefix = "";
-    }
-    mDataset = RegionDataset.readFromBed(file);
+    return (split.length > 1 && split[1].length() > 0) ? split[1].trim() + "_" : "";
   }
 
   /**
@@ -44,32 +48,56 @@ public class SimpleJoin implements DatasetProcessor {
    * @param prefix a prefix applied to the joined columns
    */
   public SimpleJoin(RegionDataset dataset, String prefix) {
+    this(dataset, prefix, false, false);
+  }
+
+  /**
+   * Constructor
+   * @param dataset the dataset to join
+   * @param prefix a prefix applied to the joined columns
+   * @param addFirst if true, any joined columns appear first
+   * @param allowDuplicateColumns if false, do not add any column which already exists in the destination dataset (based on name, incorporating prefix)
+   */
+  public SimpleJoin(RegionDataset dataset, String prefix, boolean addFirst, boolean allowDuplicateColumns) {
     mDataset = dataset;
     mPrefix = prefix;
+    mFirst = addFirst;
+    mAllowDuplicateColumns = allowDuplicateColumns;
   }
 
   @Override
   public void process(RegionDataset dataset) throws IOException {
+    simpleJoin(mDataset, dataset);
+  }
+
+  protected void simpleJoin(RegionDataset src, RegionDataset dest) {
     // Check regions are compatible
-    final ObjectColumn<SequenceNameLocus> rc1 = dataset.regions();
-    final ObjectColumn<SequenceNameLocus> rc2 = mDataset.regions();
+    final ObjectColumn<SequenceNameLocus> rc1 = dest.regions();
+    final ObjectColumn<SequenceNameLocus> rc2 = src.regions();
     final int count = Math.max(rc1.size(), rc2.size());
     for (int i = 0; i < count; ++i) {
       if (i >= rc1.size() || i >= rc2.size()) {
-        throw new NoTalkbackSlimException("Cannot join datasets as the number of rows differ: " + dataset.size() + " != " + mDataset.size());
+        throw new NoTalkbackSlimException("Cannot join datasets as the number of rows differ: " + dest.size() + " != " + src.size());
       }
       final SequenceNameLocus r1 = rc1.get(i);
       final SequenceNameLocus r2 = rc2.get(i);
       if (SequenceNameLocusComparator.SINGLETON.compare(r1, r2) != 0) {
-        throw new NoTalkbackSlimException("Cannot join datasets: region differerence at row " + i + "\nA: " + dataset.getBedRecord(i) + "\nB: " + mDataset.getBedRecord(i));
+        throw new NoTalkbackSlimException("Cannot join datasets: region difference at row " + i + "\nA: " + dest.getBedRecord(i) + "\nB: " + src.getBedRecord(i));
       }
     }
 
     // Move the columns over
-    for (int i = 0; i < mDataset.columns(); ++i) {
-      final Column col = mDataset.column(i);
-      col.setName(mPrefix + col.getName());
-      dataset.addColumn(col);
+    for (int i = 0, j = 0; i < src.columns(); ++i) {
+      final Column col = src.column(i);
+      final String newName = mPrefix + col.getName();
+      if (mAllowDuplicateColumns || dest.columnId(newName) == -1) {
+        col.setName(newName);
+        if (mFirst) {
+          dest.addColumn(j++, col);
+        } else {
+          dest.addColumn(col);
+        }
+      }
     }
   }
 }
