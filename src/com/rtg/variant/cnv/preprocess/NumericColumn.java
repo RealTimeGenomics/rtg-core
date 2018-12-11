@@ -82,7 +82,7 @@ public class NumericColumn extends Column {
   @Override
   void remove(int i) {
     if (i + 1 < mSize) {
-      System.arraycopy(mData, i + 1, mData, i, 1);
+      System.arraycopy(mData, i + 1, mData, i, mSize - (i + 1));
     }
     mSize--;
   }

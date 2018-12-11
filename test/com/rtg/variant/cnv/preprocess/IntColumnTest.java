@@ -33,9 +33,11 @@ public class IntColumnTest extends TestCase {
     col.add(1);
     col.add(2);
     col.add(3);
+    col.add(4);
+    assertEquals(4, col.size());
+    col.remove(1);  // 1,3,4
     assertEquals(3, col.size());
-    col.remove(1);
-    assertEquals(2, col.size());
+    assertEquals(1, (int) col.get(0));
     assertEquals(3, (int) col.get(1));
   }
 }
