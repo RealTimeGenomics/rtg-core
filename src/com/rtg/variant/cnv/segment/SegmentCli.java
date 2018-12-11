@@ -223,6 +223,8 @@ public class SegmentCli extends LoggedCli {
     return 0;
   }
 
+  static final boolean LEGACY = false; // Simulate old behaviour where GcNormalization effectively happened after intersecting above-coverage rows
+
   // Input datasets are both coverage output, construct data based on (log) ratio with control
   private void computeCaseControlDataset() throws IOException {
     final double minCaseCoverage = (Double) mFlags.getValue(MIN_CASE_COV_FLAG);
@@ -267,11 +269,17 @@ public class SegmentCli extends LoggedCli {
     Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", case dataset has " + caseData.size() + " rows");
 
     if (gcbins > 1) {
+      if (LEGACY) {
+        new IntersectJoin(new RegionDataset(caseData.regions()), "", true, false).process(controlData);
+        new IntersectJoin(new RegionDataset(controlData.regions()), "", true, false).process(caseData);
+      }
+
       Diagnostic.userLog("Applying GC correction using " + gcbins + " bins");
       new IntersectJoin(gcDataset, "", true, false).process(caseData);
       mCaseCoverageCol = caseData.columns() - 1;
       new GcNormalize(mCaseCoverageCol, gcbins, "case_cover_gcnorm").process(caseData);
       mCaseCoverageCol = caseData.columns() - 1;
+
 
       new IntersectJoin(gcDataset, "", true, false).process(controlData);
       mControlCoverageCol = controlData.columns() - 1;
@@ -352,6 +360,10 @@ public class SegmentCli extends LoggedCli {
     Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", case dataset has " + caseData.size() + " rows");
 
     if (gcbins > 1) {
+      if (LEGACY) {
+        new IntersectJoin(new RegionDataset(panelData.regions()), "", true, false).process(caseData);
+      }
+
       final RegionDataset gcDataset = new RegionDataset(caseData.regions());
       Diagnostic.userLog("Computing per-region GC values");
       new AddGc(mReference).process(gcDataset);
