@@ -198,6 +198,13 @@ public class DeProbeCli extends LoggedCli {
                 } else if (probeBasedDropping && record.getReadBases().length < hitProbe.getMinReadLength()) {
                   SamUtils.convertToUnmapped(record);
                   shortReads++;
+                } else {
+                  // Sometimes after stripping we're just left with soft-clipped bases. Convert these to unmapped
+                  if (!record.getCigar().getCigarElements().stream().anyMatch(e -> e.getOperator().isIndelOrSkippedRegion() || e.getOperator().isAlignment())) {
+                    //Diagnostic.warning("Encountered trimmed alignment without a real operator: " + record.getAlignmentStart() + "-" + record.getAlignmentEnd() + " " + record.getSAMString());
+                    SamUtils.convertToUnmapped(record);
+                    shortReads++;
+                  }
                 }
               }
 
