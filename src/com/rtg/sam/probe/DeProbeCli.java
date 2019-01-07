@@ -54,8 +54,8 @@ import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
 
+import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
-import htsjdk.samtools.SAMTagUtil;
 
 /**
  * Remove probes from mapped reads using a bed file to describe probes.
@@ -172,6 +172,14 @@ public class DeProbeCli extends LoggedCli {
               Diagnostic.progress("Processing: " + record.getReferenceName());
               currentSequence = record.getReferenceName();
             }
+            // Update read name to include rgid to handle reads mapped as IDs rather than full names
+            final SAMReadGroupRecord readGroup = record.getReadGroup();
+            if (readGroup != null && readGroup.getId() != null) {
+              record.setReadName(readGroup.getId() + "-" + record.getReadName());
+            } else if (!warnedNoReadGroup) {
+              Diagnostic.warning("Encountered alignment without read group information. Statistics may not be correct if mappings to not include full read names");
+              warnedNoReadGroup = true;
+            }
             if (record.getFirstOfPairFlag()) {
               ++totalRecords;
               final int ih = MathUtils.unboxNatural(SamUtils.getNHOrIH(record));
@@ -200,13 +208,7 @@ public class DeProbeCli extends LoggedCli {
               } else {
                 // If not uniquely mapped, accumulate and delay addition to the stats until the end
                 ++totalAmbiguousRecords;
-                // Include rgid in tag to handle reads mapped as IDs rather than full names
-                final Object rgatt = record.getAttribute(SAMTagUtil.getSingleton().RG);
-                if (rgatt == null && !warnedNoReadGroup) {
-                  Diagnostic.warning("Encountered alignment without read group information. Statistics may not be correct if mappings to not include full read names");
-                  warnedNoReadGroup = true;
-                }
-                final String name = record.getReadName() + rgatt;
+                final String name = record.getReadName();
                 ReadStatus s = ambiguousReads.get(name);
                 if (s == null) {
                   s = new ReadStatus(name, stripped, negative);
