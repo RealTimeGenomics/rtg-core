@@ -91,7 +91,7 @@ public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
   @Override
   protected DiscordantToolParams makeParams() throws IOException {
     final DiscordantToolParamsBuilder builder = DiscordantToolParams.builder();
-    SvCliUtils.populateCommonParams(builder, SequenceParams.builder().useMemReader(false), mFlags);
+    SvCliUtils.populateCommonParams(builder, SequenceParams.builder(), mFlags);
     return builder.bedOutput(mFlags.isSet(BED_FLAG))
         .minBreakpointDepth((Integer) mFlags.getValue(MIN_SUPPORT_FLAG))
         .overlapFraction((Double) mFlags.getValue(OVERLAP_FRACTION))

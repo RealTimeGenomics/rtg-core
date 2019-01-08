@@ -125,7 +125,7 @@ public class ChrStatsCli extends AbstractCli {
     if (c == null) {
       throw new NoTalkbackSlimException("Could not load calibration information - ensure SAM files have been calibrated"); // Runtime as above checks have ensured there are calibration files
     } else {
-      final SequenceParams.SequenceParamsBuilder builder = SequenceParams.builder().directory(genomeFile).useMemReader(false).mode(SequenceMode.UNIDIRECTIONAL);
+      final SequenceParams.SequenceParamsBuilder builder = SequenceParams.builder().directory(genomeFile).mode(SequenceMode.UNIDIRECTIONAL);
       try (SequenceParams genomeParams = builder.create()) {
         final ChrStats cc = new ChrStats(genomeParams.reader(), (Double) mFlags.getValue(SEX_Z_THRESHOLD_FLAG), (Double) mFlags.getValue(Z_THRESHOLD_FLAG));
         if (!cc.referenceOk()) {
