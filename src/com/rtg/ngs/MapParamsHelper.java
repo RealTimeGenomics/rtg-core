@@ -402,7 +402,7 @@ public final class MapParamsHelper {
     final boolean templateMem = !flags.isSet(MapFlags.NO_INMEMORY_TEMPLATE);
     final File template = (File) flags.getValue(CommonFlags.TEMPLATE_FLAG);
     final Sex sex = getMappingSex(ngsParamsBuilder, flags);
-    return new FutureTask<>(new SequenceParamsCallableSdf(template, LongRange.NONE, templateMem, sex, includeFullNames, templateMode));
+    return new FutureTask<>(new SdfSequenceParamsCallable(template, LongRange.NONE, templateMem, sex, includeFullNames, templateMode));
   }
 
   static Sex getMappingSex(NgsParamsBuilder ngsParamsBuilder, CFlags flags) throws IOException {
@@ -437,13 +437,13 @@ public final class MapParamsHelper {
     final LongRange buildRegion = CommonFlags.getReaderRestriction(flags);
     final ExecutorService executor = Executors.newFixedThreadPool(3);
     try {
-      final FutureTask<SequenceParams> leftTask = new FutureTask<>(new SequenceParamsCallableSdf(build, buildRegion, nameParams, readsMode));
+      final FutureTask<SequenceParams> leftTask = new FutureTask<>(new SdfSequenceParamsCallable(build, buildRegion, nameParams, readsMode));
       executor.execute(leftTask);
 
       try {
         FutureTask<SequenceParams> rightTask = null;
         if (buildSecond != null) {
-          rightTask = new FutureTask<>(new SequenceParamsCallableSdf(buildSecond, buildRegion, nameParams.includeFullNames() ? nameParams : new NameParams(false, false), readsMode));
+          rightTask = new FutureTask<>(new SdfSequenceParamsCallable(buildSecond, buildRegion, nameParams.includeFullNames() ? nameParams : new NameParams(false, false), readsMode));
           executor.execute(rightTask);
         }
 
@@ -489,19 +489,19 @@ public final class MapParamsHelper {
         final SimpleNames suffixes = nameParams.includeFullNames() ? new SimpleNames() : null;
 
         if (desc.getSourceFormat() == SourceFormat.SAM) {
-          final FutureTask<SequenceParams[]> samTask = new FutureTask<>(new SequenceParamsCallableSam(build, desc, buildRegion, names, suffixes, useQuality, readsMode, samParams));
+          final FutureTask<SequenceParams[]> samTask = new FutureTask<>(new SamSequenceParamsCallable(build, desc, buildRegion, names, suffixes, useQuality, readsMode, samParams));
           executor.execute(samTask);
           final SequenceParams[] sp = samTask.get();
           assert sp.length == 2;
           ngsParamsBuilder.buildFirstParams(sp[0]);
           ngsParamsBuilder.buildSecondParams(sp[1]);
         } else {
-          final FutureTask<SequenceParams[]> leftTask = new FutureTask<>(new SequenceParamsCallableFasta(build, desc, buildRegion, buildSecond != null ? PrereadArm.LEFT : PrereadArm.UNKNOWN, names, suffixes, useQuality, readsMode));
+          final FutureTask<SequenceParams[]> leftTask = new FutureTask<>(new FastaSequenceParamsCallable(build, desc, buildRegion, buildSecond != null ? PrereadArm.LEFT : PrereadArm.UNKNOWN, names, suffixes, useQuality, readsMode));
           executor.execute(leftTask);
           if (buildSecond != null) {
             final RightSimpleNames rNames = names == null ? null : new RightSimpleNames(names);
             final RightSimpleNames rSuffixes = suffixes == null ? null : new RightSimpleNames(suffixes);
-            final FutureTask<SequenceParams[]> rightTask = new FutureTask<>(new SequenceParamsCallableFasta(buildSecond, desc, buildRegion, PrereadArm.RIGHT, rNames, rSuffixes, useQuality, readsMode));
+            final FutureTask<SequenceParams[]> rightTask = new FutureTask<>(new FastaSequenceParamsCallable(buildSecond, desc, buildRegion, PrereadArm.RIGHT, rNames, rSuffixes, useQuality, readsMode));
             executor.execute(rightTask);
             ngsParamsBuilder.buildFirstParams(leftTask.get()[0]);
             ngsParamsBuilder.buildSecondParams(rightTask.get()[0]);
@@ -567,7 +567,8 @@ public final class MapParamsHelper {
     return rg;
   }
 
-  static final class SequenceParamsCallableSdf implements Callable<SequenceParams> {
+  // A callable that creates SequenceParams backed by existing SDF
+  static final class SdfSequenceParamsCallable implements Callable<SequenceParams> {
     private final File mBuild;
     private final boolean mUseMemReader;
     private final boolean mReads;
@@ -577,15 +578,15 @@ public final class MapParamsHelper {
     private final boolean mIncludeFullNames;
     private final SequenceMode mMode;
 
-    SequenceParamsCallableSdf(final File build, final LongRange readerRestriction, NameParams nameParams, SequenceMode mode) { // C'tor for reads
+    SdfSequenceParamsCallable(final File build, final LongRange readerRestriction, NameParams nameParams, SequenceMode mode) { // C'tor for reads
       this(build, true, true, readerRestriction, null, nameParams.includeNames(), nameParams.includeFullNames(), mode);
     }
 
-    SequenceParamsCallableSdf(File build, LongRange readerRestriction, boolean useMemReader, Sex sex, boolean includeFullNames, SequenceMode mode) { // C'tor for template
+    SdfSequenceParamsCallable(File build, LongRange readerRestriction, boolean useMemReader, Sex sex, boolean includeFullNames, SequenceMode mode) { // C'tor for template
       this(build, useMemReader, false, readerRestriction, sex, false, includeFullNames, mode);
     }
 
-    private SequenceParamsCallableSdf(File build, boolean useMemReader, boolean reads, LongRange readerRestriction, Sex sex, boolean includeReadNames, boolean includeFullNames, SequenceMode mode) {
+    private SdfSequenceParamsCallable(File build, boolean useMemReader, boolean reads, LongRange readerRestriction, Sex sex, boolean includeReadNames, boolean includeFullNames, SequenceMode mode) {
       mBuild = build;
       mUseMemReader = useMemReader;
       mReads = reads;
@@ -616,20 +617,19 @@ public final class MapParamsHelper {
     }
   }
 
-  abstract static class AbstractSequenceParamsCallable implements Callable<SequenceParams[]> {
+  // Callable that creates SequenceParams backed by SequencesReaders created in memory from a DataSource
+  abstract static class DataSourceSequenceParamsCallable implements Callable<SequenceParams[]> {
     protected final File mBuild;
     protected final DataSourceDescription mInputDescription;
-    private final boolean mUseMemReader;
     private final LongRange mReaderRestriction;
     private final SimpleNames mNames;
     private final SimpleNames mSuffixes;
     private final SequenceMode mMode;
     private final boolean mUseQuality;
 
-    AbstractSequenceParamsCallable(File build, DataSourceDescription desc, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) {
+    DataSourceSequenceParamsCallable(File build, DataSourceDescription desc, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) {
       // C'tor for reads
       mBuild = build;
-      mUseMemReader = true;
       mReaderRestriction = readerRestriction;
       mInputDescription = desc;
       mNames = names;
@@ -658,16 +658,16 @@ public final class MapParamsHelper {
       final SequenceParams[] sp = new SequenceParams[readers.length];
       for (int i = 0; i < readers.length; ++i) {
         if (readers[i] != null) {
-          sp[i] = SequenceParams.builder().readerParam(new DefaultReaderParams(readers[i], mReaderRestriction, mMode)).useMemReader(mUseMemReader).mode(mMode).readerRestriction(mReaderRestriction).create(); // Reads
+          sp[i] = SequenceParams.builder().readerParam(new DefaultReaderParams(readers[i], mReaderRestriction, mMode)).useMemReader(true).mode(mMode).readerRestriction(mReaderRestriction).create(); // Reads
         }
       }
       return sp;
     }
   }
 
-  static final class SequenceParamsCallableFasta extends AbstractSequenceParamsCallable {
+  static final class FastaSequenceParamsCallable extends DataSourceSequenceParamsCallable {
     private final PrereadArm mArm;
-    SequenceParamsCallableFasta(File build, DataSourceDescription desc, LongRange readerRestriction, PrereadArm arm, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) {
+    FastaSequenceParamsCallable(File build, DataSourceDescription desc, LongRange readerRestriction, PrereadArm arm, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) {
       super(build, desc, readerRestriction, names, suffixes, useQuality, mode);
       mArm = arm;
     }
@@ -677,9 +677,9 @@ public final class MapParamsHelper {
     }
   }
 
-  static final class SequenceParamsCallableSam extends AbstractSequenceParamsCallable {
+  static final class SamSequenceParamsCallable extends DataSourceSequenceParamsCallable {
     private final SamSequenceReaderParams mSamParams;
-    SequenceParamsCallableSam(File build, DataSourceDescription desc, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode, SamSequenceReaderParams samParams) { // C'tor for reads
+    SamSequenceParamsCallable(File build, DataSourceDescription desc, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode, SamSequenceReaderParams samParams) { // C'tor for reads
       super(build, desc, readerRestriction, names, suffixes, useQuality, mode);
         mSamParams = samParams;
     }

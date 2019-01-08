@@ -20,9 +20,9 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
-import com.rtg.ngs.MapParamsHelper.SequenceParamsCallableFasta;
-import com.rtg.ngs.MapParamsHelper.SequenceParamsCallableSam;
-import com.rtg.ngs.MapParamsHelper.SequenceParamsCallableSdf;
+import com.rtg.ngs.MapParamsHelper.FastaSequenceParamsCallable;
+import com.rtg.ngs.MapParamsHelper.SamSequenceParamsCallable;
+import com.rtg.ngs.MapParamsHelper.SdfSequenceParamsCallable;
 import com.rtg.ngs.NgsFilterParams.NgsFilterParamsBuilder;
 import com.rtg.reader.DataSourceDescription;
 import com.rtg.reader.PrereadArm;
@@ -325,7 +325,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       final File template = new File(tmpDir, "template");
       ReaderTestUtils.getReaderDNA(">template\nacgt", template, null);
 
-      final SequenceParamsCallableSdf spc = new MapParamsHelper.SequenceParamsCallableSdf(template, LongRange.NONE, new NameParams(false, false), SequenceMode.UNIDIRECTIONAL);
+      final SdfSequenceParamsCallable spc = new SdfSequenceParamsCallable(template, LongRange.NONE, new NameParams(false, false), SequenceMode.UNIDIRECTIONAL);
       SequenceParams sp = null;
       try {
         sp = spc.call();
@@ -340,7 +340,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
 
       mps.reset();
       sp = null;
-      final SequenceParamsCallableSdf spc2 = new MapParamsHelper.SequenceParamsCallableSdf(template, LongRange.NONE, false, Sex.MALE, false, SequenceMode.BIDIRECTIONAL);
+      final SdfSequenceParamsCallable spc2 = new SdfSequenceParamsCallable(template, LongRange.NONE, false, Sex.MALE, false, SequenceMode.BIDIRECTIONAL);
       try {
         sp = spc2.call();
         assertEquals(SequenceMode.BIDIRECTIONAL, sp.mode());
@@ -355,7 +355,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
 
       mps.reset();
       sp = null;
-      final SequenceParamsCallableSdf spc3 = new MapParamsHelper.SequenceParamsCallableSdf(template, LongRange.NONE,  new NameParams(true, false), SequenceMode.BIDIRECTIONAL);
+      final SdfSequenceParamsCallable spc3 = new SdfSequenceParamsCallable(template, LongRange.NONE,  new NameParams(true, false), SequenceMode.BIDIRECTIONAL);
       try {
         sp = spc3.call();
         assertEquals(SequenceMode.BIDIRECTIONAL, sp.mode());
@@ -380,7 +380,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       final File left = new File(tmpDir, "left");
       FileUtils.stringToFile(inputDnaSequence, left);
 
-      final SequenceParamsCallableFasta spc = new MapParamsHelper.SequenceParamsCallableFasta(left, FASTQ_DS, LongRange.NONE, PrereadArm.LEFT,  null, null, true, SequenceMode.UNIDIRECTIONAL);
+      final FastaSequenceParamsCallable spc = new FastaSequenceParamsCallable(left, FASTQ_DS, LongRange.NONE, PrereadArm.LEFT,  null, null, true, SequenceMode.UNIDIRECTIONAL);
       final SequenceParams sp = spc.call()[0];
       assertNull(spc.call()[1]);
       assertEquals(SequenceMode.UNIDIRECTIONAL, sp.mode());
@@ -394,7 +394,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       assertEquals(left, sp.reader().path());
 
       mps.reset();
-      final SequenceParamsCallableFasta spc2 = new MapParamsHelper.SequenceParamsCallableFasta(left, FASTQ_DS, LongRange.NONE, PrereadArm.RIGHT,  null, null, true, SequenceMode.UNIDIRECTIONAL);
+      final FastaSequenceParamsCallable spc2 = new FastaSequenceParamsCallable(left, FASTQ_DS, LongRange.NONE, PrereadArm.RIGHT,  null, null, true, SequenceMode.UNIDIRECTIONAL);
       final SequenceParams sp2 = spc2.call()[0];
       assertNull(spc2.call()[1]);
       assertEquals(SequenceMode.UNIDIRECTIONAL, sp2.mode());
@@ -407,7 +407,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       FileUtils.stringToFile(inputDnaSequence + inputDnaSequence, both);
       mps.reset();
       final DataSourceDescription fastqIntDs = new DataSourceDescription(SourceFormat.FASTQ, QualityFormat.SANGER, true, true, false);
-      final SequenceParamsCallableFasta spc3 = new MapParamsHelper.SequenceParamsCallableFasta(both, fastqIntDs, LongRange.NONE, PrereadArm.UNKNOWN,  null, null, true, SequenceMode.UNIDIRECTIONAL);
+      final FastaSequenceParamsCallable spc3 = new FastaSequenceParamsCallable(both, fastqIntDs, LongRange.NONE, PrereadArm.UNKNOWN,  null, null, true, SequenceMode.UNIDIRECTIONAL);
       final SequenceParams sp3l = spc3.call()[0];
       final SequenceParams sp3r = spc3.call()[1];
       assertEquals(SequenceMode.UNIDIRECTIONAL, sp3l.mode());
@@ -428,7 +428,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       String inputSequence = SamBamSequenceDataSourceTest.SAM_HEADER + String.format(SamBamSequenceDataSourceTest.SAM_LINE_SINGLE, SAM_NL, "read0", "ACTG", "5555");
       FileUtils.stringToFile(inputSequence, input);
 
-      final SequenceParamsCallableSam sps = new MapParamsHelper.SequenceParamsCallableSam(input, new DataSourceDescription(SourceFormat.SAM, QualityFormat.SANGER, false, false, false), LongRange.NONE,  null, new SimpleNames(), true, SequenceMode.UNIDIRECTIONAL, new SamSequenceReaderParams(false, false));
+      final SamSequenceParamsCallable sps = new SamSequenceParamsCallable(input, new DataSourceDescription(SourceFormat.SAM, QualityFormat.SANGER, false, false, false), LongRange.NONE,  null, new SimpleNames(), true, SequenceMode.UNIDIRECTIONAL, new SamSequenceReaderParams(false, false));
       final SequenceParams[] sp = sps.call();
       assertEquals(2, sp.length);
       assertNull(sp[1]);
@@ -446,7 +446,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       inputSequence = SamBamSequenceDataSourceTest.SAM_HEADER + String.format(SamBamSequenceDataSourceTest.SAM_LINE_LEFT, SAM_NL, "read0", "ACTG", "5555")
                                                               + String.format(SamBamSequenceDataSourceTest.SAM_LINE_RIGHT, SAM_NL, "read0", "GTCA", "6666");
       FileUtils.stringToFile(inputSequence, input);
-      final SequenceParamsCallableSam sps2 = new MapParamsHelper.SequenceParamsCallableSam(input, new DataSourceDescription(SourceFormat.SAM, QualityFormat.SANGER, false, true, false), LongRange.NONE,  null, new SimpleNames(), true, SequenceMode.UNIDIRECTIONAL, new SamSequenceReaderParams(false, false));
+      final SamSequenceParamsCallable sps2 = new SamSequenceParamsCallable(input, new DataSourceDescription(SourceFormat.SAM, QualityFormat.SANGER, false, true, false), LongRange.NONE,  null, new SimpleNames(), true, SequenceMode.UNIDIRECTIONAL, new SamSequenceReaderParams(false, false));
       final SequenceParams[] sp2 = sps2.call();
       assertNotNull(sp2[0]);
       assertNotNull(sp2[1]);
