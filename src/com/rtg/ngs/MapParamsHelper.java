@@ -399,7 +399,7 @@ public final class MapParamsHelper {
 
 
   private static FutureTask<SequenceParams> getTemplateFutureTask(NgsParamsBuilder ngsParamsBuilder, CFlags flags, boolean includeFullNames, SequenceMode templateMode) throws IOException {
-    final boolean templateMem = !flags.isSet(MapFlags.NO_INMEMORY_TEMPLATE);
+    final boolean templateMem = (Boolean) flags.getValue(MapFlags.IN_MEMORY_TEMPLATE);
     final File template = (File) flags.getValue(CommonFlags.TEMPLATE_FLAG);
     final Sex sex = getMappingSex(ngsParamsBuilder, flags);
     return new FutureTask<>(new SdfSequenceParamsCallable(template, LongRange.NONE, templateMem, sex, includeFullNames, templateMode));

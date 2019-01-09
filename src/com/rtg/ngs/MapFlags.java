@@ -11,6 +11,9 @@
  */
 package com.rtg.ngs;
 
+import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
+import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
+
 import java.io.File;
 import java.util.Locale;
 
@@ -102,7 +105,8 @@ public final class MapFlags {
   static final String OUTPUT_NULLFILTERED = "Xnull-filter";
   static final String READ_FREQUENCY_FLAG = "Xread-freq";
   static final String MIN_HITS_FLAG = "Xmin-hits";
-  static final String NO_INMEMORY_TEMPLATE = "Xno-inmemory-template";
+  /** Whether to load the template into memory during mapping */
+  public static final String IN_MEMORY_TEMPLATE = "Xin-memory-template";
   static final String OUTPUT_READ_NAMES_FLAG = "read-names";
   static final String LEGACY_CIGARS = "legacy-cigars";
   static final String BAM_FLAG = "bam";
@@ -134,21 +138,19 @@ public final class MapFlags {
     flags.registerOptional('E', UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings of unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_UNMATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings across mated results, alias for --" + MAX_ALIGNMENT_MISMATCHES + " (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
 
-    flags.registerOptional(CommonFlags.TEMP_DIR, File.class, CommonFlags.DIR, "directory used for temporary files (Defaults to output directory)").setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(CommonFlags.TEMP_DIR, File.class, CommonFlags.DIR, "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
 
-    flags.registerOptional(LEGACY_CIGARS, "use legacy cigars in output").setCategory(CommonFlagCategories.UTILITY);
-    flags.registerOptional(OUTPUT_READ_NAMES_FLAG, "use read name in output instead of read id (Uses more RAM)").setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(LEGACY_CIGARS, "use legacy cigars in output").setCategory(UTILITY);
+    flags.registerOptional(OUTPUT_READ_NAMES_FLAG, "use read name in output instead of read id (Uses more RAM)").setCategory(UTILITY);
     flags.registerOptional(ALIGNER_MODE_FLAG, AlignerMode.class, CommonFlags.STRING, "pick the aligner to use", AlignerMode.AUTO).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(SINGLE_INDEL_PENALTIES_FLAG, String.class, "STRING|FILE", "single indel penalty file", EditDistanceFactory.DEFAULT_SINGLE_INDEL_TABLE).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 
     //--X flags
 
-
-    flags.registerOptional(THREAD_MULTIPLIER, Integer.class, CommonFlags.INT, "number of work chunks per thread", HashingRegion.DEFAULT_THREAD_MULTIPLIER).setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(THREAD_MULTIPLIER, Integer.class, CommonFlags.INT, "number of work chunks per thread", HashingRegion.DEFAULT_THREAD_MULTIPLIER).setCategory(UTILITY);
     //flags.registerOptional(INSERT_SIZE_FLAG, Integer.class, INT, "expected insert size for pairs");
-    flags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary SAM files", Boolean.TRUE).setCategory(CommonFlagCategories.UTILITY);
-    flags.registerOptional(NO_INMEMORY_TEMPLATE, "do not load the template in memory").setCategory(CommonFlagCategories.UTILITY);
-    flags.registerOptional(FORCE_LONG_FLAG, "force the use of long read mode").setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary SAM files", Boolean.TRUE).setCategory(UTILITY);
+    flags.registerOptional(FORCE_LONG_FLAG, "force the use of long read mode").setCategory(UTILITY);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of sample", null).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(CommonFlags.PEDIGREE_FLAG, File.class, CommonFlags.FILE, "genome relationships pedigree containing sex of sample").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 
@@ -174,7 +176,7 @@ public final class MapFlags {
    * @param flags flags to set
    */
   public static void initInputOutputFlags(CFlags flags) {
-    final Flag<File> input = flags.registerOptional('i', CommonFlags.READS_FLAG, File.class, CommonFlags.SDF_OR_FILE, "input read set").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> input = flags.registerOptional('i', CommonFlags.READS_FLAG, File.class, CommonFlags.SDF_OR_FILE, "input read set").setCategory(INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(flags);
     initTemplateFlag(flags);
 
@@ -187,7 +189,7 @@ public final class MapFlags {
    * @param flags shared flags
    */
   public static void initMapIOFlags(CFlags flags) {
-    flags.registerRequired('i', CommonFlags.READS_FLAG, File.class, CommonFlags.SDF, "SDF containing reads to map").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerRequired('i', CommonFlags.READS_FLAG, File.class, CommonFlags.SDF, "SDF containing reads to map").setCategory(INPUT_OUTPUT);
     initTemplateFlag(flags);
     CommonFlags.initOutputDirFlag(flags);
   }
@@ -198,15 +200,15 @@ public final class MapFlags {
    */
   public static void initInputFormatFlags(CFlags flags) {
     //mapx already has a -f flag
-    final Flag<String> formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<String> formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
     formatFlag.setParameterRange(FORMAT_OPTIONS);
     CommonFlags.initQualityFormatFlag(flags);
   }
 
   static void initPairedEndFormatFlags(CFlags flags)  {
     //IO format flags specific to paired end
-    final Flag<File> inputL = flags.registerOptional('l', FormatCli.LEFT_FILE_FLAG, File.class, CommonFlags.FILE, "left input file for FASTA/FASTQ paired end reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    final Flag<File> inputR = flags.registerOptional('r', FormatCli.RIGHT_FILE_FLAG, File.class, CommonFlags.FILE, "right input file for FASTA/FASTQ paired end reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> inputL = flags.registerOptional('l', FormatCli.LEFT_FILE_FLAG, File.class, CommonFlags.FILE, "left input file for FASTA/FASTQ paired end reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> inputR = flags.registerOptional('r', FormatCli.RIGHT_FILE_FLAG, File.class, CommonFlags.FILE, "right input file for FASTA/FASTQ paired end reads").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inputL, inputR);
   }
 
@@ -219,15 +221,15 @@ public final class MapFlags {
    * @param flags shared flags
    */
   public static void initSamOutputFlag(CFlags flags) {
-    flags.registerOptional(SAM_FLAG, "output the alignment files in SAM format").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerOptional(SAM_FLAG, "output the alignment files in SAM format").setCategory(INPUT_OUTPUT);
   }
 
   static void initNoCalibrationFlag(CFlags flags) {
-    flags.registerOptional(NO_CALIBRATION, "do not produce calibration files").setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(NO_CALIBRATION, "do not produce calibration files").setCategory(UTILITY);
   }
 
   static void initSvPrepFlag(CFlags flags) {
-    flags.registerOptional(NO_SVPREP, "do not perform structural variant processing").setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(NO_SVPREP, "do not perform structural variant processing").setCategory(UTILITY);
   }
 
   /**
@@ -236,7 +238,7 @@ public final class MapFlags {
    * @param desc the flag description
    */
   static void initBamOutputFlag(CFlags flags, String desc) {
-    flags.registerOptional(BAM_FLAG, desc).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerOptional(BAM_FLAG, desc).setCategory(INPUT_OUTPUT);
   }
 
   /**
@@ -244,7 +246,7 @@ public final class MapFlags {
    * @param flags shared flags
    */
   static void initDontUnifyFlag(CFlags flags) {
-    flags.registerOptional(DONT_UNIFY_FLAG, "output mated/unmated/unmapped alignments into separate SAM/BAM files").setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(DONT_UNIFY_FLAG, "output mated/unmated/unmapped alignments into separate SAM/BAM files").setCategory(UTILITY);
   }
 
   /**
@@ -479,7 +481,7 @@ public final class MapFlags {
     flags.registerOptional(MAX_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, "upper limit for repeat frequency when using the proportional repeat frequency setting", maxRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MIN_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, "lower limit for repeat frequency when using the proportional repeat frequency setting", minRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     CommonFlags.initNoGzip(flags);
-    flags.registerOptional(PARALLEL_UNMATED_PROCESSING_FLAG, Boolean.class, CommonFlags.BOOL, "run unmated processing in parallel with mated processing", Boolean.FALSE).setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(PARALLEL_UNMATED_PROCESSING_FLAG, Boolean.class, CommonFlags.BOOL, "run unmated processing in parallel with mated processing", Boolean.FALSE).setCategory(UTILITY);
     CommonFlags.initThreadsFlag(flags);
   }
 
@@ -617,7 +619,8 @@ public final class MapFlags {
    * @param flags shared flags
    */
   public static void initTemplateFlag(CFlags flags) {
-    flags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing template to map against").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing template to map against").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(IN_MEMORY_TEMPLATE, Boolean.class, "BOOL", "whether to load the template into memory", Boolean.TRUE).setCategory(UTILITY);
   }
 
   /**

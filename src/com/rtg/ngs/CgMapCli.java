@@ -139,8 +139,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
 
     mFlags.registerRequired('i', CommonFlags.READS_FLAG, File.class, "SDF|FILE", "the Complete Genomics read set").setCategory(INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(mFlags);
-    mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing template to map against").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional(MapFlags.NO_INMEMORY_TEMPLATE, "do not load the template in memory").setCategory(UTILITY);
+    MapFlags.initTemplateFlag(mFlags);
 
     final Flag<String> maskFlag = mFlags.registerRequired(MASK_FLAG, String.class, CommonFlags.STRING, "read indexing method").setCategory(SENSITIVITY_TUNING);
     if (License.isDeveloper()) {
@@ -234,7 +233,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
       throw new NoTalkbackSlimException(ErrorType.SDF_INDEX_NOT_VALID, reads.getPath());
     }
     final File template = (File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG);
-    final boolean inMemoryTemplate = !mFlags.isSet(MapFlags.NO_INMEMORY_TEMPLATE);
+    final boolean inMemoryTemplate = (Boolean) mFlags.getValue(MapFlags.IN_MEMORY_TEMPLATE);
     SdfUtils.validateHasNames(template);
     ngsParamBuilder.outputParams(outputParams);
     final Sex sex = MapParamsHelper.getMappingSex(ngsParamBuilder, mFlags);

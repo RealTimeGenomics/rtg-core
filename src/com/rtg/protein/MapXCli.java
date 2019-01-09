@@ -345,6 +345,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     CommonFlagCategories.setCategories(flags);
     flags.registerRequired('i', READS_FLAG, File.class, "SDF|FILE", "query read sequences").setCategory(INPUT_OUTPUT);
     flags.registerRequired('t', TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing protein database to search").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(MapFlags.IN_MEMORY_TEMPLATE, Boolean.class, "BOOL", "whether to load the template into memory", Boolean.TRUE).setCategory(UTILITY);
     CommonFlags.initOutputDirFlag(flags);
 
     // No Paired End input for MapX
