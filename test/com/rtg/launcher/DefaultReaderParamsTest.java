@@ -38,7 +38,7 @@ import junit.framework.TestCase;
 public class DefaultReaderParamsTest extends TestCase {
 
   public static DefaultReaderParams createDefaultReaderParams(final File sequenceDir, LongRange readerRestriction) {
-    return new DefaultReaderParams(sequenceDir, readerRestriction, null, false, false, false);
+    return new DefaultReaderParams(sequenceDir, readerRestriction, false, false, false);
   }
 
   public DefaultReaderParamsTest(final String name) {

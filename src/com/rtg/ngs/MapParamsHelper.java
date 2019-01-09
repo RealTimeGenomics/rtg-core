@@ -658,7 +658,7 @@ public final class MapParamsHelper {
       final SequenceParams[] sp = new SequenceParams[readers.length];
       for (int i = 0; i < readers.length; ++i) {
         if (readers[i] != null) {
-          sp[i] = SequenceParams.builder().readerParam(new DefaultReaderParams(readers[i])).useMemReader(true).mode(mMode).readerRestriction(mReaderRestriction).create(); // Reads
+          sp[i] = SequenceParams.builder().readerParam(new DefaultReaderParams(readers[i])).mode(mMode).readerRestriction(mReaderRestriction).create(); // Reads
         }
       }
       return sp;

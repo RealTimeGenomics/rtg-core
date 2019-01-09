@@ -18,12 +18,12 @@ import java.io.IOException;
 import com.rtg.reader.IndexFile;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
+import com.rtg.util.intervals.LongRange;
 
 /**
  */
@@ -50,18 +50,31 @@ public class DefaultReaderParams extends ReaderParams implements Integrity {
   /**
    * @param sequenceDir directory containing sequences.
    * @param readerRestriction a region specifying the subset of the SDF to load
-   * @param parent parent, can be null
    * @param useMemSeqReader use {@link com.rtg.reader.CompressedMemorySequencesReader}
    * @param loadNames whether to load names from disk or not
    * @param loadFullNames whether to load full names from disk or not
    */
-  public DefaultReaderParams(final File sequenceDir, LongRange readerRestriction, final ReaderParams parent, final boolean useMemSeqReader, final boolean loadNames, boolean loadFullNames) {
+  public DefaultReaderParams(final File sequenceDir, LongRange readerRestriction, final boolean useMemSeqReader, final boolean loadNames, boolean loadFullNames) {
     mSequenceDir = sequenceDir;
-    mParent = parent;
+    mParent = null;
     mUseMemSeqReader = useMemSeqReader;
     mLoadNames = loadNames;
     mLoadFullNames = loadFullNames;
     mReaderRestriction = readerRestriction;
+  }
+
+  /**
+   * Create a ReaderParams corresponding to an already created ReaderParams, useful for creating a copy.
+   * @param parent parent, can be null
+   */
+  DefaultReaderParams(final ReaderParams parent) {
+    mParent = parent;
+    mSequenceDir = parent.directory();
+    // Rest of these make no sense in this case
+    mReaderRestriction = null;
+    mUseMemSeqReader = true;
+    mLoadNames = true;
+    mLoadFullNames = true;
   }
 
   /**

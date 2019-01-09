@@ -179,12 +179,16 @@ public final class SequenceParams implements ISequenceParams, Integrity {
 
   private SequenceParams(SequenceParamsBuilder builder) {
     mMode = builder.mMode;
-    final boolean useMemoryReader = builder.mUseMemReader;
-    final boolean loadNames = builder.mLoadNames;
-    final boolean loadFullNames = builder.mLoadFullNames;
     mSex = builder.mSex;
     mReaderRestriction = builder.mReaderRestriction;
-    mReaderParams = new DefaultReaderParams(builder.mSequenceDir, mReaderRestriction, builder.mReaderParams, useMemoryReader, loadNames, loadFullNames);
+    if (builder.mReaderParams != null) {
+      mReaderParams = new DefaultReaderParams(builder.mReaderParams);
+    } else {
+      final boolean useMemoryReader = builder.mUseMemReader;
+      final boolean loadNames = builder.mLoadNames;
+      final boolean loadFullNames = builder.mLoadFullNames;
+      mReaderParams = new DefaultReaderParams(builder.mSequenceDir, mReaderRestriction, useMemoryReader, loadNames, loadFullNames);
+    }
     if (builder.mRegion == HashingRegion.NONE) {
       mRegion = new HashingRegion(0, mReaderParams.reader().numberSequences());
     } else {
