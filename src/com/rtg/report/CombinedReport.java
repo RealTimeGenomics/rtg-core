@@ -43,8 +43,9 @@ import com.rtg.util.io.LineWriter;
  */
 public class CombinedReport {
 
-  final List<File> mDirectories;
-  final File mOutput;
+  private final List<File> mDirectories;
+  private final File mOutput;
+  private final HtmlReportHelper mMainHelper;
 
   /**
    * Create a report for the provided directories
@@ -54,6 +55,7 @@ public class CombinedReport {
   public CombinedReport(List<File> directories, File output) {
     mDirectories = directories;
     mOutput = output;
+    mMainHelper = new HtmlReportHelper(mOutput, "index");
   }
 
   private static class Filter implements FilenameFilter {
@@ -96,6 +98,8 @@ public class CombinedReport {
         }
       }
     }
+    mMainHelper.copyResources(ReportUtils.resourceArray("rtg.css"));
+
     final MetagenomicsReportTemplate template = new MetagenomicsReportTemplate();
     template.mVersion = version;
     template.mMapf = checklist(mapf.size() > 0);
@@ -109,16 +113,13 @@ public class CombinedReport {
     final String populated = template.fillTemplate();
     body.append(populated);
 
-
-    final HtmlReportHelper helper = new HtmlReportHelper(mOutput, "index");
-    helper.copyResources(ReportUtils.resourceArray("rtg.css"));
     // write html
     final HashMap<String, String> replace = new HashMap<>();
     replace.put("__TITLE__", "Metagenomics Data Summary Report");
     replace.put("__BODY_TEXT__", body.toString());
-    replace.put("__RESOURCE_DIR__", helper.getResourcesDirName() + "/");
+    replace.put("__RESOURCE_DIR__", mMainHelper.getResourcesDirName() + "/");
 
-    ReportUtils.writeHtml(ReportUtils.TEMPLATE_DIR + "/default.html", helper.getReportFile(), replace);
+    ReportUtils.writeHtml(ReportUtils.TEMPLATE_DIR + "/default.html", mMainHelper.getReportFile(), replace);
   }
 
   static String template(Map<String, String> replacements, String templateName) throws IOException {
@@ -203,7 +204,7 @@ public class CombinedReport {
     final StringBuilder sb = new StringBuilder();
     sb.append(template.fillTemplate());
     if (resultsFile != null) {
-      copyFile(resultsFile, new File(mOutput, resultFileName));
+      copyFile(resultsFile, new File(mMainHelper.getResourcesDir(), resultFileName));
       sb.append("<a href=\"")
           .append(resultFileName)
           .append("\">")
@@ -234,9 +235,9 @@ public class CombinedReport {
   }
 
   private File fullReport(File map, String fullDirName) throws IOException {
-    final HtmlReportHelper helper = new HtmlReportHelper(map, MapReport.REPORT_NAME);
-    final File mapReport1 = new File(mOutput, fullDirName);
+    final File mapReport1 = new File(mMainHelper.getResourcesDir(), fullDirName);
     makeOrThrow(mapReport1);
+    final HtmlReportHelper helper = new HtmlReportHelper(map, MapReport.REPORT_NAME);
     if (helper.getReportFile().exists() && helper.getResourcesDir().exists()) {
       final HtmlReportHelper destinationReport = new HtmlReportHelper(mapReport1, MapReport.REPORT_NAME);
       copyFile(helper.getReportFile(), destinationReport.getReportFile());
