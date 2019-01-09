@@ -41,12 +41,12 @@ public class OutputFormatTypeTest extends TestCase {
 
 
   private PositionParams makeParams(final OutputFormatType type) throws IOException {
-    final ReaderParams srp = new MockReaderParams(0, 0, SequenceMode.UNIDIRECTIONAL);
-    final ISequenceParams subjectParams = new MockSequenceParams(srp, 0, 0);
+    final ReaderParams srp = new MockReaderParams(0, 0, SequenceMode.UNIDIRECTIONAL.codeType());
+    final ISequenceParams subjectParams = new MockSequenceParams(srp, SequenceMode.UNIDIRECTIONAL, 0, 0);
     final BuildParams buildParams = BuildParams.builder().windowSize(5).stepSize(2).sequences(subjectParams).create();
 
-    final ReaderParams qrp = new MockReaderParams(0, 0, SequenceMode.BIDIRECTIONAL);
-    final ISequenceParams queryParams = new MockSequenceParams(qrp, 0, 0);
+    final ReaderParams qrp = new MockReaderParams(0, 0, SequenceMode.BIDIRECTIONAL.codeType());
+    final ISequenceParams queryParams = new MockSequenceParams(qrp, SequenceMode.BIDIRECTIONAL, 0, 0);
     final BuildParams searchParams = BuildParams.builder().windowSize(5).stepSize(1).sequences(queryParams).create();
     final PositionDistributionParams distr = new PositionDistributionParams(0.001, 0.009, 20, 0);
     final PositionOutputParams outParams = new PositionOutputParams(new File(""), type, distr, null, false, 10);

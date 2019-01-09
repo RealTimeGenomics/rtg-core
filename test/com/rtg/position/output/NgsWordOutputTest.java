@@ -56,12 +56,12 @@ public class NgsWordOutputTest extends TestCase {
     final PositionParams params = PositionParams.builder()
             .buildParams(BuildParams.builder()
                     .windowSize(18).stepSize(18)
-                    .sequences(SequenceParams.builder().mode(SequenceMode.UNIDIRECTIONAL).readerParam(new MockReaderParams(10, 10, SequenceMode.UNIDIRECTIONAL)).create())
+                    .sequences(SequenceParams.builder().mode(SequenceMode.UNIDIRECTIONAL).readerParam(new MockReaderParams(10, 10, SequenceMode.UNIDIRECTIONAL.codeType())).create())
 
                     .create())
             .searchParams(BuildParams.builder()
                     .windowSize(18).stepSize(1)
-                    .sequences(SequenceParams.builder().mode(SequenceMode.BIDIRECTIONAL).readerParam(new MockReaderParams(10, 10, SequenceMode.BIDIRECTIONAL)).create())
+                    .sequences(SequenceParams.builder().mode(SequenceMode.BIDIRECTIONAL).readerParam(new MockReaderParams(10, 10, SequenceMode.BIDIRECTIONAL.codeType())).create())
                     .create())
             .create();
     final NgsWordOutput word = new NgsWordOutput(params, output);

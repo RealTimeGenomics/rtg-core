@@ -96,14 +96,14 @@ public class PositionParamsTest extends TestCase {
 
   public void testHash() throws IOException {
     final ProgramMode pma = ProgramMode.SLIMN;
-    final ReaderParams rp = new MockReaderParams(0, 0, pma.subjectMode());
-    final ISequenceParams subjectaa = new MockSequenceParams(rp, 0, 0);
+    final ReaderParams rp = new MockReaderParams(0, 0, pma.subjectMode().codeType());
+    final ISequenceParams subjectaa = new MockSequenceParams(rp, pma.subjectMode(), 0, 0);
     final BuildParams buildaa = BuildParams.builder().windowSize(4).stepSize(1).sequences(subjectaa).create();
 
     final File hitDir = new File("");
 
-    final ReaderParams qp = new MockReaderParams(0, 0, pma.queryMode());
-    final ISequenceParams querya = new MockSequenceParams(qp, 0, 0);
+    final ReaderParams qp = new MockReaderParams(0, 0, pma.queryMode().codeType());
+    final ISequenceParams querya = new MockSequenceParams(qp, pma.queryMode(), 0, 0);
     final BuildParams queriesa = BuildParams.builder().windowSize(4).stepSize(1).sequences(querya).create();
 
     final PositionOutputParams outParams = new PositionOutputParams(hitDir, OutputFormatType.SEGMENT, null, null, false, 1);

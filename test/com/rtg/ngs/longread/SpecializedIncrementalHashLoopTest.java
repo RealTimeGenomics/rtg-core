@@ -92,9 +92,9 @@ public class SpecializedIncrementalHashLoopTest extends NgsLongTest {
         }
       };
 
-      final ReaderParams rp = new MockReaderParams(tmplreader, SequenceMode.BIDIRECTIONAL);
+      final ReaderParams rp = new MockReaderParams(tmplreader);
 
-      final ISequenceParams seqparam = new MockSequenceParams(rp) {
+      final ISequenceParams seqparam = new MockSequenceParams(rp, SequenceMode.BIDIRECTIONAL) {
         @Override
         public HashingRegion region() {
           return new HashingRegion(1, 1, 2, -1, 1, -1);
@@ -152,9 +152,9 @@ public class SpecializedIncrementalHashLoopTest extends NgsLongTest {
         }
       };
 
-      final ReaderParams rp = new MockReaderParams(tmplreader, SequenceMode.BIDIRECTIONAL);
+      final ReaderParams rp = new MockReaderParams(tmplreader);
 
-      final ISequenceParams seqparam = new MockSequenceParamsImpl(rp);
+      final ISequenceParams seqparam = new MockSequenceParamsImpl(rp, SequenceMode.BIDIRECTIONAL);
       sihl.execLoop(new byte[1024], 2, 1, seqparam);
     } finally {
       FileHelper.deleteAll(tmpDir);
@@ -163,8 +163,8 @@ public class SpecializedIncrementalHashLoopTest extends NgsLongTest {
 
   private static class MockSequenceParamsImpl extends MockSequenceParams {
 
-    MockSequenceParamsImpl(ReaderParams readerParams) {
-      super(readerParams);
+    MockSequenceParamsImpl(ReaderParams readerParams, SequenceMode mode) {
+      super(readerParams, mode);
     }
 
     @Override

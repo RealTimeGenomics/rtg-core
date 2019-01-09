@@ -20,7 +20,6 @@ import java.util.Arrays;
 
 import com.rtg.mode.DNAFastaSymbolTable;
 import com.rtg.mode.ProteinFastaSymbolTable;
-import com.rtg.mode.SequenceMode;
 import com.rtg.reader.FastaSequenceDataSource;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.SequencesWriter;
@@ -38,8 +37,8 @@ import junit.framework.TestCase;
  */
 public class DefaultReaderParamsTest extends TestCase {
 
-  public static DefaultReaderParams createDefaultReaderParams(final File sequenceDir, LongRange readerRestriction, final SequenceMode mode) {
-    return new DefaultReaderParams(sequenceDir, readerRestriction, mode, null, false, false, false);
+  public static DefaultReaderParams createDefaultReaderParams(final File sequenceDir, LongRange readerRestriction) {
+    return new DefaultReaderParams(sequenceDir, readerRestriction, null, false, false, false);
   }
 
   public DefaultReaderParamsTest(final String name) {
@@ -72,14 +71,13 @@ public class DefaultReaderParamsTest extends TestCase {
       try {
         getReaderProtein(">test\nACNGT\n", f);
         getReaderDNA(">test\nACGT\n", f2);
-        final DefaultReaderParams drp = createDefaultReaderParams(f, LongRange.NONE, SequenceMode.PROTEIN);
-        final DefaultReaderParams drp2 = createDefaultReaderParams(f, LongRange.NONE, SequenceMode.PROTEIN);
-        final DefaultReaderParams drp3 = createDefaultReaderParams(f2, LongRange.NONE, SequenceMode.BIDIRECTIONAL);
-        assertEquals(SequenceMode.PROTEIN, drp.mode());
+        final DefaultReaderParams drp = createDefaultReaderParams(f, LongRange.NONE);
+        final DefaultReaderParams drp2 = createDefaultReaderParams(f, LongRange.NONE);
+        final DefaultReaderParams drp3 = createDefaultReaderParams(f2, LongRange.NONE);
         assertEquals(f, drp.directory());
         assertEquals(5, drp.maxLength());
-        assertEquals(Utils.hash(new Object[]{SequenceMode.PROTEIN, f, Boolean.FALSE}), drp.hashCode());
-        assertEquals("SequenceParams mode=" + SequenceMode.PROTEIN + " directory=" + f + " usememory=" + Boolean.FALSE, drp.toString());
+        assertEquals(Utils.hash(new Object[]{f, Boolean.FALSE}), drp.hashCode());
+        assertEquals("ReaderParams directory=" + f + " usememory=" + Boolean.FALSE, drp.toString());
         assertTrue(Arrays.toString(drp.lengths()), Arrays.equals(new int[] {5}, drp.lengths()));
         assertTrue(drp.lengths() == drp.lengths()); //make sure cacheing correctly
 
@@ -99,32 +97,6 @@ public class DefaultReaderParamsTest extends TestCase {
     }
   }
 
-  public void testInvalid() throws IOException {
-    final MockEventListener ev = new MockEventListener();
-    Diagnostic.addListener(ev);
-    Diagnostic.setLogStream();
-    final File f = FileUtils.createTempDir("test", "defreadparam");
-    try {
-      getReaderDNA(">test\nACNGT\n", f);
-      try {
-        final DefaultReaderParams rp = createDefaultReaderParams(f, LongRange.NONE, SequenceMode.PROTEIN);
-        rp.reader(); //force creation of reader
-        try {
-          rp.integrity();
-          fail();
-        } finally {
-          rp.close();
-        }
-      } catch (final SlimException ex) {
-        ex.printErrorNoLog();
-        ev.compareErrorMessage("The specified sequence is of type \"DNA\" required \"PROTEIN\".");
-      }
-    } finally {
-      FileHelper.deleteAll(f);
-      Diagnostic.removeListener(ev);
-    }
-  }
-
   public void testDirectoryNotExist() throws IOException {
     final File tempDir = FileUtils.createTempDir("DefaultReaderParamsTest", null);
     try {
@@ -135,7 +107,7 @@ public class DefaultReaderParamsTest extends TestCase {
       try {
         final File t = new File(tempDir, "t");
         try {
-          final DefaultReaderParams rp = createDefaultReaderParams(t, LongRange.NONE, SequenceMode.BIDIRECTIONAL);
+          final DefaultReaderParams rp = createDefaultReaderParams(t, LongRange.NONE);
           rp.reader(); //force creation of reader
           rp.integrity();
           fail();
@@ -158,7 +130,7 @@ public class DefaultReaderParamsTest extends TestCase {
     final File dir = FileUtils.createTempDir("defaultreader", "test");
     try {
       try {
-        final DefaultReaderParams rp = createDefaultReaderParams(dir, LongRange.NONE, SequenceMode.BIDIRECTIONAL);
+        final DefaultReaderParams rp = createDefaultReaderParams(dir, LongRange.NONE);
         rp.reader(); //force creation of reader
         rp.integrity();
         fail();
@@ -179,7 +151,7 @@ public class DefaultReaderParamsTest extends TestCase {
     final File file = File.createTempFile("defaultreader", "test");
     try {
       try {
-        final DefaultReaderParams rp = createDefaultReaderParams(file, LongRange.NONE, SequenceMode.BIDIRECTIONAL);
+        final DefaultReaderParams rp = createDefaultReaderParams(file, LongRange.NONE);
         rp.reader(); //force creation of reader
         rp.integrity();
         fail();

@@ -50,8 +50,8 @@ public class PositionWriterFactoryTest extends TestCase {
           final NgsPositionWriterFactory fact = new NgsPositionWriterFactory(dops);
 
           final SequencesReader reader = new MockArraySequencesReader(SequenceType.DNA, new int[]{30, 31, 48});
-          final ReaderParams srp = new MockReaderParams(reader, SequenceMode.BIDIRECTIONAL);
-          final ISequenceParams subjectParams = new MockSequenceParams(srp, 0, reader.numberSequences());
+          final ReaderParams srp = new MockReaderParams(reader);
+          final ISequenceParams subjectParams = new MockSequenceParams(srp, SequenceMode.BIDIRECTIONAL, 0, reader.numberSequences());
 
           final PositionWriter pw = fact.makeNgs(subjectParams, null, subjectParams, HashingRegion.NONE);
           assertNotNull(pw);

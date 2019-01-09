@@ -87,8 +87,8 @@ public class OutputFilterTest extends TestCase {
 
   public void testNull1() throws IOException {
     final SequencesReader r = getReaderDNA();
-    final ReaderParams rp = new MockReaderParams(r, SequenceMode.BIDIRECTIONAL);
-    final ISequenceParams sp = new MockSequenceParams(rp, 0, r.numberSequences());
+    final ReaderParams rp = new MockReaderParams(r);
+    final ISequenceParams sp = new MockSequenceParams(rp, SequenceMode.BIDIRECTIONAL, 0, r.numberSequences());
     final NgsParams ngsp = NgsParams.builder().buildFirstParams(sp).searchParams(sp).outputParams(new NgsTestUtils.OverriddenNgsOutputParams(NgsTestUtils.OverriddenNgsOutputParams.builder())).create();
     final OutputProcessor filter = OutputFilter.NULL.makeProcessor(ngsp, null);
     assertNotNull(filter);
@@ -97,8 +97,8 @@ public class OutputFilterTest extends TestCase {
 
   public void testNone1() throws IOException {
     final SequencesReader r = getReaderDNA();
-    final ReaderParams rp = new MockReaderParams(r, SequenceMode.BIDIRECTIONAL);
-    final ISequenceParams sp = new MockSequenceParams(rp, 0, r.numberSequences());
+    final ReaderParams rp = new MockReaderParams(r);
+    final ISequenceParams sp = new MockSequenceParams(rp, SequenceMode.BIDIRECTIONAL, 0, r.numberSequences());
     final NgsParams ngsp = NgsParams.builder().buildFirstParams(sp).searchParams(sp).outputParams(new NgsTestUtils.OverriddenNgsOutputParams(NgsTestUtils.OverriddenNgsOutputParams.builder())).create();
     final OutputProcessor filter = OutputFilter.NONE.makeProcessor(ngsp, null);
     assertNotNull(filter);
@@ -107,8 +107,8 @@ public class OutputFilterTest extends TestCase {
 
   public void testNone1Syn() throws IOException {
     final SequencesReader r = getReaderDNA();
-    final ReaderParams rp = new MockReaderParams(r, SequenceMode.BIDIRECTIONAL);
-    final ISequenceParams sp = new MockSequenceParams(rp, 0, r.numberSequences());
+    final ReaderParams rp = new MockReaderParams(r);
+    final ISequenceParams sp = new MockSequenceParams(rp, SequenceMode.BIDIRECTIONAL, 0, r.numberSequences());
     final NgsParams ngsp = NgsParams.builder().numberThreads(2).buildFirstParams(sp).searchParams(sp).outputParams(new NgsTestUtils.OverriddenNgsOutputParams(NgsTestUtils.OverriddenNgsOutputParams.builder())).create();
     final OutputProcessor filter = OutputFilter.NONE.makeProcessor(ngsp, null);
     filter.close();
@@ -263,8 +263,8 @@ public class OutputFilterTest extends TestCase {
     final File outFileDir = FileUtils.createTempDir("outputFilter", "test");
     try {
       final SequencesReader r = getReaderDNA();
-      final ReaderParams rp = new MockReaderParams(r, SequenceMode.PROTEIN);
-      final ISequenceParams sp = new MockSequenceParams(rp, 0, r.numberSequences());
+      final ReaderParams rp = new MockReaderParams(r);
+      final ISequenceParams sp = new MockSequenceParams(rp, SequenceMode.PROTEIN, 0, r.numberSequences());
       final NgsFilterParams filterParams = NgsFilterParams.builder().outputFilter(OutputFilter.PROTEIN_ALL_HITS).create();
       final NgsOutputParams ngsop = NgsOutputParams.builder().progress(false).outputDir(outFileDir).filterParams(filterParams).create();
       final NgsParams ngsp = NgsParams.builder().buildFirstParams(sp).searchParams(sp).outputParams(ngsop).proteinScoringMatrix(new ProteinScoringMatrix()).numberThreads(1).create();

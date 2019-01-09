@@ -144,8 +144,8 @@ public class SearchResetHashLoopTest extends ResetHashLoopTest {
         super.hashCall(hash, internalId, stepPosition);
       }
     };
-    final ReaderParams re = new MockReaderParams(sr, mode);
-    final ISequenceParams se = new MockSequenceParams(re , 0, 2);
+    final ReaderParams re = new MockReaderParams(sr);
+    final ISequenceParams se = new MockSequenceParams(re, mode, 0, 2);
     hashLoop.execLoop(se, HashLoop.makeBuffer(sr));
     assertEquals(expected, count[0]);
   }

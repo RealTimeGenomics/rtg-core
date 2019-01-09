@@ -83,7 +83,7 @@ public class SpeciesTest extends TestCase {
     taxonomy.addNode(4, 1, "2", "none");
     taxonomy.addNode(5, 1, "3", "none");
     taxonomy.addNode(6, 1, "4", "none");
-    final MockReaderParams mrp = new MockReaderParams(200, 5, SequenceMode.UNIDIRECTIONAL) {
+    final MockReaderParams mrp = new MockReaderParams(200, 5, SequenceMode.UNIDIRECTIONAL.codeType()) {
       @Override
       public int[] lengths() {
         return new int[] {4, 5, 6, 7, 0};
@@ -154,7 +154,7 @@ public class SpeciesTest extends TestCase {
       taxonomy.addNode(2, 1, "0", "none");
       taxonomy.addNode(3, 1, "1", "none");
       taxonomy.addNode(5, 1, "3", "none");
-      final MockReaderParams mrp = new MockReaderParams(200, 4, SequenceMode.UNIDIRECTIONAL) {
+      final MockReaderParams mrp = new MockReaderParams(200, 4, SequenceMode.UNIDIRECTIONAL.codeType()) {
         @Override
         public int[] lengths() {
           return new int[] {4, 5, 6, 7};
@@ -225,7 +225,7 @@ public class SpeciesTest extends TestCase {
     sm.id(3);
     sm.id(4);
 
-    final MockReaderParams mrp = new MockReaderParams(200, 4, SequenceMode.UNIDIRECTIONAL) {
+    final MockReaderParams mrp = new MockReaderParams(200, 4, SequenceMode.UNIDIRECTIONAL.codeType()) {
       @Override
       public int[] lengths() {
         return new int[] {4, 5, 6, 7};

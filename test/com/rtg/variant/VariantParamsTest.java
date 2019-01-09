@@ -142,7 +142,7 @@ public class VariantParamsTest extends TestCase {
             " interesting_threshold=" + 5.0,
             " interesting_separation=" + 4,
             " heterozygous prior=0.0003000 homozygous prior=0.0003000",
-            " SequenceParams mode=UNIDIRECTIONAL directory=",
+            " ReaderParams directory=",
             " OutputParams output directory=" + TEST_OUTPUT,
             " progress=" + Boolean.FALSE,
             " zip=" + Boolean.FALSE,

@@ -46,12 +46,12 @@ public class SegmentOutputTest extends TestCase {
   }
 
   protected static PositionParams makeParams(final int threshold, final int windowSize, final int stepSize) throws IOException {
-    final ReaderParams srp = new MockReaderParams(0, 0, SequenceMode.UNIDIRECTIONAL);
-    final ISequenceParams subjectParams = new MockSequenceParams(srp, 0, 0);
+    final ReaderParams srp = new MockReaderParams(0, 0, SequenceMode.UNIDIRECTIONAL.codeType());
+    final ISequenceParams subjectParams = new MockSequenceParams(srp, SequenceMode.UNIDIRECTIONAL, 0, 0);
     final BuildParams buildParams = BuildParams.builder().windowSize(windowSize).stepSize(stepSize).sequences(subjectParams).create();
 
-    final ReaderParams qrp = new MockReaderParams(0, 0, SequenceMode.BIDIRECTIONAL);
-    final ISequenceParams queryParams = new MockSequenceParams(qrp, 0, 0);
+    final ReaderParams qrp = new MockReaderParams(0, 0, SequenceMode.BIDIRECTIONAL.codeType());
+    final ISequenceParams queryParams = new MockSequenceParams(qrp, SequenceMode.BIDIRECTIONAL, 0, 0);
     final BuildParams searchParams = BuildParams.builder().windowSize(windowSize).stepSize(1).sequences(queryParams).create();
     final PositionOutputParams outParams = new PositionOutputParams(new File(""), OutputFormatType.SEGMENT, null, null, false, 10);
     return PositionParams.builder().hashCountThreshold(threshold).buildParams(buildParams).searchParams(searchParams).outputParams(outParams).create();

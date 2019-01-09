@@ -238,10 +238,10 @@ public class MapXCliTest extends AbstractCliTest {
       assertEquals(output, ((MapXCli) mCli).outputDirectory());
       assertEquals(template, p.searchParams().directory());
       //assertTrue(p.searchParams().readerParams().reader() instanceof CompressedMemorySequencesReader2);
-      assertEquals(SequenceMode.PROTEIN, p.searchParams().readerParams().mode());
+      assertEquals(SequenceMode.PROTEIN, p.searchParams().mode());
       assertEquals(reads, p.buildFirstParams().directory());
       //assertTrue(p.buildFirstParams().readerParams().reader() instanceof CompressedMemorySequencesReader2);
-      assertEquals(SequenceMode.TRANSLATED, p.buildFirstParams().readerParams().mode());
+      assertEquals(SequenceMode.TRANSLATED, p.buildFirstParams().mode());
 
       assertFalse(p.outputParams().mergeMatchResults());
       assertFalse(p.outputParams().mergeAlignmentResults());

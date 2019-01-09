@@ -14,7 +14,6 @@ package com.rtg.variant.bayes.multisample;
 
 
 import com.rtg.launcher.MockReaderParams;
-import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.SexMemo;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -38,7 +37,7 @@ public class IndividualSampleFactoryTest extends TestCase {
     final VariantParams params = new VariantParamsBuilder()
       .genomePriors(new GenomePriorParamsBuilder().create())
       .machineErrorName("default")
-      .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL))
+      .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE)))
       .create();
     final ModelSnpFactory diploid = new ModelSnpFactory(params.genomePriors(), false, new NoAlleleBalance());
     final ModelSnpFactory haploid = new ModelSnpFactory(params.genomePriors(), true, new NoAlleleBalance());

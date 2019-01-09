@@ -59,13 +59,13 @@ public class GappedOutputTest extends TestCase {
 
   protected static PositionParams makeParams(final int[] seqLengths, final int stepSize, final int windowSize, final int gapSize, final int threshold) throws IOException {
     final SequencesReader reader = new MockArraySequencesReader(SequenceMode.UNIDIRECTIONAL.type(), seqLengths);
-    final ReaderParams srp = new MockReaderParams(reader, SequenceMode.UNIDIRECTIONAL);
-    final ISequenceParams subjectParams = new MockSequenceParams(srp, 0, reader.numberSequences());
+    final ReaderParams srp = new MockReaderParams(reader);
+    final ISequenceParams subjectParams = new MockSequenceParams(srp, SequenceMode.UNIDIRECTIONAL, 0, reader.numberSequences());
     final BuildParams buildParams = BuildParams.builder().windowSize(windowSize).stepSize(stepSize).sequences(subjectParams).create();
 
     final SequencesReader reader2 = new MockSequencesReader(SequenceMode.BIDIRECTIONAL.codeType(), 50);
-    final ReaderParams qrp = new MockReaderParams(reader2, SequenceMode.BIDIRECTIONAL);
-    final ISequenceParams queryParams = new MockSequenceParams(qrp, 0, 49);
+    final ReaderParams qrp = new MockReaderParams(reader2);
+    final ISequenceParams queryParams = new MockSequenceParams(qrp, SequenceMode.BIDIRECTIONAL, 0, 49);
     final BuildParams searchParams = BuildParams.builder().windowSize(windowSize).stepSize(1).sequences(queryParams).create();
     final PositionDistributionParams distr = new PositionDistributionParams(0.001, 0.009, gapSize, 0);
     final PositionOutputParams outParams = new PositionOutputParams(new File(""), OutputFormatType.SEGMENT, distr, null, false, 0);

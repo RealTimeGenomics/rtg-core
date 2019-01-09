@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 
 import com.rtg.launcher.MockReaderParams;
-import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.RelationshipsFileParser;
@@ -46,7 +45,7 @@ public class DiseasedFamilyCallerConfigurationTest extends TestCase {
     b.genomeRelationships(rel);
     b.machineErrorName("illumina");
     b.uberHeader(uber);
-    b.genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL));
+    b.genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE)));
     final VariantParams p = b.create();
 
     final DiseasedFamilyCallerConfiguration config = new DiseasedFamilyCallerConfiguration.Configurator().getConfig(p, null);

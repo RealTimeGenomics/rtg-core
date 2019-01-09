@@ -84,8 +84,8 @@ public class BuildIncrementalHashLoopTest extends AbstractPositionHashLoopTest {
   protected void getLongLoop() throws IOException {
     final HashLoop hashLoop =
       new TestLongIncrementalHashLoop(1, new ExactHashFunction(1, 2));
-    final ReaderParams re = new MockReaderParams(new ReaderLongMock(Integer.MAX_VALUE), SequenceMode.UNIDIRECTIONAL);
-    final ISequenceParams se = new MockSequenceParams(re , 0, 0);
+    final ReaderParams re = new MockReaderParams(new ReaderLongMock(Integer.MAX_VALUE));
+    final ISequenceParams se = new MockSequenceParams(re, SequenceMode.UNIDIRECTIONAL, 0, 0);
     hashLoop.execLoop(se, HashLoop.makeBuffer(se.reader()));
   }
 }

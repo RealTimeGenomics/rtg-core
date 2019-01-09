@@ -80,7 +80,7 @@ public class AbstractPositionWriterTest extends TestCase {
   protected AbstractGappedRegion<?> getRegion(final int id, final int stepSize, final int wordSize, final double score) throws IOException {
     final GappedDistribution distr = new GappedDistribution(stepSize, wordSize, GappedDistribution.distrParams(3 * stepSize));
     final GapScorer prob = distr.probabilities();
-    final ISequenceParams seqParams = new MockSequenceParams(new MockReaderParams(new MockSequencesReader(SequenceType.DNA), SequenceMode.UNIDIRECTIONAL));
+    final ISequenceParams seqParams = new MockSequenceParams(new MockReaderParams(new MockSequencesReader(SequenceType.DNA)), SequenceMode.UNIDIRECTIONAL);
     final BuildParams params = BuildParams.builder().windowSize(wordSize).stepSize(stepSize).sequences(seqParams).create();
     final MockGappedRegion gr = new MockGappedRegion(id, params, prob, score);
     final BuildParams bparams = GapBucketsTest.makeParams(8, new int[] {30, 31, 48}, 0, SequenceMode.UNIDIRECTIONAL);

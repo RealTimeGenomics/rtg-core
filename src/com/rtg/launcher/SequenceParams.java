@@ -17,12 +17,13 @@ import java.io.IOException;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.Sex;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
+import com.rtg.util.intervals.LongRange;
 
 /**
+ * Encapsulates parameters relating to how a SequencesReader should be obtained and how it will later be accessed.
  */
 public final class SequenceParams implements ISequenceParams, Integrity {
 
@@ -168,8 +169,6 @@ public final class SequenceParams implements ISequenceParams, Integrity {
     }
   }
 
-  private final File mSequenceDir;
-
   private final SequenceMode mMode;
 
   private final ReaderParams mReaderParams;
@@ -179,14 +178,13 @@ public final class SequenceParams implements ISequenceParams, Integrity {
   private final LongRange mReaderRestriction;
 
   private SequenceParams(SequenceParamsBuilder builder) {
-    mSequenceDir = builder.mSequenceDir;
     mMode = builder.mMode;
     final boolean useMemoryReader = builder.mUseMemReader;
     final boolean loadNames = builder.mLoadNames;
     final boolean loadFullNames = builder.mLoadFullNames;
     mSex = builder.mSex;
     mReaderRestriction = builder.mReaderRestriction;
-    mReaderParams = new DefaultReaderParams(mSequenceDir, mReaderRestriction, mMode, builder.mReaderParams, useMemoryReader, loadNames, loadFullNames);
+    mReaderParams = new DefaultReaderParams(builder.mSequenceDir, mReaderRestriction, builder.mReaderParams, useMemoryReader, loadNames, loadFullNames);
     if (builder.mRegion == HashingRegion.NONE) {
       mRegion = new HashingRegion(0, mReaderParams.reader().numberSequences());
     } else {
@@ -197,9 +195,9 @@ public final class SequenceParams implements ISequenceParams, Integrity {
 
   @Override
   public ISequenceParams subSequence(HashingRegion region) {
-     return new SequenceParams.SequenceParamsBuilder().directory(mSequenceDir)
+     return new SequenceParams.SequenceParamsBuilder().directory(directory())
                                                .sex(mSex)
-                                               .mode(mMode)
+                                               .mode(mode())
                                                .region(region)
                                                .readerParam(mReaderParams)
                                                .create();
@@ -207,7 +205,7 @@ public final class SequenceParams implements ISequenceParams, Integrity {
 
   @Override
   public SequenceMode mode() {
-    return mReaderParams.mode();
+    return mMode;
   }
 
   @Override
@@ -257,7 +255,7 @@ public final class SequenceParams implements ISequenceParams, Integrity {
 
   @Override
   public int hashCode() {
-    return Utils.pairHash(Utils.pairHash(mReaderParams.hashCode(), (int) mRegion.getStart()), (int) mRegion.getEnd());
+    return Utils.pairHash(Utils.pairHash(Utils.pairHash(mReaderParams.hashCode(), (int) mRegion.getStart()), (int) mRegion.getEnd()), mMode.hashCode());
   }
 
   @Override
@@ -275,20 +273,20 @@ public final class SequenceParams implements ISequenceParams, Integrity {
     if (!this.region().equals(that.region())) {
       return false;
     }
+    if (!this.mode().equals(that.mode())) {
+      return false;
+    }
     return true;
   }
 
   @Override
   public String toString() {
-    return "SequenceParams mode=" + mReaderParams.mode() + " region=" + mRegion + " directory=" + mReaderParams.directory()
+    return "SequenceParams mode=" + mode() + " region=" + mRegion + " directory=" + mReaderParams.directory()
     + (mSex != null ? " sex=" + mSex : "");
   }
 
   @Override
   public boolean integrity() {
-    if (mReaderParams == null) {
-      throw new NullPointerException();
-    }
     Exam.assertTrue(0 <= mRegion.getStart() && mRegion.getStart() <= mRegion.getEnd());
     return true;
   }

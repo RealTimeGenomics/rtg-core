@@ -102,8 +102,8 @@ public class GapBucketsInfoTest extends GapBucketsTest {
   public void testTooManySequences() throws IOException {
     Diagnostic.setLogStream();
     final SequenceMode mode = SequenceMode.UNIDIRECTIONAL;
-    final ReaderParams srp = new MockReaderParams(0, Integer.MAX_VALUE + 1L, mode);
-    final ISequenceParams subjectParams = new MockSequenceParams(srp, 0, 0);
+    final ReaderParams srp = new MockReaderParams(0, Integer.MAX_VALUE + 1L, mode.codeType());
+    final ISequenceParams subjectParams = new MockSequenceParams(srp, mode, 0, 0);
     final BuildParams params = BuildParams.builder().windowSize(1).stepSize(1).sequences(subjectParams).create();
     try {
       new GapBucketsInfo(params, 0, 1, 1000);

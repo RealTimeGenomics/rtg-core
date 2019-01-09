@@ -377,33 +377,33 @@ public class MapParamsHelperTest extends AbstractCliTest {
       final MemoryPrintStream mps = new MemoryPrintStream();
       Diagnostic.setLogStream(mps.printStream());
       final String inputDnaSequence = "@test\nacgtacgtacgtacgtacgtacgtacgtacgtacg\n+\n###################################\n";
-      final File left = new File(tmpDir, "left");
-      FileUtils.stringToFile(inputDnaSequence, left);
+      final File single = new File(tmpDir, "single.fastq");
+      FileUtils.stringToFile(inputDnaSequence, single);
 
-      final FastaSequenceParamsCallable spc = new FastaSequenceParamsCallable(left, FASTQ_DS, LongRange.NONE, PrereadArm.LEFT,  null, null, true, SequenceMode.UNIDIRECTIONAL);
+      final FastaSequenceParamsCallable spc = new FastaSequenceParamsCallable(single, FASTQ_DS, LongRange.NONE, PrereadArm.LEFT,  null, null, true, SequenceMode.UNIDIRECTIONAL);
       final SequenceParams sp = spc.call()[0];
       assertNull(spc.call()[1]);
       assertEquals(SequenceMode.UNIDIRECTIONAL, sp.mode());
       assertTrue(sp.readerParams().toString().contains("usememory=" + true));
       assertFalse(mps.toString().contains("Sequence names passed checksum"));
-      TestUtils.containsAll(mps.toString(), "Processing left arm \"" + left.getPath());
+      TestUtils.containsAll(mps.toString(), "Processing left arm \"" + single.getPath());
       assertEquals(PrereadArm.UNKNOWN, sp.reader().getArm());
       assertTrue(sp.reader().getSdfId().equals(new SdfId(0L)));
       assertTrue(sp.reader().numberSequences() > 0);
       assertTrue(sp.reader().hasQualityData());
-      assertEquals(left, sp.reader().path());
+      assertEquals(single, sp.reader().path());
 
       mps.reset();
-      final FastaSequenceParamsCallable spc2 = new FastaSequenceParamsCallable(left, FASTQ_DS, LongRange.NONE, PrereadArm.RIGHT,  null, null, true, SequenceMode.UNIDIRECTIONAL);
+      final FastaSequenceParamsCallable spc2 = new FastaSequenceParamsCallable(single, FASTQ_DS, LongRange.NONE, PrereadArm.RIGHT,  null, null, true, SequenceMode.UNIDIRECTIONAL);
       final SequenceParams sp2 = spc2.call()[0];
       assertNull(spc2.call()[1]);
       assertEquals(SequenceMode.UNIDIRECTIONAL, sp2.mode());
       assertFalse(mps.toString().contains("Sequence names passed checksum"));
-      assertTrue(mps.toString().contains("Processing right arm \"" + left.getPath()));
+      assertTrue(mps.toString().contains("Processing right arm \"" + single.getPath()));
       assertEquals(PrereadArm.UNKNOWN, sp2.reader().getArm());
-      assertEquals(left, sp2.reader().path());
+      assertEquals(single, sp2.reader().path());
 
-      final File both = new File(tmpDir, "both.fq");
+      final File both = new File(tmpDir, "alternating.fastq");
       FileUtils.stringToFile(inputDnaSequence + inputDnaSequence, both);
       mps.reset();
       final DataSourceDescription fastqIntDs = new DataSourceDescription(SourceFormat.FASTQ, QualityFormat.SANGER, true, true, false);

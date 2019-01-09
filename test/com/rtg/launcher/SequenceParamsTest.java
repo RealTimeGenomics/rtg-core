@@ -79,7 +79,7 @@ public class SequenceParamsTest extends TestCase {
   }
 
   ISequenceParams getParams(final ReaderParams readerParams, final long start, final long end) {
-    return new MockSequenceParams(readerParams, start, end);
+    return new MockSequenceParams(readerParams, SequenceMode.BIDIRECTIONAL, start, end);
   }
 
   public void testSubSequence0() throws IOException {

@@ -230,8 +230,8 @@ public class BuildParamsTest extends TestCase {
   }
 
   private static long sizeCheck(final long length, final int word, final int step, final SequenceMode mode) throws IOException {
-    final ReaderParams rp = new MockReaderParams(length, 1L, mode);
-    final ISequenceParams spa = new MockSequenceParams(rp);
+    final ReaderParams rp = new MockReaderParams(length, 1L, mode.codeType());
+    final ISequenceParams spa = new MockSequenceParams(rp, mode);
     return BuildParams.size(word, step, spa);
   }
 

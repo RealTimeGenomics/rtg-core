@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.rtg.mode.SequenceMode;
 import com.rtg.reader.IndexFile;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -31,8 +30,6 @@ import com.rtg.util.integrity.Integrity;
 public class DefaultReaderParams extends ReaderParams implements Integrity {
 
   private final File mSequenceDir;
-
-  private final SequenceMode mMode;
 
   private long mMaxLength = -1;
 
@@ -52,16 +49,14 @@ public class DefaultReaderParams extends ReaderParams implements Integrity {
 
   /**
    * @param sequenceDir directory containing sequences.
-   * @param mode the sequence mode.
    * @param readerRestriction a region specifying the subset of the SDF to load
    * @param parent parent, can be null
    * @param useMemSeqReader use {@link com.rtg.reader.CompressedMemorySequencesReader}
    * @param loadNames whether to load names from disk or not
    * @param loadFullNames whether to load full names from disk or not
    */
-  public DefaultReaderParams(final File sequenceDir, LongRange readerRestriction, final SequenceMode mode, final ReaderParams parent, final boolean useMemSeqReader, final boolean loadNames, boolean loadFullNames) {
+  public DefaultReaderParams(final File sequenceDir, LongRange readerRestriction, final ReaderParams parent, final boolean useMemSeqReader, final boolean loadNames, boolean loadFullNames) {
     mSequenceDir = sequenceDir;
-    mMode = mode;
     mParent = parent;
     mUseMemSeqReader = useMemSeqReader;
     mLoadNames = loadNames;
@@ -70,29 +65,18 @@ public class DefaultReaderParams extends ReaderParams implements Integrity {
   }
 
   /**
-   * Create a reader not backed by a directory.
+   * Create a ReaderParams corresponding to an already opened SequencesReader.
    * @param reader the sequence data
-   * @param readerRestriction a region specifying the subset of the SDF to load
-   * @param mode the sequence mode.
    */
-  public DefaultReaderParams(SequencesReader reader, LongRange readerRestriction, SequenceMode mode) {
+  public DefaultReaderParams(SequencesReader reader) {
     mReader = reader;
-    mMode = mode;
-    mReaderRestriction = readerRestriction;
+    mSequenceDir = reader.path();
+    // Rest of these make no sense in this case
+    mReaderRestriction = null;
     mParent = null;
     mUseMemSeqReader = true;
     mLoadNames = true;
     mLoadFullNames = true;
-    mSequenceDir = reader.path();
-  }
-
-  /**
-   * Get the mode.
-   * @return the mode.
-   */
-  @Override
-  public SequenceMode mode() {
-    return mMode;
   }
 
   /**
@@ -176,12 +160,12 @@ public class DefaultReaderParams extends ReaderParams implements Integrity {
 
   @Override
   public String toString() {
-    return "SequenceParams mode=" + mMode + " directory=" + mSequenceDir + " usememory=" + mUseMemSeqReader;
+    return "ReaderParams directory=" + mSequenceDir + " usememory=" + mUseMemSeqReader;
   }
 
   @Override
   public int hashCode() {
-    return Utils.hash(new Object[] {mMode, mSequenceDir, mUseMemSeqReader});
+    return Utils.hash(new Object[] {mSequenceDir, mUseMemSeqReader});
   }
 
   @Override
@@ -193,16 +177,13 @@ public class DefaultReaderParams extends ReaderParams implements Integrity {
       return false;
     }
     final DefaultReaderParams that = (DefaultReaderParams) obj;
-    return this.mMode.equals(that.mMode) && this.mSequenceDir.equals(that.mSequenceDir) && this.mUseMemSeqReader == that.mUseMemSeqReader;
+    return this.mSequenceDir.equals(that.mSequenceDir) && this.mUseMemSeqReader == that.mUseMemSeqReader;
   }
 
   @Override
   public boolean integrity() {
     //be careful here not to lazily open the reader
     if (mReader != null) {
-      if (reader().type() != mMode.type()) {
-        throw new NoTalkbackSlimException(ErrorType.SDF_FILETYPE_ERROR, reader().type().toString(), mMode.type().toString());
-      }
       Exam.assertTrue(mMaxLength == -1 || mMaxLength == reader().maxLength());
       if (mLengths != null) {
         Exam.assertTrue(mLengths.length == mReader.numberSequences());

@@ -678,8 +678,8 @@ public class SimilarityCliTest extends AbstractCliTest {
     index.freeze();
 
     final SequencesReader sr = new MockArraySequencesReader(SequenceType.DNA, new int[] {1}, new String[] {"name"});
-    final ReaderParams rp = new MockReaderParams(sr, SequenceMode.BIDIRECTIONAL);
-    final ISequenceParams sp = new MockSequenceParams(rp);
+    final ReaderParams rp = new MockReaderParams(sr);
+    final ISequenceParams sp = new MockSequenceParams(rp, SequenceMode.BIDIRECTIONAL);
     final BuildSearchParams bsp = BuildSearchParams.builder().build(BuildParams.builder().stepSize(1).windowSize(1).sequences(sp).create()).create();
     final Appendable ok = new StringWriter();
     final Appendable ok2 = new StringWriter();

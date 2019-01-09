@@ -16,7 +16,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import com.rtg.launcher.MockReaderParams;
-import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.Ploidy;
 import com.rtg.relation.GenomeRelationships;
@@ -59,7 +58,7 @@ public class PopulationCallerConfigurationTest extends TestCase {
         file.addGenome("two");
         file.addGenome("three");
         final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("two", "one", "three");
-        final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").populationPriors(alleleCountFile).uberHeader(uber).genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL)).create();
+        final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").populationPriors(alleleCountFile).uberHeader(uber).genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE))).create();
         final PopulationCallerConfiguration config = new PopulationCallerConfiguration.Configurator().getConfig(params, null);
         assertNotNull(config.getOutputFormatter(params));
 

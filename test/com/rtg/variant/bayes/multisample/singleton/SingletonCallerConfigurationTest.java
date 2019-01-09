@@ -16,7 +16,6 @@ import java.io.File;
 
 import com.rtg.AbstractTest;
 import com.rtg.launcher.MockReaderParams;
-import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.TestDirectory;
@@ -48,7 +47,7 @@ public class SingletonCallerConfigurationTest extends AbstractTest {
         .genomePriors(GenomePriorParams.builder().create())
         .populationPriors(alleleCountFile)
         .uberHeader(new SAMFileHeader())
-        .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL))
+        .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE)))
         .create();
       final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(p, null);
       assertNotNull(config.getGenomeNames());

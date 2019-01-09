@@ -33,8 +33,8 @@ public class GapBucketsTest extends TestCase {
 
   static BuildParams makeParams(final int stepSize, final int[] seqLengths, final int start, final SequenceMode mode) throws IOException {
     final SequencesReader reader = new MockArraySequencesReader(mode.type(), seqLengths);
-    final ReaderParams srp = new MockReaderParams(reader, mode);
-    final ISequenceParams subjectParams = new MockSequenceParams(srp, start, reader.numberSequences());
+    final ReaderParams srp = new MockReaderParams(reader);
+    final ISequenceParams subjectParams = new MockSequenceParams(srp, mode, start, reader.numberSequences());
     return BuildParams.builder().windowSize(stepSize).stepSize(stepSize).sequences(subjectParams).create();
   }
 

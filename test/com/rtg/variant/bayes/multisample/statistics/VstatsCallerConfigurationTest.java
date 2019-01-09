@@ -16,7 +16,6 @@ import java.io.File;
 
 import com.rtg.launcher.MockReaderParams;
 import com.rtg.launcher.OutputParams;
-import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -51,7 +50,7 @@ public class VstatsCallerConfigurationTest extends TestCase {
         .noComplexCalls(true)
         .outputParams(outputParams)
         .uberHeader(new SAMFileHeader())
-        .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL))
+        .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE)))
         .create();
       final AbstractJointCallerConfiguration config = new VstatsCallerConfiguration.Configurator().getConfig(p, null);
       assertNotNull(config.getGenomeNames());

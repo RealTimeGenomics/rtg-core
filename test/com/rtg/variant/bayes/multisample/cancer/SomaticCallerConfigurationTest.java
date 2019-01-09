@@ -21,7 +21,6 @@ import java.util.Random;
 
 import com.rtg.launcher.MockReaderParams;
 import com.rtg.mode.DnaUtils;
-import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.Ploidy;
 import com.rtg.relation.GenomeRelationships;
@@ -62,7 +61,7 @@ public class SomaticCallerConfigurationTest extends TestCase {
     b.genomePriors(GenomePriorParams.builder().create());
     b.genomeRelationships(genomeRelationships);
     b.machineErrorName("illumina");
-    b.genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL));
+    b.genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE)));
     final VariantParams p = b.uberHeader(uber).create();
 
     final SomaticCallerConfiguration config = new SomaticCallerConfiguration.Configurator().getConfig(p, null);

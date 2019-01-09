@@ -68,7 +68,7 @@ public final class NgsHashLoopImplTest extends TestCase {
             new DNAFastaSymbolTable());
     final SequencesWriter sequenceWriter = new SequencesWriter(ds, dir, 20, PrereadType.UNKNOWN, false);
     sequenceWriter.processSequences();
-    return DefaultReaderParamsTest.createDefaultReaderParams(dir, LongRange.NONE, SequenceMode.UNIDIRECTIONAL);
+    return DefaultReaderParamsTest.createDefaultReaderParams(dir, LongRange.NONE);
   }
 
   private ReaderParams getTemplate(final String inputDnaSequence) throws IOException {
@@ -79,7 +79,7 @@ public final class NgsHashLoopImplTest extends TestCase {
             new DNAFastaSymbolTable());
     final SequencesWriter sequenceWriter = new SequencesWriter(ds, dir, 20, PrereadType.UNKNOWN, false);
     sequenceWriter.processSequences();
-    return DefaultReaderParamsTest.createDefaultReaderParams(dir, LongRange.NONE, SequenceMode.BIDIRECTIONAL);
+    return DefaultReaderParamsTest.createDefaultReaderParams(dir, LongRange.NONE);
   }
 
   private void check(final String readstr, final String template, final String expected) throws IOException {
@@ -98,7 +98,7 @@ public final class NgsHashLoopImplTest extends TestCase {
 
     final TemplateHashFunction thf = new HashFunctionMock(sb);
     try {
-      hl.templateLoop(new MockSequenceParams(tem, 0, tem.reader().numberSequences()), thf);
+      hl.templateLoop(new MockSequenceParams(tem, SequenceMode.BIDIRECTIONAL, 0, tem.reader().numberSequences()), thf);
       fail();
     } catch (final RuntimeException e) {
       assertEquals("Read sequences not defined", e.getMessage());
@@ -107,12 +107,12 @@ public final class NgsHashLoopImplTest extends TestCase {
     final ReadHashFunction rhf = new HashFunctionMock(sb);
 
     sb.append("bulding").append(LS);
-    try (ISequenceParams sp1 = new MockSequenceParams(reads, 0, reads.reader().numberSequences())) {
+    try (ISequenceParams sp1 = new MockSequenceParams(reads, SequenceMode.UNIDIRECTIONAL, 0, reads.reader().numberSequences())) {
       rhf.setReadSequences(reads.reader().numberSequences());
       hl.readLoop(sp1, rhf, ReadEncoder.SINGLE_END, false);
     }
     sb.append("searching").append(LS);
-    try (ISequenceParams sp2 = new MockSequenceParams(tem, 0, tem.reader().numberSequences())) {
+    try (ISequenceParams sp2 = new MockSequenceParams(tem, SequenceMode.UNIDIRECTIONAL, 0, tem.reader().numberSequences())) {
       hl.templateLoop(sp2, thf);
     }
     Diagnostic.removeListener(clir);
@@ -288,7 +288,7 @@ public final class NgsHashLoopImplTest extends TestCase {
 
         final TemplateHashFunction thf = new HashFunctionMock(sb);
         try {
-          hl.templateLoop(new MockSequenceParams(tem, 0, tem.reader().numberSequences()), thf);
+          hl.templateLoop(new MockSequenceParams(tem, SequenceMode.BIDIRECTIONAL, 0, tem.reader().numberSequences()), thf);
           fail();
         } catch (final RuntimeException e) {
           assertEquals("Read sequences not defined", e.getMessage());
@@ -305,11 +305,11 @@ public final class NgsHashLoopImplTest extends TestCase {
 
         sb.append("bulding").append(LS);
         rhf36.setReadSequences(reads.reader().numberSequences());
-        hl.readLoop(new MockSequenceParams(reads, 0, reads.reader().numberSequences()), rhf36, ReadEncoder.SINGLE_END, false);
+        hl.readLoop(new MockSequenceParams(reads, SequenceMode.UNIDIRECTIONAL, 0, reads.reader().numberSequences()), rhf36, ReadEncoder.SINGLE_END, false);
         rhf.setReadSequences(reads.reader().numberSequences());
-        hl.readLoop(new MockSequenceParams(reads, 0, reads.reader().numberSequences()), rhf, ReadEncoder.SINGLE_END, false);
+        hl.readLoop(new MockSequenceParams(reads, SequenceMode.UNIDIRECTIONAL, 0, reads.reader().numberSequences()), rhf, ReadEncoder.SINGLE_END, false);
         sb.append("searching").append(LS);
-        hl.templateLoop(new MockSequenceParams(tem, 1, tem.reader().numberSequences() - 1), thf);
+        hl.templateLoop(new MockSequenceParams(tem, SequenceMode.BIDIRECTIONAL, 1, tem.reader().numberSequences() - 1), thf);
         Diagnostic.removeListener(clir);
         assertEquals(sb.toString(), EXPECTED_2, sb.toString());
         progressOut.close();

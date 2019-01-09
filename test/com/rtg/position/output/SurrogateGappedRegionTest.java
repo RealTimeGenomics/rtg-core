@@ -40,7 +40,7 @@ public class SurrogateGappedRegionTest extends TestCase {
   public void testInit() throws Exception {
     final GappedDistribution distr = new GappedDistribution(2, 2, GappedDistribution.distrParams(3 * 2));
     final GapScorer prob = distr.probabilities();
-    final ISequenceParams seqParams = new MockSequenceParams(new MockReaderParams(new MockSequencesReader(SequenceType.DNA), SequenceMode.BIDIRECTIONAL));
+    final ISequenceParams seqParams = new MockSequenceParams(new MockReaderParams(new MockSequencesReader(SequenceType.DNA)), SequenceMode.BIDIRECTIONAL);
     final BuildParams params = BuildParams.builder().windowSize(2).stepSize(2).sequences(seqParams).create();
     final GappedRegion gr = new GappedRegion(0, params, prob);
     final GapBuckets<GappedRegion> gb = makeBuckets(8);

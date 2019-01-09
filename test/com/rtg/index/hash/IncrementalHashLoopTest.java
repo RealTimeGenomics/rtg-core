@@ -67,8 +67,8 @@ public class IncrementalHashLoopTest extends AbstractIncrementalHashLoopTest {
     //System.err.println(" mode=" + mode + " type=" +  mode.type() + " bits=" + bits);
     final int[] count = new int[1];
     final HashLoop hashLoop = getHashLoop1(windowSize, stepSize, maxId, bits, count);
-    final ReaderParams re = new MockReaderParams(sr, mode);
-    final ISequenceParams se = new MockSequenceParams(re , 0, 1);
+    final ReaderParams re = new MockReaderParams(sr);
+    final ISequenceParams se = new MockSequenceParams(re, mode, 0, 1);
     hashLoop.execLoop(se, HashLoop.makeBuffer(sr));
     assertEquals(expected, count[0]);
     //test bad case when buffer supplied

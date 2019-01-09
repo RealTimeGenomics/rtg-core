@@ -227,8 +227,8 @@ public class CgMapCli extends ParamsCli<NgsParams> {
         final AlternatingSequencesWriter asw = new AlternatingSequencesWriter(tsv, null, PrereadType.CG, true);
         asw.setSdfId(new SdfId(0));
         final CompressedMemorySequencesReader[] readers = asw.processSequencesInMemoryPaired(reads, true, null, null, buildReaderRestriction);
-        ngsParamBuilder.buildFirstParams(SequenceParams.builder().readerParam(new DefaultReaderParams(readers[0], buildReaderRestriction, SequenceMode.UNIDIRECTIONAL)).useMemReader(true).mode(SequenceMode.UNIDIRECTIONAL).readerRestriction(buildReaderRestriction).create()); // Reads
-        ngsParamBuilder.buildSecondParams(SequenceParams.builder().readerParam(new DefaultReaderParams(readers[1], buildReaderRestriction, SequenceMode.UNIDIRECTIONAL)).useMemReader(true).mode(SequenceMode.UNIDIRECTIONAL).readerRestriction(buildReaderRestriction).create()); // Reads
+        ngsParamBuilder.buildFirstParams(SequenceParams.builder().readerParam(new DefaultReaderParams(readers[0])).useMemReader(true).mode(SequenceMode.UNIDIRECTIONAL).readerRestriction(buildReaderRestriction).create()); // Reads
+        ngsParamBuilder.buildSecondParams(SequenceParams.builder().readerParam(new DefaultReaderParams(readers[1])).useMemReader(true).mode(SequenceMode.UNIDIRECTIONAL).readerRestriction(buildReaderRestriction).create()); // Reads
       }
     } catch (final IOException e) {
       throw new NoTalkbackSlimException(ErrorType.SDF_INDEX_NOT_VALID, reads.getPath());

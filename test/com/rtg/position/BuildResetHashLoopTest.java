@@ -163,8 +163,8 @@ public class BuildResetHashLoopTest extends ResetHashLoopTest {
         super.hashCall(hash, internalId, stepPosition);
       }
     };
-    final ReaderParams re = new MockReaderParams(sr, mode);
-    final ISequenceParams se = new MockSequenceParams(re , 0, 2);
+    final ReaderParams re = new MockReaderParams(sr);
+    final ISequenceParams se = new MockSequenceParams(re, mode, 0, 2);
     try {
       hashLoop.readLengths();
       fail();
@@ -203,8 +203,8 @@ public class BuildResetHashLoopTest extends ResetHashLoopTest {
       }
     };
     final SequencesReader sr = new MockSequencesReader(SequenceType.DNA, Integer.MAX_VALUE + 1L);
-    final ReaderParams re = new MockReaderParams(sr, UNIDIRECTIONAL);
-    final ISequenceParams se = new MockSequenceParams(re, 0, 1) {
+    final ReaderParams re = new MockReaderParams(sr);
+    final ISequenceParams se = new MockSequenceParams(re, UNIDIRECTIONAL, 0, 1) {
       @Override
       public HashingRegion region() {
         return new HashingRegion(0, Integer.MAX_VALUE + 1L);

@@ -36,8 +36,8 @@ public abstract class AbstractIncrementalHashLoopTest extends AbstractHashLoopTe
     //System.err.println(" mode=" + mode + " type=" +  mode.type() + " bits=" + bits);
     final int[] count = new int[1];
     final HashLoop hashLoop = getHashLoop1(windowSize, stepSize, maxId, bits, count);
-    final ReaderParams re = new MockReaderParams(sr, mode);
-    final ISequenceParams se = new MockSequenceParams(re , 0, 1);
+    final ReaderParams re = new MockReaderParams(sr);
+    final ISequenceParams se = new MockSequenceParams(re, mode, 0, 1);
     hashLoop.execLoop(se, HashLoop.makeBuffer(sr));
     assertEquals(expected, count[0]);
     //test bad case when buffer supplied
@@ -57,8 +57,8 @@ public abstract class AbstractIncrementalHashLoopTest extends AbstractHashLoopTe
     //System.err.println(" mode=" + mode + " type=" +  mode.type() + " bits=" + bits);
     final int[] count = new int[1];
     final HashLoop hashLoop = getHashLoop1(windowSize, stepSize, maxId, bits, count);
-    final ReaderParams re = new MockReaderParams(sr, mode);
-    final ISequenceParams se = new MockSequenceParams(re , 0, 2);
+    final ReaderParams re = new MockReaderParams(sr);
+    final ISequenceParams se = new MockSequenceParams(re, mode, 0, 2);
     hashLoop.execLoop(se, HashLoop.makeBuffer(sr));
     assertEquals(expected, count[0]);
   }
@@ -93,8 +93,8 @@ public abstract class AbstractIncrementalHashLoopTest extends AbstractHashLoopTe
     final int[] count = new int[1];
     //System.err.println(" mode=" + mode + " type=" +  mode.type() + " bits=" + bits);
     final HashLoop hashLoop = getHashLoop3(windowSize, stepSize, expectedL, expectedI, bits, count);
-    final ReaderParams re = new MockReaderParams(sr, mode);
-    final ISequenceParams se = new MockSequenceParams(re , 0, 1);
+    final ReaderParams re = new MockReaderParams(sr);
+    final ISequenceParams se = new MockSequenceParams(re, mode, 0, 1);
     hashLoop.execLoop(se, HashLoop.makeBuffer(sr));
   }
 
@@ -116,8 +116,8 @@ public abstract class AbstractIncrementalHashLoopTest extends AbstractHashLoopTe
   protected void getLongLoop() throws IOException {
     final HashLoop hashLoop =
       new TestLongIncrementalHashLoop(1, new ExactHashFunction(1, 2));
-    final ReaderParams re = new MockReaderParams(new ReaderLongMock(Integer.MAX_VALUE), SequenceMode.UNIDIRECTIONAL);
-    final ISequenceParams se = new MockSequenceParams(re , 0, 0);
+    final ReaderParams re = new MockReaderParams(new ReaderLongMock(Integer.MAX_VALUE));
+    final ISequenceParams se = new MockSequenceParams(re, SequenceMode.UNIDIRECTIONAL, 0, 0);
     hashLoop.execLoop(se, HashLoop.makeBuffer(se.reader()));
   }
 }

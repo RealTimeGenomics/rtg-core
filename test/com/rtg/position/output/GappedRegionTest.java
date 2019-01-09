@@ -31,7 +31,7 @@ public class GappedRegionTest extends AbstractGappedRegionTest<GappedRegion> {
 
   @Override
   protected GappedRegion getRegion(final int id, final int stepSize, final int wordSize, final GapScorer prob, final WrappedIntArray buildLengths) throws IOException {
-    final ISequenceParams seqParams = new MockSequenceParams(new MockReaderParams(new MockSequencesReader(SequenceType.DNA), SequenceMode.BIDIRECTIONAL));
+    final ISequenceParams seqParams = new MockSequenceParams(new MockReaderParams(new MockSequencesReader(SequenceType.DNA)), SequenceMode.BIDIRECTIONAL);
     final BuildParams params = BuildParams.builder().windowSize(wordSize).stepSize(stepSize).sequences(seqParams).create();
     return getRegion(id, params, prob, buildLengths);
   }

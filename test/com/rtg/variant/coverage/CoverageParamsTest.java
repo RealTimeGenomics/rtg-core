@@ -96,7 +96,7 @@ public class CoverageParamsTest extends TestCase {
     "CoverageParams mapped reads=",
     "smoothing=0",
     "error rates=" + Boolean.FALSE.toString(),
-    "    SequenceParams mode=UNIDIRECTIONAL directory=",
+    "    ReaderParams directory=",
     "OutputParams output directory=",
     "progress=" + Boolean.FALSE + " zip=" + Boolean.TRUE + LS,
     "min coverage threshold=3"
