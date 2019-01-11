@@ -40,7 +40,7 @@ import com.rtg.util.io.LineWriter;
 
 /**
  * Create a combined report from several pre-existing output directories.
- * This is extemely brittle.
+ * This is extremely brittle.
  */
 public class CombinedReport {
 
@@ -156,7 +156,7 @@ public class CombinedReport {
       if (sourceFile.exists()) {
         return new ReportResultsFile(sourceFile, destFilename, linkTitle);
       } else {
-        File newsourceFile = new File(sourceFile.getParent(), sourceFile.getName() + FileUtils.GZ_SUFFIX);
+        final File newsourceFile = new File(sourceFile.getParent(), sourceFile.getName() + FileUtils.GZ_SUFFIX);
         if (newsourceFile.exists()) {
           return new ReportResultsFile(newsourceFile, destFilename + FileUtils.GZ_SUFFIX, linkTitle);
         }
@@ -179,7 +179,7 @@ public class CombinedReport {
     int counter = 0;
     for (File species : speciesDirs) {
       final String id = speciesDirs.size() > 1 ? String.valueOf(++counter) : "";
-      ReportResultsFile resultsFile = ReportResultsFile.getResultsFile(new File(species, SpeciesReport.SPECIES_TSV), "species" + id + ".tsv", "Species Results");
+      final ReportResultsFile resultsFile = ReportResultsFile.getResultsFile(new File(species, SpeciesReport.SPECIES_TSV), "species" + id + ".tsv", "Species Results");
       speciesReport.append(reportSummary(species, "Species Report", "speciesReport" + id, "Diversity Metrics", resultsFile));
     }
     final HashMap<String, String> replacements = new HashMap<>();
@@ -196,7 +196,7 @@ public class CombinedReport {
     int counter = 0;
     for (File mapx : mapxDirs) {
       final String id = mapxDirs.size() > 1 ? String.valueOf(++counter) : "";
-      ReportResultsFile resultsFile = ReportResultsFile.getResultsFile(new File(mapx, ProteinOutputProcessor.TABULAR_ALIGNMENTS), "mapxResults" + id + ".tsv", "Mapping Results");
+      final ReportResultsFile resultsFile = ReportResultsFile.getResultsFile(new File(mapx, ProteinOutputProcessor.TABULAR_ALIGNMENTS), "mapxResults" + id + ".tsv", "Mapping Results");
       sb.append(reportSummary(mapx, "Translated search report", "mapxReport" + id, "Mapping summary", resultsFile));
     }
     return sb.toString();
