@@ -22,7 +22,7 @@ class MapReportTemplate extends ReportTemplate {
   String mSummaryFile;
   String mSummaryFileTitle;
   String mFullReport;
-  String mFullName;
+  String mFullReportTitle;
 
   @Override
   Map<String, String> makeReplacements() {
@@ -31,7 +31,7 @@ class MapReportTemplate extends ReportTemplate {
     replacements.put("SUMMARY_FILE", mSummaryFile);
     replacements.put("SUMMARY_FILE_TITLE", mSummaryFileTitle);
     replacements.put("FULL_REPORT", mFullReport);
-    replacements.put("FULL_NAME", mFullName);
+    replacements.put("FULL_NAME", mFullReportTitle);
     return replacements;
   }
 

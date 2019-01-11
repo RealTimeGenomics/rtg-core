@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +39,8 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LineWriter;
 
 /**
+ * Create a combined report from several pre-existing output directories.
+ * This is extemely brittle.
  */
 public class CombinedReport {
 
@@ -58,7 +59,7 @@ public class CombinedReport {
     mMainHelper = new HtmlReportHelper(mOutput, "index");
   }
 
-  private static class Filter implements FilenameFilter {
+  private static class LogfileFilter implements FilenameFilter {
     @Override
     public boolean accept(File dir, String name) {
       return name.endsWith(".log");
@@ -78,7 +79,7 @@ public class CombinedReport {
     final List<File> species = new ArrayList<>();
     final List<File> mapx = new ArrayList<>();
     for (File directory : mDirectories) {
-      for (String name : FileUtils.list(directory, new Filter())) {
+      for (String name : FileUtils.list(directory, new LogfileFilter())) {
         switch(name) {
           case "mapf.log" :
             mapf.add(directory);
@@ -106,7 +107,7 @@ public class CombinedReport {
     template.mMapfReport = mapf.size() > 0 ? mapfReport(mapf) : "";
     template.mMap = checklist(map.size() > 0);
     template.mSpecies = checklist(species.size() > 0);
-    template.mSpeciesReport = species.size() > 0 ? speciesWrapper(species, map) : "";
+    template.mSpeciesReport = species.size() > 0 ? speciesReport(species, map) : "";
     template.mMapx = checklist(mapx.size() > 0);
     template.mMapxReport = mapx.size() > 0 ? mapxReport(mapx) : "";
 
@@ -144,74 +145,95 @@ public class CombinedReport {
   }
 
   private String checklist(boolean checked) {
-    if (checked) {
-      return "checked";
-    } else {
-      return "crossed";
+    return checked ? "checked" : "crossed";
+  }
+
+  static final class ReportResultsFile {
+    private final File mSourceFile;
+    private final String mDestFilename;
+    private final String mDestLinkTitle;
+    static ReportResultsFile getResultsFile(File sourceFile, String destFilename, String linkTitle) {
+      if (sourceFile.exists()) {
+        return new ReportResultsFile(sourceFile, destFilename, linkTitle);
+      } else {
+        File newsourceFile = new File(sourceFile.getParent(), sourceFile.getName() + FileUtils.GZ_SUFFIX);
+        if (newsourceFile.exists()) {
+          return new ReportResultsFile(newsourceFile, destFilename + FileUtils.GZ_SUFFIX, linkTitle);
+        }
+      }
+      return null;
+    }
+    ReportResultsFile(File sourceFile, String destFilename, String linkTitle) {
+        mSourceFile = sourceFile;
+        mDestFilename = destFilename;
+        mDestLinkTitle = linkTitle;
     }
   }
 
+  private String speciesReport(List<File> speciesDirs, List<File> mapDirs) throws IOException {
+    final StringBuilder mapReport = new StringBuilder();
+    for (File map : mapDirs) {
+      mapReport.append(reportSummary(map, "Map Report", "mapReport", "Mapping Summary"));
+    }
+    final StringBuilder speciesReport = new StringBuilder();
+    int counter = 0;
+    for (File species : speciesDirs) {
+      final String id = speciesDirs.size() > 1 ? String.valueOf(++counter) : "";
+      ReportResultsFile resultsFile = ReportResultsFile.getResultsFile(new File(species, SpeciesReport.SPECIES_TSV), "species" + id + ".tsv", "Species Results");
+      speciesReport.append(reportSummary(species, "Species Report", "speciesReport" + id, "Diversity Metrics", resultsFile));
+    }
+    final HashMap<String, String> replacements = new HashMap<>();
+    replacements.put("__MAP_REPORT__", mapReport.toString());
+    replacements.put("__SPECIES_REPORT__", speciesReport.toString());
+    return template(replacements, "species_wrapper.html");
+  }
   private String mapxReport(List<File> mapxDirs) throws IOException {
     final StringBuilder sb = new StringBuilder();
     try (final InputStream resourceAsStream = Resources.getResourceAsStream(ReportUtils.TEMPLATE_DIR + "/mapx_wrapper.html")) {
       final String header = FileUtils.streamToString(resourceAsStream);
       sb.append(header);
     }
-
-    int resultId = 1;
-    for (File mapx: mapxDirs) {
-      boolean isGzip = false;
-      File resultsFile = new File(mapx, ProteinOutputProcessor.TABULAR_ALIGNMENTS);
-      if (!resultsFile.exists()) {
-        isGzip = true;
-       resultsFile = new File(mapx, ProteinOutputProcessor.TABULAR_ALIGNMENTS + FileUtils.GZ_SUFFIX);
-      }
-
-      final String fileNameCounter = mapxDirs.size() > 1 ? String.valueOf(resultId) : "";
-      final String fileNameSuffix = fileNameCounter + ".tsv" + (isGzip ? ".gz" : "");
-      if (!resultsFile.exists()) {
-        sb.append(reportSummary(mapx, "Translated search report", "mapxReport" + fileNameCounter, "Mapping summary", null, null, null));
-      } else {
-        sb.append(reportSummary(mapx, "Translated search report", "mapxReport" + fileNameCounter, "Mapping summary", "Mapping Results", "mapxResults" + fileNameSuffix, resultsFile));
-      }
-      sb.append("<br/>");
-      ++resultId;
+    int counter = 0;
+    for (File mapx : mapxDirs) {
+      final String id = mapxDirs.size() > 1 ? String.valueOf(++counter) : "";
+      ReportResultsFile resultsFile = ReportResultsFile.getResultsFile(new File(mapx, ProteinOutputProcessor.TABULAR_ALIGNMENTS), "mapxResults" + id + ".tsv", "Mapping Results");
+      sb.append(reportSummary(mapx, "Translated search report", "mapxReport" + id, "Mapping summary", resultsFile));
     }
     return sb.toString();
   }
   private String mapfReport(List<File> mapfDirs) throws IOException {
     final StringBuilder sb = new StringBuilder();
     sb.append("<h3> Contaminant Removal </h3>\n");
+    int counter = 0;
     for (File mapf: mapfDirs) {
-      sb.append(reportSummary(mapf, "Filter Report", "mapfReport", "Filter Summary", null, null, null));
+      final String id = mapfDirs.size() > 1 ? String.valueOf(++counter) : "";
+      sb.append(reportSummary(mapf, "Filter Report", "mapfReport" + id, "Filter Summary"));
     }
     return sb.toString();
-
   }
-  private String reportSummary(File map, String fullName, String fullDirName, String summaryTitle, String resultsLink, String resultFileName, File resultsFile) throws IOException {
-    final File relativePath = fullReport(map, fullDirName);
-    final String paramsSummary = extractParams(map);
+
+  private String reportSummary(File sourceDir, String reportTitle, String destDirName, String summaryTitle, ReportResultsFile... resultsFiles) throws IOException {
+    final File relativePath = fullReport(sourceDir, destDirName);
     final MapReportTemplate template = new MapReportTemplate();
-    template.mParameterSummary = paramsSummary;
-    template.mSummaryFile = summaryFile(map);
+    template.mParameterSummary = extractParams(sourceDir);
     template.mSummaryFileTitle = summaryTitle;
-    template.mFullName = fullName;
-    final File file = new File(relativePath, "index.html");
-    final URI context = mOutput.toURI();
-    final URI absolute = file.toURI();
-    final URI relative = context.relativize(absolute);
-    template.mFullReport = relative.toString();
+    template.mSummaryFile = summaryFile(sourceDir);
+    template.mFullReportTitle = reportTitle;
+    template.mFullReport = mOutput.toURI().relativize(new File(relativePath, "index.html").toURI()).toString();
     final StringBuilder sb = new StringBuilder();
     sb.append(template.fillTemplate());
-    if (resultsFile != null) {
-      copyFile(resultsFile, new File(mMainHelper.getResourcesDir(), resultFileName));
-      sb.append("<a href=\"")
-          .append(resultFileName)
-          .append("\">")
-          .append(resultsLink)
-          .append("</a>");
+    for (ReportResultsFile resultsFile : resultsFiles) {
+      if (resultsFile != null) {
+        copyResultsFile(resultsFile, sb);
+      }
     }
     return sb.toString();
+  }
+
+  private void copyResultsFile(ReportResultsFile resultsFile, StringBuilder htmlOut) throws IOException {
+    final File destFile = new File(mMainHelper.getResourcesDir(), resultsFile.mDestFilename);
+    copyFile(resultsFile.mSourceFile, destFile);
+    htmlOut.append("<a href=\"").append(mOutput.toURI().relativize(destFile.toURI()).toString()).append("\">").append(resultsFile.mDestLinkTitle).append("</a>").append("<br/>");
   }
 
   private String extractParams(File map) throws IOException {
@@ -234,19 +256,16 @@ public class CombinedReport {
     }
   }
 
-  private File fullReport(File map, String fullDirName) throws IOException {
-    final File mapReport1 = new File(mMainHelper.getResourcesDir(), fullDirName);
-    makeOrThrow(mapReport1);
-    final HtmlReportHelper helper = new HtmlReportHelper(map, MapReport.REPORT_NAME);
+  private File fullReport(File sourceDir, String destDirName) throws IOException {
+    final File destDir = new File(mMainHelper.getResourcesDir(), destDirName);
+    makeOrThrow(destDir);
+    final HtmlReportHelper helper = new HtmlReportHelper(sourceDir, MapReport.REPORT_NAME);
     if (helper.getReportFile().exists() && helper.getResourcesDir().exists()) {
-      final HtmlReportHelper destinationReport = new HtmlReportHelper(mapReport1, MapReport.REPORT_NAME);
+      final HtmlReportHelper destinationReport = new HtmlReportHelper(destDir, MapReport.REPORT_NAME);
       copyFile(helper.getReportFile(), destinationReport.getReportFile());
       copyDirRecursive(helper.getResourcesDir(), destinationReport.getResourcesDir());
-    } else {
-      final MapReport mapReport = new MapReport();
-      mapReport.generateReport(ReportType.HTML, mapReport1, map);
     }
-    return mapReport1;
+    return destDir;
   }
 
   static String getCommandLine(File logFile) throws IOException {
@@ -270,23 +289,6 @@ public class CombinedReport {
     } else {
       return "";
     }
-  }
-  private String speciesWrapper(List<File> speciesDirs, List<File> mapDirs) throws IOException {
-    final StringBuilder mapReport = new StringBuilder();
-    for (File map : mapDirs) {
-      mapReport.append(reportSummary(map, "Map Report", "mapReport", "Mapping Summary", null, null, null));
-    }
-    final StringBuilder speciesReport = new StringBuilder();
-    int i = 1;
-    for (File species : speciesDirs) {
-      final String speciesFileName = "species" + (speciesDirs.size() > 1 ? i : "") + ".tsv";
-      speciesReport.append(reportSummary(species, "Species Report", "speciesReport", "Diversity Metrics", "Species Results", speciesFileName, new File(species, SpeciesReport.SPECIES_TSV)));
-      ++i;
-    }
-    final HashMap<String, String> replacements = new HashMap<>();
-    replacements.put("__MAP_REPORT__", mapReport.toString());
-    replacements.put("__SPECIES_REPORT__", speciesReport.toString());
-    return template(replacements, "species_wrapper.html");
   }
 
   private void copyDirRecursive(File src, File dest) throws IOException {

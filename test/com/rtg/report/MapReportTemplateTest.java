@@ -22,7 +22,7 @@ public class MapReportTemplateTest extends TestCase {
   // Basically just testing that all the parameters are present in the template
   public void testTemplate() throws IOException {
     final MapReportTemplate template = new MapReportTemplate();
-    template.mFullName = "fred";
+    template.mFullReportTitle = "fred";
     template.mSummaryFile = "summary";
     template.mSummaryFileTitle = "super original title";
     template.mParameterSummary = " I am some parameters";
