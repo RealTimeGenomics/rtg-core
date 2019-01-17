@@ -33,6 +33,8 @@ import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.util.intervals.SequenceNameLocusSimple;
 import com.rtg.util.io.FileUtils;
+import com.rtg.variant.cnv.CnaType;
+import com.rtg.variant.cnv.CnvRecordFilter;
 import com.rtg.vcf.AssertVcfSorted;
 import com.rtg.vcf.PassOnlyFilter;
 import com.rtg.vcf.VcfFilter;

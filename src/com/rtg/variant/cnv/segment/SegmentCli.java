@@ -68,6 +68,7 @@ import com.rtg.variant.cnv.preprocess.RegionColumn;
 import com.rtg.variant.cnv.preprocess.RegionDataset;
 import com.rtg.variant.cnv.preprocess.SimpleJoin;
 import com.rtg.variant.cnv.preprocess.WeightedMedianNormalize;
+import com.rtg.variant.cnv.CnaType;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
