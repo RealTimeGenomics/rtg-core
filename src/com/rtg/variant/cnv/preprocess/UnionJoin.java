@@ -44,7 +44,7 @@ public class UnionJoin extends SimpleJoin {
 
   @Override
   public void process(RegionDataset dataset) throws IOException {
-    RegionDataset src = mDataset.copy();
+    final RegionDataset src = mDataset.copy();
     final List<SequenceNameLocus> union = unionRegions(src, dataset);
     expandRegions(union, src);
     expandRegions(union, dataset);

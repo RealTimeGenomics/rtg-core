@@ -142,10 +142,12 @@ public class RegionDataset {
     }
   }
 
+  /**
+   * @return a deep copy of this dataset which can be mutated without affecting the current dataset.
+   */
   public RegionDataset copy() {
     return filter(i -> true);
   }
-
 
   /**
    * Sets the names of each column being provided in input data when calling add.

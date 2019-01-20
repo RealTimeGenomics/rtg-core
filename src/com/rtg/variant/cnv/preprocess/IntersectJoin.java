@@ -52,7 +52,7 @@ public class IntersectJoin extends SimpleJoin {
   @Override
   public void process(RegionDataset dataset) throws IOException {
     // Drop rows where sequences mismatch
-    RegionDataset src = mDataset.copy();
+    final RegionDataset src = mDataset.copy();
     final Set<String> sequences = getSequenceNames(dataset);
     final Set<String> seq2 = getSequenceNames(src);
     final int initial = sequences.size();
