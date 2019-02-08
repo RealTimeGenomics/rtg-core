@@ -31,19 +31,19 @@ import com.rtg.util.io.BaseFile;
 import com.rtg.util.io.FileUtils;
 
 /**
- * Only works on paired end pre-collated (see samtools collate) SAM/BAM
+ * Convert SAM to FASTQ files. Only works on paired end SAM/BAM.
+ * Memory use can be reduced by using pre-collated (see samtools collate) files.
  */
 public class SamToFastq extends AbstractCli {
   private static final int MAX_WARNINGS = 5;
 
   private static final String MODULE_NAME = "sam2fastq";
   private static final String INPUT_FLAG = "input";
-
-
+  private static final String COLLATED = "collated";
 
   @Override
   public String description() {
-    return "Extract fastq from pre-collated paired-end SAM/BAM files";
+    return "Extract fastq from paired-end SAM/BAM files";
   }
 
   @Override
@@ -55,8 +55,9 @@ public class SamToFastq extends AbstractCli {
   private static void initFlags(CFlags flags) {
     CommonFlagCategories.setCategories(flags);
     final Flag<File> input = flags.registerOptional('i', INPUT_FLAG, File.class, CommonFlags.FILE, "input file to convert to fastq").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    final Flag<File> inputList = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "List of input file tos convert to fastq").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> inputList = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "list of input file to convert to fastq").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, CommonFlags.FILE, "output file base name").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerOptional(COLLATED, "if set, assume input is collated to reduce memory use").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional('Z', CommonFlags.NO_GZIP, "Do not gzip output").setCategory(CommonFlagCategories.UTILITY);
     flags.addRequiredSet(input);
     flags.addRequiredSet(inputList);
@@ -72,31 +73,23 @@ public class SamToFastq extends AbstractCli {
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     final List<File> files = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, INPUT_FLAG).getFileList(mFlags);
-    final CollatedDataSource ds = new CollatedDataSource(new FileStreamIterator(files), true, false, null);
 
-    final BaseFile baseOutFile = FastqUtils.baseFile((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), !mFlags.isSet(CommonFlags.NO_GZIP));
-    final File outLeftName = baseOutFile.suffixedFile("_1");
-    final File outRightName = baseOutFile.suffixedFile("_2");
+    final SequenceDataSource ds = mFlags.isSet(COLLATED)
+      ? new CollatedDataSource(new FileStreamIterator(files), true, false, null)
+      : MappedSamBamSequenceDataSource.fromInputFiles(files, true, false, true, null);
+
+    final BaseFile baseFile = FastqUtils.baseFile((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), !mFlags.isSet(CommonFlags.NO_GZIP));
     boolean left = true;
-    try (FastqWriter outLeft = new FastqWriter(new OutputStreamWriter(FileUtils.createOutputStream(outLeftName)))) {
-      try (FastqWriter outRight = new FastqWriter(new OutputStreamWriter(FileUtils.createOutputStream(outRightName)))) {
+    try (FastqWriter outLeft = new FastqWriter(new OutputStreamWriter(FileUtils.createOutputStream(baseFile, "_1")))) {
+      try (FastqWriter outRight = new FastqWriter(new OutputStreamWriter(FileUtils.createOutputStream(baseFile, "_2")))) {
         while (ds.nextSequence()) {
           final FastqWriter w = left ? outLeft : outRight;
           w.write(ds.name(), ds.sequenceData(), ds.qualityData(), ds.currentLength());
           left = !left;
         }
+        
         try (OutputStreamWriter writer = new OutputStreamWriter(out)) {
-          writer.write("Record Pairs written: " + ds.mValidRecordPairs);
-          writer.write(StringUtils.LS);
-          writer.write("Records written: " + ds.mValidRecords);
-          writer.write(StringUtils.LS);
-          writer.write("Duplicate records skipped: " + ds.mSkippedRecords);
-          writer.write(StringUtils.LS);
-          if (ds.mBadPairs > 0) {
-            writer.write(StringUtils.LS);
-            writer.write("Arms with missing pairs: " + ds.mBadPairs);
-            writer.write(StringUtils.LS);
-          }
+          writer.write(ds.toString());
         }
       }
     }
@@ -173,6 +166,22 @@ public class SamToFastq extends AbstractCli {
 
     @Override
     protected void checkSortOrder() {
+    }
+
+    public String toString() {
+      final StringBuilder sb = new StringBuilder();
+      sb.append("Record Pairs written: ").append(mValidRecordPairs);
+      sb.append(StringUtils.LS);
+      sb.append("Records written: ").append(mValidRecords);
+      sb.append(StringUtils.LS);
+      sb.append("Duplicate records skipped: ").append(mSkippedRecords);
+      sb.append(StringUtils.LS);
+      if (mBadPairs > 0) {
+        sb.append(StringUtils.LS);
+        sb.append("Arms with missing pairs: ").append(mBadPairs);
+        sb.append(StringUtils.LS);
+      }
+      return sb.toString();
     }
   }
 

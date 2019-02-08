@@ -28,7 +28,7 @@ public class SamToFastqTest extends AbstractNanoTest {
     try (TestDirectory dir = new TestDirectory()) {
       final File inputFile = FileHelper.resourceToFile("com/rtg/reader/resources/input.sam", new File(dir, "input.sam"));
       final File outputPrefix = new File(dir, "output");
-      final MainResult mr = MainResult.run(new SamToFastq(), "-i", inputFile.getPath(), "-o", outputPrefix.getPath(), "-Z");
+      final MainResult mr = MainResult.run(new SamToFastq(), "-i", inputFile.getPath(), "-o", outputPrefix.getPath(), "-Z", "--collated");
       assertEquals(0, mr.rc());
       assertEquals("", mr.err());
       final File leftFastqOut = new File(dir, "output_1.fastq");
