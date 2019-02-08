@@ -77,6 +77,8 @@ public class PairedEndTrimCli extends AbstractCli {
 
   private static final String MISMATCH_HANDLING = "mismatch-adjustment";
 
+  private static final String MAX_READ_LENGTH = "Xmax-read-length";
+
   private static final String VERBOSE = "Xverbose";
 
 
@@ -110,6 +112,7 @@ public class PairedEndTrimCli extends AbstractCli {
     CommonFlags.initThreadsFlag(flags);
     SamFilterOptions.registerSubsampleFlags(flags);
     flags.registerOptional(BATCH_SIZE, Integer.class, CommonFlags.INT, "number of pairs to process per batch", 10000).setCategory(UTILITY);
+    flags.registerOptional(MAX_READ_LENGTH, Integer.class, CommonFlags.INT, "maximum length of input read", 350).setCategory(FILTERING);
     flags.registerOptional(VERBOSE, "dump read alignment information to stderr").setCategory(UTILITY);
     CommonFlags.initNoGzip(flags);
 
@@ -131,6 +134,7 @@ public class PairedEndTrimCli extends AbstractCli {
         && flags.checkInRange(MIN_READ_LENGTH, 0, Integer.MAX_VALUE)
         && flags.checkInRange(LEFT_PROBE_LENGTH, 0, Integer.MAX_VALUE)
         && flags.checkInRange(RIGHT_PROBE_LENGTH, 0, Integer.MAX_VALUE)
+        && flags.checkInRange(MAX_READ_LENGTH, 1, Integer.MAX_VALUE)
         && flags.checkNand(MIDPOINT_TRIM, MIDPOINT_MERGE)
         && flags.checkNand(DISCARD_EMPTY_PAIRS, DISCARD_EMPTY_READS);
     }
@@ -226,7 +230,7 @@ public class PairedEndTrimCli extends AbstractCli {
   }
 
   private PairAligner getPairAligner() {
-    final int maxReadLength = 300;
+    final int maxReadLength = (Integer) mFlags.getValue(MAX_READ_LENGTH);
     final int seedLength = 5;
     final NgsParams ngsParams = MapParamsHelper.populateAlignerPenaltiesParams(NgsParams.builder(), mFlags).singleIndelPenalties(null).create();
     return new PairAligner(
