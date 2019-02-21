@@ -11,12 +11,15 @@
  */
 package com.rtg.zooma;
 
+import static com.rtg.launcher.CommonFlags.FILE;
+import static com.rtg.launcher.CommonFlags.INT;
+import static com.rtg.launcher.CommonFlags.STRING;
+
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
 import com.rtg.launcher.AbstractCli;
-import com.rtg.launcher.CommonFlags;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 /**
@@ -43,12 +46,12 @@ public class ZoomaNativeBuildIndexCli extends AbstractCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerRequired('i', REF_FLAG, File.class, CommonFlags.FILE, "FASTA file for reference");
-    mFlags.registerOptional('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "name of output index file", new File("zooma.index.bin"));
-    mFlags.registerOptional('c', INCLUDE_FLAG, String.class, "STR", "include chromosomes with this string in the name");
-    mFlags.registerOptional('e', EXCLUDE_FLAG, String.class, "STR", "exclude chromosomes with this string in the name");
-    mFlags.registerOptional('w', WORD, Integer.class, CommonFlags.INT, "hash width (<= 21)", 18);
-    mFlags.registerOptional('s', STEP, Integer.class, CommonFlags.INT, "step size", 1);
+    mFlags.registerRequired('i', REF_FLAG, File.class, FILE, "FASTA file for reference");
+    mFlags.registerOptional('o', OUTPUT_FLAG, File.class, FILE, "name of output index file", new File("zooma.index.bin"));
+    mFlags.registerOptional('c', INCLUDE_FLAG, String.class, STRING, "include chromosomes with this string in the name");
+    mFlags.registerOptional('e', EXCLUDE_FLAG, String.class, STRING, "exclude chromosomes with this string in the name");
+    mFlags.registerOptional('w', WORD, Integer.class, INT, "hash width (<= 21)", 18);
+    mFlags.registerOptional('s', STEP, Integer.class, INT, "step size", 1);
   }
 
   @Override

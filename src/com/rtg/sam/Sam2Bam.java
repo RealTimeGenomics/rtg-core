@@ -72,7 +72,7 @@ public class Sam2Bam extends AbstractCli {
     inFlag.setMinCount(1);
     inFlag.setMaxCount(Integer.MAX_VALUE);
     //flags.registerOptional('t', TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF of the reference genome the reads have been mapped against (required for CRAM input)").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('o', OUTPUT_FLAG, File.class, FILE, "name for output BAM file.").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('o', OUTPUT_FLAG, File.class, FILE, "name for output BAM file").setCategory(INPUT_OUTPUT);
 
     flags.setValidator(VALIDATOR);
   }

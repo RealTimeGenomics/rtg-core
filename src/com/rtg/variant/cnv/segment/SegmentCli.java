@@ -158,7 +158,7 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerOptional(GCBINS_FLAG, Integer.class, INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(COV_COLUMN_NAME, String.class, STRING, "name of the coverage column in input data", DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(PANEL_COV_COLUMN_NAME, String.class, STRING, "name of the normalized coverage column in panel data", NORMALIZED_COVERAGE_COLUMN).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(GRAPHVIZ_SEGMENTATION, "if set, output a graphviz file for viewing the segmentation tree for each chromosome").setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(GRAPHVIZ_SEGMENTATION, "if set, output a Graphviz file for viewing the segmentation tree for each chromosome").setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(ABSORB_SINGLETONS_FLAG, "absorb single bins into closest scoring adjacent segment").setCategory(SENSITIVITY_TUNING);
     mFlags.addRequiredSet(controlFlag);
     mFlags.addRequiredSet(panelFlag);
