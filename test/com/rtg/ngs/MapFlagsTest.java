@@ -267,7 +267,8 @@ public class MapFlagsTest extends TestCase {
   }
 
   public void testCheckFlags() {
-    TestCFlags.check(mFlags,
+    TestCFlags.check(mFlags);
+    TestCFlags.checkUsage(mFlags,
        "guaranteed minimum number of substitutions which will be detected (Default is 1)",
        "guaranteed minimum number of indels which will be detected (Default is 1)",
        "maximum mismatches for mappings in single-end mode (as absolute value or percentage of read length) (Default is 10%)",
