@@ -97,7 +97,7 @@ class NegChecker extends PositionAndStrandChecker {
     if (mate != null) {
       updateTlenAndMateStart(record, mate);
     }
-    record.setAttribute("XP", new String(readBases, readEnd, trimmed));
+    record.setAttribute(DeProbeCli.ATTRIBUTE_STRIPPED_PROBE, new String(readBases, readEnd, trimmed));
     record.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, null);
     mBasesTrimmed += trimmed;
   }

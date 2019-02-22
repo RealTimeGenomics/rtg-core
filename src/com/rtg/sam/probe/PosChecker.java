@@ -92,7 +92,7 @@ class PosChecker extends PositionAndStrandChecker {
     if (mate != null) {
       updateTlenAndMateStart(record, mate);
     }
-    record.setAttribute("XP", new String(readBases, 0, readStart));
+    record.setAttribute(DeProbeCli.ATTRIBUTE_STRIPPED_PROBE, new String(readBases, 0, readStart));
     record.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, null);
     mBasesTrimmed += readStart;
   }

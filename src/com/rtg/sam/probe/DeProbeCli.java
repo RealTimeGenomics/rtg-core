@@ -69,6 +69,9 @@ import htsjdk.samtools.SAMRecord;
  */
 public class DeProbeCli extends LoggedCli {
 
+  static final String ATTRIBUTE_STRIPPED_PROBE = "XP";
+  static final String ATTRIBUTE_STRIP_STATUS = "XS";
+
   private static final String PROBE_DROPPING = "probe-specific-filter";
   private static final String PROBE_BED = "probe-bed";
   private static final String TOLERANCE_FLAG = "tolerance";
@@ -194,7 +197,7 @@ public class DeProbeCli extends LoggedCli {
                 }
                 stripped = hitProbe != null;
                 if (!stripped) {
-                  record.setAttribute("XS", "failed");
+                  record.setAttribute(ATTRIBUTE_STRIP_STATUS, "failed"); // Off-target alignment
                 } else if (probeBasedDropping && record.getReadBases().length < hitProbe.getMinReadLength()) {
                   SamUtils.convertToUnmapped(record);
                   shortReads++;
