@@ -30,9 +30,9 @@ import com.rtg.util.ChiSquared;
 import com.rtg.util.MathUtils;
 import com.rtg.util.MultiSet;
 import com.rtg.util.Pair;
-import com.rtg.util.intervals.RangeList;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.RangeList;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
@@ -178,7 +178,7 @@ public class SegregationChecker {
     }
     assert (mLastPatternHolder == null) == (mCurrPhaseGroup == null);
     assert mLastSeq.equals(sequence);
-    final VcfRecord repairedRecord = VcfReader.vcfLineToRecord(rec.toString());
+    final VcfRecord repairedRecord = new VcfRecord(rec);
     final PatternHolder recPhasing = new PatternHolder(familyFromRecord(rec).pattern(), false);
     final Set<String> possibleGts = getPossibleGts(rec.getAltCalls().size());
     PatternHolder selectedPatternChildren = null;
