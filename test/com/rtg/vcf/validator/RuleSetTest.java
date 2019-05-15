@@ -13,7 +13,7 @@
 package com.rtg.vcf.validator;
 
 import com.rtg.util.TestUtils;
-import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfReaderTest;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfNumber;
 import com.rtg.vcf.header.VcfNumberType;
@@ -44,15 +44,15 @@ public class RuleSetTest extends TestCase {
       fail("Should not be able to fail a string to string conversion");
     }
     try {
-      set.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=a\tGT\t0/1"));
-      set.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=b\tGT\t0/1"));
-      set.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=c\tGT\t0/1"));
-      set.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=.\tGT\t0/1"));
+      set.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=a\tGT\t0/1"));
+      set.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=b\tGT\t0/1"));
+      set.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=c\tGT\t0/1"));
+      set.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=.\tGT\t0/1"));
     } catch (RuleValidationException e) {
       fail("These records should be passing: " + e.getMessage());
     }
     try {
-      set.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=bar\tGT\t0/1"));
+      set.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=bar\tGT\t0/1"));
       fail("This record should have failed.");
     } catch (RuleValidationException e) {
       assertEquals("One or more values for the INFO field FOO is outside the expected range of values.", e.getMessage());
@@ -76,33 +76,33 @@ public class RuleSetTest extends TestCase {
       fail("Should not be able to fail a string to string conversion");
     }
     try {
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=a\tGT\t0/1"));
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO=a,c\tGT\t1/2"));
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO=.,c\tGT\t1/2"));
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\t.\t167.9\tPASS\tFOO=.\tGT\t1/2"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=a\tGT\t0/1"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO=a,c\tGT\t1/2"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO=.,c\tGT\t1/2"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\t.\t167.9\tPASS\tFOO=.\tGT\t1/2"));
     } catch (RuleValidationException e) {
       fail("These records should be passing: " + e.getMessage());
     }
     try {
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO=a,bar\tGT\t1/2"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO=a,bar\tGT\t1/2"));
       fail("This record should have failed.");
     } catch (RuleValidationException e) {
       assertEquals("One or more values for the INFO field FOO is outside the expected range of values.", e.getMessage());
     }
     try {
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO=a,b,c\tGT\t1/2"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO=a,b,c\tGT\t1/2"));
       fail("This record should have failed.");
     } catch (RuleValidationException e) {
       assertEquals("Too many values for the INFO field FOO.", e.getMessage());
     }
     try {
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO=a\tGT\t1/2"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO=a\tGT\t1/2"));
       fail("This record should have failed.");
     } catch (RuleValidationException e) {
       assertEquals("Too few values for the INFO field FOO.", e.getMessage());
     }
     try {
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO\tGT\t1/2"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT,G\t167.9\tPASS\tFOO\tGT\t1/2"));
       fail("This record should have failed.");
     } catch (RuleValidationException e) {
       assertEquals("Expected values for the INFO field FOO.", e.getMessage());
@@ -117,10 +117,10 @@ public class RuleSetTest extends TestCase {
       fail("Should not be able to fail a string to string conversion");
     }
     try {
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=a\tGT\t0/1"));
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=a,c,b\tGT\t1/2"));
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=.,c\tGT\t1/2"));
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\t.\t167.9\tPASS\tFOO=.\tGT\t1/2"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=a\tGT\t0/1"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=a,c,b\tGT\t1/2"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=.,c\tGT\t1/2"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\t.\t167.9\tPASS\tFOO=.\tGT\t1/2"));
     } catch (RuleValidationException e) {
       fail("These records should be passing: " + e.getMessage());
     }
@@ -129,12 +129,12 @@ public class RuleSetTest extends TestCase {
   public void testFlagType() {
     final RuleSet<String> fooSet = new RuleSet<>("FOO", FieldType.INFO, new VcfNumber("0"), MetaType.FLAG, null);
     try {
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO\tGT\t0/1"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO\tGT\t0/1"));
     } catch (RuleValidationException e) {
       fail("These records should be passing: " + e.getMessage());
     }
     try {
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=a\tGT\t0/1"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO=a\tGT\t0/1"));
       fail("This record should have failed.");
     } catch (RuleValidationException e) {
       assertEquals("Expected no values for the INFO field FOO.", e.getMessage());
@@ -149,12 +149,12 @@ public class RuleSetTest extends TestCase {
       fail("Should not be able to fail a string to string conversion");
     }
     try {
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\t.\tGT:FOO\t0/1:a,b\t0/0:c,.\t1/1:."));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\t.\tGT:FOO\t0/1:a,b\t0/0:c,.\t1/1:."));
     } catch (RuleValidationException e) {
       fail("These records should be passing: " + e.getMessage());
     }
     try {
-      fooSet.validateRecord(VcfReader.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\t.\tGT:FOO\t0/1:a,b\t0/0:c,.\t1/1:bar,b"));
+      fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\t.\tGT:FOO\t0/1:a,b\t0/0:c,.\t1/1:bar,b"));
       fail("This record should have failed.");
     } catch (RuleValidationException e) {
       assertEquals("One or more values for the FORMAT field FOO is outside the expected range of values.", e.getMessage());

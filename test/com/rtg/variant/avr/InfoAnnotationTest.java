@@ -12,7 +12,7 @@
 
 package com.rtg.variant.avr;
 
-import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfReaderTest;
 import com.rtg.vcf.VcfRecord;
 
 import junit.framework.TestCase;
@@ -35,7 +35,7 @@ public class InfoAnnotationTest extends TestCase {
   }
 
   public void testGetValue() {
-    final VcfRecord record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX;IS=BOO;IF=98.7;II=42;CC=a,b;DD=D1\tGT:I:M:S:F\t0|1:12:.:BLAH:1.23\t.\t1|1:99:.:FART:99.99");
+    final VcfRecord record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX;IS=BOO;IF=98.7;II=42;CC=a,b;DD=D1\tGT:I:M:S:F\t0|1:12:.:BLAH:1.23\t.\t1|1:99:.:FART:99.99");
     InfoAnnotation fa = new InfoAnnotation("XRX", AnnotationDataType.BOOLEAN);
     assertEquals("INFO-XRX", fa.getName());
     assertEquals(AnnotationDataType.BOOLEAN, fa.getType());

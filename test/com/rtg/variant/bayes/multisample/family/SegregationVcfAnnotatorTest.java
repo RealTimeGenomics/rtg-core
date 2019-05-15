@@ -17,7 +17,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.CodeDiploid;
 import com.rtg.vcf.VcfAnnotator;
-import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfReaderTest;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
@@ -53,7 +53,7 @@ public class SegregationVcfAnnotatorTest extends TestCase {
   }
 
   private void checkRecord(String samples, VcfAnnotator annotator, String expected) {
-    final VcfRecord rec = VcfReader.vcfLineToRecord("chr20\t1400\t.\tG\tA\t29\tPASS\t.\tGT\t" + samples);
+    final VcfRecord rec = VcfReaderTest.vcfLineToRecord("chr20\t1400\t.\tG\tA\t29\tPASS\t.\tGT\t" + samples);
     annotator.annotate(rec);
     annotator.annotate(rec); // Should not be a problem doing this twice
     if (expected == null) {

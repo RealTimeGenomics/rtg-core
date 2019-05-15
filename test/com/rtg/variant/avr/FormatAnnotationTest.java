@@ -12,7 +12,7 @@
 
 package com.rtg.variant.avr;
 
-import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfReaderTest;
 import com.rtg.vcf.VcfRecord;
 
 import junit.framework.TestCase;
@@ -42,7 +42,7 @@ public class FormatAnnotationTest extends TestCase {
   }
 
   public void testGetValue() {
-    final VcfRecord record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:I:M:S:F:V\t0|1:12:.:BLAH:1.23:V,V\t.\t1|1:99:.:FART:99.99:.");
+    final VcfRecord record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:I:M:S:F:V\t0|1:12:.:BLAH:1.23:V,V\t.\t1|1:99:.:FART:99.99:.");
     FormatAnnotation fa = new FormatAnnotation("I", AnnotationDataType.INTEGER);
     assertEquals("FORMAT-I", fa.getName());
     assertEquals(AnnotationDataType.INTEGER, fa.getType());

@@ -16,7 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfReaderTest;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.VcfHeader;
 
@@ -57,7 +57,7 @@ public class NullModelTest extends AbstractPredictModelTest<NullModel> {
     assertNotNull(apm);
     assertEquals("AVR", apm.getField());
 
-    final VcfRecord record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
+    final VcfRecord record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
     final String s = record.toString();
     apm.annotate(record);
     assertEquals(s, record.toString());

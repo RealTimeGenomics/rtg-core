@@ -16,7 +16,7 @@ import static com.rtg.util.StringUtils.TAB;
 
 import com.rtg.util.MathUtils;
 import com.rtg.util.PosteriorUtils;
-import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfReaderTest;
 import com.rtg.vcf.VcfRecord;
 
 import junit.framework.TestCase;
@@ -27,7 +27,7 @@ public class AviewVariantTest extends TestCase {
 
   public void test() {
     final String vcf = "someKindOfName" + TAB + "23" + TAB + "." + TAB + "A" + TAB + "T" + TAB + "12.8" + TAB + "PASS" + TAB + "." + TAB + "GT" + TAB + "1/1";
-    final VcfRecord rec = VcfReader.vcfLineToRecord(vcf);
+    final VcfRecord rec = VcfReaderTest.vcfLineToRecord(vcf);
 
     final AviewVariant v = new AviewVariant(rec, 0);
 
@@ -36,7 +36,7 @@ public class AviewVariantTest extends TestCase {
   }
 
   private AviewVariant getAviewVariant(String var) {
-    return new AviewVariant(VcfReader.vcfLineToRecord(var.replaceAll(" ", TAB)), 0);
+    return new AviewVariant(VcfReaderTest.vcfLineToRecord(var.replaceAll(" ", TAB)), 0);
   }
 
   private static final String SNP_LINE = "someKindOfName" + TAB + "23" + TAB + "." + TAB + "A" + TAB + "T" + TAB + "12.8" + TAB + "PASS" + TAB + "." + TAB + "GT:DP:RE:GQ" + TAB + "1/1:4:0.02:" + PosteriorUtils.phredIfy(12.8 * MathUtils.LOG_10);

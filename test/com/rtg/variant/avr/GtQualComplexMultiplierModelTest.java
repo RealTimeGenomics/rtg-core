@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.rtg.util.TestUtils;
-import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfReaderTest;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.VcfHeader;
 
@@ -92,7 +92,7 @@ public class GtQualComplexMultiplierModelTest extends AbstractPredictModelTest<G
     ((GtQualComplexMultiplierModel) apm).setGqComplexHomozygousMultiplier(0.5);
     ((GtQualComplexMultiplierModel) apm).setQualComplexMultiplier(0.752);
 
-    VcfRecord record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
+    VcfRecord record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
     apm.annotate(record);
 
     //System.err.println(record.toString());
@@ -101,7 +101,7 @@ public class GtQualComplexMultiplierModelTest extends AbstractPredictModelTest<G
     assertEquals(50.0, record.getSampleDouble(2, "GQ"), 0.01);
     assertEquals(75.2, Double.valueOf(record.getQuality()), 0.01);
 
-    record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\t.\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
+    record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\t.\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
     apm.annotate(record);
 
     //System.err.println(record.toString());

@@ -32,7 +32,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfReaderTest;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.VcfHeader;
 
@@ -96,7 +96,7 @@ public class MlAvrPredictModelTest extends AbstractPredictModelTest<MlAvrPredict
       }
 
       // Annotate all samples in the record
-      VcfRecord record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12\t.\t1|1:99\t0|0:34");
+      VcfRecord record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12\t.\t1|1:99\t0|0:34");
       apm.annotate(record);
 
       //System.err.println(record.toString());
@@ -108,7 +108,7 @@ public class MlAvrPredictModelTest extends AbstractPredictModelTest<MlAvrPredict
 
 
       // Annotate just requested samples
-      record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12\t.\t1|1:99\t0|0:34");
+      record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12\t.\t1|1:99\t0|0:34");
       apm.annotateSample(record, 3);
       apm.annotateSample(record, 2);
 

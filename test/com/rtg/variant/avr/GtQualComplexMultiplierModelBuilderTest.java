@@ -14,7 +14,7 @@ package com.rtg.variant.avr;
 
 import java.util.Properties;
 
-import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfReaderTest;
 import com.rtg.vcf.VcfRecord;
 
 /**
@@ -46,7 +46,7 @@ public class GtQualComplexMultiplierModelBuilderTest extends AbstractModelBuilde
 
     //System.err.println(apm.toString());
 
-    VcfRecord record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
+    VcfRecord record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
     apm.annotate(record);
 
     //System.err.println(record.toString());
@@ -56,7 +56,7 @@ public class GtQualComplexMultiplierModelBuilderTest extends AbstractModelBuilde
     assertEquals(75.0, Double.valueOf(record.getQuality()), 0.01);
 
 
-    record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\t.\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
+    record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\t.\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
     apm.annotate(record);
 
     //System.err.println(record.toString());
@@ -75,7 +75,7 @@ public class GtQualComplexMultiplierModelBuilderTest extends AbstractModelBuilde
     final AbstractPredictModel apm = amb.getModel();
     assertNotNull(apm);
 
-    VcfRecord record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
+    VcfRecord record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
     apm.annotate(record);
 
     //System.err.println(record.toString());
@@ -85,7 +85,7 @@ public class GtQualComplexMultiplierModelBuilderTest extends AbstractModelBuilde
     assertEquals(4, Double.valueOf(record.getQuality()), 0.01);
 
 
-    record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\t.\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
+    record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\t.\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
     apm.annotate(record);
 
     //System.err.println(record.toString());

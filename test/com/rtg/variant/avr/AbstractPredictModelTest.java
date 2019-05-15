@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.rtg.util.io.TestDirectory;
-import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfReaderTest;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
@@ -60,7 +60,7 @@ public abstract class AbstractPredictModelTest<T extends AbstractPredictModel> e
     assertNotNull(apm);
     assertEquals("AVR", apm.getField());
 
-    final VcfRecord record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
+    final VcfRecord record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
     apm.annotate(record);
 
     //System.err.println(record.toString());

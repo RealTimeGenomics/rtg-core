@@ -13,7 +13,7 @@ package com.rtg.variant.avr;
 
 import java.util.Properties;
 
-import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfReaderTest;
 import com.rtg.vcf.VcfRecord;
 
 /**
@@ -32,7 +32,7 @@ public class NullModelBuilderTest extends AbstractModelBuilderTest<NullModelBuil
     amb.build();
     final AbstractPredictModel apm = amb.getModel();
     assertNotNull(apm);
-    final VcfRecord record = VcfReader.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
+    final VcfRecord record = VcfReaderTest.vcfLineToRecord("chr5\t12041\trs55926606\tA\tT\t100\tPASS\tXRX\tGT:GQ\t0|1:12.3\t.\t1|1:99.9");
     final String s = record.toString();
     apm.annotate(record);
     assertEquals(s, record.toString());
