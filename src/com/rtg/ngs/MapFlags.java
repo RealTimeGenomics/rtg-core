@@ -143,7 +143,7 @@ public final class MapFlags {
     flags.registerOptional(LEGACY_CIGARS, "use legacy cigars in output").setCategory(UTILITY);
     flags.registerOptional(OUTPUT_READ_NAMES_FLAG, "use read name in output instead of read id (Uses more RAM)").setCategory(UTILITY);
     flags.registerOptional(ALIGNER_MODE_FLAG, AlignerMode.class, CommonFlags.STRING, "pick the aligner to use", AlignerMode.AUTO).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(SINGLE_INDEL_PENALTIES_FLAG, String.class, "STRING|FILE", "single indel penalty file", EditDistanceFactory.DEFAULT_SINGLE_INDEL_TABLE).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(SINGLE_INDEL_PENALTIES_FLAG, String.class, CommonFlags.STRING_OR_FILE, "single indel penalty file", EditDistanceFactory.DEFAULT_SINGLE_INDEL_TABLE).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 
     //--X flags
 
