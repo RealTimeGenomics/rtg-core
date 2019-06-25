@@ -59,8 +59,6 @@ import com.rtg.util.diagnostic.OneShotTimer;
  */
 public final class LongReadTask {
 
-  //  private static final boolean SIMPLE_TUBE = false; //Boolean.valueOf(System.getProperty("simple.tube", "false"));
-
   private LongReadTask() { }
 
   /**
