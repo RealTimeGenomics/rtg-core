@@ -14,7 +14,7 @@ package com.rtg.variant.bayes;
 import com.rtg.util.MathUtils;
 
 /**
- * Provides statistics per allele at double resolution for coverage
+ * Provides statistics per allele at double resolution for coverage.
  */
 public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDouble> {
 
@@ -25,9 +25,6 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
   private final double[] mCountsBackwards;
   private final double[] mCountsMated;
   private final double[] mCountsUnmated;
-  //private final int[] mCountsSingle;
-  //private static final double LOG10_E = Math.log(Math.E);
-
 
   /**
    * Sum of error probability for each nucleotide.
@@ -35,7 +32,7 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
   private final double[] mErrors;
 
   /**
-   * product of base quality errors
+   * Product of base quality errors.
    */
   private final double[] mQualityProduct;
 
@@ -50,12 +47,8 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
     mCountsBackwards = new double[description.size()];
     mCountsMated = new double[description.size()];
     mCountsUnmated = new double[description.size()];
-    //mCountsSingle = new int[description.size()];
     mErrors = new double[description.size()];
     mQualityProduct = new double[description.size()];
-    //Arrays.fill(mCountsForwards, 0);
-    //Arrays.fill(mCountsBackwards, 0);
-    //Arrays.fill(mErrors, 0.0);
   }
 
 
@@ -68,9 +61,6 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
    */
   public void increment(final EvidenceInterface distribution, int bestHyp, double e, double coverage) {
     assert getDescription().valid(bestHyp) : bestHyp;
-    //System.err.println("r=" + r + " q=" + q + " e=" + e);
-    //System.err.println("Counts increment index=" + index + " e=" + e);
-
     if (distribution.isForward()) {
       mCountsForwards[bestHyp] += coverage;
     } else {
@@ -87,21 +77,11 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
     mQualityProduct[bestHyp] += MathUtils.phred(e);
   }
 
-  /**
-   * Get the current count for the specified index.
-   * @param index whose value to get.
-   * @return the count.
-   */
   @Override
   public double count(final int index) {
     return mCountsForwards[index] + mCountsBackwards[index];
   }
 
-  /**
-   * Get the current accumulated for the specified index.
-   * @param index whose value to get.
-   * @return the accumulated error.
-   */
   @Override
   public double error(final int index) {
     return mErrors[index];
@@ -132,7 +112,6 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
     for (int oldI = 0; oldI < mapping.length; ++oldI) {
       final int newI = mapping[oldI];
       if (newI >= 0) {
-        //System.out.println("remap " + oldI + " (" + count(oldI) + ") -> " + newDescription.name(newI));
         newCounts.mCountsForwards[newI] += mCountsForwards[oldI];
         newCounts.mCountsBackwards[newI] += mCountsBackwards[oldI];
         newCounts.mCountsMated[newI] += mCountsMated[oldI];
@@ -143,5 +122,4 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
     }
     return newCounts;
   }
-
 }

@@ -25,9 +25,6 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
   private final int[] mCountsBackwards;
   private final int[] mCountsMated;
   private final int[] mCountsUnmated;
-  //private final int[] mCountsSingle;
-  //private static final double LOG10_E = Math.log(Math.E);
-
 
   /**
    * Sum of error probability for each nucleotide.
@@ -35,10 +32,9 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
   private final double[] mErrors;
 
   /**
-   * product of base quality errors
+   * Product of base quality errors.
    */
   private final double[] mQualityProduct;
-
 
   /**
    * Create a new empty count object.
@@ -50,7 +46,6 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
     mCountsBackwards = new int[description.size()];
     mCountsMated = new int[description.size()];
     mCountsUnmated = new int[description.size()];
-    //mCountsSingle = new int[description.size()];
     mErrors = new double[description.size()];
     mQualityProduct = new double[description.size()];
   }
@@ -63,8 +58,6 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
    */
   public void increment(final EvidenceInterface distribution, int bestHyp, double e) {
     assert getDescription().valid(bestHyp) : bestHyp;
-    //System.err.println("r=" + r + " q=" + q + " e=" + e);
-    //System.err.println("Counts increment index=" + index + " e=" + e);
 
     if (distribution.isForward()) {
       mCountsForwards[bestHyp]++;
@@ -82,31 +75,16 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
     mQualityProduct[bestHyp] += MathUtils.phred(e);
   }
 
-
-  /**
-   * Get the current count for the specified index.
-   * @param index whose value to get.
-   * @return the count.
-   */
   @Override
   public double count(final int index) {
     return mCountsForwards[index] + mCountsBackwards[index];
   }
 
-  /**
-   * Get the current accumulated for the specified index.
-   * @param index whose value to get.
-   * @return the accumulated error.
-   */
   @Override
   public double error(final int index) {
     return mErrors[index];
   }
-  /**
-   * Get the accumulated phred quality for the specified index.
-   * @param index whose value to get.
-   * @return the accumulated quality.
-   */
+
   @Override
   public double qa(final int index) {
     return mQualityProduct[index];
@@ -125,7 +103,6 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
     final int observed = mCountsUnmated[allele];
     return MathUtils.hoeffdingPhred(trials, observed, unmatedProbability);
   }
-
 
   @Override
   public AlleleStatisticsInt remap(Description newDescription, int[] mapping) {
