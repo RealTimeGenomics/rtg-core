@@ -81,6 +81,16 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
   }
 
   @Override
+  public double forward(final int index) {
+    return mCountsForwards[index];
+  }
+
+  @Override
+  public double backward(final int index) {
+    return mCountsBackwards[index];
+  }
+
+  @Override
   public double error(final int index) {
     return mErrors[index];
   }

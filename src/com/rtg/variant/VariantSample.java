@@ -146,6 +146,10 @@ public class VariantSample {
     return mStats;
   }
 
+  public Statistics<?> getAlleleStats() {
+    return mStats;
+  }
+
   public void setStats(Statistics<?> stats) {
     mStats = stats;
   }

@@ -43,12 +43,12 @@ import com.rtg.vcf.header.VcfHeader;
 import com.rtg.vcf.header.VcfNumber;
 
 /**
- * Enum of VCF FORMAT field implementations
+ * Enum of VCF FORMAT field implementations.
  */
 public enum VcfFormatField {
 
   /**
-   * Genotype
+   * Genotype.
    * Note: This Format field should always be populated first for each sample, and always be present as it also updates the ALT fields.
    * That means that this enum field should always be first.
    */
@@ -91,8 +91,8 @@ public enum VcfFormatField {
     }
   },
   /**
-   * Somatic Variant Allele. For cases where there is an allele which has a count or variant allelic frequency that exceeds call triggering threshold
-   * but which isn't represented in the GT, we may want to add the allele in order to have it included in additional statistics such as <code>AD/VAC/VAF</code>
+   * Somatic variant allele. For cases where there is an allele which has a count or variant allelic frequency that exceeds call triggering threshold
+   * but which isn't represented in the GT, we may want to add the allele in order to have it included in additional statistics such as <code>AD/VAC/VAF</code>.
    */
   VA {
     @Override
@@ -116,7 +116,7 @@ public enum VcfFormatField {
       return sample != null && sample.getVariantAllele() != null;
     }
   },
-  /** Coverage Depth */
+  /** Coverage depth. */
   DP {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -131,9 +131,7 @@ public enum VcfFormatField {
       return sample != null && sample.getCoverage() != null;
     }
   },
-
-
-  /** Deviation from expected coverage */
+  /** Deviation from expected coverage. */
   DPR {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -149,7 +147,7 @@ public enum VcfFormatField {
       return sample != null && sample.getCoverage() != null && sampleName != null && params != null && params.expectedCoverage() != null && params.expectedCoverage().expectedCoverage(call.getLocus().getSequenceName(), sampleName) > 0;
     }
   },
-  /** RTG Error */
+  /** RTG error. */
   RE {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -164,7 +162,7 @@ public enum VcfFormatField {
       return sample != null && sample.getCorrection() != null;
     }
   },
-  /** Ambiguity Ratio */
+  /** Ambiguity ratio. */
   AR {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -179,7 +177,7 @@ public enum VcfFormatField {
       return sample != null && sample.getAmbiguityRatio() != null;
     }
   },
-  /** RTG sample quality */
+  /** RTG sample quality. */
   RQ {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -194,7 +192,7 @@ public enum VcfFormatField {
       return sample != null && sample.getNonIdentityPosterior() != null;
     }
   },
-  /** Genotype Quality */
+  /** Genotype quality. */
   GQ {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -209,7 +207,7 @@ public enum VcfFormatField {
       return sample != null && sample.getName() != null && !call.isFiltered(VariantFilter.FAILED_COMPLEX);
     }
   },
-  /** RTG Posterior */
+  /** RTG posterior. */
   RP {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -224,7 +222,7 @@ public enum VcfFormatField {
       return sample != null && sample.getName() != null && !call.isFiltered(VariantFilter.FAILED_COMPLEX);
     }
   },
-  /** De novo allele */
+  /** De novo allele. */
   DN {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -239,7 +237,7 @@ public enum VcfFormatField {
       return !call.isFiltered(VariantFilter.FAILED_COMPLEX) && sample != null && sample.getName() != null && sample.isDeNovo() != VariantSample.DeNovoStatus.UNSPECIFIED;
     }
   },
-  /** De novo allele */
+  /** De novo allele probability. */
   DNP {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -254,7 +252,7 @@ public enum VcfFormatField {
       return sample != null && sample.isDeNovo() != VariantSample.DeNovoStatus.UNSPECIFIED && sample.getDeNovoPosterior() != null;
     }
   },
-  /** Hoeffding Allele Balance */
+  /** Hoeffding allele balance. */
   ABP {
     //
     @Override
@@ -274,7 +272,7 @@ public enum VcfFormatField {
       return sample != null && (sample.getHoeffdingAlleleBalanceHet() != null || sample.getHoeffdingAlleleBalanceHom() != null);
     }
   },
-  /** Hoeffding Strand Bias */
+  /** Hoeffding strand bias. */
   SBP {
     //
     @Override
@@ -294,7 +292,41 @@ public enum VcfFormatField {
       return sample != null && sample.getHoeffdingStrandBiasAllele1() != null;
     }
   },
-  /** Hoeffding read position bias */
+  /** Forward and backward per allele strand counts. */
+  SBC {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Per allele forward and reverse strand counts");
+    }
+    @Override
+    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      final Statistics<?> stats = sample.getStats();
+      String ref = rec.getRefCall();
+      if (includePrevNt) {
+        ref = ref.substring(1);
+      }
+      final AlleleStatistics<?> counts = stats.counts();
+      final Description description = counts.getDescription();
+      final StringBuilder sb = new StringBuilder();
+      final int refDescriptionCode = description.indexOf(ref);
+      if (refDescriptionCode == -1) {
+        sb.append("0,0");
+      } else {
+        sb.append(Math.round(counts.forward(refDescriptionCode))).append(',').append(Math.round(counts.backward(refDescriptionCode)));
+      }
+      for (final String altCall : rec.getAltCalls()) {
+        final String name = includePrevNt ? altCall.substring(1) : altCall;
+        final int altDescriptionCode = description.indexOf(name);
+        sb.append(",").append(Math.round(counts.forward(altDescriptionCode))).append(',').append(Math.round(counts.backward(altDescriptionCode)));
+      }
+      rec.addFormatAndSample(name(), sb.toString());
+    }
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.getStats() != null;
+    }
+  },
+  /** Hoeffding read position bias. */
   RPB {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -309,7 +341,7 @@ public enum VcfFormatField {
       return sample != null && sample.getHoeffdingReadPositionBias() != null;
     }
   },
-  /** Hoeffding unmated bias */
+  /** Hoeffding unmated bias. */
   PPB {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -328,7 +360,7 @@ public enum VcfFormatField {
       return sample != null && sample.getHoeffdingUnmatedBiasAllele1() != null;
     }
   },
-  /** Sum of quality for alleles evidence */
+  /** Sum of quality for alleles evidence. */
   AQ {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -361,7 +393,7 @@ public enum VcfFormatField {
       return sample != null && sample.getStats() != null;
     }
   },
-  /** Placed unmapped ratio */
+  /** Placed unmapped ratio. */
   PUR {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -377,7 +409,7 @@ public enum VcfFormatField {
       return sample != null && sample.getPlacedUnmappedRatio() != null;
     }
   },
-  /** RTG Support Statistics */
+  /** RTG support statistics. */
   RS {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -393,7 +425,7 @@ public enum VcfFormatField {
       return !call.isComplexScored() && sample != null && sample.getStatisticsString() != null && sample.getStatisticsString().trim().length() > 0;
     }
   },
-  /** Allelic Depth, error-corrected */
+  /** Allelic depth, error-corrected. */
   ADE {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -427,7 +459,7 @@ public enum VcfFormatField {
       return sample != null && sample.getStats() != null;
     }
   },
-  /** Allelic Depth */
+  /** Allelic depth. */
   AD {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -460,7 +492,7 @@ public enum VcfFormatField {
       return sample != null && sample.getStats() != null;
     }
   },
-  /** Somatic Score */
+  /** Somatic score. */
   SSC {
     // Note TCGA VCF 1.2 spec defines this to be an integer 0-255, but that is pretty weak in terms of resolution
     @Override
@@ -502,7 +534,7 @@ public enum VcfFormatField {
 
   // NOTE: VcfAnnotators (derived attributes) below here, non-derived above (convention is to have derived fields after non-derived)
 
-  /** Variant Allelic Fraction */
+  /** Variant allelic fraction. */
   VAF {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -523,7 +555,7 @@ public enum VcfFormatField {
     }
   },
 
-  /** Genotype likelihood field (see VCF spec)  */
+  /** Genotype likelihood field (see VCF spec).  */
   GL {
     // GL is not a derived field but it depends upon the values of all sample's GT fields so must wait for the ALT arrays to be
     @Override
@@ -573,7 +605,7 @@ public enum VcfFormatField {
     }
   },
 
-  /** GQ / DP */
+  /** GQ / DP. */
   GQD {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -601,7 +633,7 @@ public enum VcfFormatField {
       return true;
     }
   },
-  /** Zygosity */
+  /** Zygosity. */
   ZY {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -628,7 +660,7 @@ public enum VcfFormatField {
       return true;
     }
   },
-  /** Ploidy */
+  /** Ploidy. */
   PD {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -655,7 +687,7 @@ public enum VcfFormatField {
       return true;
     }
   },
-  /** Contrary observation count and fraction */
+  /** Contrary observation count and fraction. */
   SCONT {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -690,7 +722,7 @@ public enum VcfFormatField {
       return true;
     }
   },
-  /** Sum of quality of the alternate observations */
+  /** Sum of quality of the alternate observations. */
   QA {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -707,7 +739,7 @@ public enum VcfFormatField {
       return sample != null;
     }
   },
-  /** Difference in mean quality for called alleles */
+  /** Difference in mean quality for called alleles. */
   MEANQAD {
     @Override
     public void updateHeader(VcfHeader header) {
