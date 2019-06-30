@@ -69,15 +69,15 @@ public class SegregationVcfAnnotator implements VcfAnnotator {
   }
 
   static boolean checkHeader(VcfHeader header, Family family) {
-    final Integer fatherIndex = header.getSampleIndex(family.getFather());
-    final Integer motherIndex = header.getSampleIndex(family.getMother());
-    boolean ret = fatherIndex != null && motherIndex != null && !fatherIndex.equals(motherIndex);
+    final int fatherIndex = header.getSampleIndex(family.getFather());
+    final int motherIndex = header.getSampleIndex(family.getMother());
+    boolean ret = fatherIndex != -1 && motherIndex != -1 && fatherIndex != motherIndex;
     final Set<Integer> indexes = new HashSet<>(family.size());
     indexes.add(fatherIndex);
     indexes.add(motherIndex);
     for (final String child : family.getChildren()) {
-      final Integer childIndex = header.getSampleIndex(child);
-      ret &= childIndex != null && !indexes.contains(childIndex);
+      final int childIndex = header.getSampleIndex(child);
+      ret &= childIndex != -1 && !indexes.contains(childIndex);
       indexes.add(childIndex);
     }
     return ret;
@@ -92,8 +92,8 @@ public class SegregationVcfAnnotator implements VcfAnnotator {
       mFatherIndex = header.getSampleIndex(mFamily.getFather());
       mMotherIndex = header.getSampleIndex(mFamily.getMother());
       for (final String child : children) {
-        final Integer childIndex = header.getSampleIndex(child);
-        if (childIndex == null) {
+        final int childIndex = header.getSampleIndex(child);
+        if (childIndex == -1) {
           throw new NullPointerException(child);
         }
         mChildrenIndexes.add(childIndex);

@@ -93,12 +93,12 @@ public class SomaticStatistics extends VariantStatistics {
    */
   public void countVariant(final VcfHeader header, final VcfRecord rec) {
     // Handle the normal sample
-    final Integer normalId = header.getSampleIndex(mNormalSampleName);
-    if (normalId != null && isGenotype(rec, normalId, DIPLOID01)) {
+    final int normalId = header.getSampleIndex(mNormalSampleName);
+    if (normalId != -1 && isGenotype(rec, normalId, DIPLOID01)) {
       final Double rankingScore = rec.getSampleDouble(normalId, mRankingField);
       final String alleleDepth = rec.getSampleString(normalId, AD);
       insert(mNormalStore, rankingScore, alleleDepth);
-    } else if (normalId == null || isGenotype(rec, normalId, DIPLOID00)) {
+    } else if (normalId == -1 || isGenotype(rec, normalId, DIPLOID00)) {
       // Handle the cancer sample
       final int cancerId = header.getSampleIndex(mCancerSampleName);
       if (isGenotype(rec, cancerId, DIPLOID01)) {

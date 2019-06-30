@@ -210,8 +210,8 @@ public class BuilderCli extends AbstractCli {
     }
     int sampleNumber = 0;
     if (header.getSampleNames().size() > 1 || sampleName != null) {
-      final Integer sn = header.getSampleIndex(sampleName);
-      if (sn == null) {
+      final int sn = header.getSampleIndex(sampleName);
+      if (sn == -1) {
         if (sampleName == null) {
           throw new NoTalkbackSlimException("Need to specify a sample name for a multi-sample VCF file: " + vcf.getPath());
         } else {
