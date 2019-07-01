@@ -98,6 +98,7 @@ public class EvidenceComplex extends Evidence {
 
   private final boolean mForward;
   private final boolean mReadPaired;
+  private final boolean mFirst;
   private final boolean mMated;
   private final boolean mUnmapped;
 
@@ -220,6 +221,7 @@ public class EvidenceComplex extends Evidence {
 
     mForward = !match.alignmentRecord().isNegativeStrand();
     mReadPaired = match.alignmentRecord().isReadPaired(); // True if is a paired end read at all, false if single end
+    mFirst = match.alignmentRecord().isFirst();
     mMated = match.alignmentRecord().isMated(); // True if is a paired end read and is properly mated, false if single end or unmated
     mUnmapped = match.alignmentRecord().isUnmapped();
   }
@@ -299,6 +301,11 @@ public class EvidenceComplex extends Evidence {
   @Override
   public boolean isReadPaired() {
     return mReadPaired;
+  }
+
+  @Override
+  public boolean isFirst() {
+    return mFirst;
   }
 
   @Override

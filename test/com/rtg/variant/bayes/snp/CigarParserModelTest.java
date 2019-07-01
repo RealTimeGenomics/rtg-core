@@ -92,7 +92,7 @@ public class CigarParserModelTest extends TestCase {
     }
 
     @Override
-    public int getStateIndex(boolean isForward, boolean isReadPaired, boolean isMated) {
+    public int getStateIndex(boolean isForward, boolean isReadPaired, boolean isFirst, boolean isMated) {
       return 0;
     }
 

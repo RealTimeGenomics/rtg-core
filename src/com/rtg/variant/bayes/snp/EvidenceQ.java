@@ -39,6 +39,7 @@ public final class EvidenceQ extends Evidence {
 
   private final boolean mForward;
   private final boolean mReadPaired;
+  private final boolean mFirst;
   private final boolean mMated;
   private final boolean mUnmapped;
 
@@ -51,12 +52,13 @@ public final class EvidenceQ extends Evidence {
    * @param read the hypothesis corresponding to the read.
    * @param r the probability that the read is not mapped to this position.
    * @param q the total probability that the hypothesis is not equal to <code>read</code>.
-   * @param isForward true if mapped in forward frame, false otherwise
-   * @param isReadPaired true if mapping is from a paired read, false otherwise
-   * @param isMated true if mapping from a paired read which is mated, false otherwise
+   * @param isForward true iff mapped in forward frame
+   * @param isReadPaired true iff mapping is from a paired read
+   * @param isFirst true iff the read if unpaired or the first of a pair
+   * @param isMated true iff mapping from a paired read which is mated
    * @param isUnmapped if mapping from an unmapped arm
    */
-  public EvidenceQ(final Description description, final int read, final double r, final double q, boolean isForward, boolean isReadPaired, boolean isMated, boolean isUnmapped) {
+  public EvidenceQ(final Description description, final int read, final double r, final double q, boolean isForward, boolean isReadPaired, boolean isFirst, boolean isMated, boolean isUnmapped) {
     super(description, r);
     mQ = q;
     mQt = q / (description.size() - 1);
@@ -64,6 +66,7 @@ public final class EvidenceQ extends Evidence {
     mRead = read;
     mForward = isForward;
     mReadPaired = isReadPaired;
+    mFirst = isFirst;
     mMated = isMated;
     mUnmapped = isUnmapped;
     final Code code = new CodeDiploid(description().size());
@@ -91,11 +94,12 @@ public final class EvidenceQ extends Evidence {
    * @param q the total probability that the reference is not equal to <code>read</code>.
    * @param isForward true if mapped in forward frame, false otherwise
    * @param isReadPaired true if mapping is from a paired read, false otherwise
+   * @param isFirst true if mapping is from the first arm of a paired read
    * @param isMated true if mapping from a paired read which is mated, false otherwise
    * @param isUnmapped true if mapping from an unmapped arm
    */
-  public EvidenceQ(final Description description, final int read, int readBasesLeft, int readBasesRight, final double r, final double q, boolean isForward, boolean isReadPaired, boolean isMated, boolean isUnmapped) {
-    this(description, read, r, q, isForward, isReadPaired, isMated, isUnmapped);
+  public EvidenceQ(final Description description, final int read, int readBasesLeft, int readBasesRight, final double r, final double q, boolean isForward, boolean isReadPaired, boolean isFirst, boolean isMated, boolean isUnmapped) {
+    this(description, read, r, q, isForward, isReadPaired, isFirst, isMated, isUnmapped);
     mReadBasesLeft.set(readBasesLeft);
     mReadBasesRight.set(readBasesRight);
   }
@@ -171,6 +175,11 @@ public final class EvidenceQ extends Evidence {
   @Override
   public boolean isReadPaired() {
     return mReadPaired;
+  }
+
+  @Override
+  public boolean isFirst() {
+    return mFirst;
   }
 
   @Override

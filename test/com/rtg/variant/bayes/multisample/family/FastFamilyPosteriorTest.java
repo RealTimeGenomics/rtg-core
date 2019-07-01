@@ -74,13 +74,13 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
     // Add reads for father
     for (int i = 0; i < fc; ++i) {
       //incrementCats(father, new ProbabilityQ(r.nextBoolean() ? fa : fb, r.nextDouble()));
-      father.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? fa : fb, 0, 0, 0.1, r.nextDouble(), true, false, false, false));
+      father.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? fa : fb, 0, 0, 0.1, r.nextDouble(), true, false, true, false, false));
     }
     father.freeze();
     // Add reads for mother
     for (int i = 0; i < mc; ++i) {
       //incrementCats(mother, new ProbabilityQ(r.nextBoolean() ? ma : mb, r.nextDouble()));
-      mother.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? ma : mb, 0, 0, 0.1, r.nextDouble(), true, false, false, false));
+      mother.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? ma : mb, 0, 0, 0.1, r.nextDouble(), true, false, true, false, false));
     }
     mother.freeze();
     // Note: this always does Mendelian valid children
@@ -93,7 +93,7 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
       final ModelInterface<?> child = models.get(i + Family.FIRST_CHILD_INDEX);
       for (int j = 0; j < cc; ++j) {
         //incrementCats(child, new ProbabilityQ(r.nextBoolean() ? ca : cb, r.nextDouble()));
-        child.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? ca : cb, 0, 0, 0.1, r.nextDouble(), true, false, false, false));
+        child.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? ca : cb, 0, 0, 0.1, r.nextDouble(), true, false, true, false, false));
       }
       child.freeze();
     }

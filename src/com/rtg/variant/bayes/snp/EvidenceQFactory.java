@@ -20,7 +20,7 @@ import com.rtg.variant.util.VariantUtils;
  */
 public final class EvidenceQFactory implements CachedEvidenceFactory {
 
-  private static final int NUM_STATES = 6;
+  private static final int NUM_STATES = 10;
   private static final int NUM_HYPOTHESIS = 4;
   private static final int MAX_MAPQ = 255;
   private static final int MAX_PHRED = 64;
@@ -29,13 +29,16 @@ public final class EvidenceQFactory implements CachedEvidenceFactory {
   static {
     MEMO = new EvidenceInterface[NUM_STATES][NUM_HYPOTHESIS][MAX_MAPQ][MAX_PHRED];
     for (int s = 0; s < NUM_STATES; ++s) {
+      final boolean isForward = s >= 5;
+      final int t = s % 5;
+      final boolean isReadPaired = t > 0;
+      final boolean isFirst = !isReadPaired || t > 2;
+      final boolean isMated = isReadPaired && (t & 1) == 0;
+      //System.out.println(s + " " + isForward + " " + isReadPaired + " " + isFirst + " " + isMated);
       for (int i = 0; i < NUM_HYPOTHESIS; ++i) {
         for (int j = 0; j < MAX_MAPQ; ++j) {
           for (int k = 0; k < MAX_PHRED; ++k) {
-            final boolean isForward = s >= 3;
-            final boolean isReadPaired = (s % 3) >= 1;
-            final boolean isMated = (s % 3) == 2;
-            MEMO[s][i][j][k] = new EvidenceQ(DescriptionSnp.SINGLETON, i, VariantUtils.phredToProb(j), VariantUtils.phredToProb(k), isForward, isReadPaired, isMated, false);
+            MEMO[s][i][j][k] = new EvidenceQ(DescriptionSnp.SINGLETON, i, VariantUtils.phredToProb(j), VariantUtils.phredToProb(k), isForward, isReadPaired, isFirst, isMated, false);
           }
         }
       }
@@ -43,7 +46,7 @@ public final class EvidenceQFactory implements CachedEvidenceFactory {
   }
 
   /** Piece of evidence for an unmapped nucleotide. */
-  private static final EvidenceInterface UNMAPPED = new EvidenceQ(DescriptionSnp.SINGLETON, 0, 1.0, 0, false, false, false, true); // most values irrelevant
+  private static final EvidenceInterface UNMAPPED = new EvidenceQ(DescriptionSnp.SINGLETON, 0, 1.0, 0, false, false, true, false, true); // most values irrelevant
 
   @Override
   public EvidenceInterface evidence(int readNt, int readBasesLeft, int readBaseRight, int mapQ, int phred, int stateIndex, int maxIndelLength, boolean isUnmapped) {
@@ -59,28 +62,37 @@ public final class EvidenceQFactory implements CachedEvidenceFactory {
 
   /*
    * Possible states:
-   * 0 - isForward=false, isReadPaired=false, isMated=false
-   * 1 - isForward=false, isReadPaired=true, isMated=false
-   * 2 - isForward=false, isReadPaired=true, isMated=true
-   * 3 - isForward=true, isReadPaired=false, isMated=false
-   * 4 - isForward=true, isReadPaired=true, isMated=false
-   * 5 - isForward=true, isReadPaired=true, isMated=true
+   * 0 - isForward=false, isReadPaired=false, isFirst=true, isMated=false
+   * 1 - isForward=false, isReadPaired=true, isFirst=false, isMated=false
+   * 2 - isForward=false, isReadPaired=true, isFirst=false, isMated=true
+   * 3 - isForward=false, isReadPaired=true, isFirst=true, isMated=false
+   * 4 - isForward=false, isReadPaired=true, isFirst=true, isMated=true
+   * 5 - isForward=true, isReadPaired=false, isFirst=true, isMated=false
+   * 6 - isForward=true, isReadPaired=true, isFirst=false, isMated=false
+   * 7 - isForward=true, isReadPaired=true, isFirst=false, isMated=true
+   * 8 - isForward=true, isReadPaired=true, isFirst=true, isMated=false
+   * 9 - isForward=true, isReadPaired=true, isFirst=true, isMated=true
    * Illegal states:
    * isForward=true/false, isReadPaired=false, isMated = true
+   * isForward=true/false, isReadPaired=false, isFirst = false
    */
   @Override
-  public int getStateIndex(boolean isForward, boolean isReadPaired, boolean isMated) {
+  public int getStateIndex(boolean isForward, boolean isReadPaired, boolean isFirst, boolean isMated) {
     int index = 0;
     if (isForward) {
-      index += 3;
+      index += 5;
     }
     if (isReadPaired) {
       ++index;
+      if (isFirst) {
+        index += 2;
+      }
       if (isMated) {
         ++index;
       }
     } else {
       assert !isMated;
+      assert isFirst;
     }
     return index;
   }

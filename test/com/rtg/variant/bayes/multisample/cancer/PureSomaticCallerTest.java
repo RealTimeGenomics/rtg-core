@@ -94,7 +94,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     final byte[] ref = new byte[14];
     ref[12] = DNARange.T;
     ref[13] = refNt;
-    final Evidence ev = new EvidenceQ(hypotheses.description(), 0, 0, 0, 0.01, 0.01, true, false, false, false);
+    final Evidence ev = new EvidenceQ(hypotheses.description(), 0, 0, 0, 0.01, 0.01, true, false, true, false, false);
     model0.increment(ev);
     model1.increment(ev);
     final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();
@@ -128,8 +128,8 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     ref[12] = DNARange.T;
     ref[13] = refNt;
 
-    final Evidence eva = new EvidenceQ(hypotheses.description(), 0, 0, 0, 0.001, 0.001, true, false, false, false);
-    final Evidence evc = new EvidenceQ(hypotheses.description(), 1, 0, 0, 0.001, 0.001, true, false, false, false);
+    final Evidence eva = new EvidenceQ(hypotheses.description(), 0, 0, 0, 0.001, 0.001, true, false, true, false, false);
+    final Evidence evc = new EvidenceQ(hypotheses.description(), 1, 0, 0, 0.001, 0.001, true, false, true, false, false);
 
     for (int coverage = 0; coverage < 10; ++coverage) {
       model0.increment(eva);

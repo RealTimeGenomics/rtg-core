@@ -129,13 +129,13 @@ public class CancerConvergenceTest extends TestCase {
 
       for (int k = 0; k < maxCoverage; ++k) {
         final boolean noise = r.nextDouble() < noiseLevel;
-        final EvidenceInterface evidence = new EvidenceQ(DescriptionSnp.SINGLETON, noise ? randomNot(r, r.nextBoolean() ? normal1 : normal2) : r.nextBoolean() ? normal1 : normal2, 0, 0, MAPQ_PROB, PHREAD_PROB, true, false, false, false);
+        final EvidenceInterface evidence = new EvidenceQ(DescriptionSnp.SINGLETON, noise ? randomNot(r, r.nextBoolean() ? normal1 : normal2) : r.nextBoolean() ? normal1 : normal2, 0, 0, MAPQ_PROB, PHREAD_PROB, true, false, true, false, false);
         normalModel.increment(evidence);
         if (r.nextDouble() < contamination) {
-          final EvidenceInterface evidence1 = new EvidenceQ(DescriptionSnp.SINGLETON, noise ? randomNot(r, r.nextBoolean() ? normal1 : normal2) : r.nextBoolean() ? normal1 : normal2, 0, 0, MAPQ_PROB, PHREAD_PROB, true, false, false, false);
+          final EvidenceInterface evidence1 = new EvidenceQ(DescriptionSnp.SINGLETON, noise ? randomNot(r, r.nextBoolean() ? normal1 : normal2) : r.nextBoolean() ? normal1 : normal2, 0, 0, MAPQ_PROB, PHREAD_PROB, true, false, true, false, false);
           cancerModel.increment(evidence1);
         } else {
-          final EvidenceInterface evidence1 = new EvidenceQ(DescriptionSnp.SINGLETON, noise ? randomNot(r, r.nextBoolean() ? cancer1 : cancer2) : r.nextBoolean() ? cancer1 : cancer2, 0, 0, MAPQ_PROB, PHREAD_PROB, true, false, false, false);
+          final EvidenceInterface evidence1 = new EvidenceQ(DescriptionSnp.SINGLETON, noise ? randomNot(r, r.nextBoolean() ? cancer1 : cancer2) : r.nextBoolean() ? cancer1 : cancer2, 0, 0, MAPQ_PROB, PHREAD_PROB, true, false, true, false, false);
           cancerModel.increment(evidence1);
         }
         final List<ModelInterface<?>> models = new ArrayList<>();

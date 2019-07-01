@@ -54,7 +54,7 @@ public abstract class AbstractStatisticsTest extends TestCase {
   }
 
   static EvidenceInterface di(final int read, final int score, double r, boolean forward, boolean pairedRead, boolean mated) {
-    return new EvidenceQ(DescriptionSnp.SINGLETON, read, 0, 0, r, VariantUtils.phredToProb(score), forward, pairedRead, mated, false);
+    return new EvidenceQ(DescriptionSnp.SINGLETON, read, 0, 0, r, VariantUtils.phredToProb(score), forward, pairedRead, true, mated, false);
   }
 
   public void testAmbiguity1() {

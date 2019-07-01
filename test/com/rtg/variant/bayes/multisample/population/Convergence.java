@@ -183,7 +183,7 @@ public class Convergence {
       final Hypotheses<?> hyp = model.hypotheses();
       final int read0 = choose(mSample[i], hyp, mRandom);
       final int read = error(0.01, read0, mHaploid, mRandom);
-      final EvidenceInterface ev = new EvidenceQ(mDescription, read, 0, 0, 0.01, mErrorRate, true, false, false, false);
+      final EvidenceInterface ev = new EvidenceQ(mDescription, read, 0, 0, 0.01, mErrorRate, true, false, true, false, false);
       model.increment(ev);
     }
     final List<ModelInterface<?>> models = mModels.stream().map(ModelInterface::copy).collect(Collectors.toList());

@@ -44,8 +44,9 @@ public interface MatcherInterface {
   /**
    * @param isForward true if mapped in forward frame, false otherwise
    * @param isReadPaired true if mapping is from a paired read, false otherwise
+   * @param isFirst true if the mappings is single end of first of pair
    * @param isMated true if mapping from a paired read which is mated, false otherwise
    * @return the state index to pass to the match method
    */
-  int getStateIndex(boolean isForward, boolean isReadPaired, boolean isMated);
+  int getStateIndex(boolean isForward, boolean isReadPaired, boolean isFirst, boolean isMated);
 }

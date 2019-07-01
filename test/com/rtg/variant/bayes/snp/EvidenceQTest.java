@@ -39,7 +39,7 @@ public class EvidenceQTest extends TestCase {
   }
 
   public void test() {
-    final Evidence dq = new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.3, 0.1, true, false, false, false);
+    final Evidence dq = new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.3, 0.1, true, false, true, false, false);
     dq.integrity();
 
     check(dq, 0.1 / 3.0, 0);
@@ -55,7 +55,7 @@ public class EvidenceQTest extends TestCase {
   }
 
   public void testUnmapped() {
-    final Evidence dq = new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.3, 0.1, true, false, false, true);
+    final Evidence dq = new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.3, 0.1, true, false, true, false, true);
     assertTrue(dq.isUnmapped());
   }
 }

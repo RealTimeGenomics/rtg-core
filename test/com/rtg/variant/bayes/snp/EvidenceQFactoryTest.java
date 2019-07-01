@@ -28,7 +28,7 @@ public class EvidenceQFactoryTest extends TestCase {
   public void test() {
     Diagnostic.setLogStream();
     final CachedEvidenceFactory fact = new EvidenceQFactory();
-    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(true, false, false), 0, false);
+    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(true, false, true, false), 0, false);
     assertTrue(p instanceof EvidenceQ);
     assertEquals(0.1, p.mapError());
     assertEquals(2, p.read());
@@ -41,7 +41,7 @@ public class EvidenceQFactoryTest extends TestCase {
 
   public void testNotForward() {
     final CachedEvidenceFactory fact = new EvidenceQFactory();
-    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(false, false, false), 0, false);
+    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(false, false, true, false), 0, false);
     assertTrue(p instanceof EvidenceQ);
     assertEquals(0.1, p.mapError());
     assertEquals(2, p.read());
@@ -54,7 +54,7 @@ public class EvidenceQFactoryTest extends TestCase {
 
   public void testHighPhred() {
     final CachedEvidenceFactory fact = new EvidenceQFactory();
-    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 64, fact.getStateIndex(true, false, false), 0, false);
+    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 64, fact.getStateIndex(true, false, true, false), 0, false);
     assertTrue(p instanceof EvidenceQ);
     assertEquals(0.1, p.mapError());
     assertEquals(2, p.read());
@@ -67,7 +67,7 @@ public class EvidenceQFactoryTest extends TestCase {
 
   public void testHighPhredNotForward() {
     final CachedEvidenceFactory fact = new EvidenceQFactory();
-    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 65, fact.getStateIndex(false, false, false), 0, false);
+    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 65, fact.getStateIndex(false, false, true, false), 0, false);
     assertTrue(p instanceof EvidenceQ);
     assertEquals(0.1, p.mapError());
     assertEquals(2, p.read());
@@ -81,7 +81,7 @@ public class EvidenceQFactoryTest extends TestCase {
   public void testForwardUnmated() {
     Diagnostic.setLogStream();
     final CachedEvidenceFactory fact = new EvidenceQFactory();
-    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(true, true, false), 0, false);
+    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(true, true, true, false), 0, false);
     assertTrue(p instanceof EvidenceQ);
     assertEquals(0.1, p.mapError());
     assertEquals(2, p.read());
@@ -95,7 +95,7 @@ public class EvidenceQFactoryTest extends TestCase {
   public void testForwardMated() {
     Diagnostic.setLogStream();
     final CachedEvidenceFactory fact = new EvidenceQFactory();
-    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(true, true, true), 0, false);
+    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(true, true, true, true), 0, false);
     assertTrue(p instanceof EvidenceQ);
     assertEquals(0.1, p.mapError());
     assertEquals(2, p.read());
@@ -109,7 +109,7 @@ public class EvidenceQFactoryTest extends TestCase {
   public void testNotForwardUnmated() {
     Diagnostic.setLogStream();
     final CachedEvidenceFactory fact = new EvidenceQFactory();
-    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(false, true, false), 0, false);
+    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(false, true, true, false), 0, false);
     assertTrue(p instanceof EvidenceQ);
     assertEquals(0.1, p.mapError());
     assertEquals(2, p.read());
@@ -123,7 +123,7 @@ public class EvidenceQFactoryTest extends TestCase {
   public void testNotForwardMated() {
     Diagnostic.setLogStream();
     final CachedEvidenceFactory fact = new EvidenceQFactory();
-    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(false, true, true), 0, false);
+    final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, fact.getStateIndex(false, true, true, true), 0, false);
     assertTrue(p instanceof EvidenceQ);
     assertEquals(0.1, p.mapError());
     assertEquals(2, p.read());
@@ -145,11 +145,15 @@ public class EvidenceQFactoryTest extends TestCase {
 
   public void testGetStateIndex() {
     final CachedEvidenceFactory fact = new EvidenceQFactory();
-    assertEquals(0, fact.getStateIndex(false, false, false));
-    assertEquals(1, fact.getStateIndex(false, true, false));
-    assertEquals(2, fact.getStateIndex(false, true, true));
-    assertEquals(3, fact.getStateIndex(true, false, false));
-    assertEquals(4, fact.getStateIndex(true, true, false));
-    assertEquals(5, fact.getStateIndex(true, true, true));
+    assertEquals(0, fact.getStateIndex(false, false, true, false));
+    assertEquals(1, fact.getStateIndex(false, true, false, false));
+    assertEquals(2, fact.getStateIndex(false, true, false, true));
+    assertEquals(3, fact.getStateIndex(false, true, true, false));
+    assertEquals(4, fact.getStateIndex(false, true, true, true));
+    assertEquals(5, fact.getStateIndex(true, false, true, false));
+    assertEquals(6, fact.getStateIndex(true, true, false, false));
+    assertEquals(7, fact.getStateIndex(true, true, false, true));
+    assertEquals(8, fact.getStateIndex(true, true, true, false));
+    assertEquals(9, fact.getStateIndex(true, true, true, true));
   }
 }

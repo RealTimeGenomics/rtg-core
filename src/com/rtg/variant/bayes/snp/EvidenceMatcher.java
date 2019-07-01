@@ -57,8 +57,8 @@ public class EvidenceMatcher<D extends EvidenceAcceptor> implements MatcherInter
   }
 
   @Override
-  public int getStateIndex(boolean isForward, boolean isReadPaired, boolean isMated) {
-    return mCachedEvidenceFactory.getStateIndex(isForward, isReadPaired, isMated);
+  public int getStateIndex(boolean isForward, boolean isReadPaired, boolean isFirst, boolean isMated) {
+    return mCachedEvidenceFactory.getStateIndex(isForward, isReadPaired, isFirst, isMated);
   }
 
   /**

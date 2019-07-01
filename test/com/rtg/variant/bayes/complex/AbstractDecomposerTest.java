@@ -88,7 +88,7 @@ public abstract class AbstractDecomposerTest extends TestCase {
 
   static void increment(DescriptionCommon description, StatisticsComplex stats, int read, int count) {
     for (int i = 0; i < count; ++i) {
-      stats.increment(new EvidenceQ(description, read, 2, 2, 0.1, 0.1, true, true, true, false), 0);
+      stats.increment(new EvidenceQ(description, read, 2, 2, 0.1, 0.1, true, true, true, true, false), 0);
     }
   }
 

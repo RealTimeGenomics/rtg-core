@@ -82,6 +82,11 @@ public interface EvidenceInterface {
   boolean isReadPaired();
 
   /**
+   * @return if the evidence is from the first read of a pair
+   */
+  boolean isFirst();
+
+  /**
    * @return if the evidence is from a properly mated paired read
    */
   boolean isMated();

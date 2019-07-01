@@ -32,7 +32,7 @@ public class ModelCancerAlleleFactoryTest extends TestCase {
     mf.globalIntegrity();
     final ModelInterface<Description> mo = mf.make(refNt);
     assertEquals(15, mo.size());
-    final EvidenceInterface di = new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, 0.1, 0.1, true, false, false, false);
+    final EvidenceInterface di = new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, 0.1, 0.1, true, false, true, false, false);
     mo.increment(di);
   }
 

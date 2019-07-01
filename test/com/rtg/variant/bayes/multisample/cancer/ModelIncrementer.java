@@ -41,7 +41,7 @@ class ModelIncrementer<D extends Description> {
   }
   final ModelIncrementer<D> doRead(final int readNt, double quality, double mapQuality) {
     for (final ModelInterface<D> m : mModels) {
-        final Evidence ev = new EvidenceQ(m.description(), readNt, 0, 0, mapQuality, quality, true, false, false, false);
+        final Evidence ev = new EvidenceQ(m.description(), readNt, 0, 0, mapQuality, quality, true, false, true, false, false);
         m.increment(ev);
     }
     return this;

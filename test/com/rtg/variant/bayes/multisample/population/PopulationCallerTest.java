@@ -103,7 +103,7 @@ public class PopulationCallerTest extends TestCase {
   public static <T extends Description> void increment(ModelInterface<T> b, String s, double r, double q) {
     for (int i = 0; i < s.length(); ++i) {
       final char val = s.charAt(i);
-      b.increment(new EvidenceQ(DescriptionSnp.SINGLETON, DNA.valueOf(val).ordinal() - 1, 0, 0, r, q, true, false, false, false));
+      b.increment(new EvidenceQ(DescriptionSnp.SINGLETON, DNA.valueOf(val).ordinal() - 1, 0, 0, r, q, true, false, true, false, false));
     }
   }
 

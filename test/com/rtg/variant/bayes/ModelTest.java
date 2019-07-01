@@ -439,7 +439,7 @@ public class ModelTest extends TestCase {
     final MockModel<?> ba = new MockModel<>(hy, new StatisticsSnp(hy.description()), null);
     ba.integrity();
 
-    final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 0, 0, 0, 0.1, 0.1, true, false, false, false);
+    final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 0, 0, 0, 0.1, 0.1, true, false, true, false, false);
     for (int i = 0; i < 4; ++i) {
       ba.increment(di);
     }
@@ -454,7 +454,7 @@ public class ModelTest extends TestCase {
     final MockModel<?> ba = new MockModel<>(hy, new StatisticsSnp(hy.description()), null);
     ba.integrity();
 
-    final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.1, 0.1, true, false, false, false);
+    final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.1, 0.1, true, false, true, false, false);
     for (int i = 0; i < 4; ++i) {
       ba.increment(di);
     }
@@ -481,7 +481,7 @@ public class ModelTest extends TestCase {
     final MockModel<?> ba = new MockModel<>(hy, new StatisticsSnp(hy.description()), null);
     ba.integrity();
 
-    final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.1, 0.1, true, false, false, false);
+    final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.1, 0.1, true, false, true, false, false);
     for (int i = 0; i < evidenceCount; ++i) {
       ba.increment(di);
     }
@@ -535,12 +535,12 @@ public class ModelTest extends TestCase {
     final MockModel<?> ba = new MockModel<>(hy, new StatisticsSnp(hy.description()), null);
     ba.integrity();
 
-    final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.49, 0.1, true, false, false, false);
+    final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.49, 0.1, true, false, true, false, false);
     for (int i = 0; i < 9; ++i) {
       ba.increment(di);
     }
 
-    final EvidenceInterface di1 = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.51, 0.1, true, false, false, false);
+    final EvidenceInterface di1 = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.51, 0.1, true, false, true, false, false);
     for (int i = 0; i < ihCount; ++i) {
       ba.increment(di1);
     }
@@ -577,7 +577,7 @@ public class ModelTest extends TestCase {
   }
 
   public void testAmbiguityShortcut() {
-    assertFalse(new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.3, 0.7, true, false, false, false).mapError() >= Model.AMBIGUITY_THRESHOLD);
-    assertTrue(new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.51, 0.8, true, false, false, false).mapError() >= Model.AMBIGUITY_THRESHOLD);
+    assertFalse(new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.3, 0.7, true, false, true, false, false).mapError() >= Model.AMBIGUITY_THRESHOLD);
+    assertTrue(new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.51, 0.8, true, false, true, false, false).mapError() >= Model.AMBIGUITY_THRESHOLD);
   }
 }

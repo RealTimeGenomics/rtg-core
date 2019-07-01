@@ -73,6 +73,11 @@ public class EvidenceTest extends TestCase {
     }
 
     @Override
+    public boolean isFirst() {
+      return true;
+    }
+
+    @Override
     public boolean isMated() {
       return false;
     }

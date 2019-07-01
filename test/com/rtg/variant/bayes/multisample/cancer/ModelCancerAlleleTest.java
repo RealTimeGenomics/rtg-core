@@ -52,7 +52,7 @@ public class ModelCancerAlleleTest extends TestCase {
     final HypothesesPowerSet<Description> hypc = new HypothesesPowerSet<>(desc, SimplePossibility.SINGLETON, 0);
     final ModelCancerAllele<Description> model = new ModelCancerAllele<>(hypc, new StatisticsSnp(hypc.description()));
     model.integrity();
-    final Evidence evg = new EvidenceQ(desc, 2, 0, 0, 0.05, 0.05, true, false, false, false);
+    final Evidence evg = new EvidenceQ(desc, 2, 0, 0, 0.05, 0.05, true, false, true, false, false);
     model.increment(evg);
     assertEquals(EXPECT_1G, model.toString());
     model.integrity();

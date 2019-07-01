@@ -33,8 +33,8 @@ public class AlleleStatisticsIntTest extends AbstractAlleleStatisticsTest<Allele
 
   public void testQa() {
     final AlleleStatisticsInt alleleStatistics = getAlleleStatistics(DescriptionSnp.SINGLETON);
-    alleleStatistics.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0.1, 0.1, true, true, true, false), 1, 0.1);
-    alleleStatistics.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0.1, 0.1, true, true, true, false), 1, 0.1);
+    alleleStatistics.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0.1, 0.1, true, true, true, true, false), 1, 0.1);
+    alleleStatistics.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0.1, 0.1, true, true, true, true, false), 1, 0.1);
     assertEquals(20.0, alleleStatistics.qa(1));
   }
 }

@@ -34,10 +34,11 @@ public interface CachedEvidenceFactory {
   EvidenceInterface evidence(int evidence, int readBasesLeft, int readBasesRight, int mapQ, int phred, int stateIndex, int maxIndelLength, boolean isUnmapped);
 
   /**
-   * @param isForward true if mapped in forward frame, false otherwise
-   * @param isReadPaired true if mapping is from a paired read, false otherwise
-   * @param isMated true if mapping from a paired read which is mated, false otherwise
+   * @param isForward true iff mapped in forward frame
+   * @param isReadPaired true iff mapping is from a paired read
+   * @param isFirst true iff the read in unpaired or the first of a pair
+   * @param isMated true iff mapping from a paired read which is mated
    * @return the state index to pass to the evidence method
    */
-  int getStateIndex(boolean isForward, boolean isReadPaired, boolean isMated);
+  int getStateIndex(boolean isForward, boolean isReadPaired, boolean isFirst, boolean isMated);
 }

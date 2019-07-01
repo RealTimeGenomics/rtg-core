@@ -45,13 +45,13 @@ public abstract class AbstractAlleleStatisticsTest<T extends AlleleStatistics<T>
   public void test1() {
     final T cn = getAlleleStatistics(DescriptionSnp.SINGLETON);
     //System.err.println(cn.toString());
-    final EvidenceInterface di = new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.0, VariantUtils.phredToProb(3), true, false, false, false);
+    final EvidenceInterface di = new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.0, VariantUtils.phredToProb(3), true, false, true, false, false);
     incrementAlleleStatistics(cn, di);
     TestUtils.containsAll(cn.toString(), " [0]  0  0.000 [1]  1  0.501 [2]  0  0.000 [3]  0  0.000");
   }
 
   EvidenceInterface di(final int read, final int score, double r) {
-    return new EvidenceQ(DescriptionSnp.SINGLETON, read, 0, 0, r, VariantUtils.phredToProb(score), true, false, false, false);
+    return new EvidenceQ(DescriptionSnp.SINGLETON, read, 0, 0, r, VariantUtils.phredToProb(score), true, false, true, false, false);
   }
 
   public void test2() {
@@ -125,10 +125,10 @@ public abstract class AbstractAlleleStatisticsTest<T extends AlleleStatistics<T>
 
   }
   EvidenceInterface diPaired(final int read, final int score, double r, boolean mated) {
-    return new EvidenceQ(DescriptionSnp.SINGLETON, read, 0, 0, r, VariantUtils.phredToProb(score), true, true, mated, false);
+    return new EvidenceQ(DescriptionSnp.SINGLETON, read, 0, 0, r, VariantUtils.phredToProb(score), true, true, true, mated, false);
   }
   EvidenceInterface diStrand(final int read, final int score, double r, boolean forward) {
-    return new EvidenceQ(DescriptionSnp.SINGLETON, read, 0, 0, r, VariantUtils.phredToProb(score), forward, true, true, false);
+    return new EvidenceQ(DescriptionSnp.SINGLETON, read, 0, 0, r, VariantUtils.phredToProb(score), forward, true, true, true, false);
   }
   public void testAlleleBalance() {
     final T cn = getAlleleStatistics(DescriptionSnp.SINGLETON);

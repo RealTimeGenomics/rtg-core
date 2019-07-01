@@ -88,6 +88,11 @@ public class EvidenceWrapper extends Evidence {
   }
 
   @Override
+  public boolean isFirst() {
+    return true;
+  }
+
+  @Override
   public boolean isMated() {
     return false;
   }

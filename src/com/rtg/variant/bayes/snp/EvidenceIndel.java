@@ -98,6 +98,11 @@ public final class EvidenceIndel implements EvidenceInterface {
   }
 
   @Override
+  public boolean isFirst() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public boolean isMated() {
     throw new UnsupportedOperationException();
   }

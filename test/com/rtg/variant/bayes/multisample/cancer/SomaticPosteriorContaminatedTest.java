@@ -62,8 +62,8 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
     final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, contamination, new StatisticsSnp(hypc.description()), new NoAlleleBalance());
     final ModelInterface<Description> normal = new Model<>(simpleHomoHyps, new StatisticsSnp(simpleHomoHyps.description()), new NoAlleleBalance());
     // run through several identical reads
-    final Evidence evc = new EvidenceQ(simpleHomoHyps.description(), 1, 0, 0, 0.05, 0.05, true, false, false, false);
-    final Evidence evg = new EvidenceQ(simpleHomoHyps.description(), 2, 0, 0, 0.05, 0.05, true, false, false, false);
+    final Evidence evc = new EvidenceQ(simpleHomoHyps.description(), 1, 0, 0, 0.05, 0.05, true, false, true, false, false);
+    final Evidence evg = new EvidenceQ(simpleHomoHyps.description(), 2, 0, 0, 0.05, 0.05, true, false, true, false, false);
 
     for (int i = 0; i < numReads; ++i) {
       cancer.increment(evg);
@@ -109,7 +109,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
     final Hypotheses<Description> simpleHomoHyps = AbstractSomaticCallerTest.simpleHyps(0.99, refCode, Ploidy.HAPLOID);
     final HypothesesCancer<Hypotheses<Description>> hypc = new HypothesesCancer<>(simpleHomoHyps, SimplePossibility.SINGLETON);
     final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, 0.0, new StatisticsSnp(hypc.description()), new NoAlleleBalance());
-    final Evidence eva = new EvidenceQ(simpleHomoHyps.description(), 0, 0, 0, 0.05, 0.05, true, false, false, false);
+    final Evidence eva = new EvidenceQ(simpleHomoHyps.description(), 0, 0, 0, 0.05, 0.05, true, false, true, false, false);
     // run through several identical reads
     for (int i = 0; i < numReads; ++i) {
       cancer.increment(eva);

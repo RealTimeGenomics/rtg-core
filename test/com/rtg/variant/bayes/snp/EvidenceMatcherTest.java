@@ -94,7 +94,7 @@ public class EvidenceMatcherTest extends TestCase {
     final int phred = 63;
     final double q = VariantUtils.phredToProb(phred);
 
-    final EvidenceQ evid = new EvidenceQ(DESC, 1, 0, 0, q, q, true, false, false, false);
+    final EvidenceQ evid = new EvidenceQ(DESC, 1, 0, 0, q, q, true, false, true, false, false);
     bm.match(0, evid);
     bm.match(1, evid);
     bm.match(2, evid);
@@ -104,8 +104,8 @@ public class EvidenceMatcherTest extends TestCase {
     bm.match(0, evid);
 
     //the other calls
-    bm.match(1, 0, 0, 0, phred, phred, bm.getStateIndex(true, false, false));
-    bm.match(1, 0, 0, 1, phred, phred, bm.getStateIndex(true, false, false));
+    bm.match(1, 0, 0, 0, phred, phred, bm.getStateIndex(true, false, true, false));
+    bm.match(1, 0, 0, 1, phred, phred, bm.getStateIndex(true, false, true, false));
 
     assertEquals(EXP1, bm.toString());
     final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();

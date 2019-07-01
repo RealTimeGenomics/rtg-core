@@ -80,7 +80,7 @@ public class CigarParserModel implements ReadParserInterface {
     mParser.setTemplateStart(var.getStart());
     mParser.setTemplate(templateBytes);
     mParser.setQualities(qualities);
-    mParser.setAdditional(machineType, getReadScore(var), qdefault, var.isFirst(), !var.isNegativeStrand(), var.isReadPaired(), var.isMated(), var.isUnmapped());
+    mParser.setAdditional(machineType, getReadScore(var), qdefault, !var.isReadPaired() || var.isFirst(), !var.isNegativeStrand(), var.isReadPaired(), var.isMated(), var.isUnmapped());
 
     mParser.parse();
   }
@@ -91,6 +91,7 @@ public class CigarParserModel implements ReadParserInterface {
 
     private boolean mIsForward;
     private boolean mIsReadPaired;
+    private boolean mIsFirst;
     private boolean mIsMated;
     private byte[] mQualities = null;
     private boolean mCgTrimOuterBases;
@@ -134,6 +135,7 @@ public class CigarParserModel implements ReadParserInterface {
         || machineType == MachineType.COMPLETE_GENOMICS_2 && isForward;
       mIsForward = isForward;
       mIsReadPaired = isReadPaired;
+      mIsFirst = isFirst;
       mIsMated = isMated;
       mIsUnmapped = isUnmapped;
     }
@@ -207,7 +209,7 @@ public class CigarParserModel implements ReadParserInterface {
       final boolean should = includeBase(readPosition);
       final int templatePosition = getTemplatePosition();
       if (should && mStart <= templatePosition && templatePosition < mEnd) {
-        mMatcherNt.match(templatePosition, readPosition, getReadLength() - readPosition - 1, readNt, mMapScore, getCurrentQuality(), mMatcherNt.getStateIndex(mIsForward, mIsReadPaired, mIsMated));
+        mMatcherNt.match(templatePosition, readPosition, getReadLength() - readPosition - 1, readNt, mMapScore, getCurrentQuality(), mMatcherNt.getStateIndex(mIsForward, mIsReadPaired, mIsFirst, mIsMated));
         if (mMatcherIndel != null) { //for coverage-sensitive indel triggering, we create a dummy match for the indels to compute coverage down deeper.
           mMatcherIndel.match(templatePosition, null);
         }

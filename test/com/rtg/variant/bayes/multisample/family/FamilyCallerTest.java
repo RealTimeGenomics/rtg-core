@@ -137,7 +137,7 @@ public class FamilyCallerTest extends AbstractNanoTest {
   static void increment(ModelInterface<?> b, String s) {
     for (int i = 0; i < s.length(); ++i) {
       final char val = s.charAt(i);
-      b.increment(new EvidenceQ(DescriptionSnp.SINGLETON, DNA.valueOf(val).ordinal() - 1, 0, 0, 0.1, 0.1, true, false, false, false));
+      b.increment(new EvidenceQ(DescriptionSnp.SINGLETON, DNA.valueOf(val).ordinal() - 1, 0, 0, 0.1, 0.1, true, false, true, false, false));
     }
   }
 

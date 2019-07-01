@@ -46,7 +46,7 @@ public class ModelCancerContaminationTest extends TestCase {
     final Description desc = hypc.subHypotheses().description();
     final ModelCancerContamination<Hypotheses<Description>> model = new ModelCancerContamination<>(hypc, 0.2, new StatisticsSnp(hypc.description()), new NoAlleleBalance());
     model.integrity();
-    final Evidence evg = new EvidenceQ(desc, 2, 0, 0, 0.05, 0.05, true, false, false, false);
+    final Evidence evg = new EvidenceQ(desc, 2, 0, 0, 0.05, 0.05, true, false, true, false, false);
     model.increment(evg);
     assertEquals(EXPECT_1G, model.toString());
     model.integrity();

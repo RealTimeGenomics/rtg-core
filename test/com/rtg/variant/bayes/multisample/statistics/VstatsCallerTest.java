@@ -95,7 +95,7 @@ public class VstatsCallerTest extends TestCase {
     try {
       final VariantParams p = getOutputParams(tempDir);
       for (int i = 0; i < 10; ++i) {
-        list.get(0).increment(new EvidenceQ(hypotheses.description(), 3, 0, 0, 0.01, 0.1, true, false, false, false));
+        list.get(0).increment(new EvidenceQ(hypotheses.description(), 3, 0, 0, 0.01, 0.1, true, false, true, false, false));
       }
       final VstatsCaller sc = new VstatsCaller(p);
       for (int i = 0; i < 5; ++i) {
@@ -161,10 +161,10 @@ public class VstatsCallerTest extends TestCase {
 
   private void updateModels(final MockHypotheses<Description> hypotheses, final List<ModelInterface<?>> listA, final List<ModelInterface<?>> listB) {
     for (int i = 0; i < 10; ++i) {
-      listA.get(0).increment(new EvidenceQ(hypotheses.description(), 3, 0, 0, 0.01, 0.1, true, false, false, false));
+      listA.get(0).increment(new EvidenceQ(hypotheses.description(), 3, 0, 0, 0.01, 0.1, true, false, true, false, false));
     }
     for (int i = 0; i < 5; ++i) {
-      listB.get(0).increment(new EvidenceQ(hypotheses.description(), 2, 0, 0, 0.01, 0.1, true, false, false, false));
+      listB.get(0).increment(new EvidenceQ(hypotheses.description(), 2, 0, 0, 0.01, 0.1, true, false, true, false, false));
     }
   }
 

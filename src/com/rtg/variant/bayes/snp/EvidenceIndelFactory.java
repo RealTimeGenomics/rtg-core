@@ -55,7 +55,7 @@ public final class EvidenceIndelFactory implements CachedEvidenceFactory {
 
   // This one does not care about any of these states.
   @Override
-  public int getStateIndex(boolean isForward, boolean isReadPaired, boolean isMated) {
+  public int getStateIndex(boolean isForward, boolean isReadPaired, boolean isFirst, boolean isMated) {
     return 0;
   }
 }

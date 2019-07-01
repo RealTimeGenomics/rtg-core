@@ -27,7 +27,7 @@ public class VariantAlleleTriggerTest extends TestCase {
   void evidence(AlleleStatisticsInt stats, int[] counts) {
     for (int read = 0; read < counts.length; ++read) {
       for (int count = 0; count < counts[read]; ++count) {
-        stats.increment(new EvidenceQ(stats.getDescription(), read, 0.1, 0.1, true, true, true, true), read, 0.1);
+        stats.increment(new EvidenceQ(stats.getDescription(), read, 0.1, 0.1, true, true, true, true, true), read, 0.1);
       }
     }
   }

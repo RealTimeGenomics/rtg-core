@@ -41,7 +41,7 @@ public class StatisticsSnpTest extends TestCase {
   }
 
   private static EvidenceInterface di(final int read, final int score, double r, boolean unmapped) {
-    return new EvidenceQ(DescriptionSnp.SINGLETON, read, 0, 0, r, VariantUtils.phredToProb(score), true, false, false, unmapped);
+    return new EvidenceQ(DescriptionSnp.SINGLETON, read, 0, 0, r, VariantUtils.phredToProb(score), true, false, true, false, unmapped);
   }
 
   //empty state
