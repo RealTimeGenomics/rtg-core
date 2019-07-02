@@ -21,8 +21,10 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
   /**
    * Counts of different nucleotides.
    */
-  private final double[] mCountsForwards;
-  private final double[] mCountsBackwards;
+  private final double[] mCountsForwards1;
+  private final double[] mCountsForwards2;
+  private final double[] mCountsBackwards1;
+  private final double[] mCountsBackwards2;
   private final double[] mCountsMated;
   private final double[] mCountsUnmated;
 
@@ -43,8 +45,10 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
    */
   public AlleleStatisticsDouble(final Description description) {
     super(description);
-    mCountsForwards = new double[description.size()];
-    mCountsBackwards = new double[description.size()];
+    mCountsForwards1 = new double[description.size()];
+    mCountsForwards2 = new double[description.size()];
+    mCountsBackwards1 = new double[description.size()];
+    mCountsBackwards2 = new double[description.size()];
     mCountsMated = new double[description.size()];
     mCountsUnmated = new double[description.size()];
     mErrors = new double[description.size()];
@@ -62,9 +66,17 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
   public void increment(final EvidenceInterface distribution, int bestHyp, double e, double coverage) {
     assert getDescription().valid(bestHyp) : bestHyp;
     if (distribution.isForward()) {
-      mCountsForwards[bestHyp] += coverage;
+      if (distribution.isFirst()) {
+        mCountsForwards1[bestHyp] += coverage;
+      } else {
+        mCountsForwards2[bestHyp] += coverage;
+      }
     } else {
-      mCountsBackwards[bestHyp] += coverage;
+      if (distribution.isFirst()) {
+        mCountsBackwards1[bestHyp] += coverage;
+      } else {
+        mCountsBackwards2[bestHyp] += coverage;
+      }
     }
     if (distribution.isReadPaired()) {
       if (distribution.isMated()) {
@@ -79,17 +91,27 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
 
   @Override
   public double count(final int index) {
-    return mCountsForwards[index] + mCountsBackwards[index];
+    return forward(index) + backward(index);
   }
 
   @Override
-  public double forward(final int index) {
-    return mCountsForwards[index];
+  public double forward1(final int index) {
+    return mCountsForwards1[index];
   }
 
   @Override
-  public double backward(final int index) {
-    return mCountsBackwards[index];
+  public double forward2(final int index) {
+    return mCountsForwards2[index];
+  }
+
+  @Override
+  public double backward1(final int index) {
+    return mCountsBackwards1[index];
+  }
+
+  @Override
+  public double backward2(final int index) {
+    return mCountsBackwards2[index];
   }
 
   @Override
@@ -105,7 +127,7 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
   @Override
   Double strandBias(int allele) {
     final long trials = MathUtils.round(count(allele));
-    final long observed = MathUtils.round(mCountsForwards[allele]);
+    final long observed = MathUtils.round(forward(allele));
     return MathUtils.hoeffdingPhred(trials, observed, 0.5);
   }
 
@@ -122,8 +144,10 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
     for (int oldI = 0; oldI < mapping.length; ++oldI) {
       final int newI = mapping[oldI];
       if (newI >= 0) {
-        newCounts.mCountsForwards[newI] += mCountsForwards[oldI];
-        newCounts.mCountsBackwards[newI] += mCountsBackwards[oldI];
+        newCounts.mCountsForwards1[newI] += mCountsForwards1[oldI];
+        newCounts.mCountsForwards2[newI] += mCountsForwards2[oldI];
+        newCounts.mCountsBackwards1[newI] += mCountsBackwards1[oldI];
+        newCounts.mCountsBackwards2[newI] += mCountsBackwards2[oldI];
         newCounts.mCountsMated[newI] += mCountsMated[oldI];
         newCounts.mCountsUnmated[newI] += mCountsUnmated[oldI];
         newCounts.mErrors[newI] += mErrors[oldI];

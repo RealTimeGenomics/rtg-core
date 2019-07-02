@@ -96,14 +96,46 @@ public abstract class AlleleStatistics<T extends AlleleStatistics<T>> {
    * @param index whose value to get.
    * @return the count.
    */
-  public abstract double forward(final int index);
+  public double forward(final int index) {
+    return forward1(index) + forward2(index);
+  }
+
+  /**
+   * Get the current R1 forward count for the specified index.
+   * @param index whose value to get.
+   * @return the count.
+   */
+  public abstract double forward1(final int index);
+
+  /**
+   * Get the current R2 forward count for the specified index.
+   * @param index whose value to get.
+   * @return the count.
+   */
+  public abstract double forward2(final int index);
 
   /**
    * Get the current backward count for the specified index.
    * @param index whose value to get.
    * @return the count.
    */
-  public abstract double backward(final int index);
+  public double backward(final int index) {
+    return backward1(index) + backward2(index);
+  }
+
+  /**
+   * Get the current R1 backward count for the specified index.
+   * @param index whose value to get.
+   * @return the count.
+   */
+  public abstract double backward1(final int index);
+
+  /**
+   * Get the current R2 backward count for the specified index.
+   * @param index whose value to get.
+   * @return the count.
+   */
+  public abstract double backward2(final int index);
 
   /**
    * Get the current accumulated for the specified index.
