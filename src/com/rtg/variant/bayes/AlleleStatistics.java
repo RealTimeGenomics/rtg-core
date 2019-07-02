@@ -36,7 +36,7 @@ public abstract class AlleleStatistics<T extends AlleleStatistics<T>> {
 
 
   /**
-   * alleles we have counts for
+   * Alleles we have counts for.
    * @return the description for the alleles
    */
   public final Description getDescription() {

@@ -78,9 +78,9 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
     }
     if (distribution.isReadPaired()) {
       if (distribution.isMated()) {
-        mCountsMated[bestHyp]++;
+        ++mCountsMated[bestHyp];
       } else {
-        mCountsUnmated[bestHyp]++;
+        ++mCountsUnmated[bestHyp];
       }
     }
     mErrors[bestHyp] += e;
