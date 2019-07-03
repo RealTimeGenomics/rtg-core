@@ -123,10 +123,6 @@ public class VariantOutputVcfFormatter {
     mFormatFields.add(VcfFormatField.DPR);
     mFormatFields.add(VcfFormatField.ABP);
     mFormatFields.add(VcfFormatField.SBP);
-    mFormatFields.add(VcfFormatField.ADF1); // todo needs to be optional
-    mFormatFields.add(VcfFormatField.ADF2); // todo needs to be optional
-    mFormatFields.add(VcfFormatField.ADR1); // todo needs to be optional
-    mFormatFields.add(VcfFormatField.ADR2); // todo needs to be optional
     mFormatFields.add(VcfFormatField.RPB);
     mFormatFields.add(VcfFormatField.PPB);
     mFormatFields.add(VcfFormatField.PUR);

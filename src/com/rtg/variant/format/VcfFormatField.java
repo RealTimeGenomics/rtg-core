@@ -9,7 +9,6 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
-
 package com.rtg.variant.format;
 
 import java.util.ArrayList;
@@ -46,7 +45,6 @@ import com.rtg.vcf.header.VcfNumber;
  * Enum of VCF FORMAT field implementations.
  */
 public enum VcfFormatField {
-
   /**
    * Genotype.
    * Note: This Format field should always be populated first for each sample, and always be present as it also updates the ALT fields.
@@ -57,7 +55,6 @@ public enum VcfFormatField {
     public void updateHeader(VcfHeader header) {
       header.addFormatField(name(), MetaType.STRING, VcfNumber.ONE, "Genotype");
     }
-
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       if (sample != null) {
@@ -254,18 +251,13 @@ public enum VcfFormatField {
   },
   /** Hoeffding allele balance. */
   ABP {
-    //
     @Override
     public void updateHeader(VcfHeader header) {
       header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that allele imbalance is present");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      if (sample.getHoeffdingAlleleBalanceHom() != null) {
-        rec.addFormatAndSample(name(), String.format(Locale.ROOT, "%3.2f", sample.getHoeffdingAlleleBalanceHom()));
-      } else {
-        rec.addFormatAndSample(name(), String.format(Locale.ROOT, "%3.2f", sample.getHoeffdingAlleleBalanceHet()));
-      }
+      rec.addFormatAndSample(name(), String.format(Locale.ROOT, "%3.2f", sample.getHoeffdingAlleleBalanceHom() != null ? sample.getHoeffdingAlleleBalanceHom() : sample.getHoeffdingAlleleBalanceHet()));
     }
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
@@ -274,7 +266,6 @@ public enum VcfFormatField {
   },
   /** Hoeffding strand bias. */
   SBP {
-    //
     @Override
     public void updateHeader(VcfHeader header) {
       header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that strand bias is present");
@@ -290,142 +281,6 @@ public enum VcfFormatField {
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       return sample != null && sample.getHoeffdingStrandBiasAllele1() != null;
-    }
-  },
-  /** Forward allelic depth for R1 reads. */
-  ADF1 {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 1 reads on the forward strand");
-    }
-    @Override
-    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      final Statistics<?> stats = sample.getStats();
-      String ref = rec.getRefCall();
-      if (includePrevNt) {
-        ref = ref.substring(1);
-      }
-      final AlleleStatistics<?> counts = stats.counts();
-      final Description description = counts.getDescription();
-      final StringBuilder sb = new StringBuilder();
-      final int refDescriptionCode = description.indexOf(ref);
-      if (refDescriptionCode == -1) {
-        sb.append('0');
-      } else {
-        sb.append(Math.round(counts.forward1(refDescriptionCode)));
-      }
-      for (final String altCall : rec.getAltCalls()) {
-        final String name = includePrevNt ? altCall.substring(1) : altCall;
-        final int altDescriptionCode = description.indexOf(name);
-        sb.append(",").append(Math.round(counts.forward1(altDescriptionCode)));
-      }
-      rec.addFormatAndSample(name(), sb.toString());
-    }
-    @Override
-    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return sample != null && sample.getStats() != null;
-    }
-  },
-  /** Forward allelic depth for R2 reads. */
-  ADF2 {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 2 reads on the forward strand");
-    }
-    @Override
-    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      final Statistics<?> stats = sample.getStats();
-      String ref = rec.getRefCall();
-      if (includePrevNt) {
-        ref = ref.substring(1);
-      }
-      final AlleleStatistics<?> counts = stats.counts();
-      final Description description = counts.getDescription();
-      final StringBuilder sb = new StringBuilder();
-      final int refDescriptionCode = description.indexOf(ref);
-      if (refDescriptionCode == -1) {
-        sb.append('0');
-      } else {
-        sb.append(Math.round(counts.forward2(refDescriptionCode)));
-      }
-      for (final String altCall : rec.getAltCalls()) {
-        final String name = includePrevNt ? altCall.substring(1) : altCall;
-        final int altDescriptionCode = description.indexOf(name);
-        sb.append(",").append(Math.round(counts.forward2(altDescriptionCode)));
-      }
-      rec.addFormatAndSample(name(), sb.toString());
-    }
-    @Override
-    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return sample != null && sample.getStats() != null;
-    }
-  },
-  /** Reverse allelic depth for arm 1 reads. */
-  ADR1 {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 1 reads on the reverse strand");
-    }
-    @Override
-    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      final Statistics<?> stats = sample.getStats();
-      String ref = rec.getRefCall();
-      if (includePrevNt) {
-        ref = ref.substring(1);
-      }
-      final AlleleStatistics<?> counts = stats.counts();
-      final Description description = counts.getDescription();
-      final StringBuilder sb = new StringBuilder();
-      final int refDescriptionCode = description.indexOf(ref);
-      if (refDescriptionCode == -1) {
-        sb.append('0');
-      } else {
-        sb.append(Math.round(counts.backward1(refDescriptionCode)));
-      }
-      for (final String altCall : rec.getAltCalls()) {
-        final String name = includePrevNt ? altCall.substring(1) : altCall;
-        final int altDescriptionCode = description.indexOf(name);
-        sb.append(",").append(Math.round(counts.backward1(altDescriptionCode)));
-      }
-      rec.addFormatAndSample(name(), sb.toString());
-    }
-    @Override
-    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return sample != null && sample.getStats() != null;
-    }
-  },
-  /** Reverse allelic depth for R2 reads. */
-  ADR2 {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 2 reads on the reverse strand");
-    }
-    @Override
-    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      final Statistics<?> stats = sample.getStats();
-      String ref = rec.getRefCall();
-      if (includePrevNt) {
-        ref = ref.substring(1);
-      }
-      final AlleleStatistics<?> counts = stats.counts();
-      final Description description = counts.getDescription();
-      final StringBuilder sb = new StringBuilder();
-      final int refDescriptionCode = description.indexOf(ref);
-      if (refDescriptionCode == -1) {
-        sb.append('0');
-      } else {
-        sb.append(Math.round(counts.backward2(refDescriptionCode)));
-      }
-      for (final String altCall : rec.getAltCalls()) {
-        final String name = includePrevNt ? altCall.substring(1) : altCall;
-        final int altDescriptionCode = description.indexOf(name);
-        sb.append(",").append(Math.round(counts.backward2(altDescriptionCode)));
-      }
-      rec.addFormatAndSample(name(), sb.toString());
-    }
-    @Override
-    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return sample != null && sample.getStats() != null;
     }
   },
   /** Hoeffding read position bias. */
@@ -468,7 +323,6 @@ public enum VcfFormatField {
     public void updateHeader(VcfHeader header) {
       header.addFormatField(name(), MetaType.FLOAT, VcfNumber.DOT, "Sum of quality for the evidence of the allele");
     }
-
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final String ref = includePrevNt ? rec.getRefCall().substring(1) : rec.getRefCall();
@@ -477,19 +331,13 @@ public enum VcfFormatField {
       final int refHyp = desc.indexOf(ref);
 
       final StringBuilder value = new StringBuilder();
-      if (refHyp == -1) {
-        value.append(0);
-      } else {
-        value.append(Utils.realFormat(counts.qa(refHyp), 3));
-      }
+      value.append(refHyp == -1 ? 0 : Utils.realFormat(counts.qa(refHyp), 3));
       for (String altCall : rec.getAltCalls()) {
         final String adjAltCall = includePrevNt ? altCall.substring(1) : altCall;
-        final int hyp = desc.indexOf(adjAltCall);
-        value.append(",").append(Utils.realFormat(counts.qa(hyp), 3));
+        value.append(",").append(Utils.realFormat(counts.qa(desc.indexOf(adjAltCall)), 3));
       }
       rec.addFormatAndSample(name(), value.toString());
     }
-
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       return sample != null && sample.getStats() != null;
@@ -536,22 +384,13 @@ public enum VcfFormatField {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
-      String ref = rec.getRefCall();
-      if (includePrevNt) {
-        ref = ref.substring(1);
-      }
       final AlleleStatistics<?> counts = stats.counts();
       final Description description = counts.getDescription();
       final StringBuilder sb = new StringBuilder();
-      final int refDescriptionCode = description.indexOf(ref);
-      if (refDescriptionCode == -1) {
-        sb.append(0);
-      } else {
-        sb.append(Utils.realFormat(counts.count(refDescriptionCode) - counts.error(refDescriptionCode), 1));
-      }
-      for (String altCall : rec.getAltCalls()) {
-        final String name = includePrevNt ? altCall.substring(1) : altCall;
-        final int altDescriptionCode = description.indexOf(name);
+      final int refDescriptionCode = description.indexOf(getRefWithoutAnchor(rec, includePrevNt));
+      sb.append(refDescriptionCode == -1 ? 0 : Utils.realFormat(counts.count(refDescriptionCode) - counts.error(refDescriptionCode), 1));
+      for (final String altCall : rec.getAltCalls()) {
+        final int altDescriptionCode = description.indexOf(includePrevNt ? altCall.substring(1) : altCall);
         sb.append(",").append(Utils.realFormat(counts.count(altDescriptionCode) - counts.error(altDescriptionCode), 1));
       }
       rec.addFormatAndSample(name(), sb.toString());
@@ -570,22 +409,113 @@ public enum VcfFormatField {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
-      String ref = rec.getRefCall();
-      if (includePrevNt) {
-        ref = ref.substring(1);
-      }
       final Description description = stats.counts().getDescription();
       final StringBuilder sb = new StringBuilder();
-      final int refDescriptionCode = description.indexOf(ref);
-      if (refDescriptionCode == -1) {
-        sb.append(0);
-      } else {
-        sb.append(MathUtils.round(stats.counts().count(refDescriptionCode)));
-      }
-      for (String altCall : rec.getAltCalls()) {
-        final String name = includePrevNt ? altCall.substring(1) : altCall;
-        final int altDescriptionCode = description.indexOf(name);
+      final int refDescriptionCode = description.indexOf(getRefWithoutAnchor(rec, includePrevNt));
+      sb.append(refDescriptionCode == -1 ? 0 : MathUtils.round(stats.counts().count(refDescriptionCode)));
+      for (final String altCall : rec.getAltCalls()) {
+        final int altDescriptionCode = description.indexOf(includePrevNt ? altCall.substring(1) : altCall);
         sb.append(",").append(MathUtils.round(stats.counts().count(altDescriptionCode)));
+      }
+      rec.addFormatAndSample(name(), sb.toString());
+    }
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.getStats() != null;
+    }
+  },
+  /** Forward allelic depth for R1 reads. */
+  ADF1 {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 1 reads on the forward strand");
+    }
+    @Override
+    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      final Statistics<?> stats = sample.getStats();
+      final AlleleStatistics<?> counts = stats.counts();
+      final Description description = counts.getDescription();
+      final StringBuilder sb = new StringBuilder();
+      final int refDescriptionCode = description.indexOf(getRefWithoutAnchor(rec, includePrevNt));
+      sb.append(refDescriptionCode == -1 ? 0 : Math.round(counts.forward1(refDescriptionCode)));
+      for (final String altCall : rec.getAltCalls()) {
+        final int altDescriptionCode = description.indexOf(includePrevNt ? altCall.substring(1) : altCall);
+        sb.append(",").append(Math.round(counts.forward1(altDescriptionCode)));
+      }
+      rec.addFormatAndSample(name(), sb.toString());
+    }
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.getStats() != null;
+    }
+  },
+  /** Forward allelic depth for R2 reads. */
+  ADF2 {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 2 reads on the forward strand");
+    }
+    @Override
+    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      final Statistics<?> stats = sample.getStats();
+      final AlleleStatistics<?> counts = stats.counts();
+      final Description description = counts.getDescription();
+      final StringBuilder sb = new StringBuilder();
+      final int refDescriptionCode = description.indexOf(getRefWithoutAnchor(rec, includePrevNt));
+      sb.append(refDescriptionCode == -1 ? 0 : Math.round(counts.forward2(refDescriptionCode)));
+      for (final String altCall : rec.getAltCalls()) {
+        final int altDescriptionCode = description.indexOf(includePrevNt ? altCall.substring(1) : altCall);
+        sb.append(",").append(Math.round(counts.forward2(altDescriptionCode)));
+      }
+      rec.addFormatAndSample(name(), sb.toString());
+    }
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.getStats() != null;
+    }
+  },
+  /** Reverse allelic depth for arm 1 reads. */
+  ADR1 {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 1 reads on the reverse strand");
+    }
+    @Override
+    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      final Statistics<?> stats = sample.getStats();
+      final AlleleStatistics<?> counts = stats.counts();
+      final Description description = counts.getDescription();
+      final StringBuilder sb = new StringBuilder();
+      final int refDescriptionCode = description.indexOf(getRefWithoutAnchor(rec, includePrevNt));
+      sb.append(refDescriptionCode == -1 ? 0 : Math.round(counts.backward1(refDescriptionCode)));
+      for (final String altCall : rec.getAltCalls()) {
+        final int altDescriptionCode = description.indexOf(includePrevNt ? altCall.substring(1) : altCall);
+        sb.append(",").append(Math.round(counts.backward1(altDescriptionCode)));
+      }
+      rec.addFormatAndSample(name(), sb.toString());
+    }
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.getStats() != null;
+    }
+  },
+  /** Reverse allelic depth for R2 reads. */
+  ADR2 {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 2 reads on the reverse strand");
+    }
+    @Override
+    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      final Statistics<?> stats = sample.getStats();
+      final AlleleStatistics<?> counts = stats.counts();
+      final Description description = counts.getDescription();
+      final StringBuilder sb = new StringBuilder();
+      final int refDescriptionCode = description.indexOf(getRefWithoutAnchor(rec, includePrevNt));
+      sb.append(refDescriptionCode == -1 ? 0 : Math.round(counts.backward2(refDescriptionCode)));
+      for (final String altCall : rec.getAltCalls()) {
+        final int altDescriptionCode = description.indexOf(includePrevNt ? altCall.substring(1) : altCall);
+        sb.append(",").append(Math.round(counts.backward2(altDescriptionCode)));
       }
       rec.addFormatAndSample(name(), sb.toString());
     }
@@ -646,7 +576,6 @@ public enum VcfFormatField {
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       VAF_ANNOTATOR.annotate(rec);
     }
-
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       return rec.getFormat(ADE.name()) != null || rec.getFormat(AD.name()) != null;
@@ -656,7 +585,6 @@ public enum VcfFormatField {
       return true;
     }
   },
-
   /** Genotype likelihood field (see VCF spec).  */
   GL {
     // GL is not a derived field but it depends upon the values of all sample's GT fields so must wait for the ALT arrays to be
@@ -675,19 +603,14 @@ public enum VcfFormatField {
         }
       }
       final Map<Set<String>, Double> genotypeLikelihoods = sample.getGenotypeLikelihoods();
-      if (genotypeLikelihoods != null && genotypeLikelihoods.size() > 0
-        && (sample.getPloidy() == Ploidy.HAPLOID || sample.getPloidy() == Ploidy.DIPLOID)) {
+      if (genotypeLikelihoods != null && genotypeLikelihoods.size() > 0 && (sample.getPloidy() == Ploidy.HAPLOID || sample.getPloidy() == Ploidy.DIPLOID)) {
         final double[] likelihoods;
-        if (sample.getPloidy() == Ploidy.DIPLOID) {
-          likelihoods = GenotypeLikelihoodUtils.diploidLikelihoods(alleles, genotypeLikelihoods);
-        } else {
-          likelihoods = GenotypeLikelihoodUtils.haploidLikelihoods(alleles, genotypeLikelihoods);
-        }
+        likelihoods = sample.getPloidy() == Ploidy.DIPLOID ? GenotypeLikelihoodUtils.diploidLikelihoods(alleles, genotypeLikelihoods) : GenotypeLikelihoodUtils.haploidLikelihoods(alleles, genotypeLikelihoods);
         if (likelihoods == null) {
           Diagnostic.developerLog("Could not compute GL for variant at " + rec.getSequenceName() + ":" + (rec.getStart() + 1) + "-" + (rec.getEnd() + 1));
         } else {
           final StringBuilder sb = new StringBuilder();
-          for (double d : likelihoods) {
+          for (final double d : likelihoods) {
             if (sb.length() != 0) {
               sb.append(",");
             }
@@ -706,7 +629,6 @@ public enum VcfFormatField {
       return true;
     }
   },
-
   /** GQ / DP. */
   GQD {
     @Override
@@ -830,12 +752,10 @@ public enum VcfFormatField {
     public void updateHeader(VcfHeader header) {
       QA_ANNOTATOR.updateHeader(header);
     }
-
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       QA_ANNOTATOR.annotate(rec);
     }
-
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       return sample != null;
@@ -847,18 +767,21 @@ public enum VcfFormatField {
     public void updateHeader(VcfHeader header) {
       MEANQAD_ANNOTATOR.updateHeader(header);
     }
-
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       MEANQAD_ANNOTATOR.annotate(rec);
     }
-
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       return sample != null;
     }
   }
   ;
+
+  private static String getRefWithoutAnchor(final VcfRecord rec, final boolean includePrevNt) {
+    final String ref = rec.getRefCall();
+    return includePrevNt ? ref.substring(1) : ref;
+  }
 
   private static final int[] HAPLOID_REF_GT = {0};
   private static final int[] DIPLOID_REF_GT = {0, 0};
