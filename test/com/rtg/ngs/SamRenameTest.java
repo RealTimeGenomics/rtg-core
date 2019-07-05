@@ -20,6 +20,7 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
+import com.rtg.sam.SharedSamConstants;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
@@ -150,7 +151,7 @@ public class SamRenameTest extends AbstractCliTest {
   }
 
   private static final String SAM2_HEAD = ""
-    + "@HD" + TB + "VN:1.5" + TB + "SO:coordinate" + "\n"
+    + "@HD" + TB + SharedSamConstants.OUT_SAM_VERSION + TB + "SO:coordinate" + "\n"
     + "@SQ" + TB + "SN:g1" + TB + "LN:20" + "\n";
   private static final String SAM2_DATA = ""
     + "0" + TB + "0" + TB + "g1" + TB +  "3" + TB + "255" + TB + "8M" + TB + "*" + TB + "0" + TB + "0" + TB + "ATCGACTG" + TB + "*" + TB + "AS:i:0" + "\n"
