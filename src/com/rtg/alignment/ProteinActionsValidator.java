@@ -15,7 +15,7 @@ import com.rtg.mode.Protein;
 import com.rtg.mode.ProteinScoringMatrix;
 
 /**
- * Provides validation methods for the packed actions arrays returned by EditDistance classes.
+ * Provides validation methods for the packed actions arrays returned by edit distance classes.
  *
  */
 public class ProteinActionsValidator extends ActionsValidator {

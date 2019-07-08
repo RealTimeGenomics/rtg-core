@@ -17,7 +17,7 @@ import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 
 /**
- * Fast way of shifting in DNA to a shift register for use in EditDistance calculations.
+ * Fast way of shifting in DNA to a shift register for use in edit distance calculations.
  * Needs to deal with Ns hence the need for cunningness (a register with an N is invalid).
  */
 public class Seed extends IntegralAbstract {
