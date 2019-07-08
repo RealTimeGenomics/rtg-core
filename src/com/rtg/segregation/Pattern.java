@@ -22,7 +22,7 @@ import com.rtg.util.integrity.IntegralAbstract;
  * there is a constraint on the phasing of the father and mother which doesn't allow you to identify a constraint on just one of them.
  * The following table shows the alleles for the parents and child and the corresponding pattern written as a bit string, an integer and a set of allowed
  * phasings. Note that 0 and 1 have three quite distinct meanings in the alleles, the bits and the phase set.
- * <table summary="phasing patterns" border="1">
+ * <table><caption>phasing patterns</caption>
  * <tr> <th>father</th> <th>mother</th> <th>child</th> <th>bits</th> <th>int</th> <th>phase set</th> </tr>
  * <tr> <td>0_0</td> <td>0_0</td> <td>0_0</td> <td>1111</td> <td>15</td> <td>{0/0, 0/1, 1/0, 1/1}</td> </tr>
  * <tr> <td>0_0</td> <td>0_1</td> <td>0_0</td> <td>0101</td> <td>5</td> <td>{0/0, 1/0}</td> </tr>

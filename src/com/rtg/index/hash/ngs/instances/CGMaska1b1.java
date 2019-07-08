@@ -23,7 +23,7 @@ import com.rtg.util.integrity.Exam;
  * r=35 s=1
  * Allows for 0, -1, -2 on left hand gap and 5, 6, 7 on right hand gap.
  * Misses % of possibilities at varying substitutions:
- * <table summary="fraction missed by substitutions">
+ * <table><caption>fraction missed by substitutions</caption>
  * <tr> <td>1</td> <td>0.0%</td> </tr>
  * <tr> <td>2</td> <td>51.4%</td> </tr>
  * <tr> <td>3</td> <td>77.1%</td> </tr>
