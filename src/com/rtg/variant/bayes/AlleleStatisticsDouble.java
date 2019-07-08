@@ -126,15 +126,15 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
 
   @Override
   Double strandBias(int allele) {
-    final long trials = MathUtils.round(count(allele));
-    final long observed = MathUtils.round(forward(allele));
+    final double trials = count(allele);
+    final double observed = forward(allele);
     return MathUtils.hoeffdingPhred(trials, observed, 0.5);
   }
 
   @Override
   Double unmatedBias(int allele, double unmatedProbability) {
-    final long trials = MathUtils.round(mCountsMated[allele] + mCountsUnmated[allele]);
-    final long observed = MathUtils.round(mCountsUnmated[allele]);
+    final double trials = mCountsMated[allele] + mCountsUnmated[allele];
+    final double observed = mCountsUnmated[allele];
     return MathUtils.hoeffdingPhred(trials, observed, unmatedProbability);
   }
 
