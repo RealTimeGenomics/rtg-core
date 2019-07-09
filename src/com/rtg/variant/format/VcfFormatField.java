@@ -428,7 +428,7 @@ public enum VcfFormatField {
   ADF1 {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 1 reads on the forward strand");
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 1 reads on the forward strand");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -453,7 +453,7 @@ public enum VcfFormatField {
   ADF2 {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 2 reads on the forward strand");
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 2 reads on the forward strand");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -478,7 +478,7 @@ public enum VcfFormatField {
   ADR1 {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 1 reads on the reverse strand");
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 1 reads on the reverse strand");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -503,7 +503,7 @@ public enum VcfFormatField {
   ADR2 {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 2 reads on the reverse strand");
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 2 reads on the reverse strand");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
