@@ -57,7 +57,7 @@ import com.rtg.vcf.header.VcfHeader;
 public class VcfFormatFieldTest extends AbstractNanoTest {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, AQ, PUR, RS, ADE, AD, ADF1, ADF2, ADR1, ADR2, SSC, SS, VAF, GL, GQD, ZY, PD, SCONT, QA, MEANQAD]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, AQ, PUR, RS, ADE, AD, ADF, ADR, ADF1, ADF2, ADR1, ADR2, SSC, SS, VAF, GL, GQD, ZY, PD, SCONT, QA, MEANQAD]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -179,7 +179,7 @@ public class VcfFormatFieldTest extends AbstractNanoTest {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:ADF1:ADF2:ADR1:ADR2:SSC:SS:GL:GQD:ZY:PD\t0/1:.:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.000,0.000:0.42:Q:0.0,0.0:0,0:0,0:0,0:0,0:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:ADF:ADR:ADF1:ADF2:ADR1:ADR2:SSC:SS:GL:GQD:ZY:PD\t0/1:.:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.000,0.000:0.42:Q:0.0,0.0:0,0:0,0:0,0:0,0:0,0:0,0:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     sample.setHoeffdingAlleleBalanceHom(3.0);
     rec = new VcfRecord("ref", 2, "A");
@@ -187,7 +187,7 @@ public class VcfFormatFieldTest extends AbstractNanoTest {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:ADF1:ADF2:ADR1:ADR2:SSC:SS:GL:GQD:ZY:PD\t0/1:.:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.000,0.000:0.42:Q:0.0,0.0:0,0:0,0:0,0:0,0:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:ADF:ADR:ADF1:ADF2:ADR1:ADR2:SSC:SS:GL:GQD:ZY:PD\t0/1:.:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.000,0.000:0.42:Q:0.0,0.0:0,0:0,0:0,0:0,0:0,0:0,0:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     rec = new VcfRecord("ref", 2, "A");
     rec.setNumberOfSamples(sampleNames.length);
@@ -196,7 +196,7 @@ public class VcfFormatFieldTest extends AbstractNanoTest {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
 
-    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:ADF1:ADF2:ADR1:ADR2:SSC:SS:GL:GQD:ZY:PD\t.", rec.toString());
+    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:ADF:ADR:ADF1:ADF2:ADR1:ADR2:SSC:SS:GL:GQD:ZY:PD\t.", rec.toString());
 
     call = new Variant(new VariantLocus("ref", 2, 3, "A", 'G'), sample);
     call.addFilter(VariantFilter.FAILED_COMPLEX);
@@ -207,7 +207,7 @@ public class VcfFormatFieldTest extends AbstractNanoTest {
     }
 
     // This is a bit dumb the final 3 format fields haven't been populated not entirely sure why
-    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:ADF1:ADF2:ADR1:ADR2:SSC:SS:GL:GQD:ZY:PD\t./.:.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.000:0.42:Q:0.0:0:0:0:0:0:4.3:2:0.00", rec.toString());
+    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:ADF:ADR:ADF1:ADF2:ADR1:ADR2:SSC:SS:GL:GQD:ZY:PD\t./.:.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.000:0.42:Q:0.0:0:0:0:0:0:0:0:4.3:2:0.00", rec.toString());
   }
 
   public void testDenovoUpdateRecord() {

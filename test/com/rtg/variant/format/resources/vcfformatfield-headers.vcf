@@ -18,6 +18,8 @@
 ##FORMAT=<ID=RS,Number=.,Type=String,Description="RTG Support Statistics">
 ##FORMAT=<ID=ADE,Number=.,Type=Float,Description="Allelic depths for the ref and alt alleles in the order listed, error corrected">
 ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
+##FORMAT=<ID=ADF,Number=.,Type=Integer,Description="Allelic depth of reads on the forward strand">
+##FORMAT=<ID=ADR,Number=.,Type=Integer,Description="Allelic depth of reads on the reverse strand">
 ##FORMAT=<ID=ADF1,Number=.,Type=Integer,Description="Allelic depth of arm 1 reads on the forward strand">
 ##FORMAT=<ID=ADF2,Number=.,Type=Integer,Description="Allelic depth of arm 2 reads on the forward strand">
 ##FORMAT=<ID=ADR1,Number=.,Type=Integer,Description="Allelic depth of arm 1 reads on the reverse strand">
