@@ -50,11 +50,7 @@ public enum VcfFormatField {
    * Note: This Format field should always be populated first for each sample, and always be present as it also updates the ALT fields.
    * That means that this enum field should always be first.
    */
-  GT {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.STRING, VcfNumber.ONE, "Genotype");
-    }
+  GT(MetaType.STRING, VcfNumber.ONE, "Genotype") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       if (sample != null) {
@@ -91,11 +87,7 @@ public enum VcfFormatField {
    * Somatic variant allele. For cases where there is an allele which has a count or variant allelic frequency that exceeds call triggering threshold
    * but which isn't represented in the GT, we may want to add the allele in order to have it included in additional statistics such as <code>AD/VAC/VAF</code>.
    */
-  VA {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.ONE, "Variant Allele");
-    }
+  VA(MetaType.INTEGER, VcfNumber.ONE, "Variant Allele") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       if (sample != null) {
@@ -114,11 +106,7 @@ public enum VcfFormatField {
     }
   },
   /** Coverage depth. */
-  DP {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.ONE, "Read Depth");
-    }
+  DP(MetaType.INTEGER, VcfNumber.ONE, "Read Depth") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       rec.addFormatAndSample(name(), String.valueOf(sample.getCoverage()));
@@ -129,11 +117,7 @@ public enum VcfFormatField {
     }
   },
   /** Deviation from expected coverage. */
-  DPR {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Ratio of read depth to expected read depth");
-    }
+  DPR(MetaType.FLOAT, VcfNumber.ONE, "Ratio of read depth to expected read depth") {
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final double expected = params.expectedCoverage().expectedCoverage(call.getLocus().getSequenceName(), sampleName);
@@ -145,11 +129,7 @@ public enum VcfFormatField {
     }
   },
   /** RTG error. */
-  RE {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "RTG Total Error");
-    }
+  RE(MetaType.FLOAT, VcfNumber.ONE, "RTG Total Error") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       rec.addFormatAndSample(name(), Utils.realFormat(sample.getCorrection(), 3));
@@ -160,11 +140,7 @@ public enum VcfFormatField {
     }
   },
   /** Ambiguity ratio. */
-  AR {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Ambiguity Ratio");
-    }
+  AR(MetaType.FLOAT, VcfNumber.ONE, "Ambiguity Ratio") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       rec.addFormatAndSample(name(), Utils.realFormat(sample.getAmbiguityRatio(), 3));
@@ -175,11 +151,7 @@ public enum VcfFormatField {
     }
   },
   /** RTG sample quality. */
-  RQ {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "RTG sample quality");
-    }
+  RQ(MetaType.FLOAT, VcfNumber.ONE, "RTG sample quality") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       rec.addFormatAndSample(name(), Utils.realFormat(PosteriorUtils.phredIfy(sample.getNonIdentityPosterior()), 1));
@@ -190,11 +162,7 @@ public enum VcfFormatField {
     }
   },
   /** Genotype quality. */
-  GQ {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.ONE, "Genotype Quality");
-    }
+  GQ(MetaType.INTEGER, VcfNumber.ONE, "Genotype Quality") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       rec.addFormatAndSample(name(), MathUtils.cappedInt(MathUtils.round(PosteriorUtils.phredIfy(sample.getPosterior()))));
@@ -205,11 +173,7 @@ public enum VcfFormatField {
     }
   },
   /** RTG posterior. */
-  RP {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "RTG Posterior");
-    }
+  RP(MetaType.FLOAT, VcfNumber.ONE, "RTG Posterior") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       rec.addFormatAndSample(name(), VariantUtils.formatPosterior(sample.getPosterior()));
@@ -220,11 +184,7 @@ public enum VcfFormatField {
     }
   },
   /** De novo allele. */
-  DN {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.CHARACTER, VcfNumber.ONE, "Indicates whether call is a putative de novo mutation");
-    }
+  DN(MetaType.CHARACTER, VcfNumber.ONE, "Indicates whether call is a putative de novo mutation") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       rec.addFormatAndSample(name(), sample.isDeNovo() == VariantSample.DeNovoStatus.IS_DE_NOVO ? "Y" : "N");
@@ -235,11 +195,7 @@ public enum VcfFormatField {
     }
   },
   /** De novo allele probability. */
-  DNP {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that the call is due to a de novo mutation");
-    }
+  DNP(MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that the call is due to a de novo mutation") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       rec.addFormatAndSample(name(), MathUtils.cappedInt(MathUtils.round(PosteriorUtils.phredIfy(sample.getDeNovoPosterior()))));
@@ -250,11 +206,7 @@ public enum VcfFormatField {
     }
   },
   /** Hoeffding allele balance. */
-  ABP {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that allele imbalance is present");
-    }
+  ABP(MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that allele imbalance is present") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       rec.addFormatAndSample(name(), String.format(Locale.ROOT, "%3.2f", sample.getHoeffdingAlleleBalanceHom() != null ? sample.getHoeffdingAlleleBalanceHom() : sample.getHoeffdingAlleleBalanceHet()));
@@ -265,11 +217,7 @@ public enum VcfFormatField {
     }
   },
   /** Hoeffding strand bias. */
-  SBP {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that strand bias is present");
-    }
+  SBP(MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that strand bias is present") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       double score = sample.getHoeffdingStrandBiasAllele1();
@@ -284,11 +232,7 @@ public enum VcfFormatField {
     }
   },
   /** Hoeffding read position bias. */
-  RPB {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that read position bias is present");
-    }
+  RPB(MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that read position bias is present") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       rec.addFormatAndSample(name(), String.format(Locale.ROOT, "%3.2f", sample.getHoeffdingReadPositionBias()));
@@ -299,11 +243,7 @@ public enum VcfFormatField {
     }
   },
   /** Hoeffding unmated bias. */
-  PPB {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that there is a bias in the proportion of alignments that are properly paired");
-    }
+  PPB(MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that there is a bias in the proportion of alignments that are properly paired") {
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       double score = sample.getHoeffdingUnmatedBiasAllele1();
@@ -318,11 +258,7 @@ public enum VcfFormatField {
     }
   },
   /** Sum of quality for alleles evidence. */
-  AQ {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.DOT, "Sum of quality for the evidence of the allele");
-    }
+  AQ(MetaType.FLOAT, VcfNumber.DOT, "Sum of quality for the evidence of the allele") {
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final String ref = includePrevNt ? rec.getRefCall().substring(1) : rec.getRefCall();
@@ -344,11 +280,7 @@ public enum VcfFormatField {
     }
   },
   /** Placed unmapped ratio. */
-  PUR {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Ratio of placed unmapped reads to mapped reads");
-    }
+  PUR(MetaType.FLOAT, VcfNumber.ONE, "Ratio of placed unmapped reads to mapped reads") {
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final double score = sample.getPlacedUnmappedRatio();
@@ -360,11 +292,7 @@ public enum VcfFormatField {
     }
   },
   /** RTG support statistics. */
-  RS {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.STRING, VcfNumber.DOT, "RTG Support Statistics");
-    }
+  RS(MetaType.STRING, VcfNumber.DOT, "RTG Support Statistics") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       //Trim is to remove the leading TAB character
@@ -376,11 +304,7 @@ public enum VcfFormatField {
     }
   },
   /** Allelic depth, error-corrected. */
-  ADE {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.DOT, "Allelic depths for the ref and alt alleles in the order listed, error corrected");
-    }
+  ADE(MetaType.FLOAT, VcfNumber.DOT, "Allelic depths for the ref and alt alleles in the order listed, error corrected") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -401,11 +325,7 @@ public enum VcfFormatField {
     }
   },
   /** Allelic depth. */
-  AD {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Allelic depths for the ref and alt alleles in the order listed");
-    }
+  AD(MetaType.INTEGER, VcfNumber.DOT, "Allelic depths for the ref and alt alleles in the order listed") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -425,11 +345,7 @@ public enum VcfFormatField {
     }
   },
   /** Forward allelic depth. */
-  ADF {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of reads on the forward strand");
-    }
+  ADF(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of reads on the forward strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -450,11 +366,7 @@ public enum VcfFormatField {
     }
   },
   /** Reverse allelic depth. */
-  ADR {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of reads on the reverse strand");
-    }
+  ADR(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of reads on the reverse strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -475,11 +387,7 @@ public enum VcfFormatField {
     }
   },
   /** Forward allelic depth for R1 reads. */
-  ADF1 {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 1 reads on the forward strand");
-    }
+  ADF1(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 1 reads on the forward strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -500,11 +408,7 @@ public enum VcfFormatField {
     }
   },
   /** Forward allelic depth for R2 reads. */
-  ADF2 {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 2 reads on the forward strand");
-    }
+  ADF2(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 2 reads on the forward strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -525,11 +429,7 @@ public enum VcfFormatField {
     }
   },
   /** Reverse allelic depth for arm 1 reads. */
-  ADR1 {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 1 reads on the reverse strand");
-    }
+  ADR1(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 1 reads on the reverse strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -550,11 +450,7 @@ public enum VcfFormatField {
     }
   },
   /** Reverse allelic depth for R2 reads. */
-  ADR2 {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 2 reads on the reverse strand");
-    }
+  ADR2(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 2 reads on the reverse strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -575,12 +471,8 @@ public enum VcfFormatField {
     }
   },
   /** Somatic score. */
-  SSC {
+  SSC(MetaType.FLOAT, VcfNumber.ONE, "Somatic score") {
     // Note TCGA VCF 1.2 spec defines this to be an integer 0-255, but that is pretty weak in terms of resolution
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Somatic score");
-    }
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       if (sample.getDeNovoPosterior() != null) {
@@ -593,11 +485,7 @@ public enum VcfFormatField {
     }
   },
   /** Somatic status (loosely after TCGA "specification"). */
-  SS {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.ONE, "Somatic status relative to original sample");
-    }
+  SS(MetaType.INTEGER, VcfNumber.ONE, "Somatic status relative to original sample") {
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       if (sample.isDeNovo() == VariantSample.DeNovoStatus.IS_DE_NOVO) {
@@ -617,31 +505,15 @@ public enum VcfFormatField {
   // NOTE: VcfAnnotators (derived attributes) below here, non-derived above (convention is to have derived fields after non-derived)
 
   /** Variant allelic fraction. */
-  VAF {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      VAF_ANNOTATOR.updateHeader(header);
-    }
-    @Override
-    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      VAF_ANNOTATOR.annotate(rec);
-    }
+  VAF(DerivedAnnotations.VAF.getAnnotation()) {
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       return rec.getFormat(ADE.name()) != null || rec.getFormat(AD.name()) != null;
     }
-    @Override
-    public boolean isVcfAnnotator() {
-      return true;
-    }
   },
   /** Genotype likelihood field (see VCF spec).  */
-  GL {
+  GL(MetaType.FLOAT, VcfNumber.GENOTYPES, "Log_10 scaled genotype likelihoods. As defined in VCF specifications") {
     // GL is not a derived field but it depends upon the values of all sample's GT fields so must wait for the ALT arrays to be
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.GENOTYPES, "Log_10 scaled genotype likelihoods. As defined in VCF specifications");
-    }
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final List<String> alleles = new ArrayList<>();
@@ -680,15 +552,7 @@ public enum VcfFormatField {
     }
   },
   /** GQ / DP. */
-  GQD {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      GQD_ANNOTATOR.updateHeader(header);
-    }
-    @Override
-    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      GQD_ANNOTATOR.annotate(rec);
-    }
+  GQD(DerivedAnnotations.GQD.getAnnotation()) {
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       final List<String> genotypeQuals = rec.getFormat(GQ.name());
@@ -702,21 +566,9 @@ public enum VcfFormatField {
       }
       return false;
     }
-    @Override
-    public boolean isVcfAnnotator() {
-      return true;
-    }
   },
   /** Zygosity. */
-  ZY {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      ZY_ANNOTATOR.updateHeader(header);
-    }
-    @Override
-    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      ZY_ANNOTATOR.annotate(rec);
-    }
+  ZY(DerivedAnnotations.ZY.getAnnotation()) {
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       final List<String> genotypes = rec.getFormat(GT.name());
@@ -728,22 +580,10 @@ public enum VcfFormatField {
         }
       }
       return false;
-    }
-    @Override
-    public boolean isVcfAnnotator() {
-      return true;
     }
   },
   /** Ploidy. */
-  PD {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      PD_ANNOTATOR.updateHeader(header);
-    }
-    @Override
-    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      PD_ANNOTATOR.annotate(rec);
-    }
+  PD(DerivedAnnotations.PD.getAnnotation()) {
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       final List<String> genotypes = rec.getFormat(GT.name());
@@ -756,21 +596,9 @@ public enum VcfFormatField {
       }
       return false;
     }
-    @Override
-    public boolean isVcfAnnotator() {
-      return true;
-    }
   },
   /** Contrary observation count and fraction. */
-  SCONT {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      SCONT_ANNOTATOR.updateHeader(header);
-    }
-    @Override
-    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      SCONT_ANNOTATOR.annotate(rec);
-    }
+  SCONT(new SplitContraryObservationAnnotator()) {
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       List<?> fld = rec.getFormat(AD.name());
@@ -791,39 +619,19 @@ public enum VcfFormatField {
       }
       return false;
     }
-    @Override
-    public boolean isVcfAnnotator() {
-      return true;
-    }
   },
   /** Sum of quality of the alternate observations. */
-  QA {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      QA_ANNOTATOR.updateHeader(header);
-    }
-    @Override
-    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      QA_ANNOTATOR.annotate(rec);
-    }
+  QA(DerivedAnnotations.QA.getAnnotation()) {
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return sample != null;
+      return sample != null; // todo this condition looks bogus
     }
   },
   /** Difference in mean quality for called alleles. */
-  MEANQAD {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      MEANQAD_ANNOTATOR.updateHeader(header);
-    }
-    @Override
-    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      MEANQAD_ANNOTATOR.annotate(rec);
-    }
+  MEANQAD(DerivedAnnotations.MEANQAD.getAnnotation()) {
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return sample != null;
+      return sample != null; // todo this condition looks bogus
     }
   }
   ;
@@ -837,19 +645,37 @@ public enum VcfFormatField {
   private static final int[] DIPLOID_REF_GT = {0, 0};
   private static final int[] HAPLOID_MISSING_GT = {VcfUtils.MISSING_GT};
   private static final int[] DIPLOID_MISSING_GT = {VcfUtils.MISSING_GT, VcfUtils.MISSING_GT};
-  private static final VcfAnnotator GQD_ANNOTATOR = DerivedAnnotations.GQD.getAnnotation();
-  private static final VcfAnnotator ZY_ANNOTATOR = DerivedAnnotations.ZY.getAnnotation();
-  private static final VcfAnnotator PD_ANNOTATOR = DerivedAnnotations.PD.getAnnotation();
-  private static final VcfAnnotator VAF_ANNOTATOR = DerivedAnnotations.VAF.getAnnotation();
-  private static final VcfAnnotator MEANQAD_ANNOTATOR = DerivedAnnotations.MEANQAD.getAnnotation();
-  private static final VcfAnnotator QA_ANNOTATOR = DerivedAnnotations.QA.getAnnotation();
-  private static final VcfAnnotator SCONT_ANNOTATOR = new SplitContraryObservationAnnotator();
+
+  private final VcfAnnotator mAnnotator;
+  private final MetaType mMetaType;
+  private final VcfNumber mVcfNumber;
+  private final String mDescription;
+
+  VcfFormatField(final VcfAnnotator annotator) {
+    mAnnotator = annotator;
+    mMetaType = null;
+    mVcfNumber = null;
+    mDescription = null;
+  }
+
+  VcfFormatField(final MetaType type, final VcfNumber number, final String description) {
+    mAnnotator = null;
+    mMetaType = type;
+    mVcfNumber = number;
+    mDescription = description;
+  }
 
   /**
    * Update the VCF header with the field description.
    * @param header the VCF header for which the field description will be added.
    */
-  public abstract void updateHeader(VcfHeader header);
+  public void updateHeader(final VcfHeader header) {
+    if (mAnnotator != null) {
+      mAnnotator.updateHeader(header);
+    } else {
+      header.addFormatField(name(), mMetaType, mVcfNumber, mDescription);
+    }
+  }
 
   /**
    * Update the VCF record with the value for the FORMAT field.
@@ -900,7 +726,9 @@ public enum VcfFormatField {
    * @param params the variant output options params.
    * @param includePrevNt true when including previous NT in VCF output, false otherwise.
    */
-  protected abstract void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt);
+  protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+    mAnnotator.annotate(rec);
+  }
 
   /**
    * Find if this sample has information for format field.
@@ -919,7 +747,7 @@ public enum VcfFormatField {
    * @return true if this enum value uses information from the VCF record to annotate, false if it uses the Variant instead
    */
   public boolean isVcfAnnotator() {
-    return false;
+    return mAnnotator != null;
   }
 
   protected static int addAltAllele(String alt, String ref, Character previousNt, VcfRecord rec) {
