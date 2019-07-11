@@ -1,4 +1,4 @@
-##fileformat=VCFv4.1
+##fileformat=VCFv4.2
 ##fileDate=[...]
 ##source=[...]
 ##CL=[...]
@@ -32,10 +32,10 @@
 ##FORMAT=<ID=SBP,Number=1,Type=Float,Description="Phred scaled probability that strand bias is present">
 ##FORMAT=<ID=RPB,Number=1,Type=Float,Description="Phred scaled probability that read position bias is present">
 ##FORMAT=<ID=PPB,Number=1,Type=Float,Description="Phred scaled probability that there is a bias in the proportion of alignments that are properly paired">
-##FORMAT=<ID=AQ,Number=.,Type=Float,Description="Sum of quality for the evidence of the allele">
+##FORMAT=<ID=AQ,Number=R,Type=Float,Description="Sum of quality for the evidence of the allele">
 ##FORMAT=<ID=PUR,Number=1,Type=Float,Description="Ratio of placed unmapped reads to mapped reads">
 ##FORMAT=<ID=RS,Number=.,Type=String,Description="RTG Support Statistics">
-##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
 ##FORMAT=<ID=GL,Number=G,Type=Float,Description="Log_10 scaled genotype likelihoods. As defined in VCF specifications">
 ##PEDIGREE=<Child=CHILD,Mother=MOTHER,Father=FATHER>
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	FATHER	MOTHER	CHILD

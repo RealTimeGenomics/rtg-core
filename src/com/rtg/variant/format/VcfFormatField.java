@@ -258,7 +258,7 @@ public enum VcfFormatField {
     }
   },
   /** Sum of quality for alleles evidence. */
-  AQ(MetaType.FLOAT, VcfNumber.DOT, "Sum of quality for the evidence of the allele") {
+  AQ(MetaType.FLOAT, VcfNumber.REF_ALTS, "Sum of quality for the evidence of the allele") {
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final String ref = includePrevNt ? rec.getRefCall().substring(1) : rec.getRefCall();
@@ -304,7 +304,7 @@ public enum VcfFormatField {
     }
   },
   /** Allelic depth, error-corrected. */
-  ADE(MetaType.FLOAT, VcfNumber.DOT, "Allelic depths for the ref and alt alleles in the order listed, error corrected") {
+  ADE(MetaType.FLOAT, VcfNumber.REF_ALTS, "Allelic depths for the ref and alt alleles in the order listed, error corrected") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -325,7 +325,7 @@ public enum VcfFormatField {
     }
   },
   /** Allelic depth. */
-  AD(MetaType.INTEGER, VcfNumber.DOT, "Allelic depths for the ref and alt alleles in the order listed") {
+  AD(MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depths for the ref and alt alleles in the order listed") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -345,7 +345,7 @@ public enum VcfFormatField {
     }
   },
   /** Forward allelic depth. */
-  ADF(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of reads on the forward strand") {
+  ADF(MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of reads on the forward strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -366,7 +366,7 @@ public enum VcfFormatField {
     }
   },
   /** Reverse allelic depth. */
-  ADR(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of reads on the reverse strand") {
+  ADR(MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of reads on the reverse strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -387,7 +387,7 @@ public enum VcfFormatField {
     }
   },
   /** Forward allelic depth for R1 reads. */
-  ADF1(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 1 reads on the forward strand") {
+  ADF1(MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 1 reads on the forward strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -408,7 +408,7 @@ public enum VcfFormatField {
     }
   },
   /** Forward allelic depth for R2 reads. */
-  ADF2(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 2 reads on the forward strand") {
+  ADF2(MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 2 reads on the forward strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -429,7 +429,7 @@ public enum VcfFormatField {
     }
   },
   /** Reverse allelic depth for arm 1 reads. */
-  ADR1(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 1 reads on the reverse strand") {
+  ADR1(MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 1 reads on the reverse strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
@@ -450,7 +450,7 @@ public enum VcfFormatField {
     }
   },
   /** Reverse allelic depth for R2 reads. */
-  ADR2(MetaType.INTEGER, VcfNumber.DOT, "Allelic depth of arm 2 reads on the reverse strand") {
+  ADR2(MetaType.INTEGER, VcfNumber.REF_ALTS, "Allelic depth of arm 2 reads on the reverse strand") {
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final Statistics<?> stats = sample.getStats();
