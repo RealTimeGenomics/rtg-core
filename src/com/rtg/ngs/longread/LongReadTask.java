@@ -361,8 +361,6 @@ public final class LongReadTask {
           queryHashLoop = new SearchResetHashLoop(mSubParams.search().windowSize(), mSubParams.search().stepSize(), function, outputVars, outputVarsReverse, mIndex, true);
         } else {
           final ExactHashFunction function = new ExactHashFunction(buildParams, true);
-          // xxx SpecializedIncrementalHashLoop claims to be optimized, but does it really help?
-          //queryHashLoop = new SpecializedIncrementalHashLoop(mSubParams.search().stepSize(), function, outputVars, outputVarsReverse,  mIndex, true);
           queryHashLoop = new SearchIncrementalHashLoop(mSubParams.search().stepSize(), function, outputVars, outputVarsReverse,  mIndex, true);
         }
         final int padding = mSubParams.ngsParams().calculateThreadPadding(); // Amount added either side
