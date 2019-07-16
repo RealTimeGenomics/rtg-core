@@ -36,6 +36,7 @@ import com.rtg.vcf.header.FilterField;
 import com.rtg.vcf.header.FormatField;
 import com.rtg.vcf.header.InfoField;
 import com.rtg.vcf.header.MetaType;
+import com.rtg.vcf.header.TypedField;
 import com.rtg.vcf.header.VcfHeader;
 import com.rtg.vcf.header.VcfNumber;
 import com.rtg.vcf.header.VcfNumberType;
@@ -88,6 +89,24 @@ public class VcfValidatorCli extends AbstractCli {
     mFlags.registerOptional(XVERBOSE, "Set to output all failed records to error output instead of the first " + MAX_RECORD_WARNINGS).setCategory(CommonFlagCategories.REPORTING);
   }
 
+  private boolean checkField(final TypedField<?> field, final RuleSet<?> rule, final String version, final PrintStream err) {
+    final boolean preV42 = "VCFv4.2".compareTo(version) > 0;
+    VcfNumberType ruleType = rule.getVcfNumber().getNumberType();
+    if (preV42 && ruleType == VcfNumberType.REF_ALTS) {
+      // Prior to v4.2 there was no "R" type
+      ruleType = VcfNumberType.UNKNOWN;
+    }
+    if (ruleType != field.getNumber().getNumberType()) {
+      err.println("VCF " + field.fieldName() + " field " + field.getId() + " does not match the expected type, or has wrong type for VCF version.");
+      return false;
+    }
+    if (rule.getVcfNumber().getNumber() != field.getNumber().getNumber()) {
+      err.println("VCF " + field.fieldName() + " field " + field.getId() + " does not match the expected number of values.");
+      return false;
+    }
+    return true;
+  }
+
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     final File vcfFile = (File) mFlags.getAnonymousValue(0);
@@ -101,6 +120,7 @@ public class VcfValidatorCli extends AbstractCli {
       for (final FilterField field : filterLines) {
         filters.put(field.getId(), field);
       }
+      final String versionValue = header.getVersionValue();
       final List<InfoField> infoLines = header.getInfoLines();
       final Map<String, InfoField> infos = new HashMap<>(infoLines.size());
       for (final InfoField field : infoLines) {
@@ -114,8 +134,7 @@ public class VcfValidatorCli extends AbstractCli {
             err.println("VCF INFO field " + field.getId() + " does not match the expected meta-data type.");
             ++mismatchedHeaders;
           }
-          if (rule.getVcfNumber().getNumberType() != field.getNumber().getNumberType() || rule.getVcfNumber().getNumber() != field.getNumber().getNumber()) {
-            err.println("VCF INFO field " + field.getId() + " does not match the expected number of values.");
+          if (!checkField(field, rule, versionValue, err)) {
             ++mismatchedHeaders;
           }
         }
@@ -133,8 +152,7 @@ public class VcfValidatorCli extends AbstractCli {
             err.println("VCF FORMAT field " + field.getId() + " does not match the expected meta-data type.");
             ++mismatchedHeaders;
           }
-          if (rule.getVcfNumber().getNumberType() != field.getNumber().getNumberType() || rule.getVcfNumber().getNumber() != field.getNumber().getNumber()) {
-            err.println("VCF FORMAT field " + field.getId() + " does not match the expected number of values.");
+          if (!checkField(field, rule, versionValue, err)) {
             ++mismatchedHeaders;
           }
         }

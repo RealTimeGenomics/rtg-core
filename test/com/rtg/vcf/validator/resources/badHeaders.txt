@@ -1,6 +1,6 @@
 VCF INFO field DUR not contained in the specified rule set.
 VCF INFO field DP does not match the expected meta-data type.
-VCF INFO field DPR does not match the expected number of values.
+VCF INFO field DPR does not match the expected type, or has wrong type for VCF version.
 VCF FORMAT field DP does not match the expected number of values.
 VCF FORMAT field AVR does not match the expected meta-data type.
 
