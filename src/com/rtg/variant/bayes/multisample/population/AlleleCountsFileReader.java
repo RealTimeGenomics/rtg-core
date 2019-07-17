@@ -15,7 +15,6 @@ package com.rtg.variant.bayes.multisample.population;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -203,12 +202,11 @@ public final class AlleleCountsFileReader implements Closeable {
     }
     final Map<String, Integer> countsMap;
     if (mSupportsANAC) {
-      final Map<String, ArrayList<String>> info = vcfRecord.getInfo();
-      if (info.containsKey(AN_INFO_ID) && info.containsKey(AC_INFO_ID)) {
-        final ArrayList<String> anValue = info.get(AN_INFO_ID);
-        final ArrayList<String> acValue = info.get(AC_INFO_ID);
+      if (vcfRecord.hasInfo(AN_INFO_ID) && vcfRecord.hasInfo(AC_INFO_ID)) {
+        final String[] anValue = vcfRecord.getInfoSplit(AN_INFO_ID);
+        final String[] acValue = vcfRecord.getInfoSplit(AC_INFO_ID);
 
-        if (anValue.size() != 1) {
+        if (anValue.length != 1) {
           ++mWarnings;
           if (mWarnings < 10) {
             Diagnostic.warning("INFO field " + AN_INFO_ID + " contains too many values: " + vcfRecord);
@@ -217,7 +215,7 @@ public final class AlleleCountsFileReader implements Closeable {
         }
         final Integer totalAlleleNumber;
         try {
-          totalAlleleNumber = Integer.valueOf(anValue.get(0));
+          totalAlleleNumber = Integer.valueOf(anValue[0]);
         } catch (final NumberFormatException nfe) {
           ++mWarnings;
           if (mWarnings < 10) {
@@ -228,13 +226,13 @@ public final class AlleleCountsFileReader implements Closeable {
         countsMap = new HashMap<>();
         int totalAllelesSeen = 0;
 
-        if (acValue.size() != vcfRecord.getAltCalls().size()) {
-          Diagnostic.warning("Allele count field length not equal to number of alternate alleles, was " + acValue.size() + ", expected " + vcfRecord.getAltCalls().size());
+        if (acValue.length != vcfRecord.getAltCalls().size()) {
+          Diagnostic.warning("Allele count field length not equal to number of alternate alleles, was " + acValue.length + ", expected " + vcfRecord.getAltCalls().size());
           return null;
         }
-        for (int i = 0; i < acValue.size(); ++i) {
+        for (int i = 0; i < acValue.length; ++i) {
           try {
-            final Integer thisAlleleCount = Integer.valueOf(acValue.get(i));
+            final Integer thisAlleleCount = Integer.valueOf(acValue[i]);
             countsMap.put(vcfRecord.getAltCalls().get(i), thisAlleleCount);
             totalAllelesSeen += thisAlleleCount;
           } catch (final NumberFormatException nfe) {

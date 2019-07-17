@@ -35,7 +35,7 @@ public class VcfEquivalentFilter {
   }
 
   static boolean isComplexScored(final VcfRecord rec) {
-    return rec.getInfo().containsKey("XRX");
+    return rec.hasInfo("XRX");
   }
 
   /**

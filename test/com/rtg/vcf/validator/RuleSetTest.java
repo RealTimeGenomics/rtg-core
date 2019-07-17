@@ -127,7 +127,7 @@ public class RuleSetTest extends TestCase {
   }
 
   public void testFlagType() {
-    final RuleSet<String> fooSet = new RuleSet<>("FOO", FieldType.INFO, new VcfNumber("0"), MetaType.FLAG, null);
+    final RuleSet<String> fooSet = new RuleSet<>("FOO", FieldType.INFO, VcfNumber.FLAG, MetaType.FLAG, null);
     try {
       fooSet.validateRecord(VcfReaderTest.vcfLineToRecord("chr21\t1024\t.\tC\tT\t167.9\tPASS\tFOO\tGT\t0/1"));
     } catch (RuleValidationException e) {

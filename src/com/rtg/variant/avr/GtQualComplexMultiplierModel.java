@@ -124,7 +124,7 @@ public final class GtQualComplexMultiplierModel extends AbstractPredictModel {
   @Override
   public void annotate(VcfRecord record) {
     // is record complex
-    final boolean complex = record.getInfo().containsKey(VcfInfoField.XRX.name());
+    final boolean complex = record.hasInfo(VcfInfoField.XRX.name());
 
     // update QUAL value based on complexity
     final int qualIndex = complex ? 1 : 0;
@@ -154,7 +154,7 @@ public final class GtQualComplexMultiplierModel extends AbstractPredictModel {
 
   @Override
   public void annotateSample(VcfRecord record, int sampleNo) {
-    final boolean complex = record.getInfo().containsKey(VcfInfoField.XRX.name());
+    final boolean complex = record.hasInfo(VcfInfoField.XRX.name());
     // is sample heterozygous
     final boolean heterozygous = VcfUtils.isHeterozygous(record, sampleNo);
 

@@ -60,9 +60,7 @@ public class SegregationVcfAnnotatorTest extends TestCase {
       assertEquals(0, rec.getInfo().size());
     } else {
       assertEquals(1, rec.getInfo().size());
-      assertNotNull(rec.getInfo().get("SGP"));
-      assertEquals(1, rec.getInfo().get("SGP").size());
-      assertEquals(expected, rec.getInfo().get("SGP").get(0));
+      assertEquals(expected, rec.getInfo("SGP"));
     }
   }
 

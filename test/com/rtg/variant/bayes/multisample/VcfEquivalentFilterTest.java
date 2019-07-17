@@ -62,7 +62,7 @@ public class VcfEquivalentFilterTest extends TestCase {
   }
 
   private boolean isComplexEquivalent(final VcfRecord rec) {
-    return rec.getInfo().containsKey("RCE");
+    return rec.hasInfo("RCE");
   }
 
   public void testSimpleHomozygousAlt() {

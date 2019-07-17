@@ -14,7 +14,6 @@ package com.rtg.variant.avr;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.InfoField;
@@ -73,19 +72,19 @@ public class InfoAnnotation implements Annotation {
    */
   @Override
   public Object getValue(VcfRecord record, int sampleNumber) {
-    final ArrayList<String> infoValues = record.getInfo().get(mFieldName);
+    final String[] infoValues = record.getInfoSplit(mFieldName);
     final Object value;
     if (infoValues == null) {
       value = getType() == AnnotationDataType.BOOLEAN ? Boolean.FALSE : null;
-    } else if (infoValues.size() == 0) {
+    } else if (infoValues.length == 0) {
       if (getType() != AnnotationDataType.BOOLEAN) {
         throw new IllegalArgumentException("Value expected for type: " + getType());
       }
       value = Boolean.TRUE;
-    } else if (infoValues.size() > 1) {
+    } else if (infoValues.length > 1) {
       throw new IllegalArgumentException("We don't support multi-value INFO fields: " + mFieldName);
     } else {
-      value = mType.stringToObjectOfType(infoValues.get(0));
+      value = mType.stringToObjectOfType(infoValues[0]);
     }
     return value;
   }

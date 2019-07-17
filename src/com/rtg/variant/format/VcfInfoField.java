@@ -25,6 +25,7 @@ import com.rtg.variant.bayes.multisample.cancer.SomaticRecordUtils;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.VcfAnnotator;
 import com.rtg.vcf.VcfRecord;
+import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.annotation.DerivedAnnotations;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
@@ -103,14 +104,14 @@ public enum VcfInfoField {
   DP_DPR {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField("DP", MetaType.INTEGER, VcfNumber.ONE, "Combined read depth for variant over all samples");
+      header.addInfoField(VcfUtils.INFO_COMBINED_DEPTH, MetaType.INTEGER, VcfNumber.ONE, "Combined read depth for variant over all samples");
       header.addInfoField("DPR", MetaType.FLOAT, VcfNumber.ONE, "Ratio of combined read depth for variant to expected combined read depth");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       final Pair<Integer, Boolean> cov = getCoverage(call);
       if (cov.getB()) {
-        rec.setInfo("DP", Integer.toString(cov.getA()));
+        rec.setInfo(VcfUtils.INFO_COMBINED_DEPTH, Integer.toString(cov.getA()));
         if (params != null && params.expectedCoverage() != null) {
           final double expected = params.expectedCoverage().expectedTotalCoverage(call.getLocus().getSequenceName());
           if (expected > 0) {
@@ -135,7 +136,7 @@ public enum VcfInfoField {
   XRX {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.FLAG, new VcfNumber("0"), "RTG variant was called using complex caller");
+      header.addInfoField(name(), MetaType.FLAG, VcfNumber.FLAG, "RTG variant was called using complex caller");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
@@ -148,7 +149,7 @@ public enum VcfInfoField {
   RCE {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.FLAG, new VcfNumber("0"), "RTG variant is equivalent to the previous variant");
+      header.addInfoField(name(), MetaType.FLAG, VcfNumber.FLAG, "RTG variant is equivalent to the previous variant");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
@@ -175,7 +176,7 @@ public enum VcfInfoField {
   RTRM {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.FLAG, new VcfNumber("0"), "Complex called variant was trimmed");
+      header.addInfoField(name(), MetaType.FLAG, VcfNumber.FLAG, "Complex called variant was trimmed");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
@@ -201,7 +202,7 @@ public enum VcfInfoField {
   NREF {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.FLAG, new VcfNumber("0"), "REF was not considered a valid allele during calling");
+      header.addInfoField(name(), MetaType.FLAG, VcfNumber.FLAG, "REF was not considered a valid allele during calling");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {

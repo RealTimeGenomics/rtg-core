@@ -12,8 +12,6 @@
 
 package com.rtg.variant.sv.discord.pattern;
 
-import java.util.Collection;
-
 import com.rtg.util.CompareHelper;
 import com.rtg.util.Utils;
 import com.rtg.vcf.BreakpointAlt;
@@ -67,14 +65,8 @@ public class VcfBreakpoint implements Comparable<VcfBreakpoint> {
   }
 
   private static int countDepth(VcfRecord record) {
-    int depth = 0;
-    final Collection<String> depths = record.getInfo().get(VcfUtils.INFO_COMBINED_DEPTH);
-    if (depths != null) {
-      for (String str : depths) {
-        depth += Integer.parseInt(str);
-      }
-    }
-    return depth;
+    final String depth = record.getInfo(VcfUtils.INFO_COMBINED_DEPTH);
+    return depth == null ? 0 : Integer.parseInt(depth);
   }
 
   public String getLocalChr() {

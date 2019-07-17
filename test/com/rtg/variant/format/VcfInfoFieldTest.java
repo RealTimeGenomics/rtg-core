@@ -163,12 +163,12 @@ public class VcfInfoFieldTest extends TestCase {
     final VcfRecord record = SomaticFilterTest.getSomaticVcfRecord("0/1", "0/0");
     final VariantParams variantParams = VariantParams.builder().somaticParams(new SomaticParamsBuilder().lohPrior(0.01).create()).create();
     LOH.updateRecord(record, null, variantParams,  false);
-    assertEquals("1.0", record.getInfo().get("LOH").get(0));
+    assertEquals("1.0", record.getInfo("LOH"));
   }
   public void testLohNotEnabled() {
     final VcfRecord record = SomaticFilterTest.getSomaticVcfRecord("0/1", "0/0");
     final VariantParams variantParams = VariantParams.builder().somaticParams(new SomaticParamsBuilder().lohPrior(0.0).create()).create();
     LOH.updateRecord(record, null, variantParams,  false);
-    assertNull(record.getInfo().get("LOH"));
+    assertNull(record.getInfo("LOH"));
   }
 }

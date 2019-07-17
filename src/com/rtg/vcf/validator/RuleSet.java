@@ -179,8 +179,7 @@ public class RuleSet<T> {
         validateValues(StringUtils.split(sampleValue, ','), record);
       }
     } else {
-      final List<String> values = record.getInfo().get(mName);
-      validateValues(values.toArray(new String[values.size()]), record);
+      validateValues(record.getInfoSplit(mName), record);
     }
   }
 

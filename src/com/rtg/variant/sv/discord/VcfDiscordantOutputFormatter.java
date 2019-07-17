@@ -150,7 +150,7 @@ public class VcfDiscordantOutputFormatter {
     }
     header.addFilterField(FILTER_INCONSISTENT, "Supporting reads are inconsistent as to breakend location");
     header.addInfoField(INFO_CIPOS, MetaType.INTEGER, new VcfNumber("2"), "Confidence interval around POS for imprecise variants");
-    header.addInfoField(INFO_IMPRECISE, MetaType.FLAG, new VcfNumber("0"), "Imprecise structural variation");
+    header.addInfoField(INFO_IMPRECISE, MetaType.FLAG, VcfNumber.FLAG, "Imprecise structural variation");
     header.addInfoField(INFO_SVTYPE, MetaType.STRING, VcfNumber.ONE, "Type of structural variant");
     header.addInfoField(INFO_COMBINED_DEPTH, MetaType.INTEGER, VcfNumber.ONE, "Read Depth");
     if (coverage) {

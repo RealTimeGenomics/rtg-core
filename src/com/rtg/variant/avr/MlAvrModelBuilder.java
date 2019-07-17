@@ -176,8 +176,7 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
    * @return true if the instance is a positive example, false for negative example, or null if no recognized status annotation is present
    */
   private Optional<Boolean> getClassification(VcfRecord rec) {
-    final ArrayList<String> annots = rec.getInfo().get(WithInfoEvalSynchronizer.INFO_CALL);
-    final String status = (annots != null && annots.size() == 1) ? annots.get(0) : null;
+    final String status = rec.getInfo(WithInfoEvalSynchronizer.INFO_CALL);
     if (WithInfoEvalSynchronizer.STATUS_TP.equals(status)) {
       return Optional.of(true);
     } else if (WithInfoEvalSynchronizer.STATUS_FP.equals(status)) {

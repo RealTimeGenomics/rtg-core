@@ -333,7 +333,7 @@ public class SegregationChecker {
   }
 
   static VcfHeader modifyHeader(final VcfHeader header, boolean repairSimple) {
-    header.addInfoField(PHASING_COMPATIBLE, MetaType.FLAG, new VcfNumber("0"), "The phasing of children in this variant is compatible with known phasing pattern");
+    header.addInfoField(PHASING_COMPATIBLE, MetaType.FLAG, VcfNumber.FLAG, "The phasing of children in this variant is compatible with known phasing pattern");
     header.addInfoField(PHASING_INCOMPATIBLE, MetaType.CHARACTER, VcfNumber.DOT, "The phasing of children in this variant is incompatible with known phasing pattern, 'C' -> consistent or 'I' -> inconsistent for each child in the order of children in the samples.");
     header.addInfoField(PHASING_INCOMPATIBLE_COUNT, MetaType.INTEGER, VcfNumber.ONE, "Count of the minimum number of inconsistent children.");
     header.addInfoField(PHASING_QUALITY, MetaType.INTEGER, VcfNumber.ONE, "Phred-scaled probability that the phasing consistency would have been obtained by chance.");

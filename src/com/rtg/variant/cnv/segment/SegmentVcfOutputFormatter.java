@@ -97,7 +97,7 @@ public class SegmentVcfOutputFormatter {
     header.addAltField(new AltField(DUP.name(), "Duplication"));
 
     header.addInfoField(INFO_END, MetaType.INTEGER, VcfNumber.ONE, "End position of the variant described in this record");
-    header.addInfoField(INFO_IMPRECISE, MetaType.FLAG, new VcfNumber("0"), "Imprecise structural variation");
+    header.addInfoField(INFO_IMPRECISE, MetaType.FLAG, VcfNumber.FLAG, "Imprecise structural variation");
     header.addInfoField(INFO_SVTYPE, MetaType.STRING, VcfNumber.ONE, "Type of structural variant");
     header.addInfoField(INFO_BC, MetaType.INTEGER, VcfNumber.ONE, "Number of bins contained within the region");
     header.addInfoField(INFO_CIPOS, MetaType.INTEGER, new VcfNumber("2"), "Confidence interval around POS for imprecise variants");

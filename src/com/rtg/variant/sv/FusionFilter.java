@@ -179,8 +179,8 @@ public class FusionFilter extends AbstractCli {
     public void annotate(VcfRecord rec) {
       Integer bestScore = 0;
       String bestFusion = null;
-      for (String a : rec.getInfo().get(INFO_ACCEPTOR_GENE)) {
-        for (String d : rec.getInfo().get(INFO_DONOR_GENE)) {
+      for (String a : rec.getInfoSplit(INFO_ACCEPTOR_GENE)) {
+        for (String d : rec.getInfoSplit(INFO_DONOR_GENE)) {
           final String name = d + "-" + a;
           final Integer score = mFusionScores.get(name);
           if (score != null && score > bestScore) {
@@ -216,11 +216,11 @@ public class FusionFilter extends AbstractCli {
         case SV_BREAKEND:
           return possibleTranscript(record.getSequenceName(), record.getStart(), new BreakpointAlt(record.getAltCalls().get(0)), record);
         case SV_SYMBOLIC:
-          final ArrayList<String> svTypes = record.getInfo().get(INFO_SVTYPE);
-          if (svTypes == null || svTypes.size() != 1) {
+          final String svType = record.getInfo(INFO_SVTYPE);
+          if (svType == null) {
             return false;
           }
-          switch (svTypes.get(0)) {
+          switch (svType) {
             case "DEL":
               // Make equivalent breakend for the non-deleted section. Only one breakend required
               return possibleTranscript(record.getSequenceName(), record.getStart(), new BreakpointAlt(record.getRefCall() + "[" + record.getSequenceName() + ":" + VcfUtils.getIntegerInfoFieldFromRecord(record, "END") + "["), record);
