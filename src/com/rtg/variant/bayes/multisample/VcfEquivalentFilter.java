@@ -63,8 +63,8 @@ public class VcfEquivalentFilter {
           final VcfRecord lastCall = mLastCalls.get(0);
           if (complexEquivalent(lastCall, v, maxReadLength)) {
             v.addFilter("RCEQUIV");
-            v.addInfo("RCE");
-            lastCall.addInfo("RCE");
+            v.setInfo("RCE");
+            lastCall.setInfo("RCE");
           }
           res.addAll(mLastCalls);
         }

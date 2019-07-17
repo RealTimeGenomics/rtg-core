@@ -98,15 +98,15 @@ public class VcfDiscordantOutputFormatter {
     } else {
       rec.addFilter(FILTER_PASS);
     }
-    rec.addInfo(INFO_IMPRECISE);
-    rec.addInfo(INFO_SVTYPE, BND.name());
-    rec.addInfo(INFO_COMBINED_DEPTH, "" + readset.getCounts());
-    rec.addInfo(INFO_CIPOS, cipos);
+    rec.setInfo(INFO_IMPRECISE);
+    rec.setInfo(INFO_SVTYPE, BND.name());
+    rec.setInfo(INFO_COMBINED_DEPTH, "" + readset.getCounts());
+    rec.setInfo(INFO_CIPOS, cipos);
     if (coverage > -1) {
-      rec.addInfo(INFO_COVERAGE, "" + coverage);
+      rec.setInfo(INFO_COVERAGE, "" + coverage);
     }
     if (ambiguous > -1) {
-      rec.addInfo(INFO_AMBIGUITY, "" + ambiguous);
+      rec.setInfo(INFO_AMBIGUITY, "" + ambiguous);
     }
     rec.setNumberOfSamples(1);
     rec.addFormatAndSample(FORMAT_GENOTYPE, "1/1"); //for now default to homozygous

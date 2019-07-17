@@ -117,8 +117,6 @@ public class MlAvrPredictModel extends AbstractPredictModel {
     // extract fields from record to build instance object array
     final double[] instance = mAttributeExtractor.getInstance(record, sampleNumber);
     final double prediction = mClassifier.predict(instance);
-    // TODO: check the field and add/update as appropriate
-    //record.addInfo(getField(), Utils.realFormat(prediction, 4));
     record.setFormatAndSample(getField(), Utils.realFormat(prediction, 4), sampleNumber);
     incrementScore(prediction);
     return prediction;

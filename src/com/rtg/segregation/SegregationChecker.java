@@ -234,8 +234,8 @@ public class SegregationChecker {
         groupDprAvgs[i] = groupDprSums[i] / groupCounts[i];
       }
     }
-    rec.addInfo(PHASE_GROUP_COUNTS, "" + groupCounts[0], "" + groupCounts[1], "" + groupCounts[2], "" + groupCounts[3]);
-    rec.addInfo(PHASE_GROUP_DEPTH_RATIOS, Utils.realFormat(groupDprAvgs[0], 3), Utils.realFormat(groupDprAvgs[1], 3), Utils.realFormat(groupDprAvgs[2], 3), Utils.realFormat(groupDprAvgs[3], 3));
+    rec.setInfo(PHASE_GROUP_COUNTS, "" + groupCounts[0], "" + groupCounts[1], "" + groupCounts[2], "" + groupCounts[3]);
+    rec.setInfo(PHASE_GROUP_DEPTH_RATIOS, Utils.realFormat(groupDprAvgs[0], 3), Utils.realFormat(groupDprAvgs[1], 3), Utils.realFormat(groupDprAvgs[2], 3), Utils.realFormat(groupDprAvgs[3], 3));
     final List<String> fatherAlts = new ArrayList<>();
     final List<String> motherAlts = new ArrayList<>();
     if (selectedPatternParents != null) {
@@ -258,20 +258,20 @@ public class SegregationChecker {
         }
       }
       if (fatherAlts.size() > 0) {
-        rec.addInfo(ALT_FATHER_GT_FIX, fatherAlts.toArray(new String[fatherAlts.size()]));
+        rec.setInfo(ALT_FATHER_GT_FIX, fatherAlts.toArray(new String[fatherAlts.size()]));
       }
       if (motherAlts.size() > 0) {
-        rec.addInfo(ALT_MOTHER_GT_FIX, motherAlts.toArray(new String[motherAlts.size()]));
+        rec.setInfo(ALT_MOTHER_GT_FIX, motherAlts.toArray(new String[motherAlts.size()]));
       }
     }
     if (selectedPatternChildren.compatible(recPhasing)) {
-      rec.addInfo(PHASING_COMPATIBLE);
+      rec.setInfo(PHASING_COMPATIBLE);
       phase(rec, selectedPatternChildren);
       calcPhq(rec);
     } else {
       rec.addFilter(PHASING_INCOMPATIBLE);
-      rec.addInfo(PHASING_INCOMPATIBLE, selectedIncompatible);
-      rec.addInfo(PHASING_INCOMPATIBLE_COUNT, Integer.toString(minIncompatible));
+      rec.setInfo(PHASING_INCOMPATIBLE, selectedIncompatible);
+      rec.setInfo(PHASING_INCOMPATIBLE_COUNT, Integer.toString(minIncompatible));
       if (mRepairSimple) {
         if (minIncompatible == 1) {
           int childIndex = -1;
@@ -357,8 +357,8 @@ public class SegregationChecker {
     final String sampleName = mSampleNames.get(sampleIndex);
     final String oldGt = rec.getFormat(VcfUtils.FORMAT_GENOTYPE).get(sampleIndex);
     rec.setFormatAndSample(VcfUtils.FORMAT_GENOTYPE, newGt, sampleIndex);
-    rec.addInfo(PHASING_REPAIRED, sampleName, oldGt);
-    rec.addInfo(PHASING_COMPATIBLE);
+    rec.setInfo(PHASING_REPAIRED, sampleName, oldGt);
+    rec.setInfo(PHASING_COMPATIBLE);
     original.addFilter(PHASING_REPAIRED);
     phase(rec, curr);
     calcPhq(rec);
@@ -380,7 +380,7 @@ public class SegregationChecker {
         }
         codes.add(code);
       }
-      rec.addInfo(PHASING_QUALITY, "" + (int) calcPhq(codes));
+      rec.setInfo(PHASING_QUALITY, "" + (int) calcPhq(codes));
     }
   }
 

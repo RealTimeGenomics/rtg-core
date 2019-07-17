@@ -144,7 +144,7 @@ public class VcfValidatorCliTest extends AbstractCliTest {
         vcfRecord.setNumberOfSamples(0);
         for (InfoField infoField : header.getInfoLines()) {
           final String val = getTypeValue(infoField.getType());
-          vcfRecord.addInfo(infoField.getId(), val);
+          vcfRecord.setInfo(infoField.getId(), val);
         }
         writer.write(vcfRecord);
         writer.close();

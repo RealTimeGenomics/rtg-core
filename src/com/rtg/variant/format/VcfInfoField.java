@@ -43,7 +43,7 @@ public enum VcfInfoField {
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (params != null && params.somaticParams().lohPrior() > 0) {
-        rec.addInfo(name(), Utils.realFormat(SomaticRecordUtils.lossOfHeterozygosity(rec)));
+        rec.setInfo(name(), Utils.realFormat(SomaticRecordUtils.lossOfHeterozygosity(rec)));
       }
     }
   },
@@ -56,7 +56,7 @@ public enum VcfInfoField {
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (call.getNormalCancerScore() != null) {
-        rec.addInfo(name(), Utils.realFormat(PosteriorUtils.phredIfy(call.getNormalCancerScore()), 3));
+        rec.setInfo(name(), Utils.realFormat(PosteriorUtils.phredIfy(call.getNormalCancerScore()), 3));
       }
     }
   },
@@ -69,7 +69,7 @@ public enum VcfInfoField {
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (call.getDiseasePresenceScore() != null) {
-        rec.addInfo(name(), formatPossibleCause(call, includePrevNt));
+        rec.setInfo(name(), formatPossibleCause(call, includePrevNt));
       }
     }
   },
@@ -82,7 +82,7 @@ public enum VcfInfoField {
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (call.getPossibleCauseScore() != null) {
-        rec.addInfo(name(), VariantUtils.formatPosterior(call.getPossibleCauseScore()));
+        rec.setInfo(name(), VariantUtils.formatPosterior(call.getPossibleCauseScore()));
       }
     }
   },
@@ -95,7 +95,7 @@ public enum VcfInfoField {
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (call.getDiseasePresenceScore() != null) {
-        rec.addInfo(name(), Utils.realFormat(PosteriorUtils.phredIfy(Math.abs(call.getDiseasePresenceScore())), 1));
+        rec.setInfo(name(), Utils.realFormat(PosteriorUtils.phredIfy(Math.abs(call.getDiseasePresenceScore())), 1));
       }
     }
   },
@@ -110,11 +110,11 @@ public enum VcfInfoField {
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       final Pair<Integer, Boolean> cov = getCoverage(call);
       if (cov.getB()) {
-        rec.addInfo("DP", Integer.toString(cov.getA()));
+        rec.setInfo("DP", Integer.toString(cov.getA()));
         if (params != null && params.expectedCoverage() != null) {
           final double expected = params.expectedCoverage().expectedTotalCoverage(call.getLocus().getSequenceName());
           if (expected > 0) {
-            rec.addInfo("DPR", Utils.realFormat(cov.getA() / expected, 3));
+            rec.setInfo("DPR", Utils.realFormat(cov.getA() / expected, 3));
           }
         }
       }
@@ -140,7 +140,7 @@ public enum VcfInfoField {
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (call.isComplexScored()) {
-        rec.addInfo(name());
+        rec.setInfo(name());
       }
     }
   },
@@ -153,7 +153,7 @@ public enum VcfInfoField {
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (call.isComplexEquivalent()) {
-        rec.addInfo(name());
+        rec.setInfo(name());
       }
     }
   },
@@ -167,7 +167,7 @@ public enum VcfInfoField {
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (call.isFiltered(VariantFilter.COVERAGE)) {
         final CoverageThreshold threshold = params != null ? params.maxCoverageFilter() : DUMMY_COVERAGE_THRESHOLD;
-        rec.addInfo(name(), Integer.toString(threshold.thresholdSingle(call.getLocus().getSequenceName())));
+        rec.setInfo(name(), Integer.toString(threshold.thresholdSingle(call.getLocus().getSequenceName())));
       }
     }
   },
@@ -180,7 +180,7 @@ public enum VcfInfoField {
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (call.isTrimmed()) {
-        rec.addInfo(name());
+        rec.setInfo(name());
       }
     }
   },
@@ -193,7 +193,7 @@ public enum VcfInfoField {
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (call.getSplitId() > 0) {
-        rec.addInfo(name(), Integer.toString(call.getSplitId()));
+        rec.setInfo(name(), Integer.toString(call.getSplitId()));
       }
     }
   },
@@ -206,7 +206,7 @@ public enum VcfInfoField {
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (call.isInvalidRef()) {
-        rec.addInfo(name());
+        rec.setInfo(name());
       }
     }
   },

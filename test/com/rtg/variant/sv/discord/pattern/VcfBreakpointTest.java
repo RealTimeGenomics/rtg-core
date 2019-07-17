@@ -56,8 +56,7 @@ public class VcfBreakpointTest extends TestCase {
 
   public void testDepth() {
     final VcfRecord rec = makeRecord("foo", 20, "A[chr:200[");
-    rec.addInfo("DP", "5");
-    rec.addInfo("DP", "2");
+    rec.setInfo("DP", "5", "2");
     final VcfBreakpoint breakpoint = new VcfBreakpoint(rec);
     assertEquals(7, breakpoint.getDepth());
 
