@@ -14,7 +14,7 @@ package com.rtg.variant.avr;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.FormatField;
@@ -62,7 +62,7 @@ public class FormatAnnotation implements Annotation {
 
   @Override
   public Object getValue(VcfRecord record, int sampleNumber) {
-    final ArrayList<String> sampleValues = record.getFormat(mFieldName);
+    final List<String> sampleValues = record.getFormat(mFieldName);
     final Object value;
     if (sampleValues == null || sampleValues.size() < (sampleNumber + 1)) {
       value = null;
