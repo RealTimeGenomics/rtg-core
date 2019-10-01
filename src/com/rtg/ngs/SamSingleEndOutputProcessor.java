@@ -128,7 +128,7 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
     final MatchResult results = organizeResults(mUnmappedTracker.mReadIdStatus, mTopN);
     mTopN = null;
     Collections.sort(mRegions);
-    final FilterConcatIntermediateFiles files = getNonMatedFilterConcatIntermediateFiles(results, false, mRegions.toArray(new HashingRegion[mRegions.size()]));
+    final FilterConcatIntermediateFiles files = getNonMatedFilterConcatIntermediateFiles(results, false, mRegions.toArray(new HashingRegion[0]));
     outputTimer.stop();
     outputTimer.log();
     return files;

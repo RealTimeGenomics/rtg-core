@@ -150,6 +150,6 @@ public class SamAssistanceCg extends SuperCigarParser implements SamAssistance {
     // Run the parsing methods generating the AView lines
     parse();
     mSnippets.add(mAviewDisplay.toString()); // Handle the last part
-    return mSnippets.toArray(new String[mSnippets.size()]);
+    return mSnippets.toArray(new String[0]);
   }
 }

@@ -150,7 +150,7 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
           Diagnostic.userLog("Identified " + families.size() + " usable families");
           Diagnostic.userLog("Families: " + StringUtils.LS + families);
           final List<Family> orderedFamilies = MultiFamilyOrdering.orderFamiliesAndSetMates(families);
-          famArray = orderedFamilies.toArray(new Family[orderedFamilies.size()]);
+          famArray = orderedFamilies.toArray(new Family[0]);
           familyCaller = newParams.usePropagatingPriors() ? new FamilyCallerFB(newParams, famArray) : new FamilyCaller(newParams, famArray);
           annot.add(new ChildPhasingVcfAnnotator(orderedFamilies));
         }
@@ -165,7 +165,7 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
         individualFactories.add(new IndividualSampleFactory<>(newParams, chooser, haploid, diploid, none, genomeRelationships.getSex(genome), sexMemo));
       }
 
-      final PopulationCallerConfiguration pc = new PopulationCallerConfiguration(popCaller, outputGenomes.toArray(new String[outputGenomes.size()]), individualFactories, chooser, haploid, diploid, ssp, new ChildFamilyLookup(calledGenomes.size(), famArray));
+      final PopulationCallerConfiguration pc = new PopulationCallerConfiguration(popCaller, outputGenomes.toArray(new String[0]), individualFactories, chooser, haploid, diploid, ssp, new ChildFamilyLookup(calledGenomes.size(), famArray));
       pc.getVcfAnnotators().addAll(annot);
       return pc;
     }

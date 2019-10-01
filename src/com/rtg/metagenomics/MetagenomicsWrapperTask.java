@@ -304,8 +304,8 @@ class MetagenomicsWrapperTask extends ParamsTask<MetaPipelineParams, NoStatistic
     commandLine.add(module.applicationName());
     commandLine.add(module.moduleName());
     commandLine.addAll(args);
-    CommandLine.setCommandArgs(commandLine.toArray(new String[commandLine.size()]));
-    return module.mainInit(args.toArray(new String[args.size()]), out, mErr);
+    CommandLine.setCommandArgs(commandLine.toArray(new String[0]));
+    return module.mainInit(args.toArray(new String[0]), out, mErr);
   }
 
 }

@@ -126,7 +126,7 @@ public final class SvCliUtils {
     }
     builder.readGroupLabels(relabelMap);
     final Collection<File> statsFiles = CommonFlags.getFileList(flags, RG_STATS_LIST_FLAG, RG_STATS_FILE, false);
-    final Map<String, ReadGroupStats> readGroupStats = ReadGroupStats.loadReadGroupStats(relabelMap, statsFiles.toArray(new File[statsFiles.size()]));
+    final Map<String, ReadGroupStats> readGroupStats = ReadGroupStats.loadReadGroupStats(relabelMap, statsFiles.toArray(new File[0]));
     for (final ReadGroupStats e : readGroupStats.values()) {
       if (!e.isValid()) {
         throw new NoTalkbackSlimException("Invalid read group statistics for read group: " + e.id());

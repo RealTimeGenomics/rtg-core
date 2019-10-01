@@ -155,7 +155,7 @@ final class ReadSimEvalParams {
     for (final Object f : values) {
       files.add((File) f);
     }
-    return files.toArray(new File[files.size()]);
+    return files.toArray(new File[0]);
   }
 
   File mutationsVcf() {

@@ -127,7 +127,7 @@ public class SimpleDecomposer extends AbstractDecomposer {
     catSet.add(ref);
 
     // Compute maximal clip positions based on set of alleles
-    final String[] cats = catSet.toArray(new String[catSet.size()]);
+    final String[] cats = catSet.toArray(new String[0]);
 
     final int rightClip = StringUtils.longestSuffix(cats);
     final int leftClip = StringUtils.longestPrefix(rightClip, cats);
@@ -176,7 +176,7 @@ public class SimpleDecomposer extends AbstractDecomposer {
         alleles.put(clipped, newPos);
         alleleMap[i] = newPos;
       }
-      final Description newDescription = new DescriptionCommon(alleles.keySet().toArray(new String[alleles.size()]));
+      final Description newDescription = new DescriptionCommon(alleles.keySet().toArray(new String[0]));
       //System.out.println(oldDescription + " " + newDescription + " " + Arrays.toString(alleleMap));
       newSamples = createVariants(original, start, end, newDescription, alleleMap, newLocus.getRefNts(), variantAlleleTrigger);
     } else {
@@ -212,7 +212,7 @@ public class SimpleDecomposer extends AbstractDecomposer {
     catSet.add(ref);
 
     // Check all are the same length, if not we cannot split
-    final String[] cats = catSet.toArray(new String[catSet.size()]);
+    final String[] cats = catSet.toArray(new String[0]);
     final int length = cats[0].length();
     for (final String c : cats) {
       if (c.length() != length) {

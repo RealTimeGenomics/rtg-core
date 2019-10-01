@@ -63,7 +63,7 @@ public abstract class AbstractDecomposerTest extends TestCase {
     for (final String name : names) {
       allelesSet.addAll(Arrays.asList(StringUtils.split(name, VariantUtils.COLON)));
     }
-    return new DescriptionCommon(allelesSet.toArray(new String[allelesSet.size()]));
+    return new DescriptionCommon(allelesSet.toArray(new String[0]));
   }
 
   static void checkDenovoCorrect(List<Variant> variants, int[] expectedPositions, String[] expectedParentA, String[] expectedParentB, String[] expectedChild, VariantSample.DeNovoStatus[] expectedDenovo) {

@@ -261,8 +261,8 @@ public class FusionFilter extends AbstractCli {
 
     private boolean possibleTranscript(VcfRecord record, List<String> acceptorGenes, List<String> donorGenes) {
       if (acceptorGenes != null && donorGenes != null) {
-        record.setInfo(INFO_ACCEPTOR_GENE, acceptorGenes.toArray(new String[acceptorGenes.size()]));
-        record.setInfo(INFO_DONOR_GENE, donorGenes.toArray(new String[donorGenes.size()]));
+        record.setInfo(INFO_ACCEPTOR_GENE, acceptorGenes.toArray(new String[0]));
+        record.setInfo(INFO_DONOR_GENE, donorGenes.toArray(new String[0]));
         return true;
       }
       return false;

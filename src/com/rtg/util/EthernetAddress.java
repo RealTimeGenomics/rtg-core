@@ -28,7 +28,7 @@ public class EthernetAddress {
    * @return the Ethernet address(es) of the current machine
    */
   public String[] getAddresses() {
-    return mAddresses.toArray(new String[mAddresses.size()]);
+    return mAddresses.toArray(new String[0]);
   }
 
   /**

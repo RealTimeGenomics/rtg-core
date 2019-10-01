@@ -49,7 +49,7 @@ public class DiseasedFamilyCallerTest extends TestCase {
     for (int i = 0; i < numSamples; ++i) {
       names.add("g" + i);
     }
-    final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter(names.toArray(new String[names.size()]));
+    final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter(names.toArray(new String[0]));
     formatter.addExtraInfoFields(EnumSet.of(VcfInfoField.DPS));
     return formatter;
   }

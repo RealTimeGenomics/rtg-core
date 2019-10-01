@@ -31,7 +31,7 @@ public class UnionRepeatFrequencyFilterMethod implements IndexFilterMethod {
    * @param methods the delegate filter methods
    */
   public UnionRepeatFrequencyFilterMethod(Collection<IndexFilterMethod> methods) {
-    this(methods.toArray(new IndexFilterMethod[methods.size()]));
+    this(methods.toArray(new IndexFilterMethod[0]));
   }
 
   /**

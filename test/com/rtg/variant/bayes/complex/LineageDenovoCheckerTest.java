@@ -41,7 +41,7 @@ public class LineageDenovoCheckerTest extends TestCase {
       }
     }
     alleles.add(ref);
-    final DescriptionCommon description = SimpleDecomposerTest.getDescription(alleles.toArray(new String[alleles.size()]));
+    final DescriptionCommon description = SimpleDecomposerTest.getDescription(alleles.toArray(new String[0]));
     for (int i = 0; i < samples.length; ++i) {
       final List<String> sampleList = samples[i] == null ? null : Arrays.asList(samples[i]);
       variantSamples[i] = samples[i] == null ? null : SimpleDecomposerTest.getVariantSample(samples[i].length == 1 ? Ploidy.HAPLOID : Ploidy.DIPLOID, StringUtils.join("" + VariantUtils.COLON, sampleList), false, 5.0, VariantSample.DeNovoStatus.IS_DE_NOVO, 0.0, description);

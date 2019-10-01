@@ -213,7 +213,7 @@ class AviewParams {
     for (final Object file : files) {
       list.add((File) file);
     }
-    return list.toArray(new File[list.size()]);
+    return list.toArray(new File[0]);
   }
 
  static AviewParams makeParams(CFlags flags) throws IOException {
@@ -278,14 +278,14 @@ class AviewParams {
        tracks.add((File) flag.getValue());
      }
    }
-   builder.trackFiles(tracks.toArray(new File[tracks.size()]));
+   builder.trackFiles(tracks.toArray(new File[0]));
 
    if (flags.isSet(SAMPLE)) {
      final ArrayList<String> s = new ArrayList<>();
      for (Object o : flags.getValues(SAMPLE)) {
        s.add((String) o);
      }
-     builder.samples(s.toArray(new String[s.size()]));
+     builder.samples(s.toArray(new String[0]));
    }
    builder.mappingTolerance((Integer) flags.getValue(XMAPPING_TOLERANCE));
 

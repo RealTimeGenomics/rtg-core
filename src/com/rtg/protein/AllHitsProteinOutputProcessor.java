@@ -71,7 +71,7 @@ public class AllHitsProteinOutputProcessor extends ProteinOutputProcessor {
         for (final ProteinOutputProcessor child : mChildren) {
           alignmentFileList.add(child.mOutFile);
         }
-        final File[] files = alignmentFileList.toArray(new File[alignmentFileList.size()]);
+        final File[] files = alignmentFileList.toArray(new File[0]);
         if (quickcat) {
           FileUtils.copyRaw(mOutFile, files);
         } else {

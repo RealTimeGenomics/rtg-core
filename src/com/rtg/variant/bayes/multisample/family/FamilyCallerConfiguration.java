@@ -90,7 +90,7 @@ public final class FamilyCallerConfiguration extends AbstractJointCallerConfigur
         }
       }
 
-      final String[] newOutputGenomes = calledGenomes.toArray(new String[calledGenomes.size()]);
+      final String[] newOutputGenomes = calledGenomes.toArray(new String[0]);
       if (newOutputGenomes.length != outputGenomes.length) {
         throw new NoTalkbackSlimException("Not all sample names are members of the family");
       }

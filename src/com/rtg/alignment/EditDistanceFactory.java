@@ -180,9 +180,9 @@ public final class EditDistanceFactory {
       rev.add(new GotohEditDistance(ngsParams.gapOpenPenalty(), ngsParams.gapExtendPenalty(), ngsParams.substitutionPenalty(), ngsParams.unknownsPenalty(), false));
 
       return new RcEditDistance(
-        new SoftClipper(new UnidirectionalPrioritisedEditDistance(fwd.toArray(new UnidirectionalEditDistance[fwd.size()])),
+        new SoftClipper(new UnidirectionalPrioritisedEditDistance(fwd.toArray(new UnidirectionalEditDistance[0])),
           ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches()),
-        new SoftClipper(new UnidirectionalPrioritisedEditDistance(rev.toArray(new UnidirectionalEditDistance[rev.size()])),
+        new SoftClipper(new UnidirectionalPrioritisedEditDistance(rev.toArray(new UnidirectionalEditDistance[0])),
           ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches()));
     }
 

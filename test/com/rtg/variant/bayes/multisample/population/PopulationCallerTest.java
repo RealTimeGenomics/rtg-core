@@ -112,7 +112,7 @@ public class PopulationCallerTest extends TestCase {
     for (int i = 0; i < numSamples; ++i) {
       names.add("g" + i);
     }
-    final String[] namesarr = names.toArray(new String[names.size()]);
+    final String[] namesarr = names.toArray(new String[0]);
     if (params != null) {
       return new VariantOutputVcfFormatter(params, namesarr);
     }
@@ -496,7 +496,7 @@ public class PopulationCallerTest extends TestCase {
       family.setSampleIds(calledGenomes);
     }
     final FamilyCallerFB ffb = new FamilyCallerFB(VariantParams.builder().maxEmIterations(0).genomePriors(priors).create()
-        , families.toArray(new Family[families.size()])
+        , families.toArray(new Family[0])
     );
     final PopulationCaller popCall = new PopulationCaller(VariantParams.builder().genomePriors(priors).create(), ffb);
     final HypothesisScores bestScores = popCall.getBestScores(models, new PriorContainer<>(hdh, ffb.makeInitialBs(models)));
@@ -611,7 +611,7 @@ public class PopulationCallerTest extends TestCase {
     final Set<Family> familySet = Family.getFamilies(genomeRelationships, false, pedigreeToModel.keySet());
 
     final List<Family> orderedFamilies = MultiFamilyOrdering.orderFamiliesAndSetMates(familySet);
-    final Family[] families = orderedFamilies.toArray(new Family[orderedFamilies.size()]);
+    final Family[] families = orderedFamilies.toArray(new Family[0]);
 
     final GenomePriorParams params = new GenomePriorParamsBuilder().create();
     final VariantParams vParams = new VariantParamsBuilder()

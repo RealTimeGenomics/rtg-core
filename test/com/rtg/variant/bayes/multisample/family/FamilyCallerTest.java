@@ -60,7 +60,7 @@ public class FamilyCallerTest extends AbstractNanoTest {
     for (int i = 0; i < numSamples; ++i) {
       names.add("g" + i);
     }
-    return new VariantOutputVcfFormatter(names.toArray(new String[names.size()]));
+    return new VariantOutputVcfFormatter(names.toArray(new String[0]));
   }
 
   protected String nanoPrefix() {

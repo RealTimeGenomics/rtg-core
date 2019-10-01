@@ -258,10 +258,10 @@ public class SegregationChecker {
         }
       }
       if (fatherAlts.size() > 0) {
-        rec.setInfo(ALT_FATHER_GT_FIX, fatherAlts.toArray(new String[fatherAlts.size()]));
+        rec.setInfo(ALT_FATHER_GT_FIX, fatherAlts.toArray(new String[0]));
       }
       if (motherAlts.size() > 0) {
-        rec.setInfo(ALT_MOTHER_GT_FIX, motherAlts.toArray(new String[motherAlts.size()]));
+        rec.setInfo(ALT_MOTHER_GT_FIX, motherAlts.toArray(new String[0]));
       }
     }
     if (selectedPatternChildren.compatible(recPhasing)) {

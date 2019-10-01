@@ -178,7 +178,7 @@ public class BuilderCli extends AbstractCli {
     }
 
     try {
-      builder.build(datasets.toArray(new VcfDataset[datasets.size()]));
+      builder.build(datasets.toArray(new VcfDataset[0]));
       builder.save(outFile);
     } catch (IllegalArgumentException iae) {
       throw new NoTalkbackSlimException(iae.getMessage());

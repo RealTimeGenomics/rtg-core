@@ -72,7 +72,7 @@ public class AttributeExtractor {
   }
 
   static Annotation[] normalizeAnnotations(Collection<Annotation> annotations) {
-    return normalizeAnnotations(annotations.toArray(new Annotation[annotations.size()]));
+    return normalizeAnnotations(annotations.toArray(new Annotation[0]));
   }
 
   static Annotation[] normalizeAnnotations(Annotation[] annotations) {
@@ -88,7 +88,7 @@ public class AttributeExtractor {
       set.add(ann);
     }
 
-    return set.toArray(new Annotation[set.size()]);
+    return set.toArray(new Annotation[0]);
   }
 
   static Attribute[] createAttributes(Annotation[] annotations) {

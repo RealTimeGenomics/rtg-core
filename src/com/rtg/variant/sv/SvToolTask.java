@@ -206,7 +206,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
       ps.add(new HeterozygousBayesianSignal(diploidNorm, new NovelInsertionBayesianSignal()).makeSignal(states, true, "novel-insertion-hetero"));
     }
 
-    mPosteriorSignals = ps.toArray(new Signal[ps.size()]);
+    mPosteriorSignals = ps.toArray(new Signal[0]);
 
     if (mParams.outputSimple()) {
       writeHeader(mSimpleOut, "simple", mSimpleSignals, "n-count");
@@ -215,7 +215,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
   }
 
   private Signal[] getSignals(List<Signal> list) {
-    return list.toArray(new Signal[list.size()]);
+    return list.toArray(new Signal[0]);
   }
 
   private void warnRgMismatch(SAMRecord rec) {

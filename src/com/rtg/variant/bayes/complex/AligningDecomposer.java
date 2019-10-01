@@ -158,7 +158,7 @@ public class AligningDecomposer extends AbstractDecomposer {
         }
       }
     }
-    final String[] newUniqueAlleles = uniqueAlleles.keySet().toArray(new String[uniqueAlleles.size()]);
+    final String[] newUniqueAlleles = uniqueAlleles.keySet().toArray(new String[0]);
     return new Pair<>(newUniqueAlleles, alleleMap);
   }
 
@@ -230,7 +230,7 @@ public class AligningDecomposer extends AbstractDecomposer {
     }
     extra.removeAll(alts);
     extra.remove(ref);
-    return extra.toArray(new String[extra.size()]);
+    return extra.toArray(new String[0]);
   }
 
   @Override

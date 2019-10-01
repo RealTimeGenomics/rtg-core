@@ -214,7 +214,7 @@ public class FamilyCallerFBTest extends FamilyCallerTest {
       family.setSampleIds(calledGenomes);
     }
     final FamilyCallerFB ffb = new FamilyCallerFB(VariantParams.builder().genomePriors(priors).create()
-        , families.toArray(new Family[families.size()])
+        , families.toArray(new Family[0])
         );
     final HypothesisScores bestScores = ffb.getBestScores(models, new PriorContainer<>(hdh, ffb.makeInitialBs(models)));
     assertFalse(Double.isNaN(bestScores.getNonIdentityPosterior()));

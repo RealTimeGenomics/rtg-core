@@ -204,7 +204,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     Diagnostic.progress("UnmappedProcess: 1/1 Jobs Finished");
     retOutput.add(unmappedOut.mFile);
     retCalibrate.add(calibrateFile);
-    return new FilterConcatIntermediateFiles(retOutput.toArray(new File[retOutput.size()]), retCalibrate.toArray(new File[retCalibrate.size()]), !isFinalUnmapped || indexFile == null ? null : new File[] {indexFile});
+    return new FilterConcatIntermediateFiles(retOutput.toArray(new File[0]), retCalibrate.toArray(new File[0]), !isFinalUnmapped || indexFile == null ? null : new File[] {indexFile});
   }
 
   private void writeUnmappedRecords(UnmappedSamRecordFactory unmappedSamRecordFactory, RecordToWriter rtw) {
@@ -398,7 +398,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
       indexFiles[i] = AbstractMulticoreFilterConcat.indexFileName(f, mParams.outputParams().bam());
       calibrationFiles[i] = new File(f.getParent(), f.getName() + CommonFlags.RECALIBRATE_EXTENSION);
     }
-    FileUtils.copyRaw(finalOutputFile, !keepTempFiles, regionFiles.toArray(new File[regionFiles.size()]));
+    FileUtils.copyRaw(finalOutputFile, !keepTempFiles, regionFiles.toArray(new File[0]));
     if (mParams.outputParams().outputIndex() && (mParams.outputParams().isCompressOutput() || mParams.outputParams().bam())) {
       AbstractMulticoreFilterConcat.mergeIndexes(mParams, finalOutputFile, indexFiles, dataFileSizes);
     }

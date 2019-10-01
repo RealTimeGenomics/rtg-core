@@ -250,7 +250,7 @@ public class MapReport extends MapSummaryReport {
     }
     //summaryText.append("</pre></body></html>\n");
 
-    final DataTable dTable = new DataTable(titles.toArray(new String[titles.size()]), grams);
+    final DataTable dTable = new DataTable(titles.toArray(new String[0]), grams);
     final String sectionTitle = "Summary";
     final ByteArrayOutputStream png = new ByteArrayOutputStream();
     dTable.toGraphImage(png, PlotType.BOX);

@@ -285,7 +285,7 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
     final HashingRegion[] regions = splitWorkload(reader, rg, startId, endId, numberChunks, minChunkSize, padding);
 
     final List<HashingRegion> excluded = excludeDuplicateRegions(rg, regions, ReaderUtils.getSequenceNameMap(reader));
-    return excluded.toArray(new HashingRegion[excluded.size()]);
+    return excluded.toArray(new HashingRegion[0]);
   }
 
   static List<HashingRegion> excludeDuplicateRegions(ReferenceGenome rg, HashingRegion[] regions, Map<String, Long> sequenceNameMap) {
@@ -410,7 +410,7 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
     final long chunks = Math.max(1, (long) (numberChunks / (totalLengths / (double) partLength)));
     final HashingRegion[] r = splitWorkload(lengths, splitStart, (int) chunks, minChunkSize, padding);
     regions.addAll(Arrays.asList(r));
-    return regions.toArray(new HashingRegion[regions.size()]);
+    return regions.toArray(new HashingRegion[0]);
 
   }
   /**

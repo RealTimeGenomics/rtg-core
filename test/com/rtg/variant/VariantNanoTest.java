@@ -437,7 +437,7 @@ public class VariantNanoTest extends AbstractNanoTest {
     if (allNum > 0) {
       list.add(allNum + skipped);
     }
-    return list.toArray(new String[list.size()]);
+    return list.toArray(new String[0]);
   }
 
   public void testSamFormatBadIH() throws Exception {

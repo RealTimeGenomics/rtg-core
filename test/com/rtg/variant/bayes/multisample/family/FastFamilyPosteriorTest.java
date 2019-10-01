@@ -99,7 +99,7 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
     }
 
     final GenomePriorParams priors = getGenomePriorParams();
-    final Family family = FamilyCallerTest.makeFamily("f", "m", children.toArray(new String[children.size()]));
+    final Family family = FamilyCallerTest.makeFamily("f", "m", children.toArray(new String[0]));
     final AbstractFamilyPosterior slow = new FamilyPosterior(family, priors, models, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, null, mHypotheses));
     final AbstractFamilyPosterior fast = new FastFamilyPosterior(family, priors, models, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, null, mHypotheses));
     assertEquals(fast.bestFather().hypothesis(), slow.bestFather().hypothesis());
