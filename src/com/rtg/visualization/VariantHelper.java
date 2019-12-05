@@ -46,7 +46,9 @@ final class VariantHelper {
 
       // We have names available
       final List<String> sampleNames = r.getHeader().getSampleNames();
-      if (r.getHeader().getNumberOfSamples() == 1) { // Assume the user asked for it for a reason, always just add it
+      if (r.getHeader().getNumberOfSamples() == 0) {
+        throw new NoTalkbackSlimException("VCF file: " + input + " does not contain any samples.");
+      } else if (r.getHeader().getNumberOfSamples() == 1) { // Assume the user asked for it for a reason, always just add it
         actualSamples.add(0);
         final String sampleName = sampleNames.get(0);
         actualSampleNames.add(sampleName);
