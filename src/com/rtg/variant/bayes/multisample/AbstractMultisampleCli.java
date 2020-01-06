@@ -341,7 +341,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_EXPECTED_ALLELIC_FRACTION, Double.class, CommonFlags.FLOAT, "expected germline heterozygous alternate allele fraction", 0.5).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_EXPAND_COMPLEX_READ_QUERIES, Boolean.class, CommonFlags.BOOL, "expand queries for reads by one base either side of a complex region", Boolean.FALSE).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_COMPLEX_USE_SOFT_CLIP, Boolean.class, CommonFlags.BOOL, "use soft clipped bases in evidence for complex calls", Boolean.TRUE).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_FORCE_COMPLEX_REGION, String.class, CommonFlags.STRING, "Force a complex region over specified range").setCategory(UTILITY);
+    flags.registerOptional(X_FORCE_COMPLEX_REGION, String.class, CommonFlags.STRING, "force a complex region over specified range").setCategory(UTILITY);
   }
 
   protected void registerAllelicTriggers(CFlags flags) {
