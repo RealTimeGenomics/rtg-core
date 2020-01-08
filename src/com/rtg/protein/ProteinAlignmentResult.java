@@ -46,13 +46,19 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
   private final int mReadAndFrame;
   private final long mReadIdOffset;
   private final int[] mActions;
+  private final boolean mTranslated;
   private final boolean mOutputProteinSequences;
 
-  ProteinAlignmentResult(final SharedProteinResources resources, final int templateId, final int readId, final int[] res, long offset, boolean outputProteinSequences) {
+  ProteinAlignmentResult(final SharedProteinResources resources, final int templateId, final int readAndFrame, final int[] res, long offset, boolean outputProteinSequences) {
+    this(resources, templateId, readAndFrame, res, offset, outputProteinSequences, true);
+  }
+
+  ProteinAlignmentResult(final SharedProteinResources resources, final int templateId, final int readAndFrame, final int[] res, long offset, boolean outputProteinSequences, boolean translated) {
     mOutputProteinSequences = outputProteinSequences;
+    mTranslated = translated;
     mResources = resources;
     mTemplateId = templateId;
-    mReadAndFrame = readId;
+    mReadAndFrame = readAndFrame;
     mReadIdOffset = offset;
     if (res != null) {
       mActions = ActionsHelper.copy(res);
@@ -62,11 +68,11 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
   }
 
   int readId() {
-    return mReadAndFrame / FRAME_COUNT;
+    return mTranslated ? mReadAndFrame / FRAME_COUNT : mReadAndFrame;
   }
 
   private int frame() {
-    return ProteinOutputProcessor.INTERNAL_ENCODED_FRAME_TO_NATURAL_FRAME[mReadAndFrame % FRAME_COUNT];
+    return mTranslated ? ProteinOutputProcessor.INTERNAL_ENCODED_FRAME_TO_NATURAL_FRAME[mReadAndFrame % FRAME_COUNT] : 1;
   }
 
   int alignmentScore() {
@@ -136,7 +142,7 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
    * @return end position in nucleotide space
    */
   static int readNtEnd(final int start, final int ntLength) {
-    final int effectiveLength = ntLength - start + 1;
+    final int effectiveLength = ntLength - (start - 1);
     return start + (effectiveLength / NUCLEOTIDES_PER_CODON) * NUCLEOTIDES_PER_CODON - 1;
   }
 
@@ -230,10 +236,11 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
     os.write('\t');
     //    final int readStart = readStart(frame, mResources.queryLength(readId), length * NUCLEOTIDES_PER_CODON);
     final int ntLength = mResources.queryLength(readId);
-    final int readStart = readNtStart(frame, ntLength);
+    final int readStart = mTranslated ? readNtStart(frame, ntLength) : 1;
+    final int readEnd = mTranslated ? readNtEnd(readStart, ntLength) : readStart + ntLength - 1;
     IOUtils.writeInt(os, readStart);
     os.write('\t');
-    IOUtils.writeInt(os, readNtEnd(readStart, ntLength));
+    IOUtils.writeInt(os, readEnd);
     os.write('\t');
     IOUtils.writeInt(os, mResources.queryLength(readId));
 

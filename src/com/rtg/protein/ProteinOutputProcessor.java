@@ -23,7 +23,9 @@ import com.rtg.alignment.BidirectionalEditDistance;
 import com.rtg.alignment.EditDistanceFactory;
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.mode.Frame;
+import com.rtg.mode.ProteinFrame;
 import com.rtg.mode.ProteinScoringMatrix;
+import com.rtg.mode.SequenceType;
 import com.rtg.mode.TranslatedFrame;
 import com.rtg.ngs.MapStatistics;
 import com.rtg.ngs.NgsParams;
@@ -108,6 +110,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     TranslatedFrame.FORWARD2,
     TranslatedFrame.FORWARD3};
   private static final Frame[] FRAMES = TranslatedFrame.values();
+
   //static final String ALIGNMENT_OUT = TABULAR_ALIGNMENTS;
   private static final String ALIGNMENT_SUB_OUTPUT = "alignmentSubOutput_";
   private static final byte[] LS = StringUtils.LS.getBytes();
@@ -131,6 +134,8 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
   protected final File mOutFile;
   protected final ProteinOutputProcessor mMaster;
   private final SharedProteinResources mSharedResources;
+
+  private final boolean mTranslated;
 
   private final byte[] mReadWorkspace;
   private long mCurrentTemplateId = -1;
@@ -188,7 +193,17 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     //assert mTemplate instanceof CompressedMemorySequencesReader;
     //assert mRead instanceof CompressedMemorySequencesReader;
     mReadWorkspace = new byte[(int) mRead.maxLength()];
-    mEnableReadCache = mParams.enableProteinReadCache();
+    mTranslated = mRead.type() == SequenceType.DNA;
+    if (mTranslated) {
+      //System.err.println("Running in blastx mode");
+      mEnableReadCache = mParams.enableProteinReadCache();
+      mProteinWorkspace = new byte[(int) params.buildFirstParams().reader().maxLength()];
+    } else {
+      Diagnostic.developerLog("Running in blastp mode");
+      mEnableReadCache = false;
+      mProteinWorkspace = null;
+    }
+
     mProteinScoringMatrix = mParams.proteinScoringMatrix();
     mProteinEditDistance = EditDistanceFactory.createProteinEditDistance(mProteinScoringMatrix);
     mSharedResources = new SharedProteinResources(mProteinScoringMatrix, mTemplate, mRead, mParams.outputParams().outputReadNames());
@@ -232,7 +247,6 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
         mOut = null;
       }
     }
-    mProteinWorkspace = new byte[(int) params.buildFirstParams().reader().maxLength()];
   }
 
   protected NgsParams getParams() {
@@ -281,25 +295,43 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     if (mCurrentTemplateId != templateId) {
       nextTemplateId(templateId);
     }
-    final int chunkId = rr / ((int) mRead.numberSequences() * FRAMES.length);
-    final int r = rr - chunkId * (int) mRead.numberSequences() * FRAMES.length;
-    final int readId = r / FRAMES.length;
+    final int chunkId;
+    final int r;
+    final int readId;
+    final int genomeFrame;
+    final Frame frame;
+    if (mTranslated) {
+      chunkId = rr / ((int) mRead.numberSequences() * FRAMES.length);
+      r = rr - chunkId * (int) mRead.numberSequences() * FRAMES.length;
+      readId = r / FRAMES.length;
+      genomeFrame = INTERNAL_ENCODED_FRAME_TO_NATURAL_FRAME[r % FRAMES.length];
+      frame = FRAMES_MAPPING[genomeFrame + 3];
+    } else {
+      chunkId = rr / (int) mRead.numberSequences();
+      r = rr - chunkId * (int) mRead.numberSequences();
+      readId = r;
+      genomeFrame = 1;
+      frame = ProteinFrame.PROTEIN;
+    }
 
-    final int genomeFrame = INTERNAL_ENCODED_FRAME_TO_NATURAL_FRAME[r % FRAMES.length];
-    final Frame frames = FRAMES_MAPPING[genomeFrame + 3];
     //Diagnostic.developerLog("readId: " + readId);
     final int plen;
     byte[] readProtein = mEnableReadCache ? mSharedStatusCollector.getReadProtein(r) : null;
     if (readProtein == null) {
       // get read, convert to protein, put it in the cache
       final int rlen = mRead.read(readId, mReadWorkspace);
-      plen = (rlen - Math.abs(genomeFrame) + 1) / NUCLEOTIDES_PER_CODON;
-      readProtein = mEnableReadCache ? new byte[plen] : mProteinWorkspace;
-      for (int j = 0, i = 0; j < plen; ++j, i += NUCLEOTIDES_PER_CODON) {
-        readProtein[j] = frames.code(mReadWorkspace, rlen, i);
-      }
-      if (mEnableReadCache) {
-        mSharedStatusCollector.putReadProtein(r, readProtein);
+      if (mTranslated) {
+        plen = (rlen - Math.abs(genomeFrame) + 1) / NUCLEOTIDES_PER_CODON;
+        readProtein = mEnableReadCache ? new byte[plen] : mProteinWorkspace;
+        for (int j = 0, i = 0; j < plen; ++j, i += NUCLEOTIDES_PER_CODON) {
+          readProtein[j] = frame.code(mReadWorkspace, rlen, i);
+        }
+        if (mEnableReadCache) {
+          mSharedStatusCollector.putReadProtein(r, readProtein);
+        }
+      } else {
+        plen = rlen;
+        readProtein = mReadWorkspace;
       }
     } else {
       plen = readProtein.length;
@@ -307,10 +339,10 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     }
 
 
-    final int chunkToPosition = ProteinReadIndexer.chunkToPosition(chunkId, mRead.length(readId) / 3, mParams.mapXMetaChunkSize(), mParams.mapXMetaChunkOverlap());
+    final int chunkToPosition = ProteinReadIndexer.chunkToPosition(chunkId, mTranslated ? mRead.length(readId) / 3 : mRead.length(readId), mParams.mapXMetaChunkSize(), mParams.mapXMetaChunkOverlap());
     final int chunkReadStart;
     final int start;
-    if (frames.isForward()) {
+    if (frame.isForward()) {
       start = chunkStart - chunkToPosition;
       chunkReadStart = chunkToPosition;
     } else {
@@ -380,7 +412,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
       ++mAlignmentsRetained;
 
       final long idOffset = Math.max(mParams.buildFirstParams().readerRestriction().getStart(), 0);
-      writeResult(new ProteinAlignmentResult(mSharedResources, (int) templateId, r, res, idOffset, mParams.outputParams().outputProteinSequences()));
+      writeResult(new ProteinAlignmentResult(mSharedResources, (int) templateId, r, res, idOffset, mParams.outputParams().outputProteinSequences(), mTranslated));
       // and record a histogram of the shift distances
       if (Math.abs(shift) > mAlignmentShiftCount.length / 2) {
         Diagnostic.developerLog("alignment for read " + r + ", template " + templateId + ":" + start + " shifted by " + shift);

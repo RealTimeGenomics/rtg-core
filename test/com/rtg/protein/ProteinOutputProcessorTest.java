@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.launcher.AbstractNanoTest;
+import com.rtg.launcher.ISequenceParams;
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.ProteinScoringMatrix;
 import com.rtg.mode.TranslatedFrame;
@@ -42,7 +43,9 @@ import com.rtg.util.io.TestDirectory;
  */
 public class ProteinOutputProcessorTest extends AbstractNanoTest {
 
-  private static final String TEMPLATE_DNA = "AAATGGCGCAAAAACAGAAAGTCGAAAAAAAATCAAAGAAATTATAACCACGACGCAGCAGACGCAG";
+  // AAA TGG CGC AAA AAC AGA AAG TCG AAA AAA AAT CAA AGA AAT TAT AAC CAC GAC GCA GCA GAC GCA
+  // 0   1   2   3   4   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18  19  20
+  private static final String TEMPLATE_DNA = "AAATGGCGCAAAAACAGAAAGTCGAAAAAAAATCAAAGAAATTATAACCACGACGCAGCAGACGCA";
   private static final String TEMPLATE_PROTEIN = TestUtils.dnaToProtein(TEMPLATE_DNA);
 
   /** test template */
@@ -69,6 +72,13 @@ public class ProteinOutputProcessorTest extends AbstractNanoTest {
     "AAAAAAATCAAAGAAATTATAACCACGACGCAGCAG"};
   static final String READS_FASTA_PERFECT = toFasta("testRead", READS_PERFECT);
 
+  private static final String[] PROTEIN_QUERY_PERFECT = {
+    TestUtils.dnaToProtein("AAATGGCGCAAAAACAGAAAGTCGAAAAAAAATCAA"),
+    TestUtils.dnaToProtein("TGGCGCAAAAACAGAAAGTCGAAAAAAAATCAAAGA"),
+    TestUtils.dnaToProtein("AATCAAAGAAATTATAACCACGACGCAGCAGACGCA"),
+  };
+  static final String PROTEIN_QUERY_FASTA_PERFECT = toFasta("testProt", PROTEIN_QUERY_PERFECT);
+
   static final String POP_EXP_1_ALIGNMENTS_TSV_ID = "pop-exp1-alignments.tsv";
   static final String POP_EXP_UNMAPPED_TSV_ID = "pop-exp-unmapped.tsv";
 
@@ -84,11 +94,26 @@ public class ProteinOutputProcessorTest extends AbstractNanoTest {
     return actualStr;
   }
 
-  /**
-   * Test method for {@link com.rtg.protein.ProteinOutputProcessor#process(long, java.lang.String, int, int, int, int)}.
-   * @throws IOException if error
-   * @throws InvalidParamsException
-   */
+  private static NgsParams createParams(File tmp, boolean outputprot) throws IOException {
+    return createParams(tmp, outputprot, getSequenceParamsDna(READS_FASTA_PERFECT));
+  }
+
+  private static NgsParams createParams(File tmp, boolean outputprot, ISequenceParams buildparams) throws IOException {
+    final NgsFilterParams filter = NgsFilterParams.builder()
+    .outputFilter(OutputFilter.PROTEIN_TOPN)
+    .useids(true)
+    .errorLimit(MapFlags.MAX_SCORE)
+    .preFilterMinScore(0)
+    .preFilterMinOverlap(0)
+    .create();
+    return NgsParams.builder()
+      .outputParams(NgsOutputParams.builder().outputDir(tmp).outputUnmapped(true).filterParams(filter).outputProteinSequences(outputprot).create())
+      .buildFirstParams(buildparams)
+      .searchParams(getSequenceParamsProtein(TEMPLATE_FASTA))
+      .proteinScoringMatrix(new ProteinScoringMatrix())
+      .create();
+  }
+
   public final void testProcess() throws IOException, InvalidParamsException {
     final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
@@ -104,44 +129,38 @@ public class ProteinOutputProcessorTest extends AbstractNanoTest {
       mNano.check(POP_EXP_1_ALIGNMENTS_TSV_ID, getFileFromMatch(new File(tmp, TABULAR_ALIGNMENTS), "#template-name"));
       mNano.check(POP_EXP_UNMAPPED_TSV_ID, getFileFromMatch(new File(tmp, UNMAPPED_FILE), "#read-id"));
       TestUtils.containsAll(mps.toString(),
-          "Fast identity percentage : 0%",
-          "Overhang identity percentage : 0%",
-          "Total alignments : 2",
-          "Read cache hits  : 0",
-          "Alignments skipped due to offset start   : 0",
-          "Alignments skipped due to fast identity  : 0",
-          "Alignments done      : 2",
-          "Alignments done twice: 0",
-          "Alignments failed due to alignment score : 0",
-          "Alignments failed due to percent ID      : 0",
-          "Alignments failed due to E score         : 0",
-          "Alignments failed due to bit score       : 0",
-          "Alignments retained : 2"
+        "Fast identity percentage : 0%",
+        "Overhang identity percentage : 0%",
+        "Total alignments : 2",
+        "Read cache hits  : 0",
+        "Alignments skipped due to offset start   : 0",
+        "Alignments skipped due to fast identity  : 0",
+        "Alignments done      : 2",
+        "Alignments done twice: 0",
+        "Alignments failed due to alignment score : 0",
+        "Alignments failed due to percent ID      : 0",
+        "Alignments failed due to E score         : 0",
+        "Alignments failed due to bit score       : 0",
+        "Alignments retained : 2"
       );
     }
   }
 
-  private static NgsParams createParams(File tmp, boolean outputprot) throws IOException {
-    final NgsFilterParams filter = NgsFilterParams.builder()
-    .outputFilter(OutputFilter.PROTEIN_TOPN)
-    .useids(true)
-    .errorLimit(MapFlags.MAX_SCORE)
-    .preFilterMinScore(0)
-    .preFilterMinOverlap(0)
-    .create();
-    return NgsParams.builder()
-      .outputParams(NgsOutputParams.builder().outputDir(tmp).outputUnmapped(true).filterParams(filter).outputProteinSequences(outputprot).create())
-      .buildFirstParams(getSequenceParamsDna(READS_FASTA_PERFECT))
-      .searchParams(getSequenceParamsProtein(TEMPLATE_FASTA))
-      .proteinScoringMatrix(new ProteinScoringMatrix())
-      .create();
+  public final void testProcessProteinBuild() throws IOException, InvalidParamsException {
+    try (final TestDirectory tmp = new TestDirectory("proteinop")) {
+      final NgsParams params = createParams(tmp, true, getSequenceParamsProtein(PROTEIN_QUERY_FASTA_PERFECT));
+      try (final OutputProcessor p = OutputFilter.PROTEIN_ALL_HITS.makeProcessor(params, null)) {
+        assertTrue(p instanceof ProteinOutputProcessor);
+        p.process(0, "+1", 0, 0, 0, 0);
+        p.process(0, "+1", 1, 0, 0, 0);
+        p.process(0, "+1", 2, 9, 0, 0);
+        p.finish();
+      }
+      mNano.check("pop-prot-alignments.tsv", getFileFromMatch(new File(tmp, TABULAR_ALIGNMENTS), "#template-name"));
+      mNano.check("pop-prot-unmapped.tsv", getFileFromMatch(new File(tmp, UNMAPPED_FILE), "#read-id"));
+    }
   }
 
-  /**
-   * Test method for {@link com.rtg.protein.ProteinOutputProcessor#process(long, java.lang.String, int, int, int, int)}.
-   * @throws IOException if error
-   * @throws InvalidParamsException
-   */
   public final void testProcessNoProteinOutput() throws IOException, InvalidParamsException {
     try (final TestDirectory tmp = new TestDirectory("proteinop")) {
       final NgsParams params = createParams(tmp, false);
