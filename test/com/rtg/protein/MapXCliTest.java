@@ -260,18 +260,6 @@ public class MapXCliTest extends AbstractCliTest {
     return ((MapXCli) mCli).makeParams();
   }
 
-  protected static void checkAlignmentsNoHeader(String expected, File actual) throws IOException {
-    assertTrue(actual.exists());
-    final String actualStr = FileUtils.fileToString(actual);
-    assertEquals(expected, actualStr.substring(actualStr.indexOf("#template-name")));
-  }
-
-  protected static void checkUnmappedNoHeader(String expected, File actual) throws IOException {
-    assertTrue(actual.exists());
-    final String actualStr = FileUtils.fileToString(actual);
-    assertEquals(expected, actualStr.substring(actualStr.indexOf("#read-id")));
-  }
-
   static final String WARN_READS = ""
       + ">small" + LS
       + "acgtacgtacg" + LS

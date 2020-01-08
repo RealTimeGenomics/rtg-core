@@ -11,149 +11,107 @@
  */
 package com.rtg.protein;
 
+import static com.rtg.ngs.OutputFilterTest.getSequenceParamsDna;
+import static com.rtg.ngs.OutputFilterTest.getSequenceParamsProtein;
+import static com.rtg.protein.ProteinOutputProcessor.TABULAR_ALIGNMENTS;
+import static com.rtg.protein.ProteinOutputProcessor.UNMAPPED_FILE;
+import static com.rtg.protein.ProteinOutputProcessorTest.POP_EXP_1_ALIGNMENTS_TSV_ID;
+import static com.rtg.protein.ProteinOutputProcessorTest.POP_EXP_UNMAPPED_TSV_ID;
+import static com.rtg.protein.ProteinOutputProcessorTest.getFileFromMatch;
+
 import java.io.File;
 import java.io.IOException;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.launcher.SequenceParams;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.mode.ProteinScoringMatrix;
 import com.rtg.ngs.NgsFilterParams;
 import com.rtg.ngs.NgsOutputParams;
 import com.rtg.ngs.NgsParams;
 import com.rtg.ngs.OutputFilter;
-import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.StringUtils;
-import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.io.FileUtils;
-import com.rtg.util.test.FileHelper;
-
-import junit.framework.TestCase;
+import com.rtg.util.io.TestDirectory;
 
 /**
  * Test class
  */
-public class TopEqualProteinOutputProcessorTest extends TestCase {
+public class TopEqualProteinOutputProcessorTest extends AbstractNanoTest {
 
-  /**
-   */
-  public TopEqualProteinOutputProcessorTest(String name) {
-    super(name);
-  }
+  static final String POP_EXP_2_ALIGNMENTS_TSV_ID = "pop-exp2-alignments.tsv";
 
   public final void testTopEqualProteinOutputProcessor() throws IOException, InvalidParamsException {
-    Diagnostic.setLogStream();
-    final File tmp = FileUtils.createTempDir("proteinop", "filter");
-    try {
-    final NgsParams params = createParams(tmp, ProteinOutputProcessorTest.READS_FASTA_PERFECT, ProteinOutputProcessorTest.TEMPLATE_FASTA, 5);
-    final OutputProcessor p = OutputFilter.PROTEIN_TOPEQUAL.makeProcessor(params, null);
-    try {
-     assertTrue(p instanceof TopEqualProteinOutputProcessor);
-     p.process(0, "+1", 0, 0, 0, 0);
-     p.process(0, "+1", 8, 0, 0, 0);
-    } finally {
-      p.finish();
-      p.close();
-    }
+    try (final TestDirectory tmp = new TestDirectory("proteintope")) {
+      final NgsParams params = createParams(tmp, 5);
+      try (final OutputProcessor p = OutputFilter.PROTEIN_TOPEQUAL.makeProcessor(params, null)) {
+        assertTrue(p instanceof TopEqualProteinOutputProcessor);
+        p.process(0, "+1", 0, 0, 0, 0);
+        p.process(0, "+1", 8, 0, 0, 0);
+        p.finish();
+      }
 
-    MapXCliTest.checkAlignmentsNoHeader(ProteinOutputProcessorTest.EXPECTED_1, new File(tmp, "alignments.tsv"));
-    MapXCliTest.checkUnmappedNoHeader(ProteinOutputProcessorTest.EXPECTED_UNMAPPED, new File(tmp, ProteinOutputProcessor.UNMAPPED_FILE));
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
+      mNano.check(POP_EXP_1_ALIGNMENTS_TSV_ID, getFileFromMatch(new File(tmp, TABULAR_ALIGNMENTS), "#template-name"));
+      mNano.check(POP_EXP_UNMAPPED_TSV_ID, getFileFromMatch(new File(tmp, UNMAPPED_FILE), "#read-id"));
     }
+  }
+
+  public static NgsParams createParams(final File tmp, final int topn) throws IOException, InvalidParamsException {
+    return createParams(tmp, ProteinOutputProcessorTest.READS_FASTA_PERFECT, ProteinOutputProcessorTest.TEMPLATE_FASTA, topn);
   }
 
   public static NgsParams createParams(final File tmp, String dna, String protein, final int topn) throws IOException, InvalidParamsException {
-    final File input = new File(tmp, "1");
-    ReaderTestUtils.getReaderDNA(dna, input, null).close();
-    final File input2 = new File(tmp, "2");
-    ReaderTestUtils.getReaderProtein(protein, input2).close();
-
     final NgsFilterParams filterParams = NgsFilterParams.builder().topN(topn).create();
     return NgsParams.builder().outputParams(NgsOutputParams.builder().outputDir(tmp).outputUnmapped(true).filterParams(filterParams).create())
-                                                .buildFirstParams(SequenceParams.builder().directory(input).useMemReader(true).loadNames(true).create())
-                                                .searchParams(SequenceParams.builder().directory(input2).useMemReader(true).loadNames(true).create())
-                                                .proteinScoringMatrix(new ProteinScoringMatrix())
-                                                .create();
+      .buildFirstParams(getSequenceParamsDna(dna))
+      .searchParams(getSequenceParamsProtein(protein))
+      .proteinScoringMatrix(new ProteinScoringMatrix())
+      .create();
   }
 
-  private static final String EXPECTED_2 =   "#template-name\tframe\tread-id\ttemplate-start\ttemplate-end\ttemplate-length\tread-start\tread-end\tread-length\ttemplate-protein\tread-protein\talignment\tidentical\t%identical\tpositive\t%positive\tmismatches\traw-score\tbit-score\te-score" + StringUtils.LS
-    + "templateName\t+1\t0\t1\t12\t22\t1\t36\t36\tkwrknrkskknq\tkwrknrkskknq\tkwrknrkskknq\t12\t100\t12\t100\t0\t-67\t30.4\t1.5e-8" + StringUtils.LS
-    + "templateName\t+3\t1\t2\t12\t22\t3\t35\t36\twrknrkskknq\twrknrkskknq\twrknrkskknq\t11\t100\t11\t100\t0\t-62\t28.5\t5.8e-8" + StringUtils.LS;
-
   public final void testTopEqualProteinOutputProcessor2() throws IOException, InvalidParamsException {
-    Diagnostic.setLogStream();
-    final File tmp = FileUtils.createTempDir("proteinop", "filter");
-    try {
-      final NgsParams params = createParams(tmp, ProteinOutputProcessorTest.READS_FASTA_PERFECT, ProteinOutputProcessorTest.TEMPLATE_FASTA, 2);
-      final OutputProcessor p = OutputFilter.PROTEIN_TOPEQUAL.makeProcessor(params, null);
-      try {
+    try (final TestDirectory tmp = new TestDirectory("proteintope")) {
+      final NgsParams params = createParams(tmp, 2);
+      try (final OutputProcessor p = OutputFilter.PROTEIN_TOPEQUAL.makeProcessor(params, null)) {
         assertTrue(p instanceof TopEqualProteinOutputProcessor);
         p.process(0, "+1", 0, 0, 0, 0);
         p.process(0, "+1", 0, 0, 0, 0);
         p.process(0, "+1", 0, 0, 0, 0);
         p.process(0, "+1", 8, 0, 0, 0);
         p.process(0, "+1", 8, 0, 0, 0);
-      } finally {
         p.finish();
-        p.close();
       }
-      MapXCliTest.checkAlignmentsNoHeader(EXPECTED_2, new File(tmp, "alignments.tsv"));
-      MapXCliTest.checkUnmappedNoHeader(ProteinOutputProcessorTest.EXPECTED_UNMAPPED, new File(tmp, ProteinOutputProcessor.UNMAPPED_FILE));
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
+      mNano.check(POP_EXP_2_ALIGNMENTS_TSV_ID, getFileFromMatch(new File(tmp, TABULAR_ALIGNMENTS), "#template-name"));
+      mNano.check(POP_EXP_UNMAPPED_TSV_ID, getFileFromMatch(new File(tmp, UNMAPPED_FILE), "#read-id"));
     }
   }
 
   public final void testCountOverflow() throws IOException, InvalidParamsException {
-    Diagnostic.setLogStream();
-    final File tmp = FileUtils.createTempDir("proteinop", "filter");
-    try {
-      final NgsParams params = createParams(tmp, ProteinOutputProcessorTest.READS_FASTA_PERFECT, ProteinOutputProcessorTest.TEMPLATE_FASTA, 5);
-      final OutputProcessor p = OutputFilter.PROTEIN_TOPEQUAL.makeProcessor(params, null);
-      try {
+    try (final TestDirectory tmp = new TestDirectory("proteintope")) {
+      final NgsParams params = createParams(tmp, 5);
+      try (final OutputProcessor p = OutputFilter.PROTEIN_TOPEQUAL.makeProcessor(params, null)) {
         assertTrue(p instanceof TopEqualProteinOutputProcessor);
         for (int i = 0; i < 257; ++i) {
           p.process(0, "+1", 0, 0, 0, 0);
         }
         p.process(0, "+1", 8, 0, 0, 0);
         p.process(0, "+1", 8, 0, 0, 0);
-      } finally {
         p.finish();
-        p.close();
       }
-      MapXCliTest.checkAlignmentsNoHeader(EXPECTED_2, new File(tmp, "alignments.tsv"));
-      MapXCliTest.checkUnmappedNoHeader(ProteinOutputProcessorTest.EXPECTED_UNMAPPED, new File(tmp, ProteinOutputProcessor.UNMAPPED_FILE));
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
+      mNano.check(POP_EXP_2_ALIGNMENTS_TSV_ID, getFileFromMatch(new File(tmp, TABULAR_ALIGNMENTS), "#template-name"));
+      mNano.check(POP_EXP_UNMAPPED_TSV_ID, getFileFromMatch(new File(tmp, UNMAPPED_FILE), "#read-id"));
     }
   }
 
   public void testnvalidTopN() throws IOException, InvalidParamsException  {
-    Diagnostic.setLogStream();
-    final File tmp = FileUtils.createTempDir("proteinop", "invalidtopn");
-    try {
-      try {
-      final NgsParams params = createParams(tmp, ProteinOutputProcessorTest.READS_FASTA_PERFECT, ProteinOutputProcessorTest.TEMPLATE_FASTA, 0);
-      OutputFilter.PROTEIN_TOPEQUAL.makeProcessor(params, null);
-      fail();
-      } catch (final IllegalArgumentException ex) {
-        //okay
-      }
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
-    }
-    final File tmp2 = FileUtils.createTempDir("proteinop", "invalidtopn");
-    try {
-      try {
-        final NgsParams params = createParams(tmp2, ProteinOutputProcessorTest.READS_FASTA_PERFECT, ProteinOutputProcessorTest.TEMPLATE_FASTA, 251);
-        OutputFilter.PROTEIN_TOPEQUAL.makeProcessor(params, null);
-        fail();
+    try (final TestDirectory tmp = new TestDirectory("proteintope")) {
+      for (int topn : new int[] {0, 251 }) {
+        try {
+          final NgsParams params = createParams(tmp, topn);
+          OutputFilter.PROTEIN_TOPEQUAL.makeProcessor(params, null);
+          fail();
         } catch (final IllegalArgumentException ex) {
-          //okay
+          assertTrue(ex.getMessage().contains("topN"));
         }
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp2));
+      }
     }
   }
 }

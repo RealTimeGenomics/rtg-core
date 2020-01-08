@@ -11,6 +11,8 @@
  */
 package com.rtg.protein;
 
+import static com.rtg.mode.TranslatedFrame.NUCLEOTIDES_PER_CODON;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,7 +27,6 @@ import com.rtg.util.io.IOUtils;
 class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
 
   private static final int FRAME_COUNT = 6;
-  private static final int NUCLEOTIDES_PER_CODON = 3;
 
   /** System dependent representation of null. */
   private static final byte[] NULL = ("" + null).getBytes();

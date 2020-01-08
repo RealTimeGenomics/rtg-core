@@ -22,12 +22,6 @@ import com.rtg.util.InvalidParamsException;
  */
 public class TopEqualProteinImplementationTest extends TopEqualProteinOutputProcessorTest {
 
-  /**
-   */
-  public TopEqualProteinImplementationTest(String name) {
-    super(name);
-  }
-
   public void testResults() throws IOException, InvalidParamsException {
     final TopEqualProteinImplementation impl = new TopEqualProteinImplementation(2, 3);
     impl.insertResult(getResult(0));

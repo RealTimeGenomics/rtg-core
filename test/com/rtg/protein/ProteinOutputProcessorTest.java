@@ -11,14 +11,17 @@
  */
 package com.rtg.protein;
 
+import static com.rtg.ngs.OutputFilterTest.getSequenceParamsDna;
+import static com.rtg.ngs.OutputFilterTest.getSequenceParamsProtein;
+import static com.rtg.protein.ProteinOutputProcessor.TABULAR_ALIGNMENTS;
+import static com.rtg.protein.ProteinOutputProcessor.UNMAPPED_FILE;
 import static com.rtg.util.StringUtils.LS;
 
 import java.io.File;
 import java.io.IOException;
 
-import com.rtg.AbstractTest;
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.launcher.SequenceParams;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.ProteinScoringMatrix;
 import com.rtg.mode.TranslatedFrame;
@@ -27,8 +30,6 @@ import com.rtg.ngs.NgsFilterParams;
 import com.rtg.ngs.NgsOutputParams;
 import com.rtg.ngs.NgsParams;
 import com.rtg.ngs.OutputFilter;
-import com.rtg.reader.ReaderTestUtils;
-import com.rtg.reader.SequencesReader;
 import com.rtg.util.Environment;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.TestUtils;
@@ -39,7 +40,7 @@ import com.rtg.util.io.TestDirectory;
 
 /**
  */
-public class ProteinOutputProcessorTest extends AbstractTest {
+public class ProteinOutputProcessorTest extends AbstractNanoTest {
 
   private static final String TEMPLATE_DNA = "AAATGGCGCAAAAACAGAAAGTCGAAAAAAAATCAAAGAAATTATAACCACGACGCAGCAGACGCAG";
   private static final String TEMPLATE_PROTEIN = TestUtils.dnaToProtein(TEMPLATE_DNA);
@@ -47,6 +48,14 @@ public class ProteinOutputProcessorTest extends AbstractTest {
   /** test template */
   public static final String TEMPLATE_FASTA = ">templateName" + LS
     + TEMPLATE_PROTEIN + LS;
+
+  private static String toFasta(String prefix, String[] seqs) {
+    final StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < seqs.length; ++i) {
+      sb.append(">").append(prefix).append(i).append(LS).append(seqs[i]).append(LS);
+    }
+    return sb.toString();
+  }
 
   private static final String[] READS_PERFECT = {
     "AAATGGCGCAAAAACAGAAAGTCGAAAAAAAATCAA",
@@ -58,47 +67,22 @@ public class ProteinOutputProcessorTest extends AbstractTest {
     DnaUtils.reverseComplement("ATGGCGCAAAAACAGAAAGTCGAAAAAAAATCAAAG"),
     DnaUtils.reverseComplement("TGGCGCAAAAACAGAAAGTCGAAAAAAAATCAAAGA"),
     "AAAAAAATCAAAGAAATTATAACCACGACGCAGCAG"};
+  static final String READS_FASTA_PERFECT = toFasta("testRead", READS_PERFECT);
 
-  /** test reads */
-  public static final String READS_FASTA_PERFECT;
-  static final String TB = "\t";
-  static final String EXPECTED_1 = "#template-name" + TB + "frame" + TB + "read-id" + TB
-    + "template-start" + TB + "template-end" + TB + "template-length" + TB
-    + "read-start" + TB + "read-end" + TB + "read-length" + TB
-    + "template-protein" + TB + "read-protein" + TB + "alignment" + TB
-    + "identical" + TB + "%identical" + TB + "positive" + TB + "%positive" + TB + "mismatches" + TB
-    + "raw-score" + TB + "bit-score" + TB + "e-score" + LS
+  static final String POP_EXP_1_ALIGNMENTS_TSV_ID = "pop-exp1-alignments.tsv";
+  static final String POP_EXP_UNMAPPED_TSV_ID = "pop-exp-unmapped.tsv";
 
-    + "templateName" + TB + "+1" + TB + "0" + TB
-    + "1" + TB + "12" + TB + "22" + TB + "1" + TB + "36" + TB + "36" + TB
-    + "kwrknrkskknq" + TB + "kwrknrkskknq" + TB + "kwrknrkskknq" + TB
-    // matches   +matches   mismatches
-    + "12" + TB + "100" + TB + "12" + TB + "100" + TB + "0" + TB
-    // alignment-    bit-   e-scores
-    + "-67" + TB + "30.4" + TB + "1.5e-8" + LS
 
-    + "templateName" + TB + "+3" + TB + "1" + TB
-    + "2" + TB + "12" + TB + "22" + TB + "3" + TB + "35" + TB + "36" + TB
-    + "wrknrkskknq" + TB + "wrknrkskknq" + TB + "wrknrkskknq" + TB
-    // matches   +matches   mismatches
-    + "11" + TB + "100" + TB + "11" + TB + "100" + TB + "0" + TB
-    + "-62" + TB + "28.5" + TB + "5.8e-8" +  LS;
-  static {
-    final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < READS_PERFECT.length; ++i) {
-      sb.append(">testRead").append(i).append(LS).append(READS_PERFECT[i]).append(LS);
-    }
-    READS_FASTA_PERFECT = sb.toString();
+  protected static void checkUnmappedNoHeader(String expected, File actual) throws IOException {
+    assertEquals(expected, getFileFromMatch(actual, "#read-id"));
   }
 
-  static final String EXPECTED_UNMAPPED = "#read-id\treason-unmapped" + LS
-    + "2" + LS
-    + "3" + LS
-    + "4" + LS
-    + "5" + LS
-    + "6" + LS
-    + "7" + LS
-    + "8" + LS;
+  public static String getFileFromMatch(File actual, String headerStr) throws IOException {
+    assertTrue(actual.exists());
+    String actualStr = FileUtils.fileToString(actual);
+    actualStr = actualStr.substring(actualStr.indexOf(headerStr));
+    return actualStr;
+  }
 
   /**
    * Test method for {@link com.rtg.protein.ProteinOutputProcessor#process(long, java.lang.String, int, int, int, int)}.
@@ -109,34 +93,16 @@ public class ProteinOutputProcessorTest extends AbstractTest {
     final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
     try (final TestDirectory tmp = new TestDirectory("proteinop")) {
-      final File input = new File(tmp, "1");
-      ReaderTestUtils.getReaderDNA(READS_FASTA_PERFECT, input, null).close();
-      final File input2 = new File(tmp, "2");
-      ReaderTestUtils.getReaderProtein(TEMPLATE_FASTA, input2).close();
-
-      final NgsFilterParams filter = NgsFilterParams.builder()
-      .outputFilter(OutputFilter.PROTEIN_TOPN)
-      .useids(true)
-      .errorLimit(MapFlags.MAX_SCORE)
-      .preFilterMinScore(0)
-      .preFilterMinOverlap(0)
-      .create();
-      final NgsParams params = NgsParams.builder().outputParams(NgsOutputParams.builder().outputDir(tmp).outputUnmapped(true).filterParams(filter).create())
-        .buildFirstParams(SequenceParams.builder().directory(input).useMemReader(true).loadNames(true).create())
-        .searchParams(SequenceParams.builder().directory(input2).useMemReader(true).loadNames(true).create())
-        .proteinScoringMatrix(new ProteinScoringMatrix())
-        .create();
-      final OutputProcessor p = OutputFilter.PROTEIN_ALL_HITS.makeProcessor(params, null);
-      try {
+      final NgsParams params = createParams(tmp, true);
+      try (final OutputProcessor p = OutputFilter.PROTEIN_ALL_HITS.makeProcessor(params, null)) {
         assertTrue(p instanceof ProteinOutputProcessor);
         p.process(0, "+1", 0, 0, 0, 0);
-        p.process(0, "+1", 8, 0, 0, 0);
-      } finally {
+        p.process(0, "+3", 8, 0, 0, 0);
+        //p.process(0, "+2", 13, 0, 0, 0);
         p.finish();
-        p.close();
       }
-      MapXCliTest.checkAlignmentsNoHeader(EXPECTED_1, new File(tmp, "alignments.tsv"));
-      MapXCliTest.checkUnmappedNoHeader(EXPECTED_UNMAPPED, new File(tmp, ProteinOutputProcessor.UNMAPPED_FILE));
+      mNano.check(POP_EXP_1_ALIGNMENTS_TSV_ID, getFileFromMatch(new File(tmp, TABULAR_ALIGNMENTS), "#template-name"));
+      mNano.check(POP_EXP_UNMAPPED_TSV_ID, getFileFromMatch(new File(tmp, UNMAPPED_FILE), "#read-id"));
       TestUtils.containsAll(mps.toString(),
           "Fast identity percentage : 0%",
           "Overhang identity percentage : 0%",
@@ -155,24 +121,21 @@ public class ProteinOutputProcessorTest extends AbstractTest {
     }
   }
 
-  static final String EXPECTED_NO_PROTEIN = "#template-name" + TB + "frame" + TB + "read-id" + TB
-  + "template-start" + TB + "template-end" + TB + "template-length" + TB
-  + "read-start" + TB + "read-end" + TB + "read-length" + TB
-  + "identical" + TB + "%identical" + TB + "positive" + TB + "%positive" + TB + "mismatches" + TB
-  + "raw-score" + TB + "bit-score" + TB + "e-score" + LS
-
-  + "templateName" + TB + "+1" + TB + "0" + TB
-  + "1" + TB + "12" + TB + "22" + TB + "1" + TB + "36" + TB + "36" + TB
-  // matches   +matches   mismatches
-  + "12" + TB + "100" + TB + "12" + TB + "100" + TB + "0" + TB
-  // alignment-    bit-   e-scores
-  + "-67" + TB + "30.4" + TB + "1.5e-8" + LS
-
-  + "templateName" + TB + "+3" + TB + "1" + TB
-  + "2" + TB + "12" + TB + "22" + TB + "3" + TB + "35" + TB + "36" + TB
-  // matches   +matches   mismatches
-  + "11" + TB + "100" + TB + "11" + TB + "100" + TB + "0" + TB
-  + "-62" + TB + "28.5" + TB + "5.8e-8" +  LS;
+  private static NgsParams createParams(File tmp, boolean outputprot) throws IOException {
+    final NgsFilterParams filter = NgsFilterParams.builder()
+    .outputFilter(OutputFilter.PROTEIN_TOPN)
+    .useids(true)
+    .errorLimit(MapFlags.MAX_SCORE)
+    .preFilterMinScore(0)
+    .preFilterMinOverlap(0)
+    .create();
+    return NgsParams.builder()
+      .outputParams(NgsOutputParams.builder().outputDir(tmp).outputUnmapped(true).filterParams(filter).outputProteinSequences(outputprot).create())
+      .buildFirstParams(getSequenceParamsDna(READS_FASTA_PERFECT))
+      .searchParams(getSequenceParamsProtein(TEMPLATE_FASTA))
+      .proteinScoringMatrix(new ProteinScoringMatrix())
+      .create();
+  }
 
   /**
    * Test method for {@link com.rtg.protein.ProteinOutputProcessor#process(long, java.lang.String, int, int, int, int)}.
@@ -180,43 +143,21 @@ public class ProteinOutputProcessorTest extends AbstractTest {
    * @throws InvalidParamsException
    */
   public final void testProcessNoProteinOutput() throws IOException, InvalidParamsException {
-    Diagnostic.setLogStream();
     try (final TestDirectory tmp = new TestDirectory("proteinop")) {
-      final File input = new File(tmp, "1");
-      final SequencesReader r = ReaderTestUtils.getReaderDNA(READS_FASTA_PERFECT, input, null);
-      r.close();
-      final File input2 = new File(tmp, "2");
-      final SequencesReader t = ReaderTestUtils.getReaderProtein(TEMPLATE_FASTA, input2);
-      t.close();
-
-      final NgsFilterParams filter = NgsFilterParams.builder()
-      .outputFilter(OutputFilter.PROTEIN_TOPN)
-      .useids(true)
-      .errorLimit(MapFlags.MAX_SCORE)
-      .preFilterMinScore(0)
-      .preFilterMinOverlap(0)
-      .create();
-      final NgsParams params = NgsParams.builder().outputParams(NgsOutputParams.builder().outputDir(tmp).outputUnmapped(true).filterParams(filter).outputProteinSequences(false).create())
-        .buildFirstParams(SequenceParams.builder().directory(input).useMemReader(true).loadNames(true).create())
-        .searchParams(SequenceParams.builder().directory(input2).useMemReader(true).loadNames(true).create())
-        .proteinScoringMatrix(new ProteinScoringMatrix())
-        .create();
-      final OutputProcessor p = OutputFilter.PROTEIN_ALL_HITS.makeProcessor(params, null);
-      try {
+      final NgsParams params = createParams(tmp, false);
+      try (final OutputProcessor p = OutputFilter.PROTEIN_ALL_HITS.makeProcessor(params, null)) {
         assertTrue(p instanceof ProteinOutputProcessor);
         p.process(0, "+1", 0, 0, 0, 0);
         p.process(0, "+1", 8, 0, 0, 0);
-      } finally {
         p.finish();
-        p.close();
       }
       final String res = FileUtils.fileToString(new File(tmp, "alignments.tsv"));
       assertTrue(res.contains("#Version" + "\t" + Environment.getVersion()));
       assertTrue(res.contains(ProteinOutputProcessor.MAPX_OUTPUT_VERSION_HEADER + "\t" + ProteinOutputProcessor.MAPX_OUTPUT_VERSION));
-      assertTrue(res.contains(ProteinOutputProcessor.MAPX_TEMPLATE_SDF_ID_HEADER + "\t" + t.getSdfId()));
-      assertTrue(res.contains(ProteinOutputProcessor.MAPX_READ_SDF_ID_HEADER + "\t" + r.getSdfId()));
-      MapXCliTest.checkAlignmentsNoHeader(EXPECTED_NO_PROTEIN, new File(tmp, "alignments.tsv"));
-      MapXCliTest.checkUnmappedNoHeader(EXPECTED_UNMAPPED, new File(tmp, ProteinOutputProcessor.UNMAPPED_FILE));
+      assertTrue(res.contains(ProteinOutputProcessor.MAPX_TEMPLATE_SDF_ID_HEADER));
+      assertTrue(res.contains(ProteinOutputProcessor.MAPX_READ_SDF_ID_HEADER));
+      mNano.check("pop-no-prot-alignments.tsv", getFileFromMatch(new File(tmp, TABULAR_ALIGNMENTS), "#template-name"));
+      mNano.check(POP_EXP_UNMAPPED_TSV_ID, getFileFromMatch(new File(tmp, UNMAPPED_FILE), "#read-id"));
     }
   }
 

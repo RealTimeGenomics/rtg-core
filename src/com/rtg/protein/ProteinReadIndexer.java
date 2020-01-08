@@ -12,6 +12,8 @@
 package com.rtg.protein;
 
 
+import static com.rtg.mode.TranslatedFrame.NUCLEOTIDES_PER_CODON;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,15 +95,15 @@ public final class ProteinReadIndexer {
             final NgsHashFunction hashFunction = pair.getHashFunction();
             int readStartPosition = 0;
             for (int j = 0; j < numChunks; ++j) {
-              int readEndPosition = readStartPosition + metaChunkLength * 3;
+              int readEndPosition = readStartPosition + metaChunkLength * NUCLEOTIDES_PER_CODON;
               if (readEndPosition > length) {
                 readEndPosition = (int) length;
-                readStartPosition = readEndPosition - metaChunkLength * 3;
+                readStartPosition = readEndPosition - metaChunkLength * NUCLEOTIDES_PER_CODON;
               }
               final HashingRegion r = new HashingRegion(i, readStartPosition, i, readEndPosition, readStartPosition, readEndPosition);
               r.setMapxMetaChunkId(j);
               totalLength += hashLoop.readLoop(sequence.subSequence(r), hashFunction, ReadEncoder.SINGLE_END, false);
-              readStartPosition = readEndPosition - metaChunkOverlap * 3;
+              readStartPosition = readEndPosition - metaChunkOverlap * NUCLEOTIDES_PER_CODON;
             }
           }
         }
@@ -115,8 +117,8 @@ public final class ProteinReadIndexer {
   }
 
   static ReadLengthHashingState createHashingState(int readLength, final NgsParams params, final CreateParamsBuilder indexParamsBuilder, final long count, final int frames, final OutputProcessor outProcessor, long numValues) throws IOException {
-    final int windowSize = readLength / 3 - 1; //-1 to force removal of the last frame (the case where this frame is legit will just have to deal with it)
-    final int maskLength = Math.min(readLength, params.mapXMetaChunkSize() * 3);
+    final int windowSize = readLength / NUCLEOTIDES_PER_CODON - 1; //-1 to force removal of the last frame (the case where this frame is legit will just have to deal with it)
+    final int maskLength = Math.min(readLength, params.mapXMetaChunkSize() * NUCLEOTIDES_PER_CODON);
     final HashFunctionFactory hashFunctionFactory = params.maskParams().maskFactory(maskLength);
     indexParamsBuilder.size(count * frames)
     .windowBits(hashFunctionFactory.windowBits())
@@ -160,7 +162,7 @@ public final class ProteinReadIndexer {
       }
     }
     if (longReadCount > 0) {
-      final int virtualReadLength = params.mapXMetaChunkSize() * 3;
+      final int virtualReadLength = params.mapXMetaChunkSize() * NUCLEOTIDES_PER_CODON;
       final ReadLengthHashingState rlhs = createHashingState(virtualReadLength, params, indexParamsBuilder, longReadCount, frames, outProcessor, numValues);
       lengthFunctions.put(META_CHUNKED_KEY, rlhs);
     }
@@ -184,7 +186,7 @@ public final class ProteinReadIndexer {
    * @return start position for each chunk in protein space
    */
   static int countMetaChunks(int length, int metaChunkLength, int metaChunkOverlap) {
-    final int protlength = (length / 3) - 1;
+    final int protlength = (length / NUCLEOTIDES_PER_CODON) - 1;
     //63 = max protein length
     return (protlength - metaChunkOverlap - 1) / (metaChunkLength - metaChunkOverlap) + 1;
   }

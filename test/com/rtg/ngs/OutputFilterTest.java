@@ -24,7 +24,6 @@ import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.ProteinScoringMatrix;
 import com.rtg.mode.SequenceMode;
 import com.rtg.protein.ProteinOutputProcessor;
-import com.rtg.protein.ProteinOutputProcessorTest;
 import com.rtg.protein.TopEqualProteinOutputProcessor;
 import com.rtg.protein.TopEqualProteinOutputProcessorTest;
 import com.rtg.protein.TopNProteinOutputProcessor;
@@ -42,12 +41,12 @@ public class OutputFilterTest extends AbstractTest {
   private static final String DNA_FASTA = ">test\nacgtacgt";
   private static final String PROTEIN_FASTA = ">x\nacgt\n";
 
-  protected static ISequenceParams getSequenceParamsDna(String fasta) throws IOException {
+  public static ISequenceParams getSequenceParamsDna(String fasta) throws IOException {
     final SequencesReader dr = ReaderTestUtils.getReaderDnaMemory(fasta);
     return new MockSequenceParams(new MockReaderParams(dr), SequenceMode.BIDIRECTIONAL, 0, dr.numberSequences());
   }
 
-  protected static ISequenceParams getSequenceParamsProtein(String fasta) throws IOException {
+  public static ISequenceParams getSequenceParamsProtein(String fasta) throws IOException {
     final SequencesReader pr = ReaderTestUtils.getReaderProteinMemory(fasta);
     return new MockSequenceParams(new MockReaderParams(pr), SequenceMode.PROTEIN, 0, pr.numberSequences());
   }
@@ -190,7 +189,7 @@ public class OutputFilterTest extends AbstractTest {
 
   public void testProteinTopN1() throws IOException, InvalidParamsException {
     try (final TestDirectory tmp = new TestDirectory("proteinop")) {
-      final NgsParams params = TopEqualProteinOutputProcessorTest.createParams(tmp, ProteinOutputProcessorTest.READS_FASTA_PERFECT, ProteinOutputProcessorTest.TEMPLATE_FASTA, 5);
+      final NgsParams params = TopEqualProteinOutputProcessorTest.createParams(tmp, 5);
       final OutputProcessor p = OutputFilter.PROTEIN_TOPN.makeProcessor(params, null);
       assertTrue(p instanceof TopNProteinOutputProcessor);
       p.finish();
@@ -199,7 +198,7 @@ public class OutputFilterTest extends AbstractTest {
     }
 
     try (final TestDirectory tmp2 = new TestDirectory("proteintopn")) {
-      final NgsParams params = TopEqualProteinOutputProcessorTest.createParams(tmp2, ProteinOutputProcessorTest.READS_FASTA_PERFECT, ProteinOutputProcessorTest.TEMPLATE_FASTA, 1);
+      final NgsParams params = TopEqualProteinOutputProcessorTest.createParams(tmp2, 1);
       final OutputProcessor p = OutputFilter.PROTEIN_TOPN.makeProcessor(params, null);
       assertTrue(p instanceof TopEqualProteinOutputProcessor);
       p.finish();
@@ -210,7 +209,7 @@ public class OutputFilterTest extends AbstractTest {
 
 
   public void testProtein1() throws IOException, InvalidParamsException {
-    try (TestDirectory outFileDir = new TestDirectory("outputFilter")){
+    try (TestDirectory outFileDir = new TestDirectory("outputFilter")) {
       final NgsFilterParams filterParams = NgsFilterParams.builder().outputFilter(OutputFilter.PROTEIN_ALL_HITS).create();
       final NgsOutputParams ngsop = NgsOutputParams.builder().progress(false).outputDir(outFileDir).filterParams(filterParams).create();
       final NgsParams ngsp = NgsParams.builder()

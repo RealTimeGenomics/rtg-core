@@ -11,6 +11,8 @@
  */
 package com.rtg.protein;
 
+import static com.rtg.mode.TranslatedFrame.NUCLEOTIDES_PER_CODON;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -291,9 +293,9 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     if (readProtein == null) {
       // get read, convert to protein, put it in the cache
       final int rlen = mRead.read(readId, mReadWorkspace);
-      plen = (rlen - Math.abs(genomeFrame) + 1) / 3;
+      plen = (rlen - Math.abs(genomeFrame) + 1) / NUCLEOTIDES_PER_CODON;
       readProtein = mEnableReadCache ? new byte[plen] : mProteinWorkspace;
-      for (int j = 0, i = 0; j < plen; ++j, i += 3) {
+      for (int j = 0, i = 0; j < plen; ++j, i += NUCLEOTIDES_PER_CODON) {
         readProtein[j] = frames.code(mReadWorkspace, rlen, i);
       }
       if (mEnableReadCache) {

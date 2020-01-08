@@ -31,7 +31,7 @@ public class TopEqualProteinOutputProcessor extends ProteinOutputProcessor {
   static NgsParams checkTopNValue(final NgsParams params) {
     final int topN = params.outputParams().filter().topN();
     if (topN < 1 || topN > 250) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("Invalid topN");
     }
     return params;
   }

@@ -11,6 +11,7 @@
  */
 package com.rtg.protein;
 
+import static com.rtg.protein.ProteinOutputProcessorTest.checkUnmappedNoHeader;
 import static com.rtg.util.StringUtils.LS;
 import static com.rtg.util.StringUtils.TAB;
 
@@ -292,7 +293,7 @@ public class MapXFunctionalTest extends TestCase {
           + "6\tg" + LS
           + "7\tg" + LS
           + "8\tg" + LS;
-      MapXCliTest.checkUnmappedNoHeader(expected, new File(output, "unmapped.tsv"));
+      checkUnmappedNoHeader(expected, new File(output, "unmapped.tsv"));
 
       assertEquals(0, foo.mainInit(new String[] {"-t", template.getPath(), "-i", reads.getPath(), "-a", "1", "-b", "0", "-o", output2.getPath(), "-w", "9", "-T", "2", "-E", "0.000000016"}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream()));
       final String actual = FileHelper.gzFileToString(new File(output2, "unmapped.tsv.gz"));
@@ -512,7 +513,7 @@ public class MapXFunctionalTest extends TestCase {
       }
       assertEquals(errBaos.toString(), 0, code);
       //final String results = FileUtils.fileToString(new File(output, "alignments.tsv"));
-      MapXCliTest.checkUnmappedNoHeader(expected, new File(output, "unmapped.tsv"));
+      checkUnmappedNoHeader(expected, new File(output, "unmapped.tsv"));
     } finally {
       assertTrue(FileHelper.deleteAll(dir));
     }

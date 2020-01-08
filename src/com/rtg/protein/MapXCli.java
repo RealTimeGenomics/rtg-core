@@ -15,6 +15,7 @@ import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.launcher.CommonFlags.READS_FLAG;
 import static com.rtg.launcher.CommonFlags.TEMPLATE_FLAG;
 import static com.rtg.launcher.CommonFlags.TEMP_DIR;
+import static com.rtg.mode.TranslatedFrame.NUCLEOTIDES_PER_CODON;
 import static com.rtg.ngs.MapFlags.COMPRESS_HASHES_FLAG;
 import static com.rtg.ngs.MapFlags.DEFAULT_TOP_N;
 import static com.rtg.ngs.MapFlags.TEMP_FILES_COMPRESSED;
@@ -202,7 +203,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     if (mFlags.isSet(MIN_READ_LENGTH)) {
       mapXMinLength = (Long) mFlags.getValue(MIN_READ_LENGTH);
     } else {
-      mapXMinLength = 3 * (mask.getWordSize() + mask.getSubstitutions() + 1);
+      mapXMinLength = NUCLEOTIDES_PER_CODON * (mask.getWordSize() + mask.getSubstitutions() + 1);
     }
     ngsParamsBuilder.mapXMinLength(mapXMinLength);
     if (readLen < mapXMinLength) {
@@ -236,11 +237,6 @@ public class MapXCli extends ParamsCli<NgsParams> {
     ngsParamsBuilder.compressHashes((Boolean) mFlags.getValue(COMPRESS_HASHES_FLAG));
     ngsParamsBuilder.outputParams(outBuild.create());
     ngsParamsBuilder.useLongReadMapping(false);
-    /*
-    if ((readLen / 3 - 1) > 64) {
-      throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "Input SDF contains reads that will translate to greater than 64 amino acids");
-      //ngsParamsBuilder.useLongReadMapping(true);
-    }*/
     ngsParamsBuilder.buildFirstParams(reads);
     ngsParamsBuilder.searchParams(templ);
     if (mFlags.getFlag(MATRIX_FLAG) != null) {
@@ -325,7 +321,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     final int i = (Integer) mFlags.getValue(GAPS_FLAG);
     final int l = (Integer) mFlags.getValue(GAP_LENGTH_FLAG);
     final int s = Math.max(subs, i);
-    MapFlags.validateMaskParams(readLength / 3 - 1, w, s, i, l);
+    MapFlags.validateMaskParams(readLength / NUCLEOTIDES_PER_CODON - 1, w, s, i, l);
     return new NgsMaskParamsProtein(w, s, i, l);
   }
 

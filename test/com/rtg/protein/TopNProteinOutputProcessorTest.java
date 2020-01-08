@@ -21,7 +21,7 @@ import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.test.FileHelper;
+import com.rtg.util.io.TestDirectory;
 
 /**
  * Test class.
@@ -29,11 +29,9 @@ import com.rtg.util.test.FileHelper;
 public class TopNProteinOutputProcessorTest extends AbstractNanoTest {
 
   public void testTopN() throws IOException, InvalidParamsException {
-    final File tmp2 = FileUtils.createTempDir("proteintopn", "filter");
-    try {
-      final NgsParams params = TopEqualProteinOutputProcessorTest.createParams(tmp2, ProteinOutputProcessorTest.READS_FASTA_PERFECT, ProteinOutputProcessorTest.TEMPLATE_FASTA, 3);
-      final TopNProteinOutputProcessor p = new TopNProteinOutputProcessor(params, null);
-      try {
+    try (final TestDirectory tmp = new TestDirectory("proteintopn")) {
+      final NgsParams params = TopEqualProteinOutputProcessorTest.createParams(tmp, 3);
+      try (final TopNProteinOutputProcessor p = new TopNProteinOutputProcessor(params, null)) {
         p.writeResult(getProteinRes(0, -42, params));
         p.writeResult(getProteinRes(1, 42, params));
         p.writeResult(getProteinRes(1, -42, params));
@@ -53,35 +51,25 @@ public class TopNProteinOutputProcessorTest extends AbstractNanoTest {
         p.writeResult(getProteinRes(6, 2, params));
         p.writeResult(getProteinRes(6, 3, params));
         p.writeResult(getProteinRes(6, 3, params));
-      } finally {
         p.finish();
-        p.close();
       }
-      mNano.check("test-topn.txt", TestUtils.sanitizeTsvHeader(StringUtils.grepMinusV(FileUtils.fileToString(new File(tmp2, "alignments.tsv")), "^#.*-ID")));
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp2));
+      mNano.check("test-topn.txt", TestUtils.sanitizeTsvHeader(StringUtils.grepMinusV(FileUtils.fileToString(new File(tmp, "alignments.tsv")), "^#.*-ID")));
     }
   }
 
   public void testTopN250() throws IOException, InvalidParamsException {
-    final File tmp2 = FileUtils.createTempDir("proteintopn", "filter");
-    try {
-      final NgsParams params = TopEqualProteinOutputProcessorTest.createParams(tmp2, ProteinOutputProcessorTest.READS_FASTA_PERFECT, ProteinOutputProcessorTest.TEMPLATE_FASTA, 250);
-      final TopNProteinOutputProcessor p = new TopNProteinOutputProcessor(params, null);
-      try {
+    try (final TestDirectory tmp = new TestDirectory("proteintopn")) {
+      final NgsParams params = TopEqualProteinOutputProcessorTest.createParams(tmp, 250);
+      try (final TopNProteinOutputProcessor p = new TopNProteinOutputProcessor(params, null)) {
         for (int k = 0; k < 250; ++k) {
           p.writeResult(getProteinRes(0, -47, params));
         }
         for (int k = 0; k < 251; ++k) {
           p.writeResult(getProteinRes(1, 47, params));
         }
-      } finally {
         p.finish();
-        p.close();
       }
-      mNano.check("test-topn250.txt", TestUtils.sanitizeTsvHeader(StringUtils.grepMinusV(FileUtils.fileToString(new File(tmp2, "alignments.tsv")), "^#.*-ID")));
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp2));
+      mNano.check("test-topn250.txt", TestUtils.sanitizeTsvHeader(StringUtils.grepMinusV(FileUtils.fileToString(new File(tmp, "alignments.tsv")), "^#.*-ID")));
     }
   }
 
