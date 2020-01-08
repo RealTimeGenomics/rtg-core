@@ -70,7 +70,7 @@ public class ProteinAlignmentResultTest extends TestCase {
         p[j] = frames.code(b, rlen, i);
       }
       final int[] r = ed.calculateEditDistance(p, plen, t, 0, false, Integer.MAX_VALUE, MaxShiftUtils.calculateDefaultMaxShift(plen), true);
-      final ProteinAlignmentResult res = new ProteinAlignmentResult(resx, 0, 0, r, 0);
+      final ProteinAlignmentResult res = new ProteinAlignmentResult(resx, 0, 0, r, 0, true);
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
       try {
         res.write(bos);
@@ -88,48 +88,48 @@ public class ProteinAlignmentResultTest extends TestCase {
 
     final int[] actions = new int[ActionsHelper.ACTIONS_START_INDEX + 1];
     actions[ActionsHelper.TEMPLATE_START_INDEX] = 100;
-    final ProteinAlignmentResult r1 = new ProteinAlignmentResult(null, 10, 10, actions, 0);
+    final ProteinAlignmentResult r1 = new ProteinAlignmentResult(null, 10, 10, actions, 0, true);
 
     // Same result
-    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 10, 10, actions, 0)) == 0);
+    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 10, 10, actions, 0, true)) == 0);
 
     // Ordering of template id
-    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 11, 10, actions, 0)) < 0);
-    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 9, 10, actions, 0)) > 0);
+    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 11, 10, actions, 0, true)) < 0);
+    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 9, 10, actions, 0, true)) > 0);
 
     // Ordering of start position
     actions[ActionsHelper.TEMPLATE_START_INDEX] = 101;
-    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 10, 10, actions, 0)) < 0);
+    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 10, 10, actions, 0, true)) < 0);
     actions[ActionsHelper.TEMPLATE_START_INDEX] = 99;
-    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 10, 10, actions, 0)) > 0);
+    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 10, 10, actions, 0, true)) > 0);
 
     // Ordering of read id
     actions[ActionsHelper.TEMPLATE_START_INDEX] = 100;
-    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 10, 11, actions, 0)) < 0);
-    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 10, 9, actions, 0)) > 0);
+    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 10, 11, actions, 0, true)) < 0);
+    assertTrue(r1.compareTo(new ProteinAlignmentResult(null, 10, 9, actions, 0, true)) > 0);
   }
 
   public void testEqual() {
     final int[] actions = new int[ActionsHelper.ACTIONS_START_INDEX + 1];
     actions[ActionsHelper.TEMPLATE_START_INDEX] = 100;
-    final ProteinAlignmentResult r1 = new ProteinAlignmentResult(null, 10, 10, actions, 0);
+    final ProteinAlignmentResult r1 = new ProteinAlignmentResult(null, 10, 10, actions, 0, true);
 
-    assertTrue(r1.equals(new ProteinAlignmentResult(null, 10, 10, actions, 0)));
+    assertTrue(r1.equals(new ProteinAlignmentResult(null, 10, 10, actions, 0, true)));
     assertTrue(r1.equals(r1));
 
     assertFalse(r1.equals(null));
-    assertFalse(r1.equals(new ProteinAlignmentResult(null, 10, 11, actions, 0)));
+    assertFalse(r1.equals(new ProteinAlignmentResult(null, 10, 11, actions, 0, true)));
     final int[] actions2 = new int[ActionsHelper.ACTIONS_START_INDEX + 1];
     actions[ActionsHelper.TEMPLATE_START_INDEX] = 101;
-    assertFalse(r1.equals(new ProteinAlignmentResult(null, 10, 10, actions2, 0)));
+    assertFalse(r1.equals(new ProteinAlignmentResult(null, 10, 10, actions2, 0, true)));
   }
 
   public void testHashCode() {
     final int[] actions = new int[ActionsHelper.ACTIONS_START_INDEX + 1];
     actions[ActionsHelper.TEMPLATE_START_INDEX] = 100;
-    final ProteinAlignmentResult r1 = new ProteinAlignmentResult(null, 10, 10, actions, 0);
-    assertEquals(new ProteinAlignmentResult(null, 10, 10, actions, 0).hashCode(), r1.hashCode());
-    assertFalse(new ProteinAlignmentResult(null, 10, 11, actions, 0).hashCode() == r1.hashCode());
+    final ProteinAlignmentResult r1 = new ProteinAlignmentResult(null, 10, 10, actions, 0, true);
+    assertEquals(new ProteinAlignmentResult(null, 10, 10, actions, 0, true).hashCode(), r1.hashCode());
+    assertFalse(new ProteinAlignmentResult(null, 10, 11, actions, 0, true).hashCode() == r1.hashCode());
   }
 
   public void testReadPositions() {

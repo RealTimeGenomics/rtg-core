@@ -36,30 +36,27 @@ public class SharedProteinResources {
   private final NamesInterface mReadNames;
 
   SharedProteinResources(final ProteinScoringMatrix matrix, final SequencesReader template, final SequencesReader query, boolean readNames) throws IOException {
+    if (template == null || query == null) {
+      throw new NullPointerException();
+    }
+    if (query.numberSequences() > Integer.MAX_VALUE) {
+      throw new IllegalArgumentException("Number of reads exceeds " + Integer.MAX_VALUE);
+    }
+    assert template.type() == SequenceType.PROTEIN;
+    assert query.type() == SequenceType.PROTEIN || query.type() == SequenceType.DNA;
+
     mProteinScoringMatrix = matrix;
     mTemplateReader = template;
-
     mQueryReader = query;
-    if (query != null) {
+    if (mQueryReader.type() == SequenceType.DNA) {
       mWorkSpace = new byte[(int) query.maxLength()];
       mWorkSpaceProtein = new byte[mWorkSpace.length / 3];
-      if (query.numberSequences() > Integer.MAX_VALUE) {
-        throw new IllegalArgumentException("Number of reads exceeds " + Integer.MAX_VALUE);
-      }
     } else {
       mWorkSpace = null;
       mWorkSpaceProtein = null;
     }
-    if (mTemplateReader != null) {
-      mTemplateNames = mTemplateReader.names();
-    } else {
-      mTemplateNames = null;
-    }
-    if (readNames && mQueryReader != null) {
-      mReadNames = query.names();
-    } else {
-      mReadNames = null;
-    }
+    mTemplateNames = mTemplateReader.names();
+    mReadNames = readNames ? query.names() : null;
   }
 
   SequencesReader templateReader() {
@@ -75,11 +72,7 @@ public class SharedProteinResources {
   }
 
   int templateLength(final int id) throws IOException {
-    if (mTemplateReader == null) {
-      return -1;
-    } else {
-      return mTemplateReader.length(id);
-    }
+    return mTemplateReader.length(id);
   }
 
   NamesInterface templateNames() {
@@ -91,22 +84,12 @@ public class SharedProteinResources {
   }
 
   int queryLength(final int id) throws IOException {
-    if (mQueryReader == null) {
-      return -1;
-    } else {
-      return mQueryReader.length(id);
-    }
+    return mQueryReader.length(id);
   }
 
   long totalTemplateLength() {
-    if (mTemplateReader == null) {
-      return -1;
-    } else {
-      return mTemplateReader.totalLength();
-    }
+    return mTemplateReader.totalLength();
   }
-
-  private static final byte[] EMPTY = new byte[0];
 
   /**
    * Return the query, resulting array may contain rubbish entries at the end.
@@ -117,9 +100,7 @@ public class SharedProteinResources {
    * @exception IOException if an I/O error occurs.
    */
   byte[] query(final int id, final int frame) throws IOException {
-    if (mQueryReader == null) {
-      return EMPTY;
-    } else if (mQueryReader.type() == SequenceType.DNA) {
+    if (mQueryReader.type() == SequenceType.DNA) {
       // In this situation, use precomputed array to store intermediate nt version
       final int length = mQueryReader.read(id, mWorkSpace);
       // Convert to protein in situ
@@ -139,11 +120,7 @@ public class SharedProteinResources {
 
   byte[] template(final int id) throws IOException {
     if (id != mCachedTemplateId) {
-      if (mTemplateReader == null) {
-        mCachedTemplate = EMPTY;
-      } else {
-        mCachedTemplate = mTemplateReader.read(id);
-      }
+      mCachedTemplate = mTemplateReader.read(id);
       mCachedTemplateId = id;
     }
     return mCachedTemplate;

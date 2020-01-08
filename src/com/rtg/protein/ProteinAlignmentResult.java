@@ -47,10 +47,6 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
   private final int[] mActions;
   private final boolean mOutputProteinSequences;
 
-  ProteinAlignmentResult(final SharedProteinResources resources, final int templateId, final int readId, final int[] res, long offset) {
-    this(resources, templateId, readId, res, offset, true);
-  }
-
   ProteinAlignmentResult(final SharedProteinResources resources, final int templateId, final int readId, final int[] res, long offset, boolean outputProteinSequences) {
     mOutputProteinSequences = outputProteinSequences;
     mResources = resources;

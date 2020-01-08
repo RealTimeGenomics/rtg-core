@@ -29,20 +29,6 @@ public class SharedProteinResourcesTest extends TestCase {
     Diagnostic.setLogStream();
   }
 
-  public void test1() throws Exception {
-    final ProteinScoringMatrix m = new ProteinScoringMatrix();
-    final SharedProteinResources res = new SharedProteinResources(m, null, null, false);
-    assertNull(res.templateReader());
-    assertNull(res.queryReader());
-    assertEquals(m, res.proteinScoringMatrix());
-    assertEquals(-1, res.templateLength(0));
-    assertEquals(-1, res.queryLength(0));
-    assertEquals(-1, res.totalTemplateLength());
-
-    assertNull(res.templateNames());
-    assertNull(res.readNames());
-  }
-
   public void test2() throws Exception {
     final CompressedMemorySequencesReader t = new CompressedMemorySequencesReader(new byte[][] {DnaUtils.encodeArray("actg".getBytes())}, new String[] {"seq1"}, new long[] {4}, 4, 4, SequenceType.PROTEIN);
     final CompressedMemorySequencesReader r = new CompressedMemorySequencesReader(new byte[][] {DnaUtils.encodeArray("ttttt".getBytes())}, new String[] {"seq2"}, new long[] {5}, 5, 5, SequenceType.DNA);
@@ -68,13 +54,6 @@ public class SharedProteinResourcesTest extends TestCase {
     assertEquals(2, res.template(0)[1]);
     assertEquals(4, res.template(0)[2]);
     assertEquals(3, res.template(0)[3]);
-  }
-
-  public void testNulls() throws Exception {
-    final SharedProteinResources res = new SharedProteinResources(null, null, null, false);
-    assertEquals(null, res.proteinScoringMatrix());
-    assertTrue(res.query(0, 1).length == 0);
-    assertTrue(res.template(4).length == 0);
   }
 
   public void test3() throws Exception {

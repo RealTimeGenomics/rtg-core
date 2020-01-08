@@ -16,6 +16,7 @@ import static com.rtg.util.StringUtils.LS;
 import java.io.File;
 import java.io.IOException;
 
+import com.rtg.AbstractTest;
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.DnaUtils;
@@ -34,13 +35,11 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
-import com.rtg.util.test.FileHelper;
-
-import junit.framework.TestCase;
+import com.rtg.util.io.TestDirectory;
 
 /**
  */
-public class ProteinOutputProcessorTest extends TestCase {
+public class ProteinOutputProcessorTest extends AbstractTest {
 
   private static final String TEMPLATE_DNA = "AAATGGCGCAAAAACAGAAAGTCGAAAAAAAATCAAAGAAATTATAACCACGACGCAGCAGACGCAG";
   private static final String TEMPLATE_PROTEIN = TestUtils.dnaToProtein(TEMPLATE_DNA);
@@ -109,8 +108,7 @@ public class ProteinOutputProcessorTest extends TestCase {
   public final void testProcess() throws IOException, InvalidParamsException {
     final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
-    final File tmp = FileUtils.createTempDir("proteinop", "filter");
-    try {
+    try (final TestDirectory tmp = new TestDirectory("proteinop")) {
       final File input = new File(tmp, "1");
       ReaderTestUtils.getReaderDNA(READS_FASTA_PERFECT, input, null).close();
       final File input2 = new File(tmp, "2");
@@ -154,8 +152,6 @@ public class ProteinOutputProcessorTest extends TestCase {
           "Alignments failed due to bit score       : 0",
           "Alignments retained : 2"
       );
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
     }
   }
 
@@ -185,9 +181,7 @@ public class ProteinOutputProcessorTest extends TestCase {
    */
   public final void testProcessNoProteinOutput() throws IOException, InvalidParamsException {
     Diagnostic.setLogStream();
-    final File tmp = FileUtils.createTempDir("proteinop", "filter");
-    try {
-
+    try (final TestDirectory tmp = new TestDirectory("proteinop")) {
       final File input = new File(tmp, "1");
       final SequencesReader r = ReaderTestUtils.getReaderDNA(READS_FASTA_PERFECT, input, null);
       r.close();
@@ -223,8 +217,6 @@ public class ProteinOutputProcessorTest extends TestCase {
       assertTrue(res.contains(ProteinOutputProcessor.MAPX_READ_SDF_ID_HEADER + "\t" + r.getSdfId()));
       MapXCliTest.checkAlignmentsNoHeader(EXPECTED_NO_PROTEIN, new File(tmp, "alignments.tsv"));
       MapXCliTest.checkUnmappedNoHeader(EXPECTED_UNMAPPED, new File(tmp, ProteinOutputProcessor.UNMAPPED_FILE));
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
     }
   }
 

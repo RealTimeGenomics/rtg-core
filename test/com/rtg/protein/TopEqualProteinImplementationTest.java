@@ -14,6 +14,7 @@ package com.rtg.protein;
 import java.io.IOException;
 
 import com.rtg.mode.ProteinScoringMatrix;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.InvalidParamsException;
 
 /**
@@ -54,7 +55,7 @@ public class TopEqualProteinImplementationTest extends TopEqualProteinOutputProc
   }
 
   private static ProteinAlignmentResult getResult(int readId) throws InvalidParamsException, IOException {
-    final SharedProteinResources resx = new SharedProteinResources(new ProteinScoringMatrix(), null, null, false);
-    return new ProteinAlignmentResult(resx, 0, readId * 6, null, 0);
+    final SharedProteinResources resx = new SharedProteinResources(new ProteinScoringMatrix(), ReaderTestUtils.getReaderProteinMemory(">A\n"), ReaderTestUtils.getReaderDnaMemory(">A\n"), false);
+    return new ProteinAlignmentResult(resx, 0, readId * 6, null, 0, true);
   }
 }

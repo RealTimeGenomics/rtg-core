@@ -53,7 +53,7 @@ public class GotohProteinEditDistanceTest extends AbstractTest {
     final UnidirectionalEditDistance f = getED(new ProteinScoringMatrix());
     final int[] r = f.calculateEditDistance(s1, s1.length, s2, 0, Integer.MAX_VALUE, 7, true);
     final SharedProteinResources resx = new SharedProteinResources(new ProteinScoringMatrix(), singleSequence(s2), singleSequence(s1), false);
-    final ProteinAlignmentResult res = new ProteinAlignmentResult(resx, 0, 1, r, 0);
+    final ProteinAlignmentResult res = new ProteinAlignmentResult(resx, 0, 1, r, 0, true);
     final String[] p = writeIgnore(res);
     assertEquals(read, p[10]);
     assertEquals(template, p[9]);
@@ -138,7 +138,7 @@ public class GotohProteinEditDistanceTest extends AbstractTest {
     final byte[] template = {1, 2};
     final int[] alignment = ped.calculateEditDistance(read, read.length, template, 0, Integer.MAX_VALUE, 7, true);
     final SharedProteinResources res = new SharedProteinResources(new ProteinScoringMatrix(), singleSequence(template), singleSequence(read), false);
-    final ProteinAlignmentResult r = new ProteinAlignmentResult(res, 0, 0, alignment, 0);
+    final ProteinAlignmentResult r = new ProteinAlignmentResult(res, 0, 0, alignment, 0, true);
     final String[] p = writeIgnore(r);
     assertNotNull(r);
     assertEquals("*ax", p[9]);
@@ -154,7 +154,7 @@ public class GotohProteinEditDistanceTest extends AbstractTest {
     final byte[] template = {20, 21};
     final int[] alignment = ped.calculateEditDistance(read, read.length, template, -1, Integer.MAX_VALUE, 7, true);
     final SharedProteinResources res = new SharedProteinResources(new ProteinScoringMatrix(), singleSequence(template), singleSequence(read), false);
-    final ProteinAlignmentResult r = new ProteinAlignmentResult(res, 0, 0, alignment, 0);
+    final ProteinAlignmentResult r = new ProteinAlignmentResult(res, 0, 0, alignment, 0, true);
     final String[] p = writeIgnore(r);
     assertEquals("xyv", p[9]);
     assertEquals("wyv", p[10]);
