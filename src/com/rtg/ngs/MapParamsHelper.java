@@ -65,6 +65,7 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.ListenerType;
+import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.IOUtils;
 import com.rtg.util.io.InputFileUtils;
@@ -599,21 +600,18 @@ public final class MapParamsHelper {
 
     @Override
     public SequenceParams call() {
+      final SequenceParams params;
       if (mReads) {
-        return SequenceParams.builder().directory(mBuild).useMemReader(mUseMemReader).loadNames(mIncludeReadNames).loadFullNames(mIncludeFullNames).mode(mMode).readerRestriction(mReaderRestriction).create(); // Reads
+        params = SequenceParams.builder().directory(mBuild).useMemReader(mUseMemReader).loadNames(mIncludeReadNames).loadFullNames(mIncludeFullNames).mode(mMode).readerRestriction(mReaderRestriction).create(); // Reads
       } else {
         SdfUtils.validateHasNames(mBuild);
-        final SequenceParams params = SequenceParams.builder().sex(mSex).directory(mBuild).useMemReader(mUseMemReader).loadNames(true).loadFullNames(mIncludeFullNames).mode(mMode).readerRestriction(mReaderRestriction).create();
-        try {
-          SdfUtils.validateNoDuplicates(params.reader(), !mReads);
-          return params; // Template
-        } catch (final RuntimeException e) {
-          try {
-            params.close();
-          } catch (final IOException e1) { }
-          throw e;
-        }
+        params = SequenceParams.builder().sex(mSex).directory(mBuild).useMemReader(mUseMemReader).loadNames(true).loadFullNames(mIncludeFullNames).mode(mMode).readerRestriction(mReaderRestriction).create();
+        SdfUtils.validateNoDuplicates(params.reader(), !mReads);
       }
+      if (params.reader().type() != mMode.type()) {
+        throw new NoTalkbackSlimException(ErrorType.SDF_FILETYPE_ERROR, params.reader().type().toString(), mMode.type().toString());
+      }
+      return params;
     }
   }
 
@@ -628,7 +626,6 @@ public final class MapParamsHelper {
     private final boolean mUseQuality;
 
     DataSourceSequenceParamsCallable(File build, DataSourceDescription desc, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) {
-      // C'tor for reads
       mBuild = build;
       mReaderRestriction = readerRestriction;
       mInputDescription = desc;
@@ -658,6 +655,9 @@ public final class MapParamsHelper {
       final SequenceParams[] sp = new SequenceParams[readers.length];
       for (int i = 0; i < readers.length; ++i) {
         if (readers[i] != null) {
+          if (readers[i].type() != mMode.type()) {
+            throw new NoTalkbackSlimException(ErrorType.SDF_FILETYPE_ERROR, readers[i].type().toString(), mMode.type().toString());
+          }
           sp[i] = SequenceParams.builder().readerParam(new DefaultReaderParams(readers[i])).mode(mMode).readerRestriction(mReaderRestriction).create(); // Reads
         }
       }
