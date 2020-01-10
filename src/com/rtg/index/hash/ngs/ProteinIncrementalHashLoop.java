@@ -38,7 +38,7 @@ public abstract class ProteinIncrementalHashLoop extends HashLoop {
    * @param windowSize number of codes to be included in a window used to make a hash.
    * @param stepSize number of steps to take per hash call
    * @param function used to construct the hash from the codes.
-   * @param isTemplate true if the hashloop is used for the template, false when used for reads
+   * @param isTemplate true if the hash loop is used for the template, false when used for reads
    */
   public ProteinIncrementalHashLoop(final int windowSize, final int stepSize, final ProteinMask function, boolean isTemplate) {
     super(windowSize, stepSize);
