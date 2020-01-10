@@ -19,12 +19,12 @@ import junit.framework.TestCase;
 public class ProteinReadIndexerTest extends TestCase {
 
   public void testSplit() {
-    final int numchunks = ProteinReadIndexer.countMetaChunks(400, 63, 31);
+    final int numchunks = ProteinReadIndexer.countMetaChunks(400 / 3, 63, 31);
     assertEquals(4, numchunks);
   }
 
   public void testSplitShort() {
-    final int numChunks = ProteinReadIndexer.countMetaChunks(120, 63, 31);
+    final int numChunks = ProteinReadIndexer.countMetaChunks(120 / 3, 63, 31);
     assertEquals(1, numChunks);
   }
 }

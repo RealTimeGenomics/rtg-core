@@ -48,7 +48,7 @@ public class ProteinIncrementalHashLoopTest extends TestCase {
       final FakeProteinMask mask = new FakeProteinMask(new Skeleton(adjLength, adjLength, 0, 0, 1), new ReadCallMock(new StringWriter()), new ImplementHashFunctionTest.TemplateCallMock());
       final int[] res = new int[3];
       try (ISequenceParams readParams = SequenceParams.builder().directory(readDir).mode(SequenceMode.TRANSLATED).create()) {
-        final ProteinIncrementalHashLoop loop = new ProteinIncrementalHashLoop(adjLength, adjLength, mask) {
+        final ProteinIncrementalHashLoop loop = new ProteinIncrementalHashLoop(adjLength, adjLength, mask, false) {
           @Override
           public void hashCall(final int internalId, final int endPosition) {
             res[0]++;
@@ -96,7 +96,7 @@ public class ProteinIncrementalHashLoopTest extends TestCase {
       ReaderTestUtils.getReaderDNA(">a\n" + read, readDir, null).close();
       ReaderTestUtils.getReaderProtein(">b\n" + template, templateDir).close();
       final FakeProteinMask mask = new FakeProteinMask(new Skeleton(adjLength, adjLength, 0, 0, 1), new ReadCallMock(new StringWriter()), new ImplementHashFunctionTest.TemplateCallMock());
-      final ProteinIncrementalHashLoop loop = new ProteinIncrementalHashLoop(adjLength, adjLength, mask) {
+      final ProteinIncrementalHashLoop loop = new ProteinIncrementalHashLoop(adjLength, adjLength, mask, false) {
 
         @Override
         public void hashCall(final int internalId, final int endPosition) {

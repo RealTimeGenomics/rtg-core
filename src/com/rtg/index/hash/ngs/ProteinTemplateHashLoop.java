@@ -28,7 +28,7 @@ public class ProteinTemplateHashLoop extends ProteinIncrementalHashLoop {
    * @param function used to construct the hash from the codes.
    */
   public ProteinTemplateHashLoop(int windowSize, int stepSize, ProteinMask function) {
-    super(windowSize, stepSize, function);
+    super(windowSize, stepSize, function, true);
   }
 
   @Override

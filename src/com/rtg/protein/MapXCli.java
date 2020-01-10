@@ -100,6 +100,8 @@ public class MapXCli extends ParamsCli<NgsParams> {
 
   private static final String XDONT_MERGE_ALIGNMENT_RESULTS = "Xdont-merge-alignment-result";
 
+  private static final String PROTEIN_QUERY = "Xprotein-query";
+
   static final HashMap<String, OutputFilter> FILTERS = new HashMap<>();
   private static final ArrayList<String> MATRICES = new ArrayList<>();
 
@@ -192,18 +194,20 @@ public class MapXCli extends ParamsCli<NgsParams> {
   protected NgsParams makeParams() throws IOException {
     final NgsParamsBuilder ngsParamsBuilder = NgsParams.builder();
     final NameParams nameParams = new NameParams(mFlags.isSet(OUTPUT_READ_NAMES_FLAG), false);
-    MapParamsHelper.initReaders(ngsParamsBuilder, mFlags, nameParams, false, SequenceMode.PROTEIN, SequenceMode.TRANSLATED, new SamSequenceReaderParams(false, false));
+    final boolean translated = !mFlags.isSet(PROTEIN_QUERY);
+    final SequenceMode readsMode = translated ? SequenceMode.TRANSLATED : SequenceMode.PROTEIN;
+    MapParamsHelper.initReaders(ngsParamsBuilder, mFlags, nameParams, false, SequenceMode.PROTEIN, readsMode, new SamSequenceReaderParams(false, false));
     final ISequenceParams reads = ngsParamsBuilder.buildFirstParams();
     final ISequenceParams templ = ngsParamsBuilder.searchParams();
     final int readLen = (int) reads.reader().maxLength();
     final int minReadLen = (int) reads.reader().minLength();
-    final NgsMaskParams mask = createMaskParams(readLen);
+    final NgsMaskParams mask = createMaskParams(readLen, translated);
     ngsParamsBuilder.maskParams(mask);
     final long mapXMinLength;
     if (mFlags.isSet(MIN_READ_LENGTH)) {
       mapXMinLength = (Long) mFlags.getValue(MIN_READ_LENGTH);
     } else {
-      mapXMinLength = NUCLEOTIDES_PER_CODON * (mask.getWordSize() + mask.getSubstitutions() + 1);
+      mapXMinLength = (translated ? NUCLEOTIDES_PER_CODON : 1) * (mask.getWordSize() + mask.getSubstitutions() + 1);
     }
     ngsParamsBuilder.mapXMinLength(mapXMinLength);
     if (readLen < mapXMinLength) {
@@ -315,13 +319,13 @@ public class MapXCli extends ParamsCli<NgsParams> {
     .preFilterMinOverlap(minOverlap);
   }
 
-  private NgsMaskParams createMaskParams(final int readLength) {
+  private NgsMaskParams createMaskParams(final int readLength, boolean translated) {
     final int w = (Integer) mFlags.getValue(WORDSIZE_FLAG);
     final int subs = (Integer) mFlags.getValue(MISMATCHES_FLAG);
     final int i = (Integer) mFlags.getValue(GAPS_FLAG);
     final int l = (Integer) mFlags.getValue(GAP_LENGTH_FLAG);
     final int s = Math.max(subs, i);
-    MapFlags.validateMaskParams(readLength / NUCLEOTIDES_PER_CODON - 1, w, s, i, l);
+    MapFlags.validateMaskParams(readLength / (translated ? NUCLEOTIDES_PER_CODON : 1) - 1, w, s, i, l);
     return new NgsMaskParamsProtein(w, s, i, l);
   }
 
@@ -387,6 +391,8 @@ public class MapXCli extends ParamsCli<NgsParams> {
     flags.registerOptional(XMETA_CHUNK_LENGTH, Integer.class, CommonFlags.INT, "how large to make long read meta chunks. (Defaults to " + ProteinReadIndexer.DEFAULT_META_CHUNK_LENGTH + ")").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(XMETA_CHUNK_OVERLAP, Integer.class, CommonFlags.INT, "how much overlap to have in long read meta chunks. (Defaults to meta chunk length / 2)").setCategory(SENSITIVITY_TUNING);
 
+    flags.registerOptional(PROTEIN_QUERY, "query sequences are protein rather than DNA").setCategory(INPUT_OUTPUT);
+
     CommonFlags.initReadRange(mFlags);
 
     flags.setValidator(new MapXValidator());
@@ -405,7 +411,8 @@ public class MapXCli extends ParamsCli<NgsParams> {
       assert params.searchParams().numberSequences() < Integer.MAX_VALUE : indexSize;
       final OutputFilter filter = params.outputParams().outFilter();
       try (OutputProcessor outProcessor = filter.makeProcessor(params, mStatistics)) {
-        final int numChunks = ProteinReadIndexer.countMetaChunks((int) params.buildFirstParams().maxLength(), params.mapXMetaChunkSize(), params.mapXMetaChunkOverlap());
+        final int translatedScale = params.buildFirstParams().mode() == SequenceMode.TRANSLATED ? NUCLEOTIDES_PER_CODON : 1;
+        final int numChunks = ProteinReadIndexer.countMetaChunks((int) params.buildFirstParams().maxLength() / translatedScale, params.mapXMetaChunkSize(), params.mapXMetaChunkOverlap());
         final long numValues = params.buildFirstParams().numberSequences() * params.buildFirstParams().mode().numberFrames() * numChunks;
         assert numValues < Integer.MAX_VALUE : numValues;
         final int bitValues = MathUtils.ceilPowerOf2Bits(numValues);

@@ -31,6 +31,7 @@ import com.rtg.index.params.CreateParams;
 import com.rtg.index.params.CreateParams.CreateParamsBuilder;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
+import com.rtg.mode.SequenceMode;
 import com.rtg.ngs.NgsParams;
 import com.rtg.ngs.NgsTask;
 import com.rtg.reader.SequencesReader;
@@ -66,6 +67,7 @@ public final class ProteinReadIndexer {
     final long start;
     final long end;
     final HashingRegion region = sequence.region();
+    final int translatedScale = sequence.mode() == SequenceMode.TRANSLATED ? NUCLEOTIDES_PER_CODON : 1;
     final SequencesReader reader =  sequence.reader();
     if (region != HashingRegion.NONE) {
       start = region.getStart();
@@ -81,7 +83,7 @@ public final class ProteinReadIndexer {
         final long length = reader.length(i);
         final long bucket = buckets.bucket(length);
         if (bucket != -1) {
-          final int numChunks = countMetaChunks((int) bucket, metaChunkLength, metaChunkOverlap);
+          final int numChunks = countMetaChunks((int) bucket / translatedScale, metaChunkLength, metaChunkOverlap);
           if (numChunks == 1) {
             final ReadLengthHashingState pair = map.get(bucket);
             final ProteinNgsHashLoop hashLoop = pair.getHashLoop();
@@ -95,15 +97,15 @@ public final class ProteinReadIndexer {
             final NgsHashFunction hashFunction = pair.getHashFunction();
             int readStartPosition = 0;
             for (int j = 0; j < numChunks; ++j) {
-              int readEndPosition = readStartPosition + metaChunkLength * NUCLEOTIDES_PER_CODON;
+              int readEndPosition = readStartPosition + metaChunkLength * translatedScale;
               if (readEndPosition > length) {
                 readEndPosition = (int) length;
-                readStartPosition = readEndPosition - metaChunkLength * NUCLEOTIDES_PER_CODON;
+                readStartPosition = readEndPosition - metaChunkLength * translatedScale;
               }
               final HashingRegion r = new HashingRegion(i, readStartPosition, i, readEndPosition, readStartPosition, readEndPosition);
               r.setMapxMetaChunkId(j);
               totalLength += hashLoop.readLoop(sequence.subSequence(r), hashFunction, ReadEncoder.SINGLE_END, false);
-              readStartPosition = readEndPosition - metaChunkOverlap * NUCLEOTIDES_PER_CODON;
+              readStartPosition = readEndPosition - metaChunkOverlap * translatedScale;
             }
           }
         }
@@ -117,8 +119,9 @@ public final class ProteinReadIndexer {
   }
 
   static ReadLengthHashingState createHashingState(int readLength, final NgsParams params, final CreateParamsBuilder indexParamsBuilder, final long count, final int frames, final OutputProcessor outProcessor, long numValues) throws IOException {
-    final int windowSize = readLength / NUCLEOTIDES_PER_CODON - 1; //-1 to force removal of the last frame (the case where this frame is legit will just have to deal with it)
-    final int maskLength = Math.min(readLength, params.mapXMetaChunkSize() * NUCLEOTIDES_PER_CODON);
+    final int translatedScale = params.buildFirstParams().mode() == SequenceMode.TRANSLATED ? NUCLEOTIDES_PER_CODON : 1;
+    final int windowSize = readLength / translatedScale - 1; //-1 to force removal of the last frame (the case where this frame is legit will just have to deal with it)
+    final int maskLength = Math.min(readLength, params.mapXMetaChunkSize() * translatedScale);
     final HashFunctionFactory hashFunctionFactory = params.maskParams().maskFactory(maskLength);
     indexParamsBuilder.size(count * frames)
     .windowBits(hashFunctionFactory.windowBits())
@@ -148,11 +151,11 @@ public final class ProteinReadIndexer {
   public static long indexThenSearchProteinReads(final NgsParams params, final OutputProcessor outProcessor, final CreateParams.CreateParamsBuilder indexParamsBuilder, SequenceLengthBuckets buckets, long numValues) throws IOException {
     assert !params.paired();
     final Map<Long, ReadLengthHashingState> lengthFunctions = new HashMap<>();
+    final int translatedScale = params.buildFirstParams().mode() == SequenceMode.TRANSLATED ? NUCLEOTIDES_PER_CODON : 1;
     final int frames = params.buildFirstParams().mode().numberFrames();
-
     long longReadCount = 0;
     for (final Long l : buckets.getBuckets()) {
-      final int numChunks = countMetaChunks(l.intValue(), params.mapXMetaChunkSize(), params.mapXMetaChunkOverlap());
+      final int numChunks = countMetaChunks(l.intValue() / translatedScale, params.mapXMetaChunkSize(), params.mapXMetaChunkOverlap());
       if (numChunks > 1) {
         longReadCount += numChunks * buckets.getCount(l);
       } else {
@@ -162,7 +165,7 @@ public final class ProteinReadIndexer {
       }
     }
     if (longReadCount > 0) {
-      final int virtualReadLength = params.mapXMetaChunkSize() * NUCLEOTIDES_PER_CODON;
+      final int virtualReadLength = params.mapXMetaChunkSize() * translatedScale;
       final ReadLengthHashingState rlhs = createHashingState(virtualReadLength, params, indexParamsBuilder, longReadCount, frames, outProcessor, numValues);
       lengthFunctions.put(META_CHUNKED_KEY, rlhs);
     }
@@ -180,13 +183,13 @@ public final class ProteinReadIndexer {
 
   /**
    * Returns start positions (protein space) for each chunk given DNA read length and overlap size
-   * @param length the length of the read in DNA space
+   * @param length the length of the read in protein space space
    * @param metaChunkLength size of meta chunks
    * @param metaChunkOverlap  overlap size in protein space
    * @return start position for each chunk in protein space
    */
   static int countMetaChunks(int length, int metaChunkLength, int metaChunkOverlap) {
-    final int protlength = (length / NUCLEOTIDES_PER_CODON) - 1;
+    final int protlength = length - 1;
     //63 = max protein length
     return (protlength - metaChunkOverlap - 1) / (metaChunkLength - metaChunkOverlap) + 1;
   }

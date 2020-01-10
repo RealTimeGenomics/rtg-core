@@ -28,7 +28,7 @@ public class ProteinReadHashLoop extends ProteinIncrementalHashLoop {
    * @param function used to construct the hash from the codes.
    */
   public ProteinReadHashLoop(int windowSize, int stepSize, ProteinMask function) {
-    super(windowSize, stepSize, function);
+    super(windowSize, stepSize, function, false);
   }
 
   @Override
