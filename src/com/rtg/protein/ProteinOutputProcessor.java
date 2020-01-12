@@ -195,11 +195,11 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     mReadWorkspace = new byte[(int) mRead.maxLength()];
     mTranslated = mRead.type() == SequenceType.DNA;
     if (mTranslated) {
-      //System.err.println("Running in blastx mode");
+      //Diagnostic.developerLog("Running in blastx mode");
       mEnableReadCache = mParams.enableProteinReadCache();
       mProteinWorkspace = new byte[(int) params.buildFirstParams().reader().maxLength()];
     } else {
-      Diagnostic.developerLog("Running in blastp mode");
+      //Diagnostic.developerLog("Running in blastp mode");
       mEnableReadCache = false;
       mProteinWorkspace = null;
     }
@@ -339,7 +339,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     }
 
 
-    final int chunkToPosition = ProteinReadIndexer.chunkToPosition(chunkId, mTranslated ? mRead.length(readId) / 3 : mRead.length(readId), mParams.mapXMetaChunkSize(), mParams.mapXMetaChunkOverlap());
+    final int chunkToPosition = ProteinReadIndexer.chunkToPosition(chunkId, mTranslated ? mRead.length(readId) / NUCLEOTIDES_PER_CODON : mRead.length(readId), mParams.mapXMetaChunkSize(), mParams.mapXMetaChunkOverlap());
     final int chunkReadStart;
     final int start;
     if (frame.isForward()) {

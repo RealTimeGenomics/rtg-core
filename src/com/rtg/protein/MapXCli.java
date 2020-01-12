@@ -440,17 +440,11 @@ public class MapXCli extends ParamsCli<NgsParams> {
 
     @Override
     protected void exec() throws IOException {
-      try (NgsParams proteinParams = mParams) {
-        final Timer firstTimer = new Timer("Matching_Phase");
-
-        firstTimer.start();
-        execNgs(proteinParams);
-        firstTimer.stop();
-        firstTimer.log();
-      } finally {
-        mParams.close();
-      }
+      final Timer firstTimer = new Timer("Matching_Phase");
+      firstTimer.start();
+      execNgs(mParams);
+      firstTimer.stop();
+      firstTimer.log();
     }
   }
-
 }

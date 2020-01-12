@@ -43,6 +43,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 /**
@@ -267,9 +268,7 @@ public class MapXCliTest extends AbstractCliTest {
       + "acgtacgtacgt" + LS;
 
   public void testWarningAndError() throws IOException, InvalidParamsException {
-    final File dir = FileUtils.createTempDir("mapx", "test");
-
-    try {
+    try (final TestDirectory dir = new TestDirectory("mapx")) {
       final MemoryPrintStream ps = new MemoryPrintStream();
       Diagnostic.setLogStream(ps.printStream());
       final File template = new File(dir, "template");
@@ -287,9 +286,6 @@ public class MapXCliTest extends AbstractCliTest {
       } catch (final NoTalkbackSlimException e) {
         assertEquals("All reads are shorter than the minimum DNA read length 13", e.getMessage());
       }
-    } finally {
-      Diagnostic.setLogStream();
-      FileHelper.deleteAll(dir);
     }
   }
 
@@ -344,9 +340,7 @@ public class MapXCliTest extends AbstractCliTest {
         new HashSet<>(Arrays.asList(1, 2)), 130L);
   }
   public void checkVariableLength(String[] args, Set<Integer> expectedMappings, long usageMetric) throws IOException {
-    final File dir = FileUtils.createTempDir("mapx", "checkVariableLength");
-    try {
-
+    try (final TestDirectory dir = new TestDirectory("mapx")) {
       final File output = new File(dir, "output");
       final File template = new File(dir, "template");
       ReaderTestUtils.getReaderProtein(PROTEIN_TEMPLATE, template).close();
@@ -372,14 +366,11 @@ public class MapXCliTest extends AbstractCliTest {
       final String usageLog = mapXCli.usageLog();
       //System.err.println(usageLog);
       TestUtils.containsAll(usageLog, "[Usage beginning module=mapx runId=", ", Usage end module=mapx runId=", " metric=" + usageMetric + " success=true]");
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
   public void testLongReadMetaChunking() throws IOException {
-    final File dir = FileUtils.createTempDir("mapx", "metachunking");
-    try {
+    try (final TestDirectory dir = new TestDirectory("mapx")) {
       final File output = new File(dir, "output");
       final File template = new File(dir, "template");
       ReaderTestUtils.getReaderProtein(FileHelper.resourceToString("com/rtg/protein/resources/mcProt.fa"), template).close();
@@ -392,8 +383,6 @@ public class MapXCliTest extends AbstractCliTest {
       final String resultsNoHeader = StringUtils.grep(results, "^[^#]");
       //System.out.println(resultsNoHeader);
       mNano.check("mcResults", resultsNoHeader);
-    } finally {
-      FileHelper.deleteAll(dir);
     }
   }
 }

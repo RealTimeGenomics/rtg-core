@@ -182,7 +182,7 @@ public final class ProteinReadIndexer {
   }
 
   /**
-   * Returns start positions (protein space) for each chunk given DNA read length and overlap size
+   * Returns start positions (protein space) for each chunk given protein read length and overlap size
    * @param length the length of the read in protein space space
    * @param metaChunkLength size of meta chunks
    * @param metaChunkOverlap  overlap size in protein space

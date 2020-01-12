@@ -60,13 +60,10 @@ final class ProteinBitScorer {
    *     by the bit-score of the OR of all the shifts.
    */
   public int[] calculateFastScore(final byte[] read, int zeroBasedReadStart, final int rlen, final byte[] template, final int zeroBasedStart) {
-    //Diagnostic.developerLog("rlen: " + rlen + " start: " + zeroBasedStart);
-//    System.err.println("read : " + Arrays.toString(read));
-//    System.err.println("read len " + rlen);
-//    System.err.println("template " + Arrays.toString(template));
-//    System.err.println("start " + zeroBasedStart);
-//    System.err.println("templateLength " + template.length);
-//    System.err.println("templateEnd " + (zeroBasedStart + rlen));
+//    System.err.println("read: " + Protein.bytesToProtein(read, 0, read.length));
+//    System.err.println("read [" + zeroBasedReadStart + "," + (zeroBasedReadStart + rlen) + "):" + Protein.bytesToProtein(read, zeroBasedReadStart, rlen));
+//    System.err.println("template " + Protein.bytesToProtein(template, 0, template.length));
+//    System.err.println("template [" + zeroBasedStart + "," + (zeroBasedStart + rlen) + "): " + Protein.bytesToProtein(template, zeroBasedStart, rlen));
     fillup(read, zeroBasedReadStart, rlen, 0, mRead);
     // we include an extra mMaxIndel amino acids on each side of the template.
     if (zeroBasedStart != mPrevZeroBasedStart || template != mPrevTemplate || rlen != 0) {
