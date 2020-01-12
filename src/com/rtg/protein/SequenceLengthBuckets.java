@@ -20,11 +20,15 @@ import com.rtg.reader.SequencesReader;
 import com.rtg.util.diagnostic.Diagnostic;
 
 /**
- * Groups length of reads into sizes that will be treated as equal for purposes of protein mapping
+ * Groups length of reads into sizes that will be treated as equal for purposes of indexing
  */
 public final class SequenceLengthBuckets {
-  Map<Long, Long> mLengthCounts = new HashMap<>();
+
+  private static final int BUCKET_SIZE = 3;
+
+  private final Map<Long, Long> mLengthCounts = new HashMap<>();
   private final long mMinLength;
+  private final int mBucketSize;
 
   /**
    * Counts the number of sequences which fall into each protein length bucket
@@ -33,8 +37,13 @@ public final class SequenceLengthBuckets {
    * @throws IOException when the sequence reader blows up.
    */
   public SequenceLengthBuckets(SequencesReader sr, long minLength) throws IOException {
+    this(BUCKET_SIZE, minLength, sr.sequenceLengths(0, sr.numberSequences()));
+  }
+
+  private SequenceLengthBuckets(int bucketSize, long minLength, int[] lengths) {
+    mBucketSize = bucketSize;
     mMinLength = minLength;
-    for (long length : sr.sequenceLengths(0, sr.numberSequences())) {
+    for (long length : lengths) {
       if (length >= minLength) {
         final long bucket = bucket(length);
         // System.err.println("length: " + length + " bucket: " + bucket);
@@ -57,7 +66,7 @@ public final class SequenceLengthBuckets {
     if (length < mMinLength) {
       return -1;
     }
-    return (length / 3) * 3;
+    return (length / mBucketSize) * mBucketSize;
   }
 
   /**
@@ -78,8 +87,9 @@ public final class SequenceLengthBuckets {
     }
     return mLengthCounts.get(bucketId);
   }
+
   @Override
   public String toString() {
-    return "SequenceLengthBuchets: minLength=" + mMinLength + " buckets=" + mLengthCounts;
+    return "SequenceLengthBuckets: bucketSize=" + mBucketSize + " minLength=" + mMinLength + " buckets=" + mLengthCounts;
   }
 }

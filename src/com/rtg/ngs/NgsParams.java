@@ -368,12 +368,12 @@ public class NgsParams extends ModuleParams implements Integrity {
     return mParallelUnmatedProcessing;
   }
 
-  /** @return the size at which meta chunks are created */
+  /** @return the size (in amino acids) at which meta chunks are created */
   public int mapXMetaChunkSize() {
     return mMapXMetaChunkSize;
   }
 
-  /** @return how much overlap to have between adjacent meta chunks */
+  /** @return how much overlap (in amino acids) to have between adjacent meta chunks */
   public int mapXMetaChunkOverlap() {
     return mMapXMetaChunkOverlap;
   }
