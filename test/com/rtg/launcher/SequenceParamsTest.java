@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 
 import com.rtg.mode.DNAFastaSymbolTable;
 import com.rtg.mode.SequenceMode;
@@ -25,13 +24,13 @@ import com.rtg.reader.FastaSequenceDataSource;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesWriter;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.DiagnosticEvent;
 import com.rtg.util.diagnostic.DiagnosticListener;
 import com.rtg.util.diagnostic.SlimException;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
@@ -69,10 +68,8 @@ public class SequenceParamsTest extends TestCase {
 
   private File getDir() throws IOException {
     final File dir = FileUtils.createTempDir("SequenceParamsTest", "getDir", mDir);
-    final ArrayList<InputStream> inputStreams = new ArrayList<>();
-    inputStreams.add(new ByteArrayInputStream(SEQ_DNA_A.getBytes()));
-    final FastaSequenceDataSource ds = new FastaSequenceDataSource(inputStreams,
-            new DNAFastaSymbolTable());
+    final InputStream fqis = new ByteArrayInputStream(SEQ_DNA_A.getBytes());
+    final FastaSequenceDataSource ds = new FastaSequenceDataSource(fqis, new DNAFastaSymbolTable());
     final SequencesWriter sequenceWriter = new SequencesWriter(ds, dir, 20, PrereadType.UNKNOWN, false);
     sequenceWriter.processSequences();
     return dir;

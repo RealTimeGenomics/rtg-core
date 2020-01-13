@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.util.Collections;
 import java.util.concurrent.FutureTask;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -167,8 +166,8 @@ public class PairedEndTrimCli extends AbstractCli {
     final QualityFormat encoding = FastqTrim.qualityFlagToFastQScoreType((String) mFlags.getValue(QUALITY_FLAG));
     // All trimming and aligning is done in separate threads from reading
     final int threads = mFlags.isSet(VERBOSE) ? 1 : CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG));
-    try (final SequenceDataSource r1fq = new FastqSequenceDataSource(Collections.singletonList(FileUtils.createInputStream((File) mFlags.getValue(LEFT), true)), encoding);
-         final SequenceDataSource r2fq = new FastqSequenceDataSource(Collections.singletonList(FileUtils.createInputStream((File) mFlags.getValue(RIGHT), true)), encoding)) {
+    try (final SequenceDataSource r1fq = new FastqSequenceDataSource(FileUtils.createInputStream((File) mFlags.getValue(LEFT), true), encoding);
+         final SequenceDataSource r2fq = new FastqSequenceDataSource(FileUtils.createInputStream((File) mFlags.getValue(RIGHT), true), encoding)) {
 
       final Timer t = new Timer("FastqPairTrimmer");
       t.start();

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
 
 import com.rtg.launcher.DefaultReaderParamsTest;
 import com.rtg.launcher.HashingRegion;
@@ -62,10 +61,8 @@ public final class NgsHashLoopImplTest extends TestCase {
 
   private ReaderParams getReads(final String inputDnaSequence) throws IOException {
     final File dir = FileHelper.createTempDirectory(mDir);
-    final ArrayList<InputStream> inputStreams = new ArrayList<>();
-    inputStreams.add(new ByteArrayInputStream(inputDnaSequence.getBytes()));
-    final FastaSequenceDataSource ds = new FastaSequenceDataSource(inputStreams,
-            new DNAFastaSymbolTable());
+    final InputStream fqis = new ByteArrayInputStream(inputDnaSequence.getBytes());
+    final FastaSequenceDataSource ds = new FastaSequenceDataSource(fqis, new DNAFastaSymbolTable());
     final SequencesWriter sequenceWriter = new SequencesWriter(ds, dir, 20, PrereadType.UNKNOWN, false);
     sequenceWriter.processSequences();
     return DefaultReaderParamsTest.createDefaultReaderParams(dir, LongRange.NONE);
@@ -73,10 +70,8 @@ public final class NgsHashLoopImplTest extends TestCase {
 
   private ReaderParams getTemplate(final String inputDnaSequence) throws IOException {
     final File dir = FileHelper.createTempDirectory(mDir);
-    final ArrayList<InputStream> inputStreams = new ArrayList<>();
-    inputStreams.add(new ByteArrayInputStream(inputDnaSequence.getBytes()));
-    final FastaSequenceDataSource ds = new FastaSequenceDataSource(inputStreams,
-            new DNAFastaSymbolTable());
+    final InputStream fqis = new ByteArrayInputStream(inputDnaSequence.getBytes());
+    final FastaSequenceDataSource ds = new FastaSequenceDataSource(fqis, new DNAFastaSymbolTable());
     final SequencesWriter sequenceWriter = new SequencesWriter(ds, dir, 20, PrereadType.UNKNOWN, false);
     sequenceWriter.processSequences();
     return DefaultReaderParamsTest.createDefaultReaderParams(dir, LongRange.NONE);

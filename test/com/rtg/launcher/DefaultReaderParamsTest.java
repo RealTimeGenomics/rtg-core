@@ -15,7 +15,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.rtg.mode.DNAFastaSymbolTable;
@@ -46,18 +45,16 @@ public class DefaultReaderParamsTest extends TestCase {
   }
 
   private void getReaderDNA(final String inputDnaSequence, final File dir) throws IOException {
-    final ArrayList<InputStream> inputStreams = new ArrayList<>();
-    inputStreams.add(new ByteArrayInputStream(inputDnaSequence.getBytes()));
-    final FastaSequenceDataSource ds = new FastaSequenceDataSource(inputStreams, new DNAFastaSymbolTable());
+    final InputStream fqis = new ByteArrayInputStream(inputDnaSequence.getBytes());
+    final FastaSequenceDataSource ds = new FastaSequenceDataSource(fqis, new DNAFastaSymbolTable());
     final SequencesWriter sequenceWriter = new SequencesWriter(ds, dir, 20, PrereadType.UNKNOWN, false);
     sequenceWriter.processSequences();
 
   }
 
   private void getReaderProtein(final String inputProteinSequence, final File dir) throws IOException {
-    final ArrayList<InputStream> al = new ArrayList<>();
-    al.add(new ByteArrayInputStream(inputProteinSequence.getBytes()));
-    final FastaSequenceDataSource ds = new FastaSequenceDataSource(al, new ProteinFastaSymbolTable());
+    final InputStream fqis = new ByteArrayInputStream(inputProteinSequence.getBytes());
+    final FastaSequenceDataSource ds = new FastaSequenceDataSource(fqis, new ProteinFastaSymbolTable());
     final SequencesWriter sw = new SequencesWriter(ds, dir, 20, PrereadType.UNKNOWN, false);
     sw.processSequences();
 

@@ -16,7 +16,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.util.Collections;
 
 import org.junit.Test;
 
@@ -37,8 +36,8 @@ public class FastqPairIteratorTest {
 
   @Test
   public void full() {
-      final FastqSequenceDataSource leftSource = new FastqSequenceDataSource(Collections.singletonList(new ByteArrayInputStream(LEFT_FASTQ.getBytes())), QualityFormat.SOLEXA);
-    final FastqSequenceDataSource rightSource = new FastqSequenceDataSource(Collections.singletonList(new ByteArrayInputStream(RIGHT_FASTQ.getBytes())), QualityFormat.SOLEXA);
+    final FastqSequenceDataSource leftSource = new FastqSequenceDataSource(new ByteArrayInputStream(LEFT_FASTQ.getBytes()), QualityFormat.SOLEXA);
+    final FastqSequenceDataSource rightSource = new FastqSequenceDataSource(new ByteArrayInputStream(RIGHT_FASTQ.getBytes()), QualityFormat.SOLEXA);
       final FastqPairIterator fastqIterator = new FastqPairIterator(new FastqIterator(leftSource), new FastqIterator(rightSource));
       assertTrue(fastqIterator.hasNext());
       FastqPair pair = fastqIterator.next();
@@ -54,7 +53,7 @@ public class FastqPairIteratorTest {
 
   FastqIterator emptyFastqIterator() {
 
-    final FastqSequenceDataSource fastqSequenceDataSource = new FastqSequenceDataSource(Collections.singletonList(new ByteArrayInputStream(new byte[0])), QualityFormat.SOLEXA);
+    final FastqSequenceDataSource fastqSequenceDataSource = new FastqSequenceDataSource(new ByteArrayInputStream(new byte[0]), QualityFormat.SOLEXA);
     return new FastqIterator(fastqSequenceDataSource);
   }
 

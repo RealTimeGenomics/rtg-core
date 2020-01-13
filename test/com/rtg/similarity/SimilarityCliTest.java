@@ -106,10 +106,8 @@ public class SimilarityCliTest extends AbstractCliTest {
    * @throws IOException if badness
    */
   public static void writeDNA(final String inputSequence, final File dir) throws IOException {
-    final ArrayList<InputStream> inputStreams = new ArrayList<>();
-    inputStreams.add(new ByteArrayInputStream(inputSequence.getBytes()));
-    final FastaSequenceDataSource ds = new FastaSequenceDataSource(inputStreams,
-        new DNAFastaSymbolTable());
+    final InputStream fqis = new ByteArrayInputStream(inputSequence.getBytes());
+    final FastaSequenceDataSource ds = new FastaSequenceDataSource(fqis, new DNAFastaSymbolTable());
     final SequencesWriter sequenceWriter = new SequencesWriter(ds, dir, 20, PrereadType.UNKNOWN, true);
     sequenceWriter.processSequences();
   }
@@ -189,9 +187,8 @@ public class SimilarityCliTest extends AbstractCliTest {
 
 
   private SequencesReader getReaderDNA(final String inputDnaSequence) throws IOException {
-    final ArrayList<InputStream> inputStreams = new ArrayList<>();
-    inputStreams.add(new ByteArrayInputStream(inputDnaSequence.getBytes()));
-    final FastaSequenceDataSource ds = new FastaSequenceDataSource(inputStreams, new DNAFastaSymbolTable());
+    final InputStream fqis = new ByteArrayInputStream(inputDnaSequence.getBytes());
+    final FastaSequenceDataSource ds = new FastaSequenceDataSource(fqis, new DNAFastaSymbolTable());
 
     return CompressedMemorySequencesReader.createSequencesReader(ds);
     /*
@@ -533,16 +530,15 @@ public class SimilarityCliTest extends AbstractCliTest {
     try {
       final File dir = new File(tempDir, "dir");
       final File outDir = new File(tempDir, "outDir");
-      final ArrayList<InputStream> al = new ArrayList<>();
-      al.add(new ByteArrayInputStream((">x" + LS + "actg" + LS).getBytes()));
-      final FastaSequenceDataSource ds = new FastaSequenceDataSource(al, new DNAFastaSymbolTable());
+      final InputStream fqis = new ByteArrayInputStream((">x" + LS + "actg" + LS).getBytes());
+      final FastaSequenceDataSource ds = new FastaSequenceDataSource(fqis, new DNAFastaSymbolTable());
       final SequencesWriter sw = new SequencesWriter(ds, dir, 100000, PrereadType.UNKNOWN, false);
       sw.processSequences();
       final String pathpr = dir.getPath();
       try (final ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
         try (final ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
           try (final PrintStream err = new PrintStream(bos)) {
-            assertEquals(0, new SimilarityCli().mainInit(new String[] {"-o", outDir.getPath(), "-i", pathpr}, bout, err));
+            assertEquals(0, new SimilarityCli().mainInit(new String[]{"-o", outDir.getPath(), "-i", pathpr}, bout, err));
             assertTrue(outDir.exists());
             assertTrue(outDir.toString(), new File(outDir, SimilarityCli.TREE_SUFFIX).exists());
             assertTrue(outDir.toString(), new File(outDir, SimilarityCli.XML_SUFFIX).exists());

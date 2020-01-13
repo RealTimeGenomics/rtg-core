@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 
 import com.rtg.mode.DNAFastaSymbolTable;
 import com.rtg.mode.ProteinFastaSymbolTable;
@@ -57,20 +56,16 @@ public abstract class AbstractHashLoopTest extends TestCase {
   }
 
   protected SequencesReader getReaderDNA(final String str) throws IOException {
-    final ArrayList<InputStream> al = new ArrayList<>();
-    al.add(new ByteArrayInputStream(str.getBytes()));
-    final FastaSequenceDataSource ds = new FastaSequenceDataSource(al,
-        new DNAFastaSymbolTable());
+    final InputStream fqis = new ByteArrayInputStream(str.getBytes());
+    final FastaSequenceDataSource ds = new FastaSequenceDataSource(fqis, new DNAFastaSymbolTable());
     final SequencesWriter sw = new SequencesWriter(ds, mDir, 20, PrereadType.UNKNOWN, false);
     sw.processSequences();
     return SequencesReaderFactory.createDefaultSequencesReader(mDir);
   }
 
   private SequencesReader getReaderProtein(final String str) throws IOException {
-    final ArrayList<InputStream> al = new ArrayList<>();
-    al.add(new ByteArrayInputStream(str.getBytes()));
-    final FastaSequenceDataSource ds = new FastaSequenceDataSource(al,
-        new ProteinFastaSymbolTable());
+    final InputStream fqis = new ByteArrayInputStream(str.getBytes());
+    final FastaSequenceDataSource ds = new FastaSequenceDataSource(fqis, new ProteinFastaSymbolTable());
     final SequencesWriter sw = new SequencesWriter(ds, mDir, 20, PrereadType.UNKNOWN, false);
     sw.processSequences();
     return SequencesReaderFactory.createDefaultSequencesReader(mDir);
