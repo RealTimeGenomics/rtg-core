@@ -15,11 +15,10 @@ import java.io.IOException;
 
 import com.rtg.index.hash.HashLoop;
 import com.rtg.index.hash.ngs.protein.ProteinMask;
-import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.HashingRegion;
+import com.rtg.launcher.ISequenceParams;
 import com.rtg.mode.Frame;
 import com.rtg.mode.SequenceMode;
-import com.rtg.mode.SequenceType;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.ProgramState;
 
@@ -90,10 +89,10 @@ public abstract class ProteinIncrementalHashLoop extends HashLoop {
     final int step = stepSize * codeSize;
 
     int internalId;
-    if (reader.type() == SequenceType.DNA) {
-      internalId = (region.getChunkId() * (int) reader.numberSequences() * frames.length) + (int) startSequence * frames.length;
-    } else {
+    if (mTemplate) {
       internalId = (int) startSequence * frames.length;
+    } else {
+      internalId = (region.getChunkId() * (int) reader.numberSequences() * frames.length) + (int) startSequence * frames.length;
     }
     final int readLength = mProteinMask.readLength();
     // To make sure we get all hits near the end of the template, we need to go the

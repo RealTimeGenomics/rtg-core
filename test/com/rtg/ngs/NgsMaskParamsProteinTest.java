@@ -13,22 +13,25 @@ package com.rtg.ngs;
 
 import java.io.StringWriter;
 
+import com.rtg.AbstractTest;
 import com.rtg.index.hash.ngs.instances.AbstractSplitTest.ReadCallMock;
 import com.rtg.index.hash.ngs.instances.AbstractSplitTest.TemplateCallMock;
 import com.rtg.index.hash.ngs.protein.ProteinMask;
-import com.rtg.util.diagnostic.Diagnostic;
-
-import junit.framework.TestCase;
 
 /**
  * Test for corresponding class
  */
-public class NgsMaskParamsProteinTest extends TestCase {
+public class NgsMaskParamsProteinTest extends AbstractTest {
 
   public void testMaskFactory() {
-    Diagnostic.setLogStream();
-    final NgsMaskParamsProtein params = new NgsMaskParamsProtein(9, 0, 0, 1);
+    final NgsMaskParamsProtein params = new NgsMaskParamsProtein(9, 0, 0, 1, true);
     final ProteinMask mask = (ProteinMask) params.maskFactory(36).create(new ReadCallMock(new StringWriter()), new TemplateCallMock(new StringWriter()));
+    assertEquals(11, mask.readLength());
+  }
+
+  public void testMaskFactoryUntranslated() {
+    final NgsMaskParamsProtein params = new NgsMaskParamsProtein(9, 0, 0, 1, false);
+    final ProteinMask mask = (ProteinMask) params.maskFactory(12).create(new ReadCallMock(new StringWriter()), new TemplateCallMock(new StringWriter()));
     assertEquals(11, mask.readLength());
   }
 

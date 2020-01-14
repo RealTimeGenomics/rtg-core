@@ -11,36 +11,20 @@
  */
 package com.rtg.protein;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.rtg.mode.SequenceType;
-import com.rtg.reader.MockSequencesReader;
-
-import junit.framework.TestCase;
+import com.rtg.AbstractTest;
 
 /**
  */
-public class SequenceLengthBucketsTest extends TestCase {
-  private static class MockLengthsReader extends MockSequencesReader {
-    private final int[] mLengths;
-    MockLengthsReader(int[] lengths) {
-      super(SequenceType.PROTEIN, lengths.length);
-      mLengths = lengths;
-    }
-    @Override
-    public int[] sequenceLengths(long start, long end) {
-      return Arrays.copyOfRange(mLengths, (int) start, (int) end);
-    }
+public class SequenceLengthBucketsTest extends AbstractTest {
 
-  }
-
-  public void testBucketing() throws Exception {
+  public void testBucketing() {
     final int[] lengths = {100, 101, 102, 103, 104, 23, 105, 106, 107, 50, 108};
-    final SequenceLengthBuckets buckets = new SequenceLengthBuckets(new MockLengthsReader(lengths), 99);
+    final SequenceLengthBuckets buckets = new SequenceLengthBuckets(3, 99, lengths);
     assertEquals(4, buckets.getBuckets().size());
     assertEquals(2, buckets.getCount(99));
     assertEquals(3, buckets.getCount(102));
@@ -49,9 +33,9 @@ public class SequenceLengthBucketsTest extends TestCase {
     assertEquals(0, buckets.getCount(9999));
   }
 
-  public void testBucketList() throws IOException {
+  public void testBucketList() {
     final int[] lengths = {100, 101, 102, 103, 104, 105, 24, 106, 107, 108};
-    final SequenceLengthBuckets buckets = new SequenceLengthBuckets(new MockLengthsReader(lengths), 99);
+    final SequenceLengthBuckets buckets = new SequenceLengthBuckets(3, 99, lengths);
     final Collection<Long> b = buckets.getBuckets();
     final Set<Long> expected = new HashSet<>(Arrays.asList(99L, 102L, 105L, 108L));
     assertEquals(expected, b);

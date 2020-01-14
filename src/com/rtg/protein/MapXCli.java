@@ -326,7 +326,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     final int l = (Integer) mFlags.getValue(GAP_LENGTH_FLAG);
     final int s = Math.max(subs, i);
     MapFlags.validateMaskParams(readLength / (translated ? NUCLEOTIDES_PER_CODON : 1) - 1, w, s, i, l);
-    return new NgsMaskParamsProtein(w, s, i, l);
+    return new NgsMaskParamsProtein(w, s, i, l, translated);
   }
 
   @Override
@@ -416,8 +416,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
         final long numValues = params.buildFirstParams().numberSequences() * params.buildFirstParams().mode().numberFrames() * numChunks;
         assert numValues < Integer.MAX_VALUE : numValues;
         final int bitValues = MathUtils.ceilPowerOf2Bits(numValues);
-
-        final SequenceLengthBuckets buckets = new SequenceLengthBuckets(params.buildFirstParams().reader(), params.mapXMinReadLength());
+        final SequenceLengthBuckets buckets = new SequenceLengthBuckets(translatedScale, params.mapXMinReadLength(), params.buildFirstParams().reader().sequenceLengths(0, params.buildFirstParams().reader().numberSequences()));
         final CreateParams.CreateParamsBuilder builder = new CreateParams.CreateParamsBuilder();
         builder.valueBits(bitValues).compressHashes(params.compressHashes());
 

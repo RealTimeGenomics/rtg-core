@@ -11,6 +11,8 @@
  */
 package com.rtg.ngs;
 
+import static com.rtg.mode.TranslatedFrame.NUCLEOTIDES_PER_CODON;
+
 import com.rtg.index.hash.ngs.HashFunctionFactory;
 import com.rtg.index.hash.ngs.general.Skeleton;
 import com.rtg.index.hash.ngs.protein.ProteinMask;
@@ -20,15 +22,19 @@ import com.rtg.index.hash.ngs.protein.ProteinMask;
  */
 public class NgsMaskParamsProtein extends NgsMaskParamsGeneral {
 
+  private final boolean mTranslated;
+
   /**
    * as in super class
    * @param wordSize word size
    * @param substitutions number of substitutions
    * @param indels number of indels
    * @param indelLength length of indels
+   * @param translated true for translated (DNA) search, false for untranslated (protein) search
    */
-  public NgsMaskParamsProtein(final int wordSize, final int substitutions, final int indels, final int indelLength) {
+  public NgsMaskParamsProtein(final int wordSize, final int substitutions, final int indels, final int indelLength, boolean translated) {
     super(wordSize, substitutions, indels, indelLength);
+    mTranslated = translated;
   }
 
   @Override
@@ -42,8 +48,7 @@ public class NgsMaskParamsProtein extends NgsMaskParamsGeneral {
     return super.isValid(convertedReadLength(readLength));
   }
 
-
-  private static int convertedReadLength(int readLength) {
-    return readLength / 3 - 1;
+  private int convertedReadLength(int readLength) {
+    return (mTranslated ? (readLength / NUCLEOTIDES_PER_CODON) : readLength) - 1;
   }
 }

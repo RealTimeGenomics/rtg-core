@@ -11,12 +11,10 @@
  */
 package com.rtg.protein;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.rtg.reader.SequencesReader;
 import com.rtg.util.diagnostic.Diagnostic;
 
 /**
@@ -24,23 +22,17 @@ import com.rtg.util.diagnostic.Diagnostic;
  */
 public final class SequenceLengthBuckets {
 
-  private static final int BUCKET_SIZE = 3;
-
   private final Map<Long, Long> mLengthCounts = new HashMap<>();
   private final long mMinLength;
   private final int mBucketSize;
 
   /**
    * Counts the number of sequences which fall into each protein length bucket
-   * @param sr the sequence reader with mixed length sequences
-   * @param minLength do not create buckets for lengths shorter than this.
-   * @throws IOException when the sequence reader blows up.
+   * @param bucketSize the size of each bucket
+   * @param minLength do not create buckets for lengths shorter than this
+   * @param lengths the lengths to be bucketed
    */
-  public SequenceLengthBuckets(SequencesReader sr, long minLength) throws IOException {
-    this(BUCKET_SIZE, minLength, sr.sequenceLengths(0, sr.numberSequences()));
-  }
-
-  private SequenceLengthBuckets(int bucketSize, long minLength, int[] lengths) {
+  SequenceLengthBuckets(int bucketSize, long minLength, int[] lengths) {
     mBucketSize = bucketSize;
     mMinLength = minLength;
     for (long length : lengths) {

@@ -11,6 +11,8 @@
  */
 package com.rtg.ngs;
 
+import static com.rtg.mode.SequenceType.PROTEIN;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,9 +40,11 @@ import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.mode.ProteinFastaSymbolTable;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.AlternatingSequencesWriter;
 import com.rtg.reader.DataSourceDescription;
+import com.rtg.reader.FastaSequenceDataSource;
 import com.rtg.reader.FormatCli;
 import com.rtg.reader.IndexFile;
 import com.rtg.reader.PrereadArm;
@@ -622,7 +626,7 @@ public final class MapParamsHelper {
     private final LongRange mReaderRestriction;
     private final SimpleNames mNames;
     private final SimpleNames mSuffixes;
-    private final SequenceMode mMode;
+    protected final SequenceMode mMode;
     private final boolean mUseQuality;
 
     DataSourceSequenceParamsCallable(File build, DataSourceDescription desc, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) {
@@ -673,7 +677,11 @@ public final class MapParamsHelper {
     }
     @Override
     SequenceDataSource getDataSource() {
-      return FormatCli.getDnaDataSource(Collections.singletonList(mBuild), mInputDescription, mArm, false, false, null, false);
+      if (mInputDescription.getSourceFormat() == SourceFormat.FASTA && mMode.type() == PROTEIN) {
+        return new FastaSequenceDataSource(Collections.singletonList(mBuild), new ProteinFastaSymbolTable(), PrereadArm.UNKNOWN);
+      } else {
+        return FormatCli.getDnaDataSource(Collections.singletonList(mBuild), mInputDescription, mArm, false, false, null, false);
+      }
     }
   }
 
