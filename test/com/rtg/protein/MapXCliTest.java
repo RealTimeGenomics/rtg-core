@@ -278,10 +278,10 @@ public class MapXCliTest extends AbstractCliTest {
       ReaderTestUtils.getReaderProtein(TEMPLATE_FASTA, template).close();
       //ReaderTestUtils.getReaderDNA(ERROR_READS, errorReads, null).close();
       ReaderTestUtils.getReaderDNA(WARN_READS, warnReads, null).close();
-      createParams(new String[] {"-t", template.getPath(), "-i", warnReads.getPath(), "-a", "0", "-b", "0", "-o", output.getPath(), "-w", "1", "--min-dna-read-length", "12"});
+      createParams(new String[] {"-t", template.getPath(), "-i", warnReads.getPath(), "-a", "0", "-b", "0", "-o", output.getPath(), "-w", "1", "--min-read-length", "12"});
       assertTrue(ps.toString(), ps.toString().contains("The read set contains reads which are shorter than the minimum read length 12 which will be ignored"));
       try {
-        createParams(new String[] {"-t", template.getPath(), "-i", warnReads.getPath(), "-a", "0", "-b", "0", "-o", output.getPath(), "-w", "1", "--min-dna-read-length", "13"});
+        createParams(new String[] {"-t", template.getPath(), "-i", warnReads.getPath(), "-a", "0", "-b", "0", "-o", output.getPath(), "-w", "1", "--min-read-length", "13"});
         fail();
       } catch (final NoTalkbackSlimException e) {
         assertEquals("All reads are shorter than the minimum read length 13", e.getMessage());
@@ -317,7 +317,7 @@ public class MapXCliTest extends AbstractCliTest {
         new HashSet<>(Arrays.asList(0, 1, 2, 3)), LENGTH);
   }
   public void testMinReadLength() throws Exception {
-    checkVariableLength(new String[] {"-Z", "-a", "2", "--min-dna-read-length", "70"},
+    checkVariableLength(new String[] {"-Z", "-a", "2", "--min-read-length", "70"},
         new HashSet<>(Arrays.asList(2, 3)), 158L);
 
   }

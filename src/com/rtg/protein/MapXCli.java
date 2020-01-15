@@ -92,7 +92,8 @@ public class MapXCli extends ParamsCli<NgsParams> {
   static final String MIN_IDENTITY_FLAG = "min-identity";
   static final String MAX_ESCORE_FLAG = "max-e-score";
   static final String MIN_BITSCORE_FLAG = "min-bit-score";
-  static final String MIN_READ_LENGTH = "min-dna-read-length";
+  static final String MIN_DNA_READ_LENGTH = "min-dna-read-length"; // Deprecated
+  static final String MIN_READ_LENGTH = "min-read-length";
   private static final String OUTPUT_READ_NAMES_FLAG = "read-names";
   private static final String SUPPRESS_PROTEIN_OUTPUT_FLAG = "suppress-protein";
   private static final String XMETA_CHUNK_LENGTH = "Xmeta-chunk-length";
@@ -160,7 +161,8 @@ public class MapXCli extends ParamsCli<NgsParams> {
         || !flags.checkInRange(MIN_BITSCORE_FLAG, 0, Double.MAX_VALUE)
         || !flags.checkInRange(PRE_FILTER_MIN_SCORE, 0, 100)
         || !flags.checkInRange(PRE_FILTER_MIN_OVERLAP, 0, 100)
-        || !flags.checkInRange(PRE_FILTER_ALGORITHM, -10, 10)) {
+        || !flags.checkInRange(PRE_FILTER_ALGORITHM, -10, 10)
+        || !flags.checkNand(MIN_READ_LENGTH, MIN_DNA_READ_LENGTH)) {
         return false;
       }
       final int metachunklength;
@@ -206,6 +208,8 @@ public class MapXCli extends ParamsCli<NgsParams> {
     final long mapXMinLength;
     if (mFlags.isSet(MIN_READ_LENGTH)) {
       mapXMinLength = (Long) mFlags.getValue(MIN_READ_LENGTH);
+    } else if (mFlags.isSet(MIN_DNA_READ_LENGTH)) { // Backwards compat for deprecated flag
+      mapXMinLength = (Long) mFlags.getValue(MIN_DNA_READ_LENGTH);
     } else {
       mapXMinLength = (translated ? NUCLEOTIDES_PER_CODON : 1) * (mask.getWordSize() + mask.getSubstitutions() + 1);
     }
@@ -386,10 +390,11 @@ public class MapXCli extends ParamsCli<NgsParams> {
     flags.registerOptional(READ_CACHE_FLAG, "enable protein read cache").setCategory(UTILITY);
 
     flags.registerOptional(UNFILTERED_FLAG, "output all alignments meeting thresholds instead of applying topn/topequals N limits").setCategory(REPORTING);
-    flags.registerOptional(MIN_READ_LENGTH, Long.class, CommonFlags.INT, "minimum read length in nucleotides. Shorter reads will be ignored. (Defaults to 3 * (w + a + 1))").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(MIN_DNA_READ_LENGTH, Long.class, CommonFlags.INT, "minimum read length in nucleotides. Shorter reads will be ignored (Default is 3 * (w + a + 1))").setCategory(SENSITIVITY_TUNING).setDeprecated();
+    flags.registerOptional(MIN_READ_LENGTH, Long.class, CommonFlags.INT, "minimum read length. Shorter reads will be ignored (Default is protein space length of (w + a + 1))").setCategory(SENSITIVITY_TUNING);
 
-    flags.registerOptional(XMETA_CHUNK_LENGTH, Integer.class, CommonFlags.INT, "how large to make long read meta chunks. (Defaults to " + ProteinReadIndexer.DEFAULT_META_CHUNK_LENGTH + ")").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(XMETA_CHUNK_OVERLAP, Integer.class, CommonFlags.INT, "how much overlap to have in long read meta chunks. (Defaults to meta chunk length / 2)").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(XMETA_CHUNK_LENGTH, Integer.class, CommonFlags.INT, "how large to make long read meta chunks (Default is " + ProteinReadIndexer.DEFAULT_META_CHUNK_LENGTH + ")").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(XMETA_CHUNK_OVERLAP, Integer.class, CommonFlags.INT, "how much overlap to have in long read meta chunks (Default is meta chunk length / 2)").setCategory(SENSITIVITY_TUNING);
 
     flags.registerOptional(PROTEIN_QUERY, "query sequences are protein rather than DNA").setCategory(INPUT_OUTPUT);
 
