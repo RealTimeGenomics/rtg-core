@@ -211,10 +211,10 @@ public class MapXCli extends ParamsCli<NgsParams> {
     }
     ngsParamsBuilder.mapXMinLength(mapXMinLength);
     if (readLen < mapXMinLength) {
-      throw new NoTalkbackSlimException("All reads are shorter than the minimum DNA read length " + mapXMinLength);
+      throw new NoTalkbackSlimException("All reads are shorter than the minimum read length " + mapXMinLength);
     }
     if (minReadLen < mapXMinLength) {
-      Diagnostic.warning("The read set contains reads which are shorter than the minimum DNA read length " + mapXMinLength  + " which will be ignored");
+      Diagnostic.warning("The read set contains reads which are shorter than the minimum read length " + mapXMinLength  + " which will be ignored");
     }
 
     final NgsFilterParams.NgsFilterParamsBuilder filterBuild = NgsFilterParams.builder();

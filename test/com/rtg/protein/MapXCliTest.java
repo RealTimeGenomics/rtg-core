@@ -279,12 +279,12 @@ public class MapXCliTest extends AbstractCliTest {
       //ReaderTestUtils.getReaderDNA(ERROR_READS, errorReads, null).close();
       ReaderTestUtils.getReaderDNA(WARN_READS, warnReads, null).close();
       createParams(new String[] {"-t", template.getPath(), "-i", warnReads.getPath(), "-a", "0", "-b", "0", "-o", output.getPath(), "-w", "1", "--min-dna-read-length", "12"});
-      assertTrue(ps.toString(), ps.toString().contains("The read set contains reads which are shorter than the minimum DNA read length 12 which will be ignored"));
+      assertTrue(ps.toString(), ps.toString().contains("The read set contains reads which are shorter than the minimum read length 12 which will be ignored"));
       try {
         createParams(new String[] {"-t", template.getPath(), "-i", warnReads.getPath(), "-a", "0", "-b", "0", "-o", output.getPath(), "-w", "1", "--min-dna-read-length", "13"});
         fail();
       } catch (final NoTalkbackSlimException e) {
-        assertEquals("All reads are shorter than the minimum DNA read length 13", e.getMessage());
+        assertEquals("All reads are shorter than the minimum read length 13", e.getMessage());
       }
     }
   }
