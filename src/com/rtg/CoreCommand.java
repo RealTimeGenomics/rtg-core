@@ -25,6 +25,7 @@ import com.rtg.ngs.CgMapCli;
 import com.rtg.ngs.MapCli;
 import com.rtg.ngs.MapFCli;
 import com.rtg.ngs.SamRename;
+import com.rtg.protein.MapPCli;
 import com.rtg.protein.MapXCli;
 import com.rtg.protein.MapxRename;
 import com.rtg.reader.Cg2Sdf;
@@ -113,8 +114,11 @@ public final class CoreCommand {
   /** Runs stand alone re-calibration */
   static final Command CALIBRATE = new LicensedCommand(new RecalibrateCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
 
-  /** Runs Ngs and Alignment*/
+  /** Protein search from translated DNA queries*/
   static final Command MAPX = new LicensedCommand(new MapXCli(), CommandCategory.PROTEIN, ReleaseLevel.GA);
+
+  /** Protein search from untranslated protein queries*/
+  static final Command MAPP = new LicensedCommand(new MapPCli(), CommandCategory.PROTEIN, ReleaseLevel.BETA);
 
   /** Assemble reads into longer contigs */
   static final Command ASSEMBLE = new LicensedCommand(new AssembleCli(), CommandCategory.ASSEMBLY, ReleaseLevel.BETA);
@@ -275,7 +279,7 @@ public final class CoreCommand {
     COVERAGE, CALIBRATE,
 
     // Protein
-    MAPX,
+    MAPX, MAPP,
 
     // Assembly
     ASSEMBLE, ADDPACBIO,

@@ -12,22 +12,22 @@
 package com.rtg.protein;
 
 /**
- * Module for doing protein matching using translated reads
+ * Module for doing protein matching using protein query sequences
  */
-public class MapXCli extends MapProteinCli {
+public class MapPCli extends MapProteinCli {
 
   @Override
   public String moduleName() {
-    return "mapx";
+    return "mapp";
   }
 
   @Override
   public String description() {
-    return "translated protein search";
+    return "untranslated protein search";
   }
 
   @Override
   protected boolean translated() {
-    return true;
+    return false;
   }
 }
