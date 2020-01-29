@@ -64,6 +64,7 @@ import com.rtg.usage.UsageMetric;
 import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.MathUtils;
+import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.cli.CommonFlagCategories;
@@ -120,6 +121,8 @@ public abstract class MapProteinCli extends ParamsCli<NgsParams> {
   }
 
   protected abstract boolean translated();
+
+  protected abstract String queryLabel();
 
   @TestClass(value = "com.rtg.protein.MapXValidatorTest")
   private static class MapXValidator implements Validator {
@@ -204,10 +207,10 @@ public abstract class MapProteinCli extends ParamsCli<NgsParams> {
     }
     ngsParamsBuilder.mapXMinLength(mapXMinLength);
     if (readLen < mapXMinLength) {
-      throw new NoTalkbackSlimException("All reads are shorter than the minimum read length " + mapXMinLength);
+      throw new NoTalkbackSlimException("All " + queryLabel() + "s are shorter than the minimum query length " + mapXMinLength);
     }
     if (minReadLen < mapXMinLength) {
-      Diagnostic.warning("The read set contains reads which are shorter than the minimum read length " + mapXMinLength  + " which will be ignored");
+      Diagnostic.warning("The input set contains " + queryLabel() + "s which are shorter than the minimum query length " + mapXMinLength  + " which will be ignored");
     }
 
     final NgsFilterParams.NgsFilterParamsBuilder filterBuild = NgsFilterParams.builder();
@@ -260,7 +263,7 @@ public abstract class MapProteinCli extends ParamsCli<NgsParams> {
     ngsParamsBuilder.mapXMetaChunkOverlap(metaChunkOverlap);
     final NgsParams localParams = ngsParamsBuilder.create();
     if (localParams.outputParams().outputReadNames() && !localParams.buildFirstParams().reader().hasNames()) {
-      throw new InvalidParamsException("Names not present in SDF and read names requested");
+      throw new InvalidParamsException("Names not present in SDF and " + queryLabel() + " names requested");
     }
     localParams.globalIntegrity();
     return localParams;
@@ -334,22 +337,22 @@ public abstract class MapProteinCli extends ParamsCli<NgsParams> {
   }
 
   private void initFlags(final CFlags flags) {
-    flags.setDescription("Searches translated read data sets of defined length (e.g. 100 bp reads) against protein databases or translated nucleotide sequences.");
+    flags.setDescription(StringUtils.sentencify(description()));
     CommonFlagCategories.setCategories(flags);
-    flags.registerRequired('i', READS_FLAG, File.class, "SDF|FILE", "query read sequences").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('i', READS_FLAG, File.class, "SDF|FILE", "query sequences").setCategory(INPUT_OUTPUT);
     flags.registerRequired('t', TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing protein database to search").setCategory(INPUT_OUTPUT);
     flags.registerOptional(MapFlags.IN_MEMORY_TEMPLATE, Boolean.class, "BOOL", "whether to load the template into memory", Boolean.TRUE).setCategory(UTILITY);
     CommonFlags.initOutputDirFlag(flags);
 
     // No Paired End input for MapX
-    final Flag<String> formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
+    final Flag<String> formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for " + queryLabel() + "s", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
     formatFlag.setParameterRange(new String[]{FormatCli.SDF_FORMAT, FormatCli.FASTA_FORMAT, FormatCli.FASTQ_FORMAT, FormatCli.SAM_SE_FORMAT});
 
     final Flag<String> filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, CommonFlags.STRING, "output filter", "topn");
     filter.setCategory(REPORTING);
     filter.setParameterRange(FILTERS.keySet());
     flags.registerOptional(XDONT_MERGE_ALIGNMENT_RESULTS, "does not concat alignment files").setCategory(UTILITY);
-    flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, CommonFlags.INT, "maximum number of topn/topequals results output per read",
+    flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, CommonFlags.INT, "maximum number of topn/topequals results output per " + queryLabel(),
       DEFAULT_TOP_N).setCategory(REPORTING);
     final Flag<String> matrix = flags.registerOptional(MATRIX_FLAG, String.class, CommonFlags.STRING, "name of the scoring matrix used during alignment", "blosum62");
     matrix.setCategory(SENSITIVITY_TUNING);
@@ -363,29 +366,31 @@ public abstract class MapProteinCli extends ParamsCli<NgsParams> {
     flags.registerOptional(COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", Boolean.TRUE).setCategory(UTILITY);
     flags.registerOptional(TEMP_DIR, File.class, CommonFlags.DIR, "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
     flags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary files", Boolean.TRUE).setCategory(UTILITY);
-    flags.registerOptional(MapFlags.NO_UNMAPPED, "do not output unmapped reads").setCategory(UTILITY);
+    flags.registerOptional(MapFlags.NO_UNMAPPED, "do not output unmapped " + queryLabel() + "s").setCategory(UTILITY);
     flags.registerOptional('w', WORDSIZE_FLAG, Integer.class, CommonFlags.INT, "word size", 7).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('a', MISMATCHES_FLAG, Integer.class, CommonFlags.INT, "guaranteed minimum number of identical mismatches which will be detected", 1).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('b', GAPS_FLAG, Integer.class, CommonFlags.INT, "guaranteed minimum number of gaps which will be detected (if this is larger than the minimum number of mismatches then the minimum number of mismatches is increased to the same value)", 0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('c', GAP_LENGTH_FLAG, Integer.class, CommonFlags.INT, "guaranteed number of positions that will be detected in a single gap", 1).setCategory(SENSITIVITY_TUNING);
     CommonFlags.initThreadsFlag(mFlags);
     CommonFlags.initNoGzip(flags);
-    flags.registerOptional('e', MAX_ALIGNMENT_SCORE, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score at output (as absolute value or percentage of read length in protein space)", IntegerOrPercentage.valueOf("30%")).setCategory(REPORTING);
+    flags.registerOptional('e', MAX_ALIGNMENT_SCORE, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score at output (as absolute value or percentage of query length in protein space)", IntegerOrPercentage.valueOf("30%")).setCategory(REPORTING);
     flags.registerOptional(CommonFlags.REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, CommonFlags.INT, "maximum repeat frequency", IntegerOrPercentage.valueOf("95%")).setCategory(SENSITIVITY_TUNING);
 
-    flags.registerOptional(OUTPUT_READ_NAMES_FLAG, "use read name in output instead of read id (Uses more RAM)").setCategory(UTILITY);
-    flags.registerOptional(SUPPRESS_PROTEIN_OUTPUT_FLAG, "suppress output of sequence protein information").setCategory(UTILITY);
+    flags.registerOptional(OUTPUT_READ_NAMES_FLAG, "use " + queryLabel() + " name in output instead of " + queryLabel() + " id (Uses more RAM)").setCategory(UTILITY);
+    flags.registerOptional(SUPPRESS_PROTEIN_OUTPUT_FLAG, "do not include protein sequence in output files").setCategory(UTILITY);
 
-    flags.registerOptional(READ_CACHE_FLAG, "enable protein read cache").setCategory(UTILITY);
 
     flags.registerOptional(UNFILTERED_FLAG, "output all alignments meeting thresholds instead of applying topn/topequals N limits").setCategory(REPORTING);
-    flags.registerOptional(MIN_DNA_READ_LENGTH, Long.class, CommonFlags.INT, "minimum read length in nucleotides. Shorter reads will be ignored (Default is 3 * (w + a + 1))").setCategory(SENSITIVITY_TUNING).setDeprecated();
-    flags.registerOptional(MIN_READ_LENGTH, Long.class, CommonFlags.INT, "minimum read length. Shorter reads will be ignored (Default is protein space length of (w + a + 1))").setCategory(SENSITIVITY_TUNING);
+    if (translated()) {
+      flags.registerOptional(READ_CACHE_FLAG, "enable protein read cache").setCategory(UTILITY);
+      flags.registerOptional(MIN_DNA_READ_LENGTH, Long.class, CommonFlags.INT, "minimum read length in nucleotides. Shorter " + queryLabel() + "s will be ignored (Default is 3 * (w + a + 1))").setCategory(SENSITIVITY_TUNING).setDeprecated();
+    }
+    flags.registerOptional(MIN_READ_LENGTH, Long.class, CommonFlags.INT, "minimum " + queryLabel() + " length. Shorter " + queryLabel() + "s will be ignored (Default is protein space length of (w + a + 1))").setCategory(SENSITIVITY_TUNING);
 
-    flags.registerOptional(XMETA_CHUNK_LENGTH, Integer.class, CommonFlags.INT, "how large to make long read meta chunks (Default is " + ProteinReadIndexer.DEFAULT_META_CHUNK_LENGTH + ")").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(XMETA_CHUNK_OVERLAP, Integer.class, CommonFlags.INT, "how much overlap to have in long read meta chunks (Default is meta chunk length / 2)").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(XMETA_CHUNK_LENGTH, Integer.class, CommonFlags.INT, "how large to make long query meta chunks (Default is " + ProteinReadIndexer.DEFAULT_META_CHUNK_LENGTH + ")").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(XMETA_CHUNK_OVERLAP, Integer.class, CommonFlags.INT, "how much overlap to have in long query meta chunks (Default is meta chunk length / 2)").setCategory(SENSITIVITY_TUNING);
 
-    CommonFlags.initReadRange(mFlags);
+    CommonFlags.initReadRange(mFlags, queryLabel());
 
     flags.setValidator(new MapXValidator());
   }

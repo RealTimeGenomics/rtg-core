@@ -23,11 +23,16 @@ public class MapPCli extends MapProteinCli {
 
   @Override
   public String description() {
-    return "untranslated protein search";
+    return "searches protein query sets against a protein database";
   }
 
   @Override
   protected boolean translated() {
     return false;
+  }
+
+  @Override
+  protected String queryLabel() {
+    return "query sequence";
   }
 }
