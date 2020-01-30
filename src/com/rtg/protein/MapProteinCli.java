@@ -77,6 +77,7 @@ import com.rtg.util.diagnostic.Timer;
 /**
  * Base module for doing protein matching
  */
+@TestClass("com.rtg.protein.MapXCliTest")
 public abstract class MapProteinCli extends ParamsCli<NgsParams> {
 
   private static final String UNFILTERED_FLAG = "all-hits";

@@ -24,6 +24,7 @@ import java.util.Set;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
 import com.rtg.launcher.CommonFlags;
+import com.rtg.launcher.MainResult;
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.SequenceMode;
 import com.rtg.ngs.MapFlags;
@@ -36,6 +37,7 @@ import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
+import com.rtg.util.Utils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
@@ -59,7 +61,6 @@ public class MapXCliTest extends AbstractCliTest {
   public void testMapXFlags() {
     assertEquals("mapx", mCli.moduleName());
     checkHelp("directory for output",
-        "query read sequences",
         "SDF containing protein database to search",
         "guaranteed number of positions",
         "guaranteed minimum number of gaps",
@@ -77,8 +78,7 @@ public class MapXCliTest extends AbstractCliTest {
         "do not gzip the output",
         "directory used for temporary files",
         "number of threads",
-        "min-identity", "minimum percent identity at output",
-        "suppress output of sequence protein information"
+        "min-identity", "minimum percent identity at output"
         );
   }
 
@@ -159,7 +159,7 @@ public class MapXCliTest extends AbstractCliTest {
   }
 
   public void testModuleName() {
-    assertEquals("mapx", new MapXCli().moduleName());
+    assertEquals("mapx", getCli().moduleName());
   }
 
   public void testFiltering()  throws InvalidParamsException, IOException  {
@@ -272,19 +272,17 @@ public class MapXCliTest extends AbstractCliTest {
       final MemoryPrintStream ps = new MemoryPrintStream();
       Diagnostic.setLogStream(ps.printStream());
       final File template = new File(dir, "template");
-      //final File errorReads = new File(dir, "reads");
       final File warnReads = new File(dir, "wreads");
       final File output = new File(dir, "output");
       ReaderTestUtils.getReaderProtein(TEMPLATE_FASTA, template).close();
-      //ReaderTestUtils.getReaderDNA(ERROR_READS, errorReads, null).close();
       ReaderTestUtils.getReaderDNA(WARN_READS, warnReads, null).close();
       createParams(new String[] {"-t", template.getPath(), "-i", warnReads.getPath(), "-a", "0", "-b", "0", "-o", output.getPath(), "-w", "1", "--min-read-length", "12"});
-      assertTrue(ps.toString(), ps.toString().contains("The read set contains reads which are shorter than the minimum read length 12 which will be ignored"));
+      assertTrue(ps.toString(), ps.toString().contains("The input set contains reads which are shorter than the minimum query length 12 which will be ignored"));
       try {
         createParams(new String[] {"-t", template.getPath(), "-i", warnReads.getPath(), "-a", "0", "-b", "0", "-o", output.getPath(), "-w", "1", "--min-read-length", "13"});
         fail();
       } catch (final NoTalkbackSlimException e) {
-        assertEquals("All reads are shorter than the minimum read length 13", e.getMessage());
+        assertEquals("All reads are shorter than the minimum query length 13", e.getMessage());
       }
     }
   }
@@ -313,49 +311,34 @@ public class MapXCliTest extends AbstractCliTest {
   private static final long LENGTH = R_1.length() + R_2.length() + R_3.length() + R_4.length();
 
   public void testVariableLength() throws Exception {
-    checkVariableLength(new String[] {"-Z", "-a", "2"},
-        new HashSet<>(Arrays.asList(0, 1, 2, 3)), LENGTH);
+    checkVariableLength(new HashSet<>(Arrays.asList(0, 1, 2, 3)), LENGTH, "-Z", "-a", "2");
   }
   public void testMinReadLength() throws Exception {
-    checkVariableLength(new String[] {"-Z", "-a", "2", "--min-read-length", "70"},
-        new HashSet<>(Arrays.asList(2, 3)), 158L);
-
+    checkVariableLength(new HashSet<>(Arrays.asList(2, 3)), 158L, "-Z", "-a", "2", "--min-read-length", "70");
   }
   public void testStartRead() throws Exception {
-    checkVariableLength(new String[] {"-Z", "-a", "2", "--start-read", "1"},
-        new HashSet<>(Arrays.asList(1, 2, 3)), 218L);
-
+    checkVariableLength(new HashSet<>(Arrays.asList(1, 2, 3)), 218L, "-Z", "-a", "2", "--start-read", "1");
   }
   public void testEndRead() throws Exception {
-    checkVariableLength(new String[] {"-Z", "-a", "2", "--end-read", "3"},
-        new HashSet<>(Arrays.asList(0, 1, 2)), 190L);
-
+    checkVariableLength(new HashSet<>(Arrays.asList(0, 1, 2)), 190L, "-Z", "-a", "2", "--end-read", "3");
   }
   public void testReadRange() throws Exception {
-    checkVariableLength(new String[] {"-Z", "-a", "2", "--start-read", "1", "--end-read", "3"},
-        new HashSet<>(Arrays.asList(1, 2)), 130L);
+    checkVariableLength(new HashSet<>(Arrays.asList(1, 2)), 130L, "-Z", "-a", "2", "--start-read", "1", "--end-read", "3");
   }
   public void testNoCompress() throws Exception {
-    checkVariableLength(new String[] {"-Z", "-a", "2", "--start-read", "1", "--end-read", "3", "--Xcompress-hashes", "false"},
-        new HashSet<>(Arrays.asList(1, 2)), 130L);
+    checkVariableLength(new HashSet<>(Arrays.asList(1, 2)), 130L, "-Z", "-a", "2", "--start-read", "1", "--end-read", "3", "--Xcompress-hashes", "false");
   }
-  public void checkVariableLength(String[] args, Set<Integer> expectedMappings, long usageMetric) throws IOException {
+  public void checkVariableLength(Set<Integer> expectedMappings, long usageMetric, String... args) throws IOException {
     try (final TestDirectory dir = new TestDirectory("mapx")) {
       final File output = new File(dir, "output");
       final File template = new File(dir, "template");
       ReaderTestUtils.getReaderProtein(PROTEIN_TEMPLATE, template).close();
       final File reads = ReaderTestUtils.getDNADir(READ_1 + READ_2 + READ_3 + READ_4, new File(dir, "reads"));
-      final MemoryPrintStream mps = new MemoryPrintStream();
-      final String[] consistentArgs = {"-i", reads.getPath(), "-t", template.getPath(), "-o", output.getPath()};
-      final String[] finalArgs = new String[consistentArgs.length + args.length];
-      System.arraycopy(consistentArgs, 0, finalArgs, 0, consistentArgs.length);
-      System.arraycopy(args, 0, finalArgs, consistentArgs.length, args.length);
 
-      final MapXCli mapXCli = new MapXCli();
-      final int code = mapXCli.mainInit(finalArgs, mps.outputStream(), mps.printStream());
-      assertEquals(mps.toString(), 0, code);
-      final String outputString = FileUtils.fileToString(new File(output, "alignments.tsv"));
-      final String[] res = StringUtils.grep(outputString, "^[^#]").split("\n|\r\n");
+      final AbstractCli mapXCli = getCli();
+      MainResult result = MainResult.run(mapXCli, Utils.append(args, "-i", reads.getPath(), "-t", template.getPath(), "-o", output.getPath()));
+      assertEquals(result.err(), 0, result.rc());
+      final String[] res = StringUtils.grep(FileUtils.fileToString(new File(output, "alignments.tsv")), "^[^#]").split("\n|\r\n");
       final HashSet<Integer> readsSet = new HashSet<>();
       for (final String s : res) {
         final String[] line = s.split("\t");
@@ -364,7 +347,6 @@ public class MapXCliTest extends AbstractCliTest {
       }
       assertEquals(expectedMappings, readsSet);
       final String usageLog = mapXCli.usageLog();
-      //System.err.println(usageLog);
       TestUtils.containsAll(usageLog, "[Usage beginning module=mapx runId=", ", Usage end module=mapx runId=", " metric=" + usageMetric + " success=true]");
     }
   }
@@ -375,14 +357,8 @@ public class MapXCliTest extends AbstractCliTest {
       final File template = new File(dir, "template");
       ReaderTestUtils.getReaderProtein(FileHelper.resourceToString("com/rtg/protein/resources/mcProt.fa"), template).close();
       final File reads = ReaderTestUtils.getDNADir(FileHelper.resourceToString("com/rtg/protein/resources/mcReads.fa"), new File(dir, "reads"));
-      final MemoryPrintStream mps = new MemoryPrintStream();
-      final int code = new MapXCli().mainInit(new String[] {"-i", reads.getPath(), "-t", template.getPath(), "-o", output.getPath()}, mps.outputStream(), mps.printStream());
-      assertEquals(mps.toString(), 0, code);
-      final String results = FileHelper.gzFileToString(new File(output, "alignments.tsv.gz"));
-      //System.out.println(results);
-      final String resultsNoHeader = StringUtils.grep(results, "^[^#]");
-      //System.out.println(resultsNoHeader);
-      mNano.check("mcResults", resultsNoHeader);
+      checkMainInitOk("-i", reads.getPath(), "-t", template.getPath(), "-o", output.getPath());
+      mNano.check("mcResults", StringUtils.grep(FileHelper.gzFileToString(new File(output, "alignments.tsv.gz")), "^[^#]"));
     }
   }
 }
