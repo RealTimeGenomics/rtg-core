@@ -28,7 +28,7 @@ public final class BuildParams implements Params {
 
   static long size(final int windowSize, final int stepSize, final ISequenceParams sequenceParams) throws IOException {
     final SequenceMode mode = sequenceParams.mode();
-    final HashingRegion region = sequenceParams.region(); // XXX This should probably be sequenceParams.readerRestriction()??
+    final HashingRegion region = sequenceParams.region();
     final long st;
     final long en;
     if (region != HashingRegion.NONE) {

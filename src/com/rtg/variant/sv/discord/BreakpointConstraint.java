@@ -69,7 +69,7 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
     mMeanR = r(mProxy.getXLo(), mProxy.getYLo()) + rgs.gapMean();
     mStdDeviation = rgs.fragmentStdDev();
 
-    assert getRLo() < mMeanR && mMeanR < getRHi() : this.toString(); // XXX if read overlaps are very common this may not be true, since RLo is clipped
+    assert getRLo() < mMeanR && mMeanR < getRHi() : this.toString(); // TODO if read overlaps are very common this may not be true, since RLo is clipped
     assert globalIntegrity();
   }
 

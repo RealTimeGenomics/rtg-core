@@ -426,7 +426,7 @@ public final class UnmatedAugmenter {
       if (rs.hasDuplicates()) {
         for (Pair<RegionRestriction, RegionRestriction> dup : rs.duplicates()) {
           if (dup.getB().contains(record.getReferenceName(), Math.min(refLength, alignmentStart))) {
-            // XXX This seems wrong if the PAR regions are different lengths - the projected position may
+            // TODO This seems wrong if the PAR regions are different lengths - the projected position may
             // not be inside the partner PAR region.
             alignmentStart = dup.getA().getStart() + (alignmentStart - dup.getB().getStart());
             record.setReferenceName(dup.getA().getSequenceName());

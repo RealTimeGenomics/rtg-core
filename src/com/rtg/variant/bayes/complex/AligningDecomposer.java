@@ -64,7 +64,7 @@ public class AligningDecomposer extends AbstractDecomposer {
     this(null, new VariantAlleleTrigger(0, 0));
   }
 
-  // XXX These should be recomputed directly from the measure, in order to include alleles not called in the originalLikelihoods
+  // TODO These should be recomputed directly from the measure, in order to include alleles not called in the originalLikelihoods
   private static Map<Set<String>, Double> newGenotypeLikelihoods(final VariantSample sample, final SplitAlleles splitter, final String[] alleles, final int leftClip) {
     final Map<Set<String>, Double> originalLikelihoods = sample.getGenotypeLikelihoods();
     if (originalLikelihoods != null) {

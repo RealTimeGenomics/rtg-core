@@ -322,7 +322,7 @@ public class ReadSimEvalCli extends LoggedCli {
       final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).create();
 
       final List<File> inputs = Arrays.asList(mParams.samFiles());
-      final SamReadingContext context = new SamReadingContext(inputs, 1, filterParams, SamUtils.getUberHeader(inputs), null); // XXX Add CRAM support?
+      final SamReadingContext context = new SamReadingContext(inputs, 1, filterParams, SamUtils.getUberHeader(inputs), null); // Note, no CRAM support here yet
       try (RecordIterator<SAMRecord> itr = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
         if (recordsOut != null) {
           recordsOut.write(itr.header().getTextHeader());

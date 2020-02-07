@@ -173,7 +173,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     // Reference allele frequency (average) from our priors file
     final double refFreqInitial = (1.0 - genomePriors.genomeIndelEventFraction()) / (genomePriors.genomeIndelEventFraction() + 1.0);
     double altFreqInitial = 1.0 - refFreqInitial; // Probability mass for all alt alleles.
-    // XXX Hack to make alt stuff less likely, to improve ROC from slope analysis.
+    // TODO Hack to make alt stuff less likely, to improve ROC from slope analysis.
     altFreqInitial = altFreqInitial * PRIORS_ALT_BIAS;
     final double refFreq = 1.0 - altFreqInitial;
     final double altFreq = haploidPriors.length == 1 ? 1.0 : altFreqInitial / (haploidPriors.length - 1); // Distribute evenly among all alt alleles
@@ -188,7 +188,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
       final int cb = code.b(i);
       diploidPriors[i] = arithmetic.multiply(diploidPriors[i], arithmetic.multiply(haploidFrequencies[ca], haploidFrequencies[cb]));  // Probability of getting the combination of alleles (just from allele frequencies)
       if (!code.homozygous(i) && PRIORS_HET_BIAS != 1.0) {
-        diploidPriors[i] = arithmetic.multiply(diploidPriors[i], hetBias); // XXX Hack to give less confidence in het stuff, to improve ROC from slope analysis.
+        diploidPriors[i] = arithmetic.multiply(diploidPriors[i], hetBias); // TODO Hack to give less confidence in het stuff, to improve ROC from slope analysis.
       }
     }
   }

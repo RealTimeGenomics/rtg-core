@@ -92,7 +92,7 @@ public class DiseasedFamilyCaller implements MultisampleJointCaller {
     final ModelInterface<?> fb = models.get(Family.FATHER_INDEX);
     final ModelInterface<?> mb = models.get(Family.MOTHER_INDEX);
     final boolean overCoverage = mParams.maxCoverageFilter() != null && Utils.maxCoverage(models) > mParams.maxCoverageFilter().thresholdSingle(templateName);
-    final Hypotheses<?> commonHypotheses = hypotheses.get(models.get(0)); // XXX this doesn't appear to support sex
+    final Hypotheses<?> commonHypotheses = hypotheses.get(models.get(0)); // TODO this doesn't appear to support sex
     final byte refNt = (byte) (ref[position] - 1);
     final HypothesesDisease diseaseHypotheses = new HypothesesDisease(commonHypotheses.description(), mNoDiseasePrior, refNt);
     //TODO use flag for dominant vs recessive.
@@ -117,7 +117,7 @@ public class DiseasedFamilyCaller implements MultisampleJointCaller {
         final HypothesisScore child = fp.bestChild(i);
         samples[i + Family.FIRST_CHILD_INDEX] = FamilyCaller.createSample(commonHypotheses, child, models.get(i + Family.FIRST_CHILD_INDEX), mParams);
       }
-      final String refAllele = commonHypotheses.description().name(commonHypotheses.reference()); // XXX Doesn't support reference == Hypothesis.NO_HYPOTHESIS
+      final String refAllele = commonHypotheses.description().name(commonHypotheses.reference()); // TODO Doesn't support reference == Hypothesis.NO_HYPOTHESIS
       final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
       final Variant v = new Variant(locus, samples);
       v.setDiseasePresenceScore(fp.anyDiseasePosteriorRatio());

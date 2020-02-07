@@ -53,7 +53,7 @@ public class DedupifyingIteratorTest extends AbstractTest {
   }
 
   public void testPairedEnd() throws IOException {
-    final boolean skipBug = true; // XXX showing current behaviour, set false to demonstrate bug 1612
+    final boolean skipBug = true; // FYI showing current behaviour, set false to demonstrate bug 1612
     try (InputStream exp = Resources.getResourceAsStream("com/rtg/sam/resources/" + (skipBug ? "deduplicated-current.sam" : "deduplicated.sam"))) {
       try (InputStream in = Resources.getResourceAsStream("com/rtg/sam/resources/duplicates.sam")) {
         final SamReader inSam = SamUtils.makeSamReader(in);

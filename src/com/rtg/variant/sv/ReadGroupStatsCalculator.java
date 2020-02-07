@@ -259,7 +259,7 @@ public final class ReadGroupStatsCalculator {
    * @return gap size
    */
   private static int calculateGapSize(SAMRecord record) {
-    // XXX What does this do when the two reads overlap
+    // TODO What does this do when the two reads overlap
     if (record.getMateAlignmentStart() > record.getAlignmentStart()) {
       return record.getMateAlignmentStart() - record.getAlignmentEnd();
     } else {

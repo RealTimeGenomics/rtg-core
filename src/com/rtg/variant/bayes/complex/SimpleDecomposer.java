@@ -59,7 +59,7 @@ public class SimpleDecomposer extends AbstractDecomposer {
     }
   }
 
-  // XXX These should be recomputed directly from the measure, in order to include alleles not called in the originalLikelihoods
+  // TODO These should be recomputed directly from the measure, in order to include alleles not called in the originalLikelihoods
   private static Map<Set<String>, Double> newGenotypeLikelihoods(final VariantSample sample, final int leftClip, final int rightClip) {
     final Map<Set<String>, Double> originalLikelihoods = sample.getGenotypeLikelihoods();
     if (originalLikelihoods != null) {
@@ -68,7 +68,7 @@ public class SimpleDecomposer extends AbstractDecomposer {
         final Set<String> key = entry.getKey();
         final Set<String> newSet = new HashSet<>(key.size());
         for (final String s : key) {
-          newSet.add(StringUtils.clip(s, leftClip, rightClip)); // XXX assumptions about all alleles same length ??
+          newSet.add(StringUtils.clip(s, leftClip, rightClip)); // TODO assumptions about all alleles same length ??
         }
         final Double v = newMap.get(newSet);
         final double existing = v == null ? LogApproximatePossibility.SINGLETON.zero() : v;

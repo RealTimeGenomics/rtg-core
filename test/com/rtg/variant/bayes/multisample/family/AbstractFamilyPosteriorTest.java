@@ -555,7 +555,7 @@ public abstract class AbstractFamilyPosteriorTest extends TestCase {
     checkBest(fp.bestFather(), 0, 2.9647, -2.9647);
     checkBest(fp.bestMother(), 0, 2.2431, -2.2431);
     checkBest(fp.bestChild(0), 2, 3.2981, 3.2981);
-    if (!(this instanceof FamilyPosteriorFBTest)) { // XXX Come back here and implement denovo posterior for PPP
+    if (!(this instanceof FamilyPosteriorFBTest)) { // TODO Come back here and implement denovo posterior for PPP
       assertEquals(1.5122, fp.bestChild(0).getDeNovoPosterior(), 1e-4);
     }
     assertEquals(1, fp.numberChildren());
@@ -581,7 +581,7 @@ public abstract class AbstractFamilyPosteriorTest extends TestCase {
     checkBest(fp.bestFather(), 0, 0.9867, -0.9867);
     checkBest(fp.bestMother(), 0, -0.1251, 0.1251);
     checkBest(fp.bestChild(0), 2, 1.4033, 1.4033);
-    if (!(this instanceof FamilyPosteriorFBTest)) { // XXX Come back here and implement denovo posterior for PPP
+    if (!(this instanceof FamilyPosteriorFBTest)) { // TODO Come back here and implement denovo posterior for PPP
       assertNull(fp.bestChild(0).getDeNovoPosterior());
     }
     assertEquals(1, fp.numberChildren());

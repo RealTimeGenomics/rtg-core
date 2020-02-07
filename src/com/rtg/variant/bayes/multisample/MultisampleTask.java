@@ -751,7 +751,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     if (trimSplitType == DecomposerType.NONE || mParams.callLevel() == VariantOutputLevel.ALL) {
       mDecomposer = new DoNothingDecomposer();
     } else if (trimSplitType == DecomposerType.TRIM || mParams.ionTorrent()) {
-      // XXX I'm not sure why we do trimming only for ion torrent -- perhaps this could now use our ordinary trim/split
+      // I'm not sure why we do trimming only for ion torrent -- perhaps this could now use our ordinary trim/split
       mDecomposer = new Trimmer(variantAlleleTrigger);
     } else if (trimSplitType == DecomposerType.TRIMSPLIT) {
       mDecomposer = new SimpleDecomposer(mConfig.getDenovoChecker(), variantAlleleTrigger);
