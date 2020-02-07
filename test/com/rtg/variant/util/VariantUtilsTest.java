@@ -349,25 +349,4 @@ public class VariantUtilsTest extends TestCase {
     final double[] normed = VariantUtils.normalisePossibilities(new double[]{0.4565873371437609, -20.351968280794335, -36.661425482130056, -36.62905520787501, -37.43049091089874, -19.82279123723306, -53.125023572451596, -69.40211049953227, -70.17117592830095, -36.13224843856878, -53.09265329819655, -70.203546202556, -36.099878164313736, -53.89408900122028, -36.90131386733746}, LogApproximatePossibility.SINGLETON);
     assertTrue(Arrays.equals(new double[] {0.0, -20.808555617938097, -37.118012819273815, -37.08564254501877, -37.8870782480425, -20.27937857437682, -53.581610909595355, -69.85869783667603, -70.62776326544471, -36.58883577571254, -53.54924063534031, -70.66013353969976, -36.556465501457495, -54.35067633836404, -37.357901204481216}, normed));
   }
-
-  public void testNormalizePair() {
-    checkNormalizePair("", "", "");
-    checkNormalizePair(":A", "", "A");
-    checkNormalizePair("C:A", "C", "A");
-    checkNormalizePair("A", "A", "A");
-    checkNormalizePair("A:C", "A", "C");
-    try {
-      checkNormalizePair("C:A:A", "C", "A");
-      fail();
-    } catch (final IllegalArgumentException e) {
-      assertEquals("Invalid variation: C:A:A", e.getMessage());
-    }
-  }
-
-  private void checkNormalizePair(final String variation, final String left, final String right) {
-    final String[] res = VariantUtils.normalizePair(variation.replace(':', VariantUtils.COLON)); // XXX Update input
-    assertEquals(2, res.length);
-    assertEquals(left, res[0]);
-    assertEquals(right, res[1]);
-  }
 }

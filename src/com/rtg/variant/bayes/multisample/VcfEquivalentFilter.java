@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.rtg.mode.DnaUtils;
-import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 
@@ -116,8 +115,8 @@ public class VcfEquivalentFilter {
       final int startPos = lastComplex.getStart();
       final int endPos = current.getEnd();
       final String template = DnaUtils.bytesToSequenceIncCG(mTemplateBytes, startPos, endPos - startPos);
-      final String[] lastPair = VariantUtils.normalizePair(explicitGenotype(lastComplex, ls)); // todo simplify these contortions
-      final String[] currentPair = VariantUtils.normalizePair(explicitGenotype(current, cs));
+      final String[] lastPair = getAlleles(lastComplex, ls);
+      final String[] currentPair = getAlleles(current, cs);
       if (!complexEquivalent(lastPair, lastComplex.getEnd() - startPos, currentPair, endPos - current.getStart(), template)) {
         return false;
       }
@@ -125,15 +124,13 @@ public class VcfEquivalentFilter {
     return nonRef; // Only variant sites can be complex equivalent
   }
 
-  private static String explicitGenotype(final VcfRecord rec, final int[] gt) {
-    final StringBuilder sb = new StringBuilder();
+  private static String[] getAlleles(final VcfRecord rec, final int[] gt) {
+    final String[] ret = new String[gt.length];
+    int i = 0;
     for (final int allele : gt) {
-      if (sb.length() > 0) {
-        sb.append(':');
-      }
-      sb.append(allele == 0 ? rec.getRefCall() : rec.getAltCalls().get(allele - 1));
+      ret[i++] = allele == 0 ? rec.getRefCall() : rec.getAltCalls().get(allele - 1);
     }
-    return sb.toString();
+    return ret;
   }
 
   /**
@@ -146,11 +143,15 @@ public class VcfEquivalentFilter {
    * @return true if the calls can generate identical haplotypes
    */
   private boolean complexEquivalent(String[] lastPair, int lastLength, String[] currentPair, int currentLength, String template) {
-    if (lastLength < 0) {
+    if (lastLength < 0 || lastPair.length != currentPair.length || lastPair.length < 1) {
         return false;
     }
     final String lastTemplate = template.substring(lastLength);
     final String currentTemplate = template.substring(0, template.length() - currentLength);
+    if (lastPair.length == 1) {
+      return (lastPair[0] + lastTemplate).equals(currentTemplate + currentPair[0]);
+    }
+    // Check both phasings - note this won't work for higher ploidys
     if ((lastPair[0] + lastTemplate).equals(currentTemplate + currentPair[0]) && (lastPair[1] + lastTemplate).equals(currentTemplate + currentPair[1])) {
       return true;
     }
