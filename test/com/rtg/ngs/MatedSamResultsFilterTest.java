@@ -353,7 +353,7 @@ public class MatedSamResultsFilterTest extends TestCase {
               final SAMFileHeader header = new SAMFileHeader();
               header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
               header.addSequence(new SAMSequenceRecord("chr20", 62435964));
-              filter.setHeader(header); //XXX this is dumb V
+              filter.setHeader(header);
               filter.filterConcat(header, out, null, null, mTemplateReader, false, in1);
             }
             final String contents = FileUtils.fileToString(outFile);

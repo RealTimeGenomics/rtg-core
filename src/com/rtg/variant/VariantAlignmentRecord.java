@@ -231,7 +231,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     this(record, 0, new DefaultMachineErrorChooser(), 0);
   }
 
-  //XXX note we actually modify the contents of mBases in SuperCigarParser.updateReadWithTemplate
+  // Note that with CG and Super Cigars we sometimes modify the contents of mBases in SuperCigarParser.updateReadWithTemplate
   public byte[] getRead() {
     return mBases;
   }

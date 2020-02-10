@@ -59,7 +59,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
 
 
     mMaximalCode = mFatherHypotheses.code().size() > mMotherHypotheses.code().size() ? mFatherHypotheses.code() : mMotherHypotheses.code();
- //   assert !hypotheses.isDefault(); //XXX we're ignoring this for now?!?
+ //   assert !hypotheses.isDefault(); // we're ignoring this for now?!?
     mDenovoSubstitutionFactory = denovoSubstitutionFactory;
   }
 
@@ -72,7 +72,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     as[Family.FATHER_INDEX] = CommonFormulas.createMutableFactor(mFatherHypotheses);
     as[Family.MOTHER_INDEX] = CommonFormulas.createMutableFactor(mMotherHypotheses);
     for (int i = 0; i < mChildren.size(); ++i) {
-      as[Family.FIRST_CHILD_INDEX + i] = null; //CommonFormulas.hypothesesToVector(mChildren.get(i).hypotheses()); //XXX poss not needed
+      as[Family.FIRST_CHILD_INDEX + i] = null; //CommonFormulas.hypothesesToVector(mChildren.get(i).hypotheses()); // possibly not needed
     }
     return as;
   }
@@ -231,7 +231,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
   }
 
   @Override
-  public boolean isInteresting() { //XXX is this correct surely low posterior reference calls are also interesting?
+  public boolean isInteresting() { // TODO is this correct surely low posterior reference calls are also interesting?
     return !mEqual;
   }
 

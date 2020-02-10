@@ -340,7 +340,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
       }
       unmappedOut = new FileAndStream(unmappedOutFile, FileUtils.createOutputStream(unmappedOutFile, mParams.outputParams().isCompressOutput(), mParams.outputParams().isCompressOutput()));
     } else {
-      unmappedOut = new FileAndStream(null, NullStreamUtils.getNullOutputStream()); //XXX why are we creating SAMRecords to be thrown away?
+      unmappedOut = new FileAndStream(null, NullStreamUtils.getNullOutputStream()); // TODO avoid creating SAMRecords entirely in this case
     }
     return unmappedOut;
   }

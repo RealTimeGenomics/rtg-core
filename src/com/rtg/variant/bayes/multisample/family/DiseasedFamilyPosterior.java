@@ -40,7 +40,8 @@ import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
  * <li> the reference sequence doesn't have the disease </li>
  * <li> the disease status of each family member is known </li>
  * </ul>
- * XXX We aren't actually computing a proper GQ for this caller. We're computing P(H_a|H_d, E) instead of P(H_a|E)
+ *
+ * We aren't actually computing a proper GQ for this caller. We're computing P(H_a|H_d, E) instead of P(H_a|E)
  * There is no Non Identity posterior score either
  */
 public class DiseasedFamilyPosterior {

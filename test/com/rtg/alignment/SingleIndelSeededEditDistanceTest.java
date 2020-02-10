@@ -82,7 +82,7 @@ public class SingleIndelSeededEditDistanceTest extends SingleIndelEditDistanceTe
   } */
 
 
-  //XXX Currently these tests below are totally wrong for seeded single indel. They should be looked at before this is used seriously.
+  // Currently these tests below are totally wrong for seeded single indel.
   @Override
   public void testInsertAtStart() {
   }

@@ -64,7 +64,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
    * @param findDiagonal if set, do not assume there is a good hit along the diagonal, do an initial search for the best diagonal. Then pass alignment position to single indel edit distance
    * @param maxReadLength maximum read length in data set
    */
-  public SingleIndelSeededEditDistance(final NgsParams ngsParams, final int seedSize, final int deltaThreshold, final int diffThreshold, boolean findDiagonal, int maxReadLength) { //XXX put these int values into params
+  public SingleIndelSeededEditDistance(final NgsParams ngsParams, final int seedSize, final int deltaThreshold, final int diffThreshold, boolean findDiagonal, int maxReadLength) {
     super(ngsParams, maxReadLength);
     mSeed = new Seed(seedSize);
     mSeedInfo = new short[SEED_LENGTH * (1 << mSeed.size() * 2)];

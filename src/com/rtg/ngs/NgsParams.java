@@ -539,13 +539,13 @@ public class NgsParams extends ModuleParams implements Integrity {
     long overlap;
     try {
       if (paired()) {
-        //XXX this seems bogus - during alignment we can find longer indels than this and may require more padding than the mask params show.
+        // This seems a bit bogus - during alignment we can find longer indels than this and may require more padding than the mask params show.
         overlap = buildFirstParams().maxLength() * 2 + maxFragmentLength() + maskParams().getIndelLength() * maskParams().getIndels() * 2;
       } else {
         overlap = buildFirstParams().maxLength() + maskParams().getIndels() * maskParams().getIndelLength();
       }
     } catch (final UnsupportedOperationException e) {
-      //XXX this catch is heinous, and seems to be solely to make up for particularly a particulary poor inheritance usage on explicit CG masks
+      // This catch seems to be solely to make up for particularly a particulary poor inheritance usage on explicit CG masks
       if (paired()) {
         overlap = buildFirstParams().maxLength() * 2 + maxFragmentLength() + 20;
       } else {
