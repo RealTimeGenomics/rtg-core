@@ -23,7 +23,7 @@ public class MapXCli extends MapProteinCli {
 
   @Override
   public String description() {
-    return "searches translated nucleotide read data sets against a protein database";
+    return "search translated nucleotide read data sets against a protein database";
   }
 
   @Override

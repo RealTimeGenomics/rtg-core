@@ -23,7 +23,7 @@ public class MapPCli extends MapProteinCli {
 
   @Override
   public String description() {
-    return "searches protein query sets against a protein database";
+    return "search protein query sets against a protein database";
   }
 
   @Override
