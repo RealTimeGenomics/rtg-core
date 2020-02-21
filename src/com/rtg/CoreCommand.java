@@ -137,7 +137,7 @@ public final class CoreCommand {
   static final Command MULTI_SOMATIC = new LicensedCommand(new SomaticCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs somatic variant calling. */
-  static final Command TUMOR_ONLY = new LicensedCommand(new TumorOnlyCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+  static final Command TUMOR_ONLY = new LicensedCommand(new TumorOnlyCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
 
   /** Runs the mondo population/pedigree variant caller. */
   static final Command MULTI_POPULATION = new LicensedCommand(new PopulationCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
