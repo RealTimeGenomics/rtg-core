@@ -30,12 +30,9 @@ import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.util.IORunnable;
-import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
-import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.ErrorType;
 
 /**
  */
@@ -52,74 +49,6 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
   private static final String X_CALLABILITY_FLAG = "Xcallability";
   private static final String X_DISABLE_HTML_REPORT_FLAG = "Xdisable-html-report";
 
-  private static class CoverageValidator implements Validator {
-
-    @Override
-    public boolean isValid(final CFlags flags) {
-      if (!CommonFlags.validateOutputDirectory(flags)) {
-        return false;
-      }
-
-      if (flags.isSet(CommonFlags.TEMPLATE_FLAG)) {
-        final String genomePath = flags.getFlag(CommonFlags.TEMPLATE_FLAG).getValue().toString();
-        final File genome = new File(genomePath);
-        if (!genome.exists()) {
-          Diagnostic.error(ErrorType.INFO_ERROR, "The specified SDF, \"" + genome.getPath() + "\", does not exist.");
-          return false;
-        }
-        if (!genome.isDirectory()) {
-          Diagnostic.error(ErrorType.INFO_ERROR, "The specified file, \"" + genome.getPath() + "\", is not an SDF.");
-          return false;
-        }
-      }
-
-      if (flags.isSet(SMOOTHING_LEVEL_FLAG)) {
-        /*
-         * The 8192 upper limit is based on the chunk size (10,000 as set in CoverageParams).
-         * This value must be less than the chunk size since the window extends
-         * this value either side of the point being smoothed, but must not cross two chunk boundaries.
-         */
-        if (!flags.checkInRange(SMOOTHING_LEVEL_FLAG, 0, 8192)) {
-          return false;
-        }
-      }
-
-      if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)) {
-        return false;
-      }
-
-      if (!CommonFlags.validateThreads(flags)) {
-        return false;
-      }
-
-      if (!SamFilterOptions.validateFilterFlags(flags, false)) {
-        return false;
-      }
-
-      if (!flags.checkNand(PER_BASE_FLAG, BEDGRAPH_FLAG)) {
-        return false;
-      }
-      if (!flags.checkNand(PER_BASE_FLAG, PER_REGION_FLAG)) {
-        return false;
-      }
-      if (!flags.checkNand(PER_BASE_FLAG, SMOOTHING_LEVEL_FLAG)) {
-        return false;
-      }
-      if (!flags.checkNand(PER_REGION_FLAG, X_BINARIZE_BED_FLAG)) {
-        return false;
-      }
-      if (!flags.checkNand(PER_REGION_FLAG, X_CALLABILITY_FLAG)) {
-        return false;
-      }
-      if (!flags.checkNand(PER_REGION_FLAG, SMOOTHING_LEVEL_FLAG)) {
-        return false;
-      }
-
-      return true;
-    }
-
-  }
-
   @Override
   public String moduleName() {
     return "coverage";
@@ -134,7 +63,6 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
   protected void initFlags() {
     mFlags.setDescription("Measures and reports coverage depth of read alignments across a reference.");
     CommonFlagCategories.setCategories(mFlags);
-    mFlags.setValidator(new CoverageValidator());
     final Flag<File> inFlag = mFlags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
@@ -166,6 +94,25 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     CommonFlags.initIndexFlags(mFlags);
     mFlags.addRequiredSet(inFlag);
     mFlags.addRequiredSet(listFlag);
+
+    mFlags.setValidator(flags -> CommonFlags.validateOutputDirectory(flags)
+      && CommonFlags.validateTemplate(flags)
+      /*
+       * The 8192 upper limit is based on the chunk size (10,000 as set in CoverageParams).
+       * This value must be less than the chunk size since the window extends
+       * this value either side of the point being smoothed, but must not cross two chunk boundaries.
+       */
+      && flags.checkInRange(SMOOTHING_LEVEL_FLAG, 0, 8192)
+      && CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)
+      && CommonFlags.validateThreads(flags)
+      && SamFilterOptions.validateFilterFlags(flags, false)
+      && flags.checkNand(PER_BASE_FLAG, BEDGRAPH_FLAG)
+      && flags.checkNand(PER_BASE_FLAG, PER_REGION_FLAG)
+      && flags.checkNand(PER_BASE_FLAG, SMOOTHING_LEVEL_FLAG)
+      && flags.checkNand(PER_REGION_FLAG, X_BINARIZE_BED_FLAG)
+      && flags.checkNand(PER_REGION_FLAG, X_CALLABILITY_FLAG)
+      && flags.checkNand(PER_REGION_FLAG, SMOOTHING_LEVEL_FLAG)
+    );
   }
 
   @Override

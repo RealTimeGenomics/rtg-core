@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.rtg.launcher.ParamsTask;
+import com.rtg.launcher.ReaderParams;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
@@ -55,20 +56,9 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
   // arithmetic for the situation of interest
   private static final double SCALE = 16.0 * 9.0 * 5 * 7 * 11;
   private static final double INV_SCALE = 1.0 / SCALE;
-  private long[] mChunkCovPrev;
-  private long[] mChunkCov;
-  private int[] mIH1Prev;
-  private int[] mIH1;
-  private int[] mIHgt1Prev;
-  private int[] mIHgt1;
-  private CircularBufferMultifileSinglePassReaderWindow<CoverageReaderRecord> mCircularBuffer;
+  private CoverageProxy mCoverageProxy;
   private ChunkInfo mInfo;
   private Long mReferenceSequenceIndex;
-  private byte[] mReferenceBytes;
-  private byte[] mPrevReferenceBytes;
-  private int mChunkStart;
-  private int mChunkEnd;
-  private int mChunkNumber;
   private ParallelProgress mPP = null;
   private Map<String, Long> mReferenceNames = null;
 
@@ -112,7 +102,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     } else {
       Diagnostic.warning("No reference supplied - unable to determine regions of unknown nucleotides.");
     }
-
+    mCoverageProxy = mParams.tsvOutput() ? new ExpandedCoverageProxy(mParams.genome()) : new CoverageProxy(mParams.genome());
     try (final CoverageProcessor coverageWriter = mParams.tsvOutput() ? new CoverageTsvWriter(mParams) : new CoverageBedWriter(mParams)) {
       coverageWriter.init();
       if (mParams.perRegion()) {
@@ -179,7 +169,6 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     setReferenceSequence(r, ranges.get(0).getStart(), ranges.get(ranges.size() - 1).getEnd());
 
     try {
-
       final int minCoverage = mParams.minimumCoverageThreshold();
       final boolean byRegions = mParams.perRegion();
       final boolean byLevels = !mParams.tsvOutput() && !byRegions;
@@ -201,15 +190,15 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
       } else {
         cl = new CoverageSmoothingWindow(mParams.smoothing());
       }
+
       //main coverage loop.
-      int currentTemplatePosition = mInfo.start();
-      while (currentTemplatePosition <= mInfo.end()) {
-        if (currentTemplatePosition == range.getEnd()) {
+      for (int pos = mInfo.start(); pos <= mInfo.end(); ++pos) {
+        if (pos == range.getEnd()) {
           // do things necessary at the end of a range BEFORE processing the base at this position.
 
           if (lastLevel != -1 && byLevels) { // Write new level at range boundary
             coverageWriter.setRegionLabel(levelLabel);
-            coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, lastLevel);
+            coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, pos, lastLevel);
           }
 
           // get the next range
@@ -228,40 +217,40 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
         }
 
         // now deal with the base at this template position.
-        if (currentTemplatePosition >= range.getStart()) { //we're within a range
-          final double nonSmoothCov = getCoverageForPosition(currentTemplatePosition) * INV_SCALE;
+        if (pos >= range.getStart()) { //we're within a range
+          final double nonSmoothCov = mCoverageProxy.getCoverageForPosition(pos) * INV_SCALE;
 
           if (mParams.tsvOutput()) { //tsv outputs something at every position within a range.
-            coverageWriter.finalCoveragePosition(sequenceName, currentTemplatePosition, getIH1ForPosition(currentTemplatePosition), getIHgt1ForPosition(currentTemplatePosition), nonSmoothCov);
+            coverageWriter.finalCoveragePosition(sequenceName, pos,
+              ((ExpandedCoverageProxy) mCoverageProxy).getIH1ForPosition(pos),
+              ((ExpandedCoverageProxy) mCoverageProxy).getIHgt1ForPosition(pos), nonSmoothCov);
           } else if (byLevels) {
             final int currentLevel = cl.level();
             if (lastLevel != -1 && currentLevel != lastLevel) { // we have a level change, write the previous
               coverageWriter.setRegionLabel(levelLabel);
-              coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, lastLevel);
-              lastLevelStartPos = currentTemplatePosition;
+              coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, pos, lastLevel);
+              lastLevelStartPos = pos;
             }
             lastLevel = currentLevel;
           }
 
           //update statistics for this base.
-          final byte base = getBaseForPosition(currentTemplatePosition);
+          final byte base = mCoverageProxy.getBaseForPosition(pos);
           mStatistics.updateCoverageHistogram(nonSmoothCov, mReferenceSequenceIndex != null && base == DnaUtils.UNKNOWN_RESIDUE, minCoverage);
         }
         cl.step();
-        ++currentTemplatePosition;
       }
 
-      recCounts.incrementCounts(mCircularBuffer);
-
+      mCoverageProxy.incrementRecordCounts(recCounts);
       mPP.updateProgress(100);
       Diagnostic.progress("Finished: " + sequenceName);
 
     } finally {
-      mCircularBuffer.close();
+      mCoverageProxy.close();
     }
   }
 
-  private class CoverageLeveller {
+  private static class CoverageLeveller {
     protected void step() throws IOException { }
     protected int level() {
       return -1;
@@ -279,7 +268,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     }
     @Override
     protected void step() throws IOException {
-      mCurrent = mPos < mInfo.end() && MathUtils.round(getCoverageForPosition(mPos++) * INV_SCALE) >= mMinCoverage;
+      mCurrent = mPos < mInfo.end() && MathUtils.round(mCoverageProxy.getCoverageForPosition(mPos++) * INV_SCALE) >= mMinCoverage;
     }
     @Override
     protected int level() {
@@ -297,7 +286,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
       mPos = mInfo.start();
       mSmoothWindowSize = smoothWindowSize;
       for (int i = mPos; i < mPos + mSmoothWindowSize + 1 && i < mInfo.end(); ++i) {
-        mCoverageSum += getCoverageForPosition(i);
+        mCoverageSum += mCoverageProxy.getCoverageForPosition(i);
         ++mNumInDaSum;
       }
     }
@@ -308,11 +297,11 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     @Override
     protected void step() throws IOException {
       if (mPos + mSmoothWindowSize + 1 < mInfo.end()) {
-        mCoverageSum += getCoverageForPosition(mPos + mSmoothWindowSize + 1);
+        mCoverageSum += mCoverageProxy.getCoverageForPosition(mPos + mSmoothWindowSize + 1);
         ++mNumInDaSum;
       }
       if (mPos - mSmoothWindowSize >= mInfo.start()) {
-        mCoverageSum -= getCoverageForPosition(mPos - mSmoothWindowSize);
+        mCoverageSum -= mCoverageProxy.getCoverageForPosition(mPos - mSmoothWindowSize);
         --mNumInDaSum;
       }
       ++mPos;
@@ -323,117 +312,14 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     if (mParams.genome() != null) {
       mReferenceSequenceIndex = mReferenceNames.get(r.getSequenceName());
     }
+
     final int chunkSize = mParams.smoothing() < (mParams.chunkSize() / 2) ? mParams.chunkSize() : (mParams.smoothing() * 2 + 2);
     mInfo = new ChunkInfo(r.getSequenceLength(), r.getSequenceName(), chunkSize, restrictionStart, restrictionEnd, mParams.execThreads(), 1000);
-    if (mCircularBuffer != null) {
-      mCircularBuffer.close();
-    }
 
     final CoverageReaderRecordPopulator populator = new CoverageReaderRecordPopulator(mParams.includeDeletions());
-    mCircularBuffer = new CircularBufferMultifileSinglePassReaderWindow<>(mWrapper, populator, r.getSequenceIndex(), mInfo.start(), Integer.MAX_VALUE);
-    mChunkCov = null;
-    mChunkStart = -1;
-    mChunkEnd = -1;
-    mChunkNumber = 0;
-  }
+    final CircularBufferMultifileSinglePassReaderWindow<CoverageReaderRecord> circularBuffer = new CircularBufferMultifileSinglePassReaderWindow<>(mWrapper, populator, r.getSequenceIndex(), mInfo.start(), Integer.MAX_VALUE);
 
-  private byte getBaseForPosition(int sequencePosition) {
-    if (mReferenceSequenceIndex == null) {
-      return DnaUtils.UNKNOWN_RESIDUE;
-    }
-    final int currChunkPos = sequencePosition - mChunkStart;
-    if (currChunkPos < 0) {
-      assert -currChunkPos < mInfo.chunkSize();
-      return mPrevReferenceBytes[mInfo.chunkSize() + currChunkPos]; //currChunkPos is -ve
-    } else {
-      assert currChunkPos < mInfo.chunkSize();
-      return mReferenceBytes[currChunkPos];
-    }
-  }
-
-  private int getValueForPosition(int sequencePosition, int[] arr, int[] prevArr) {
-    final int currChunkPos = sequencePosition - mChunkStart;
-    if (currChunkPos < 0) {
-      assert -currChunkPos < mInfo.chunkSize();
-      return prevArr[mInfo.chunkSize() + currChunkPos]; //currChunkPos is -ve
-    } else {
-      assert currChunkPos < mInfo.chunkSize();
-      return arr[currChunkPos];
-    }
-  }
-
-  private int getIH1ForPosition(int sequencePosition) {
-    return getValueForPosition(sequencePosition, mIH1, mIH1Prev);
-  }
-
-  private int getIHgt1ForPosition(int sequencePosition) {
-    return getValueForPosition(sequencePosition, mIHgt1, mIHgt1Prev);
-  }
-
-  private long getCoverageForPosition(int sequencePosition) throws IOException {
-    while (sequencePosition >= mChunkEnd) {
-      mPP.updateProgress(mInfo.percent(mChunkEnd));
-      if (!loadNextChunk()) {
-        throw new ArrayIndexOutOfBoundsException(sequencePosition);
-      }
-    }
-    final int currChunkPos = sequencePosition - mChunkStart;
-    if (currChunkPos < 0) {
-      assert -currChunkPos < mInfo.chunkSize();
-      return mChunkCovPrev[mChunkCovPrev.length + currChunkPos]; //currChunkPos is -ve
-    } else {
-      assert currChunkPos < mInfo.chunkSize();
-      return mChunkCov[currChunkPos];
-    }
-  }
-
-  private boolean loadNextChunk() throws IOException {
-    if (mChunkNumber < mInfo.numberChunks()) {
-      mChunkCovPrev = mChunkCov;
-      mChunkCov = new long[mInfo.chunkSize()];
-      if (mParams.tsvOutput()) {
-        mIH1Prev = mIH1;
-        mIH1 = new int[mInfo.chunkSize()];
-        mIHgt1Prev = mIHgt1;
-        mIHgt1 = new int[mInfo.chunkSize()];
-      }
-      if (mChunkNumber > 0) {
-        mCircularBuffer.flush(mChunkStart, mChunkEnd);
-      }
-      mChunkStart = mChunkNumber * mInfo.chunkSize() + mInfo.start();
-      mChunkEnd = Math.min(mChunkStart + mInfo.chunkSize(), mInfo.end());
-      mPrevReferenceBytes = mReferenceBytes;
-      if (mReferenceSequenceIndex != null) {
-        mReferenceBytes = new byte[mInfo.chunkSize()];
-        mParams.genome().reader().read(mReferenceSequenceIndex, mReferenceBytes, mChunkStart, mChunkEnd - mChunkStart);
-      }
-      ++mChunkNumber;
-      final Iterator<CoverageReaderRecord> it = mCircularBuffer.recordsOverlap(mChunkStart, mChunkEnd);
-      while (it.hasNext()) {
-        final CoverageReaderRecord crr = it.next();
-        addBitSet(crr.getStart(), crr.getIH(), crr.getCoverageMultiplier(), crr.getCoverageBitSet());
-      }
-      return true;
-    }
-    return false;
-  }
-
-  private void addBitSet(int start, int ih, double multiplier, BitSet coverageBitSet) {
-    for (int j = 0; j < coverageBitSet.length(); ++j) {
-      if (coverageBitSet.get(j)) {
-        final int index = start + j - mChunkStart;
-        if (index >= 0 && index < mChunkCov.length) {
-          mChunkCov[index] += MathUtils.round(multiplier * SCALE);
-          if (mParams.tsvOutput()) {
-            if (ih == 1) {
-              mIH1[index]++;
-            } else {
-              mIHgt1[index]++;
-            }
-          }
-        }
-      }
-    }
+    mCoverageProxy.setReferenceSequence(mReferenceSequenceIndex, mInfo, circularBuffer, mPP);
   }
 
 
@@ -450,6 +336,165 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     @Override
     public CoverageReaderRecord populate(SAMRecord source) {
       return new CoverageReaderRecord(source, 0, mIncludeDeletions);
+    }
+  }
+
+
+  // Processes alignment data and provides per-position access to coverage totals
+  private static class CoverageProxy {
+    private final SequencesReader mReader;
+    private Long mReferenceSequenceIndex;
+    private CircularBufferMultifileSinglePassReaderWindow<CoverageReaderRecord> mCircularBuffer;
+    private ParallelProgress mPP;
+    private ChunkInfo mInfo;
+    private int mChunkStart;
+    private int mChunkEnd;
+    private int mChunkNumber;
+    private long[] mCoverage;
+    private byte[] mReferenceBytes;
+    private long[] mCoveragePrev;
+    private byte[] mReferenceBytesPrev;
+
+    CoverageProxy(ReaderParams params) {
+      mReader = params == null ? null : params.reader();
+    }
+    public void setReferenceSequence(Long referenceSequenceIndex, ChunkInfo info, CircularBufferMultifileSinglePassReaderWindow<CoverageReaderRecord> circularBuffer, ParallelProgress pp) {
+      mReferenceSequenceIndex = referenceSequenceIndex;
+      mCircularBuffer = circularBuffer;
+      mPP = pp;
+      mInfo = info;
+      mCoverage = null;
+      mChunkStart = -1;
+      mChunkEnd = -1;
+      mChunkNumber = 0;
+    }
+    public long getCoverageForPosition(int sequencePosition) throws IOException {
+      ensurePosition(sequencePosition);
+      final int currChunkPos = sequencePosition - mChunkStart;
+      if (currChunkPos < 0) {
+        assert -currChunkPos < mInfo.chunkSize();
+        return mCoveragePrev[mCoveragePrev.length + currChunkPos]; //currChunkPos is -ve
+      } else {
+        assert currChunkPos < mInfo.chunkSize();
+        return mCoverage[currChunkPos];
+      }
+    }
+    public byte getBaseForPosition(int sequencePosition) {
+      if (mReferenceSequenceIndex == null) {
+        return DnaUtils.UNKNOWN_RESIDUE;
+      }
+      final int currChunkPos = sequencePosition - mChunkStart;
+      if (currChunkPos < 0) {
+        assert -currChunkPos < mInfo.chunkSize();
+        return mReferenceBytesPrev[mInfo.chunkSize() + currChunkPos]; //currChunkPos is -ve
+      } else {
+        assert currChunkPos < mInfo.chunkSize();
+        return mReferenceBytes[currChunkPos];
+      }
+    }
+    public void incrementRecordCounts(SimpleRecordCounter recCounts) {
+      recCounts.incrementCounts(mCircularBuffer);
+    }
+    public void close() {
+      if (mCircularBuffer != null) {
+        mCircularBuffer.close();
+      }
+    }
+    protected int getValueForPosition(int sequencePosition, int[] arr, int[] prevArr) throws IOException {
+      ensurePosition(sequencePosition);
+      final int currChunkPos = sequencePosition - mChunkStart;
+      if (currChunkPos < 0) {
+        assert -currChunkPos < mInfo.chunkSize();
+        return prevArr[mInfo.chunkSize() + currChunkPos]; //currChunkPos is -ve
+      } else {
+        assert currChunkPos < mInfo.chunkSize();
+        return arr[currChunkPos];
+      }
+    }
+
+    private void ensurePosition(int sequencePosition) throws IOException {
+      while (sequencePosition >= mChunkEnd) {
+        mPP.updateProgress(mInfo.percent(mChunkEnd));
+        if (!loadNextChunk()) {
+          throw new ArrayIndexOutOfBoundsException(sequencePosition);
+        }
+      }
+    }
+
+    private boolean loadNextChunk() throws IOException {
+      if (mChunkNumber < mInfo.numberChunks()) {
+        if (mChunkNumber > 0) {
+          mCircularBuffer.flush(mChunkStart, mChunkEnd);
+        }
+        mChunkStart = mChunkNumber * mInfo.chunkSize() + mInfo.start();
+        mChunkEnd = Math.min(mChunkStart + mInfo.chunkSize(), mInfo.end());
+        shiftData();
+        ++mChunkNumber;
+
+        final Iterator<CoverageReaderRecord> it = mCircularBuffer.recordsOverlap(mChunkStart, mChunkEnd);
+        while (it.hasNext()) {
+          final CoverageReaderRecord crr = it.next();
+          addBitSet(crr.getStart(), crr.getIH(), crr.getCoverageMultiplier(), crr.getCoverageBitSet());
+        }
+        return true;
+      }
+      return false;
+    }
+    protected void shiftData() throws IOException {
+      mCoveragePrev = mCoverage;
+      mCoverage = new long[mInfo.chunkSize()];
+      mReferenceBytesPrev = mReferenceBytes;
+      if (mReferenceSequenceIndex != null) {
+        mReferenceBytes = new byte[mInfo.chunkSize()];
+        mReader.read(mReferenceSequenceIndex, mReferenceBytes, mChunkStart, mChunkEnd - mChunkStart);
+      }
+    }
+    private void addBitSet(int start, int ih, double multiplier, BitSet coverageBitSet) {
+      for (int j = 0; j < coverageBitSet.length(); ++j) {
+        if (coverageBitSet.get(j)) {
+          final int index = start + j - mChunkStart;
+          if (index >= 0 && index < mCoverage.length) {
+            addIndex(index, ih, multiplier);
+          }
+        }
+      }
+    }
+    protected void addIndex(int index, int ih, double multiplier) {
+      mCoverage[index] += MathUtils.round(multiplier * SCALE);
+    }
+  }
+
+  // Adds accumulation of ambiguous mapping statistics
+  private class ExpandedCoverageProxy extends CoverageProxy {
+    private int[] mIH1 = null;
+    private int[] mIHgt1 = null;
+    private int[] mIH1Prev = null;
+    private int[] mIHgt1Prev = null;
+    ExpandedCoverageProxy(ReaderParams params) {
+      super(params);
+    }
+    public int getIH1ForPosition(int sequencePosition) throws IOException {
+      return getValueForPosition(sequencePosition, mIH1, mIH1Prev);
+    }
+    public int getIHgt1ForPosition(int sequencePosition) throws IOException {
+      return getValueForPosition(sequencePosition, mIHgt1, mIHgt1Prev);
+    }
+    @Override
+    protected void addIndex(int index, int ih, double multiplier) {
+      super.addIndex(index, ih, multiplier);
+      if (ih == 1) {
+        mIH1[index]++;
+      } else {
+        mIHgt1[index]++;
+      }
+    }
+    @Override
+    protected void shiftData() throws IOException {
+      super.shiftData();
+      mIH1Prev = mIH1;
+      mIH1 = new int[mInfo.chunkSize()];
+      mIHgt1Prev = mIHgt1;
+      mIHgt1 = new int[mInfo.chunkSize()];
     }
   }
 }
