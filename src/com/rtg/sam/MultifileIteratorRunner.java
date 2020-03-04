@@ -259,12 +259,17 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
 
   @Override
   public long getOutputRecordsCount() {
-    return getTotalRecordsCount() - getInvalidRecordsCount() - getDuplicateRecordsCount() - getFilteredRecordsCount();
+    return mIterator.getOutputRecordsCount() - mInvalidRecords;
   }
 
   @Override
   public long getDuplicateRecordsCount() {
     return mIterator.getDuplicateRecordsCount();
+  }
+
+  @Override
+  public long getOverCoverageRecordsCount() {
+    return mIterator.getOverCoverageRecordsCount();
   }
 
   @Override

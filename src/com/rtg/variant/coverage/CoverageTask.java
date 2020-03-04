@@ -26,6 +26,7 @@ import com.rtg.reader.SequencesReader;
 import com.rtg.sam.CircularBufferMultifileSinglePassReaderWindow;
 import com.rtg.sam.SamReadingContext;
 import com.rtg.sam.SamUtils;
+import com.rtg.sam.SimpleRecordCounter;
 import com.rtg.sam.ThreadedMultifileIteratorWrapper;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
@@ -101,7 +102,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
 
   @Override
   protected void exec() throws IOException {
-    final SamRecordCounter recCounts = new SamRecordCounter();
+    final SimpleRecordCounter recCounts = new SimpleRecordCounter();
 
     final SequencesReader reference = mParams.genome() == null ? null : mParams.genome().reader();
     final SAMFileHeader uberHeader = SamUtils.getUberHeader(reference, mParams.mapped(), mParams.ignoreIncompatibleSamHeaders(), null);
@@ -168,7 +169,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
    * @param rangeList null to process entire reference, or a RangeList providing ranges of interest.
    * @throws IOException if an exception occurs while reading or writing
    */
-  private void processReference(CoverageProcessor coverageWriter, SAMSequenceRecord r, SamRecordCounter recCounts, RangeList<String> rangeList) throws IOException {
+  private void processReference(CoverageProcessor coverageWriter, SAMSequenceRecord r, SimpleRecordCounter recCounts, RangeList<String> rangeList) throws IOException {
     final List<RangeList.RangeData<String>> ranges = rangeList.getRangeList();
     if (ranges.isEmpty()) { // no ranges were specified for this reference, so bail out
       return;
@@ -449,36 +450,6 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     @Override
     public CoverageReaderRecord populate(SAMRecord source) {
       return new CoverageReaderRecord(source, 0, mIncludeDeletions);
-    }
-  }
-
-  private static class SamRecordCounter {
-    private int mValidRecords = 0;
-    private int mInvalidRecords = 0;
-    private int mFilteredRecords = 0;
-    private int mTossedRecords = 0;
-
-    void incrementCounts(CircularBufferMultifileSinglePassReaderWindow<?> cbmrw) {
-      mValidRecords += cbmrw.getValidRecordsCount();
-      mInvalidRecords += cbmrw.getInvalidRecordsCount();
-      mFilteredRecords += cbmrw.getFilteredRecordsCount();
-      mTossedRecords += cbmrw.getTossedRecordCount();
-    }
-
-    void reportCounts() {
-      final String invalidRecordsWarning = mInvalidRecords + " records skipped because of SAM format problems.";
-      if (mInvalidRecords > 0) {
-        Diagnostic.warning(invalidRecordsWarning);
-      } else {
-        Diagnostic.userLog(invalidRecordsWarning);
-      }
-      if (mFilteredRecords > 0) {
-        Diagnostic.userLog(mFilteredRecords + " records skipped due to input filtering criteria");
-      }
-      if (mTossedRecords > 0) {
-        Diagnostic.userLog(mTossedRecords + " records skipped in extreme coverage regions");
-      }
-      Diagnostic.userLog(mValidRecords + " records processed");
     }
   }
 }

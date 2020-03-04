@@ -37,6 +37,11 @@ public class DedupifyingRecordIterator<T extends ReaderRecord<T> & MateInfo> ext
   }
 
   @Override
+  public long getOverCoverageRecordsCount() {
+    return mRecordWrapped.getOverCoverageRecordsCount();
+  }
+
+  @Override
   public long getTotalNucleotides() {
     return mRecordWrapped.getTotalNucleotides();
   }
@@ -53,7 +58,7 @@ public class DedupifyingRecordIterator<T extends ReaderRecord<T> & MateInfo> ext
 
   @Override
   public long getOutputRecordsCount() {
-    return getTotalRecordsCount() - getInvalidRecordsCount() - getDuplicateRecordsCount() - getFilteredRecordsCount();
+    return mRecordWrapped.getOutputRecordsCount() - getDuplicateRecordsCount();
   }
 
   @Override

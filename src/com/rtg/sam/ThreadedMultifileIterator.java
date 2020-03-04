@@ -185,47 +185,32 @@ public final class ThreadedMultifileIterator<T> implements RecordIterator<T> {
    */
   @Override
   public long getInvalidRecordsCount() {
-    long count = 0;
-    for (final MultifileIteratorRunner<T> smfir : mOriginals) {
-      count += smfir.getInvalidRecordsCount();
-    }
-    return count;
+    return mOriginals.stream().mapToLong(RecordCounter::getInvalidRecordsCount).sum();
   }
 
   @Override
   public long getOutputRecordsCount() {
-    long count = 0;
-    for (final MultifileIteratorRunner<T> smfir : mOriginals) {
-      count += smfir.getOutputRecordsCount();
-    }
-    return count;
+    return mOriginals.stream().mapToLong(RecordCounter::getOutputRecordsCount).sum();
   }
 
   @Override
   public long getDuplicateRecordsCount() {
-    long count = 0;
-    for (final MultifileIteratorRunner<T> smfir : mOriginals) {
-      count += smfir.getDuplicateRecordsCount();
-    }
-    return count;
+    return mOriginals.stream().mapToLong(RecordCounter::getDuplicateRecordsCount).sum();
+  }
+
+  @Override
+  public long getOverCoverageRecordsCount() {
+    return mOriginals.stream().mapToLong(RecordCounter::getOverCoverageRecordsCount).sum();
   }
 
   @Override
   public long getFilteredRecordsCount() {
-    long count = 0;
-    for (final MultifileIteratorRunner<T> smfir : mOriginals) {
-      count += smfir.getFilteredRecordsCount();
-    }
-    return count;
+    return mOriginals.stream().mapToLong(RecordCounter::getFilteredRecordsCount).sum();
   }
 
   @Override
   public long getTotalRecordsCount() {
-    long count = 0;
-    for (final MultifileIteratorRunner<T> smfir : mOriginals) {
-      count += smfir.getTotalRecordsCount();
-    }
-    return count;
+    return mOriginals.stream().mapToLong(RecordCounter::getTotalRecordsCount).sum();
   }
 
   @Override

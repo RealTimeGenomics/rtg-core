@@ -124,38 +124,27 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
 
   @Override
   public long getInvalidRecordsCount() {
-    long count = 0;
-    for (final SamFileAndRecord sfr : mOriginals) {
-      count += sfr.getInvalidRecordsCount();
-    }
-    return count;
+    return mOriginals.stream().mapToLong(RecordCounter::getInvalidRecordsCount).sum();
   }
 
   @Override
   public long getFilteredRecordsCount() {
-    long count = 0;
-    for (final SamFileAndRecord sfr : mOriginals) {
-      count += sfr.getFilteredRecordsCount();
-    }
-    return count + mFilteredRecords;
+    return mOriginals.stream().mapToLong(RecordCounter::getFilteredRecordsCount).sum() + mFilteredRecords;
   }
 
   @Override
   public long getDuplicateRecordsCount() {
-    long count = 0;
-    for (final SamFileAndRecord sfr : mOriginals) {
-      count += sfr.getDuplicateRecordsCount();
-    }
-    return count;
+    return mOriginals.stream().mapToLong(RecordCounter::getDuplicateRecordsCount).sum();
+  }
+
+  @Override
+  public long getOverCoverageRecordsCount() {
+    return mOriginals.stream().mapToLong(RecordCounter::getOverCoverageRecordsCount).sum();
   }
 
   @Override
   public long getTotalRecordsCount() {
-    long count = 0;
-    for (final SamFileAndRecord sfr : mOriginals) {
-      count += sfr.getTotalRecordsCount();
-    }
-    return count;
+    return mOriginals.stream().mapToLong(RecordCounter::getTotalRecordsCount).sum();
   }
 
   @Override

@@ -120,6 +120,11 @@ public class ThreadedMultifileIteratorWrapper<T extends ReaderRecord<T> & MateIn
   }
 
   @Override
+  public long getOverCoverageRecordsCount() {
+    return mIterator.getOverCoverageRecordsCount();
+  }
+
+  @Override
   public long getOutputRecordsCount() {
     return mIterator.getOutputRecordsCount();
   }

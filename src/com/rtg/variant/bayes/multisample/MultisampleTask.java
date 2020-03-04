@@ -312,7 +312,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
   }
 
   private long mInvalidRecords = 0;
-  private long mTossedRecords = 0;
+  private long mOverCoverageRecords = 0;
   private long mExcessiveCoverageCount = 0;
   private long mExcessiveHypothesesCount = 0;
   private long mNoHypothesesCount = 0;
@@ -357,7 +357,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
     @Override
     public void close() throws IOException {
-      mTossedRecords += mBuffer.getTossedRecordCount();
+      mOverCoverageRecords += mBuffer.getOverCoverageRecordsCount();
       mBed.finish();
       mBuffer.close();
       mPP.close();
@@ -719,8 +719,8 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     }
     final long numDeduped = mWrapper.getDuplicateRecordsCount();
     Diagnostic.userLog(numDeduped + " alignments skipped due to duplicate detection");
-    Diagnostic.userLog(mTossedRecords + " alignments skipped in extreme coverage regions");
-    final long processed = mWrapper.getTotalRecordsCount() - invalidRecords - filteredRecords - numDeduped - mTossedRecords;
+    Diagnostic.userLog(mOverCoverageRecords + " alignments skipped in extreme coverage regions");
+    final long processed = mWrapper.getTotalRecordsCount() - invalidRecords - filteredRecords - numDeduped - mOverCoverageRecords;
     Diagnostic.userLog(processed + " alignments processed");
   }
 

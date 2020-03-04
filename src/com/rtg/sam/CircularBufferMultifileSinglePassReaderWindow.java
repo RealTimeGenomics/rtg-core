@@ -24,7 +24,7 @@ import com.rtg.util.diagnostic.Diagnostic;
  * May return overflow records to indicate that records have been discarded.
  * @param <T> record type
  */
-public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecord<T> & MateInfo> implements ReaderWindow<T> {
+public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecord<T> & MateInfo> implements ReaderWindow<T>, RecordCounter {
 
   private static final int DEFAULT_BUFFER_LENGTH = 2;
   private ReaderRecord<T>[] mBuffer; // Primary circular buffer
@@ -248,19 +248,34 @@ public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecor
     mMinimumStart = newMinimumStart;
   }
 
-  public long getValidRecordsCount() {
-    return mIterator.getOutputRecordsCount();
-  }
-
-  /**
-   * @return number of invalid SAM records read so far
-   */
+  @Override
   public long getInvalidRecordsCount() {
     return mIterator.getInvalidRecordsCount();
   }
 
+  @Override
   public long getFilteredRecordsCount() {
     return mIterator.getFilteredRecordsCount();
+  }
+
+  @Override
+  public long getDuplicateRecordsCount() {
+    return mIterator.getDuplicateRecordsCount();
+  }
+
+  @Override
+  public long getOverCoverageRecordsCount() {
+    return mDroppedRecords;
+  }
+
+  @Override
+  public long getOutputRecordsCount() {
+    return mIterator.getOutputRecordsCount() - mDroppedRecords;
+  }
+
+  @Override
+  public long getTotalRecordsCount() {
+    return mIterator.getTotalRecordsCount();
   }
 
   private void insertRecord(T record) {
@@ -334,14 +349,6 @@ public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecor
     //System.err.println("recordsOverlap size=" + records.size());
     //System.err.println("CBMSPR |overlap(" + start + ", " + end + ")| = " + records.size();
     return records.iterator();
-  }
-
-  /**
-   * Total number of records discarded due to extreme coverage regions.
-   * @return discarded record count
-   */
-  public long getTossedRecordCount() {
-    return mDroppedRecords;
   }
 
   /**
