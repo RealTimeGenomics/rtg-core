@@ -43,7 +43,7 @@ public class VstatsCallerConfigurationTest extends TestCase {
       ti.saveVcfIndex();
 
       Diagnostic.setLogStream();
-      final OutputParams outputParams = new OutputParams(tempDir, false, false);
+      final OutputParams outputParams = new OutputParams(tempDir, false);
       final VariantParams p = VariantParams.builder()
         .machineErrorName("illumina")
         .genomePriors(GenomePriorParams.builder().create())

@@ -43,7 +43,7 @@ public class SvToolParamsTest extends TestCase {
     Diagnostic.setLogStream();
     final File tempDir = FileUtils.createTempDir("svtoolparams", "test");
     try {
-      final SvToolParams def = SvToolParams.builder().mapped(Collections.emptyList()).outputParams(new OutputParams(tempDir, false, false)).genome(new MockReaderParams(1, 1, SequenceMode.BIDIRECTIONAL.codeType())).create();
+      final SvToolParams def = SvToolParams.builder().mapped(Collections.emptyList()).outputParams(new OutputParams(tempDir, false)).genome(new MockReaderParams(1, 1, SequenceMode.BIDIRECTIONAL.codeType())).create();
       assertEquals(def.binSize(), 0);
       assertEquals(def.stepSize(), 0);
       assertEquals(def.fineStepSize(), 0);

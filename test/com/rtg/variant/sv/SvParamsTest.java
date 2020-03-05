@@ -61,7 +61,7 @@ public class SvParamsTest extends TestCase {
     Diagnostic.setLogStream();
     final File tempDir = FileUtils.createTempDir("svparams", "test");
     try {
-      final MockSvParams def = MockSvParams.builder().outputParams(new OutputParams(tempDir, false, true)).create();
+      final MockSvParams def = MockSvParams.builder().outputParams(new OutputParams(tempDir, true)).create();
 
       assertNotNull(def.outputParams());
       assertNotNull(def.filterParams());

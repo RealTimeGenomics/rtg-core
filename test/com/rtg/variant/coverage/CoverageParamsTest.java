@@ -67,7 +67,7 @@ public class CoverageParamsTest extends TestCase {
 
   public void testDefaultParams() throws IOException {
     final File outDir = new File(mDir, "output");
-    final CoverageParams cp = CoverageParams.builder().outputParams(new OutputParams(outDir, false, false)).genome(makeGenome()).create();
+    final CoverageParams cp = CoverageParams.builder().outputParams(new OutputParams(outDir, false)).genome(makeGenome()).create();
     assertFalse(cp.tsvOutput());
     assertTrue(cp.bedOutput());
     assertFalse(cp.blockCompressed());
@@ -86,7 +86,7 @@ public class CoverageParamsTest extends TestCase {
 
   public void testTsv() throws IOException {
     final File outDir = new File(mDir, "output");
-    final CoverageParams cp = CoverageParams.builder().outputParams(new OutputParams(outDir, false, false)).genome(makeGenome()).tsvOutput(true).create();
+    final CoverageParams cp = CoverageParams.builder().outputParams(new OutputParams(outDir, false)).genome(makeGenome()).tsvOutput(true).create();
     assertTrue(cp.tsvOutput());
     assertEquals("coverage.tsv", cp.outFile().getName());
     assertFalse(cp.bedOutput());
@@ -98,12 +98,12 @@ public class CoverageParamsTest extends TestCase {
     "error rates=" + Boolean.FALSE.toString(),
     "    ReaderParams directory=",
     "OutputParams output directory=",
-    "progress=" + Boolean.FALSE + " zip=" + Boolean.TRUE + LS,
+    "zip=" + Boolean.TRUE + LS,
     "min coverage threshold=3"
   };
 
   CoverageParams getCoverageParams(final File outFile, final List<File> mapped) throws IOException {
-    return CoverageParams.builder().outputParams(new OutputParams(outFile, false, true))
+    return CoverageParams.builder().outputParams(new OutputParams(outFile, true))
                                    .mapped(mapped).genome(makeGenome()).smoothing(0)
                                    .ioThreads(1).minimumCoverageThreshold(3).tsvOutput(false)
                                    .name("CoverageParams").errorRates(false)

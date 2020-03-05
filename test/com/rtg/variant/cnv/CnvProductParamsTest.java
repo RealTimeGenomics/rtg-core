@@ -72,7 +72,7 @@ public class CnvProductParamsTest extends TestCase {
     final CnvProductParams params = CnvProductParams.builder()
       .mappedBase(new ArrayList<>())
       .mappedTarget(new ArrayList<>())
-      .outputParams(new OutputParams(tempFile, false, false))
+      .outputParams(new OutputParams(tempFile, false))
       .divisionFactor(5.0)
       .multiplicationFactor(7.0)
       .bucketSize(2)
@@ -94,7 +94,6 @@ public class CnvProductParamsTest extends TestCase {
       "maxMatedAlignmentScore=null",
       "maxUnmatedAlignmentScore=null",
       "maxAlignmentCount=-1",
-      "progress=" + false,
       "zip=" + false);
 
 

@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 
-import com.rtg.launcher.BuildCommon;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.OutputParams;
 import com.rtg.launcher.ParamsCli;
@@ -165,7 +164,7 @@ public class CnvCli extends ParamsCli<CnvProductParams> {
     final CnvProductParamsBuilder builder = CnvProductParams.builder();
     builder.name(mFlags.getName());
     final boolean gzip = !mFlags.isSet(NO_GZIP);
-    final OutputParams outParams = new OutputParams((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), mFlags.isSet(BuildCommon.PROGRESS_FLAG), gzip);
+    final OutputParams outParams = new OutputParams((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), gzip);
     builder.outputParams(outParams);
     final Collection<File> inputFilesBase = CommonFlags.getFileList(mFlags, INPUT_BASELINE_LIST_FLAG, INPUT_BASELINE_FLAG, false);
     Diagnostic.userLog("Base input SAM files: " + inputFilesBase);

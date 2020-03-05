@@ -239,7 +239,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     final long numSeqs = params.buildFirstParams().numberSequences() + (params.paired() ? params.buildSecondParams().numberSequences() : 0);
     final CreateParams indexParams = new CreateParams(numSeqs, factory.hashBits(), factory.windowBits(), NgsParams.calculateValueBitsShortReads(params.buildFirstParams().numberSequences(), params.paired()), params.compressHashes(), true, false, false);
     Diagnostic.developerLog("Index params: " + indexParams);
-    final NgsHashLoopImpl hashLoop = new NgsHashLoopImpl(params.buildFirstParams().numberSequences(), params.outputParams().progress(), 0x3FFFFL, ((pMask + 1L) << threadBits) - 1L);
+    final NgsHashLoopImpl hashLoop = new NgsHashLoopImpl(params.buildFirstParams().numberSequences(), 0x3FFFFL, ((pMask + 1L) << threadBits) - 1L);
     hashLoop.setThreadPadding(params.calculateThreadPadding());
     usageMetric.setMetric(indexThenSearchShortReads(params, hashLoop, statistics, indexParams));
   }

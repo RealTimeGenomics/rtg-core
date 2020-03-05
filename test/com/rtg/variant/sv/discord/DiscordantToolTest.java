@@ -49,7 +49,7 @@ public class DiscordantToolTest extends AbstractNanoTest {
     builder.debugOutput(true);
     builder.genome(SequenceParams.builder().directory(ref).loadNames(true).useMemReader(true).create().readerParams());
     final boolean gzip = false;
-    final OutputParams outParams = new OutputParams(output, false, gzip);
+    final OutputParams outParams = new OutputParams(output, gzip);
     builder.outputParams(outParams);
     builder.overlapFraction(0);
 //    builder.maxAmbiguity(ambiguity);

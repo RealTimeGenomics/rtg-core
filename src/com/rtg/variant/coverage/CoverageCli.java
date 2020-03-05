@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 
-import com.rtg.launcher.BuildCommon;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.OutputParams;
 import com.rtg.launcher.ParamsCli;
@@ -119,7 +118,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
   protected CoverageParams makeParams() throws IOException {
     final CoverageParams.CoverageParamsBuilder builder = CoverageParams.builder();
     builder.name(mFlags.getName());
-    final OutputParams outParams = new OutputParams((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), mFlags.isSet(BuildCommon.PROGRESS_FLAG), !mFlags.isSet(NO_GZIP));
+    final OutputParams outParams = new OutputParams((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), !mFlags.isSet(NO_GZIP));
     builder.outputParams(outParams);
     if (mFlags.isSet(CommonFlags.TEMPLATE_FLAG)) {
       builder.genome(SequenceParams.builder().directory((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG)).mode(SequenceMode.UNIDIRECTIONAL).create().readerParams());

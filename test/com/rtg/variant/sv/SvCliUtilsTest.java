@@ -86,7 +86,6 @@ public class SvCliUtilsTest extends TestCase {
       assertEquals("blah", params.name());
       assertEquals(3, params.ioThreads());
       assertEquals(out.getPath(), params.directory().getPath());
-      assertFalse(params.outputParams().progress());
       assertFalse(params.outputParams().isCompressed());
 
       assertTrue(flags.setFlags("--template", gen.getPath(), "--output", out.getPath(), "-r", f.getPath(), f.getPath(), "--threads", "4"));

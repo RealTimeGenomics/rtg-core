@@ -31,7 +31,6 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.SamCalibrationInputs;
-import com.rtg.launcher.BuildCommon;
 import com.rtg.launcher.CommandLineFiles;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.OutputParams;
@@ -393,7 +392,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     parseThreads(builder);
     processDefaultAndMaxMappingQuality(builder);
     final boolean zip = !mFlags.isSet(CommonFlags.NO_GZIP);
-    final OutputParams outParams = new OutputParams((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), mFlags.isSet(BuildCommon.PROGRESS_FLAG), zip);
+    final OutputParams outParams = new OutputParams((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), zip);
     builder.outputParams(outParams);
     if (mFlags.getFlag(X_PRUNE_HYPOTHESES) != null) {
       builder.pruneHypotheses((Boolean) mFlags.getValue(X_PRUNE_HYPOTHESES));

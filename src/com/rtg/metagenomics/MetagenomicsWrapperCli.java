@@ -233,7 +233,7 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
   protected MetaPipelineParams makeParams() {
     final MetaPipelineParamsBuilder builder = MetaPipelineParams.builder().name(mFlags.getName());
     final File output = (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
-    final OutputParams outParams = new OutputParams(output, false, false);
+    final OutputParams outParams = new OutputParams(output, false);
     builder.outputParams(outParams);
     if (mFlags.isSet(INPUT)) {
       builder.inputFile((File) mFlags.getValue(INPUT));

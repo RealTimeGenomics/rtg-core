@@ -37,7 +37,6 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
   private static final int MASKED_CALL_PADDING_ADJUSTMENT = 64;
   /** Timer for delays in doing I/O. */
   //  public static final Timer READ_DELAY = new Timer("Read_delay");
-  private final boolean mProgress;
   private final long mNumberReads;
   private boolean mReadSequencesDefined = false;
   private final long mReadProgressMask;
@@ -58,21 +57,19 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
 
   /**
    * @param numberReads total number of reads used for building.
-   * @param progress true iff progress messages are to be generated.
+   *
    */
-  public NgsHashLoopImpl(final long numberReads, final boolean progress) {
-    this(numberReads, progress, 0x3FFFFL, 0x1FFFFL);
+  public NgsHashLoopImpl(final long numberReads) {
+    this(numberReads, 0x3FFFFL, 0x1FFFFL);
   }
 
   /**
    * @param numberReads total number of reads used for building.
-   * @param progress true iff progress messages are to be generated.
    * @param readProgressMask sets the frequency of read progress (intended for testing).
    * @param templateProgressMask sets the frequency of template progress (intended for testing).
    */
-  public NgsHashLoopImpl(final long numberReads, final boolean progress, final long readProgressMask, final long templateProgressMask) {
+  public NgsHashLoopImpl(final long numberReads, final long readProgressMask, final long templateProgressMask) {
     mNumberReads = numberReads;
-    mProgress = progress;
     mReadProgressMask = readProgressMask;
     mTemplateProgressMask = templateProgressMask;
   }
@@ -215,8 +212,6 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
     //the various possible frames (direction and phase for translation)
     assert mode.allFrames().length == 2;
     long nt = 0;
-    long ntbatch = 0;
-    long batchstart = System.currentTimeMillis();
     for (long templateId = start; templateId < end; ++templateId) {
       final int length = reader.read(templateId, byteBuffer);
       hashFunction.reset();
@@ -224,20 +219,6 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
       for (int endPosition = 0; endPosition < length; ++endPosition, ++nt) {
         if ((nt & mTemplateProgressMask) == 0) {
           ProgramState.checkAbort();
-        }
-        if (mProgress) {
-          // every 10,000,000nt print out a debug line
-          if (ntbatch >= 10000000) {
-            final long bs = System.currentTimeMillis();
-            final double secs = (bs - batchstart) / 1000.0;
-            final long ntpersec = (int) (ntbatch / secs);
-            // estimate time for human in hours
-            final long threebillestimate = (int) (3000000000L / ntpersec) / 3600;
-            Diagnostic.userLog("Throughput " + ntbatch + "nt in " + secs + "s, rate=" + ntpersec + " nt/s: estimate for 3 billion nt=" + threebillestimate + " hours");
-            ntbatch = 0;
-            batchstart = bs;
-          }
-          ++ntbatch;
         }
         //final byte b = frame.code(byteBuffer, length, endPosition);
         final byte b = byteBuffer[endPosition];

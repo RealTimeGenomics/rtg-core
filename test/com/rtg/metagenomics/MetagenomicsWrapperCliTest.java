@@ -195,7 +195,6 @@ public class MetagenomicsWrapperCliTest extends AbstractCliTest {
     @Override
     protected IORunnable task(MetaPipelineParams params, OutputStream out) {
       assertFalse(params.outputParams().isCompressed());
-      assertFalse(params.outputParams().progress());
       mTask = new MockMetagenomicsWrapperTask(params, out, mUsageMetric, mLogStream, mErr);
       return mTask;
     }

@@ -84,7 +84,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
           .speciesSdf(species)
           .proteinSdf(protein)
           .inputFile(readSdf)
-          .outputParams(new OutputParams(output, false, false))
+          .outputParams(new OutputParams(output, false))
           .create();
       final MemoryPrintStream logStream = new MemoryPrintStream();
       final LogSimple log = new LogSimple(logStream.printStream());
@@ -133,7 +133,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
           .inputLeft(readsLeft)
           .inputRight(readsRight)
           .inputPlatform(Platform.IONTORRENT)
-          .outputParams(new OutputParams(output, false, false))
+          .outputParams(new OutputParams(output, false))
           .create();
       final MemoryPrintStream logStream = new MemoryPrintStream();
       final LogSimple log = new LogSimple(logStream.printStream());
@@ -178,7 +178,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
           .speciesSdf(species)
           .proteinSdf(protein)
           .inputFile(reads)
-          .outputParams(new OutputParams(output, false, false))
+          .outputParams(new OutputParams(output, false))
           .create();
       final MemoryPrintStream logStream = new MemoryPrintStream();
       final LogSimple log = new LogSimple(logStream.printStream());
@@ -220,7 +220,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
           .filterSdf(filter)
           .inputLeft(readsLeft)
           .inputRight(readsRight)
-          .outputParams(new OutputParams(output, false, false))
+          .outputParams(new OutputParams(output, false))
           .create();
       final MemoryPrintStream logStream = new MemoryPrintStream();
       final LogSimple log = new LogSimple(logStream.printStream());
@@ -249,7 +249,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
       final MetaPipelineParams params = MetaPipelineParams.builder()
           .filterSdf(filter)
           .inputFile(reads)
-          .outputParams(new OutputParams(output, false, false))
+          .outputParams(new OutputParams(output, false))
           .create();
       final MemoryPrintStream logStream = new MemoryPrintStream();
       final LogSimple log = new LogSimple(logStream.printStream());
@@ -277,7 +277,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
       final MetaPipelineParams params = MetaPipelineParams.builder()
           .filterSdf(filter)
           .inputFile(reads)
-          .outputParams(new OutputParams(output, false, false))
+          .outputParams(new OutputParams(output, false))
           .create();
       final MemoryPrintStream logStream = new MemoryPrintStream();
       final LogSimple log = new LogSimple(logStream.printStream());
@@ -301,7 +301,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
       final MetaPipelineParams params = MetaPipelineParams.builder()
           .speciesSdf(species)
           .inputFile(reads)
-          .outputParams(new OutputParams(output, false, false))
+          .outputParams(new OutputParams(output, false))
           .create();
       final MemoryPrintStream logStream = new MemoryPrintStream();
       final LogSimple log = new LogSimple(logStream.printStream());
@@ -328,7 +328,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
       final MetaPipelineParams params = MetaPipelineParams.builder()
           .speciesSdf(species)
           .inputFile(reads)
-          .outputParams(new OutputParams(output, false, false))
+          .outputParams(new OutputParams(output, false))
           .create();
       final MemoryPrintStream logStream = new MemoryPrintStream();
       final LogSimple log = new LogSimple(logStream.printStream());
@@ -355,7 +355,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
       final MetaPipelineParams params = MetaPipelineParams.builder()
           .proteinSdf(protein)
           .inputFile(reads)
-          .outputParams(new OutputParams(output, false, false))
+          .outputParams(new OutputParams(output, false))
           .create();
       final MemoryPrintStream logStream = new MemoryPrintStream();
       final LogSimple log = new LogSimple(logStream.printStream());

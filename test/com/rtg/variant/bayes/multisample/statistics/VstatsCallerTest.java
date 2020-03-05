@@ -207,7 +207,7 @@ public class VstatsCallerTest extends TestCase {
   }
 
   private VariantParams getOutputParams(final File tempDir) {
-    final OutputParams outputParams = new OutputParams(tempDir, false, false);
+    final OutputParams outputParams = new OutputParams(tempDir, false);
     return VariantParams.builder()
         .machineErrorName("illumina")
         .genomePriors(GenomePriorParams.builder().create())

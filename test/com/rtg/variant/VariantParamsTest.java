@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.rtg.AbstractTest;
 import com.rtg.launcher.OutputParams;
 import com.rtg.launcher.ReaderParams;
 import com.rtg.launcher.SequenceParams;
@@ -36,35 +37,16 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogRecord;
 import com.rtg.util.io.LogStream;
 import com.rtg.util.io.TestDirectory;
-import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.params.TestParams;
-
-import junit.framework.TestCase;
 
 /**
  */
-public class VariantParamsTest extends TestCase {
-
-  protected File mDir;
-
-  @Override
-  public void setUp() throws IOException {
-    Diagnostic.setLogStream();
-    mDir = FileHelper.createTempDirectory();
-  }
-
-  @Override
-  public void tearDown() {
-    Diagnostic.setLogStream();
-    assertTrue(FileHelper.deleteAll(mDir));
-    mDir = null;
-  }
+public class VariantParamsTest extends AbstractTest {
 
   private static final String TEST_OUTPUT = "varianttestoutput";
 
-
-  private ReaderParams makeGenome() throws IOException {
-    final File subjectsDir = FileUtils.createTempDir("test", "coverageparams", mDir);
+  private ReaderParams makeGenome(TestDirectory tmpDir) throws IOException {
+    final File subjectsDir = FileUtils.createTempDir("test", "coverageparams", tmpDir);
     ReaderTestUtils.getReaderDNA(">t\nacgt", subjectsDir, null).close();
     return SequenceParams.builder().directory(subjectsDir).mode(SequenceMode.UNIDIRECTIONAL).create().readerParams();
   }
@@ -105,75 +87,61 @@ public class VariantParamsTest extends TestCase {
   }
 
   public void testOutputParamsLink() throws Exception {
-    final File outDir = new File(mDir, TEST_OUTPUT);
-    assertTrue(outDir.mkdirs());
-    final VariantParamsBuilder vpb = VariantParams.builder().outputParams(new OutputParams(outDir, false, false));
-    VariantParams vp = vpb.create();
-    assertEquals(outDir, vp.directory());
-    assertEquals(new File(outDir, "test.txt"), vp.file("test.txt"));
-    assertFalse(vp.blockCompressed());
-    assertEquals(new File(outDir, "snps.vcf"), vp.vcfFile());
-    vp.bedStream().close();
-    assertTrue(vp.file("regions.bed").isFile());
-    vp.vcfStream().close();
-    assertTrue(vp.file("snps.vcf").isFile());
-    vp = vpb.create();
-    assertEquals(new File(outDir, "snps.vcf"), vp.vcfFile());
-    vp.vcfStream().close();
-    assertTrue(vp.file("snps.vcf").isFile());
-  }
-
-  public void testOk1() throws Exception {
-    Diagnostic.setLogStream();
-    final File map = File.createTempFile("testok1", "variantParams");
-    try {
-      FileUtils.stringToFile(SharedSamConstants.SAM9, map);
-      assertTrue(map.isFile());
-
-      VariantParams vp = null;
-      try {
-        final File outFile = new File(TEST_OUTPUT);
-        assertTrue(outFile.mkdir());
-
-        final String[] exp = {
-            "VariantParams mapped reads=[" + map.getPath() + "]",
-            " call_level=" + VariantOutputLevel.INTERESTING,
-            " indels=" + Boolean.TRUE,
-            " interesting_threshold=" + 5.0,
-            " interesting_separation=" + 4,
-            " heterozygous prior=0.0003000 homozygous prior=0.0003000",
-            " ReaderParams directory=",
-            " OutputParams output directory=" + TEST_OUTPUT,
-            " progress=" + Boolean.FALSE,
-            " zip=" + Boolean.FALSE,
-            " max_ambiguity=null",
-            " sex=" + Sex.EITHER,
-        };
-
-        final List<File> mapped = new ArrayList<>();
-        mapped.add(map);
-
-        final VariantParamsBuilder vpb = VariantParams.builder();
-        vpb.genomePriors(GenomePriorParams.builder().genomePriors("testhumanprior").create()).mapped(mapped).genome(makeGenome());
-        vp = vpb.outputParams(new OutputParams(outFile, false, false)).interestingThreshold(5).create();
-
-        final String ccs = vp.toString();
-        //System.err.println(ccs);
-        TestUtils.containsAll(ccs, exp);
-        vp.close();
-      } finally {
-        if (vp != null) {
-          FileHelper.deleteAll(vp.genome().directory());
-        }
-        FileHelper.deleteAll(new File(TEST_OUTPUT));
-      }
-
-    } finally {
-      assertTrue(map.delete());
+    try (final TestDirectory tmpDir = new TestDirectory("testok1")) {
+      final File outDir = new File(tmpDir, TEST_OUTPUT);
+      assertTrue(outDir.mkdirs());
+      final VariantParamsBuilder vpb = VariantParams.builder().outputParams(new OutputParams(outDir, false));
+      VariantParams vp = vpb.create();
+      assertEquals(outDir, vp.directory());
+      assertEquals(new File(outDir, "test.txt"), vp.file("test.txt"));
+      assertFalse(vp.blockCompressed());
+      assertEquals(new File(outDir, "snps.vcf"), vp.vcfFile());
+      vp.bedStream().close();
+      assertTrue(vp.file("regions.bed").isFile());
+      vp.vcfStream().close();
+      assertTrue(vp.file("snps.vcf").isFile());
+      vp = vpb.create();
+      assertEquals(new File(outDir, "snps.vcf"), vp.vcfFile());
+      vp.vcfStream().close();
+      assertTrue(vp.file("snps.vcf").isFile());
     }
   }
 
-  //TODO do all calls
+  public void testOk1() throws Exception {
+    try (final TestDirectory tmpDir = new TestDirectory("testok1")) {
+      final File map = new File(tmpDir, "map");
+      FileUtils.stringToFile(SharedSamConstants.SAM9, map);
+      assertTrue(map.isFile());
+
+      final File outFile = new File(tmpDir, TEST_OUTPUT);
+      assertTrue(outFile.mkdir());
+
+      final String[] exp = {
+        "VariantParams mapped reads=[" + map.getPath() + "]",
+        " call_level=" + VariantOutputLevel.INTERESTING,
+        " indels=" + Boolean.TRUE,
+        " interesting_threshold=" + 5.0,
+        " interesting_separation=" + 4,
+        " heterozygous prior=0.0003000 homozygous prior=0.0003000",
+        " ReaderParams directory=",
+        " zip=" + Boolean.FALSE,
+        " max_ambiguity=null",
+        " sex=" + Sex.EITHER,
+      };
+
+      final List<File> mapped = new ArrayList<>();
+      mapped.add(map);
+
+      final VariantParamsBuilder vpb = VariantParams.builder();
+      vpb.genomePriors(GenomePriorParams.builder().genomePriors("testhumanprior").create()).mapped(mapped).genome(makeGenome(tmpDir));
+      VariantParams vp = vpb.outputParams(new OutputParams(outFile, false)).interestingThreshold(5).create();
+
+      final String ccs = vp.toString();
+      //System.err.println(ccs);
+      TestUtils.containsAll(ccs, exp);
+    }
+  }
+
   public void testBuilder() throws InvalidParamsException, IOException {
     final VariantParamsBuilder vpb = VariantParams.builder();
     assertTrue(vpb.callLevel(VariantOutputLevel.ALL) == vpb);
@@ -183,7 +151,7 @@ public class VariantParamsTest extends TestCase {
     assertEquals(vpb.mapped(Collections.singleton(new File(""))), vpb);
     assertTrue(vpb.name("name") == vpb);
     assertTrue(vpb.interestingThreshold(5.0) == vpb);
-    final OutputParams op = new OutputParams(new File(""), false, false);
+    final OutputParams op = new OutputParams(new File(""), false);
     assertTrue(vpb.outputParams(op) == vpb);
     assertTrue(vpb.name("name") == vpb);
     assertTrue(vpb.genomePriors("human") == vpb);
@@ -204,7 +172,6 @@ public class VariantParamsTest extends TestCase {
         " interesting_threshold=" + 5.0,
         " interesting_separation=" + 4,
         " heterozygous prior=0.0007100 homozygous prior=0.0005300",
-        " progress=" + Boolean.FALSE,
         " zip=" + Boolean.FALSE,
         " max_ambiguity=" + Double.toString(1.0),
         " sex=" + Sex.FEMALE,
@@ -257,7 +224,7 @@ public class VariantParamsTest extends TestCase {
   public void testStreams() throws IOException {
     try (TestDirectory tmp = new TestDirectory("vpt")) {
     final File fooFile = new File(tmp, "foofile");
-      final OutputParams op = new OutputParams(fooFile, false, false);
+      final OutputParams op = new OutputParams(fooFile, false);
       final VariantParams params = VariantParams.builder().outputParams(op).create();
 
       final OutputStream os = params.vcfStream();

@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-import com.rtg.launcher.BuildCommon;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.OutputParams;
 import com.rtg.launcher.SequenceParams.SequenceParamsBuilder;
@@ -106,7 +105,7 @@ public final class SvCliUtils {
   public static void populateCommonParams(SvParamsBuilder<?> builder, SequenceParamsBuilder genomeBuilder, CFlags flags) throws IOException {
     builder.name(flags.getName())
            .genome(genomeBuilder.directory((File) flags.getValue(CommonFlags.TEMPLATE_FLAG)).create().readerParams())
-           .outputParams(new OutputParams((File) flags.getValue(CommonFlags.OUTPUT_FLAG), flags.isSet(BuildCommon.PROGRESS_FLAG), !flags.isSet(CommonFlags.NO_GZIP)))
+           .outputParams(new OutputParams((File) flags.getValue(CommonFlags.OUTPUT_FLAG), !flags.isSet(CommonFlags.NO_GZIP)))
            .ioThreads(CommonFlags.parseIOThreads((Integer) flags.getValue(CommonFlags.THREADS_FLAG)))
            .mapped(CommonFlags.getFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, false))
            .filterParams(SamFilterOptions.makeFilterParamsBuilder(flags)

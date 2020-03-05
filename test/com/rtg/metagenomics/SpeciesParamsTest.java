@@ -66,7 +66,7 @@ public class SpeciesParamsTest extends TestCase {
           mapped.add(map);
 
           final SpeciesParamsBuilder build = SpeciesParams.builder().mapped(mapped).genome(genomes).referenceMap(null);
-          ccp = build.filterParams(SamFilterParams.builder().create()).minIter(10).verbose(false).outputParams(new OutputParams(genomeDir, false, false)).printAll(true).create();
+          ccp = build.filterParams(SamFilterParams.builder().create()).minIter(10).verbose(false).outputParams(new OutputParams(genomeDir, false)).printAll(true).create();
           assertNotNull(ccp.filterParams());
           assertEquals(genomes, ccp.genome());
           assertNull(ccp.referenceMap());

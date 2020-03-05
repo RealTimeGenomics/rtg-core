@@ -49,7 +49,7 @@ public class CnvRatioTest extends TestCase {
     final Reader in = new StringReader(inStr);
     final Map<String, Region> regionMap = RegionUtils.regionsFromReader(in);
 
-    final CnvRatio ratio = new CnvRatio(3.0, regionMap, nameMap, CnvProductParams.builder().outputParams(new OutputParams(outputDir, false, false)).bucketSize(5).create(), 10, false);
+    final CnvRatio ratio = new CnvRatio(3.0, regionMap, nameMap, CnvProductParams.builder().outputParams(new OutputParams(outputDir, false)).bucketSize(5).create(), 10, false);
     try {
       ratio.exec(new int[][] {{3, 1, 2, 1, 0}, {3, 3, 2, 0, 0}, {3, 3, 1, 0, 0}, {3, 3, 2, 0, 0}, {9, 9, 9, 9, 9, 100, 100, 5, 5, 5, 5, 5, 5, 5, 5, 100, 100, 100}}, new int[][] {{1, 2, 1, 1, 0}, {3, 0, 2, 1, 0}, {0, 0, 4, 0, 0}, {3, 0, 2, 1, 0}, {9, 9, 9, 9, 9, 100, 100, 5, 5, 5, 5, 5, 5, 5, 5, 100, 100, 100}});
       final String bedFile = FileUtils.fileToString(new File(outputDir, "cnv.bed"));

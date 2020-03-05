@@ -62,7 +62,7 @@ public class NgsTaskTest extends NgsPairedEndTest {
         ntt.mDir = mDir;
         try (NgsParams params = ntt.getParams(ba, new NgsMaskParamsGeneral(4, 0, 0, 1), new NgsTestUtils.ParamsParams(SEQ_DNA_Y2, SEQ_DNA_Y1, 10, true, false), ListenerType.NULL, OutputFilter.NONE, 1, numberThreads)) {
           final int threadBits = MathUtils.ceilPowerOf2Bits(numberThreads - 1);
-          assertEquals(8, NgsTask.indexThenSearchShortReads(params, new NgsHashLoopImpl(params.buildFirstParams().numberSequences(), params.outputParams().progress(), 0x3FFFFL, ((0x1FFFFL + 1L) << threadBits) - 1L), null, makeIndexParams(params)));
+          assertEquals(8, NgsTask.indexThenSearchShortReads(params, new NgsHashLoopImpl(params.buildFirstParams().numberSequences(), 0x3FFFFL, ((0x1FFFFL + 1L) << threadBits) - 1L), null, makeIndexParams(params)));
         }
         pr.flush();
         final String logs = ba.toString();

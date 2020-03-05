@@ -87,7 +87,7 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     final Collection<File> inputFiles = CommonFlags.getFileList(mFlags, CommonFlags.INPUT_LIST_FLAG, null, false);
     Diagnostic.userLog("Input SAM files: " + inputFiles);
     final File output = (File) mFlags.getValue(OUTPUT_FLAG);
-    final OutputParams outParams = new OutputParams(output, false, false);
+    final OutputParams outParams = new OutputParams(output, false);
     final File genomes = (File) mFlags.getValue(TEMPLATE_FLAG);
     final SequenceParams genomesParams = SequenceParams.builder().directory(genomes).create();
     final int minIter = (Integer) mFlags.getValue(ITERATIONS_FLAG);

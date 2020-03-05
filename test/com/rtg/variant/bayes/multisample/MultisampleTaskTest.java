@@ -109,7 +109,7 @@ public class MultisampleTaskTest extends AbstractNanoTest {
         mapped.add(samFile);
         builder.mapped(mapped);
         builder.genome(g.readerParams());
-        builder.outputParams(new OutputParams(outFile, false, false));
+        builder.outputParams(new OutputParams(outFile, false));
         builder.genomePriors(GenomePriorParams.builder().contraryProbability(1).create());
         builder.genomeRelationships(genomeRelationships);
         builder.maxCoverageFilter(new StaticThreshold(100));

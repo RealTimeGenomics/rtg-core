@@ -74,7 +74,7 @@ public class IndividualSampleProcessorTest extends TestCase {
             list.add(samFile);
             b.mapped(list);
             b.genome(g.readerParams());
-            b.outputParams(new OutputParams(outFile, false, false));
+            b.outputParams(new OutputParams(outFile, false));
             final GenomePriorParams gpp = GenomePriorParams.builder().create();
             b.genomePriors(gpp);
             final VariantParams p = b.create();

@@ -181,7 +181,7 @@ public class CnvProductTaskTest extends TestCase {
       FileUtils.stringToFile(FileHelper.resourceToString("com/rtg/variant/cnv/resources/babySamTarget.sam"), targetSamFile);
       final File output = new File(dir, "output");
       final CnvProductParams params = CnvProductParams.builder().bucketSize(5).mappedBase(Arrays.asList(baseSamFile))
-              .mappedTarget(Arrays.asList(targetSamFile)).outputParams(new OutputParams(output, false, false)).create();
+              .mappedTarget(Arrays.asList(targetSamFile)).outputParams(new OutputParams(output, false)).create();
       final CnvProductTask task = new CnvProductTask(params, TestUtils.getNullOutputStream());
       task.exec();
       final String bedFile = FileUtils.fileToString(new File(output, "cnv.bed"));
@@ -214,7 +214,7 @@ public class CnvProductTaskTest extends TestCase {
       FileUtils.stringToFile(FileHelper.resourceToString("com/rtg/variant/cnv/resources/otherDict.sam"), targetSamFile);
       final File output = new File(dir, "output");
       final CnvProductParams params = CnvProductParams.builder().bucketSize(5).mappedBase(Arrays.asList(baseSamFile))
-              .mappedTarget(Arrays.asList(targetSamFile)).outputParams(new OutputParams(output, false, false)).create();
+              .mappedTarget(Arrays.asList(targetSamFile)).outputParams(new OutputParams(output, false)).create();
       final CnvProductTask task = new CnvProductTask(params, TestUtils.getNullOutputStream());
       try {
         task.exec();

@@ -80,7 +80,7 @@ public final class NgsHashLoopImplTest extends TestCase {
   private void check(final String readstr, final String template, final String expected) throws IOException {
     final ReaderParams tem = getTemplate(template);
     final ReaderParams reads = getReads(readstr);
-    final NgsHashLoopImpl hl = new NgsHashLoopImpl(reads.reader().numberSequences(), false);
+    final NgsHashLoopImpl hl = new NgsHashLoopImpl(reads.reader().numberSequences());
     hl.integrity();
     assertEquals("HashLoop", hl.toString());
 
@@ -271,7 +271,7 @@ public final class NgsHashLoopImplTest extends TestCase {
     Diagnostic.setLogStream();
     try (ReaderParams tem = getTemplate(TEM_2)) {
       try (ReaderParams reads = getReads(READS_2)) {
-        final NgsHashLoopImpl hl = new NgsHashLoopImpl(reads.reader().numberSequences(), true, 0L, 0x3L);
+        final NgsHashLoopImpl hl = new NgsHashLoopImpl(reads.reader().numberSequences(), 0L, 0x3L);
         hl.integrity();
 
         final StringWriter sb = new StringWriter();
@@ -323,7 +323,7 @@ public final class NgsHashLoopImplTest extends TestCase {
   public void testPcr() throws IOException {
     Diagnostic.setLogStream();
     final long[] hashes = {0, 3, 5, 7};
-    final NgsHashLoopImpl hl = new NgsHashLoopImpl(hashes.length, true, 0L, 0x3L);
+    final NgsHashLoopImpl hl = new NgsHashLoopImpl(hashes.length, 0L, 0x3L);
 
     hl.integrity();
 
@@ -368,7 +368,7 @@ public final class NgsHashLoopImplTest extends TestCase {
       final String template = "tttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccccccccccccccccccccccccccccccccccggg";
       ReaderTestUtils.getReaderDNA(">a\n" + read + "\n>b\n" + read2, readDir, null).close();
       ReaderTestUtils.getReaderProtein(">b\n" + template + "\n>c\n" + template + "\n>d\n" + template + "\n>e\n" + template, templateDir).close();
-      final NgsHashLoopImpl loop = new NgsHashLoopImpl(1, false);
+      final NgsHashLoopImpl loop = new NgsHashLoopImpl(1);
       loop.mMinChunkSize = 2;
       //final FakeProteinMask mask = new FakeProteinMask(new Skeleton(adjLength, adjLength, 0, 0, 1), new FakeReadCall(), new ImplementHashFunctionTest.TemplateCallMock());
 
@@ -399,7 +399,7 @@ public final class NgsHashLoopImplTest extends TestCase {
       final String template = "KWRKNRKSKKNQRNYNHDAADA";
       ReaderTestUtils.getReaderDNA(">a\n" + read, readDir, null).close();
       ReaderTestUtils.getReaderProtein(">b\n" + template + "\n>c\n" + template + "\n>d\n" + template + "\n>e\n" + template, templateDir).close();
-      final NgsHashLoopImpl loop = new NgsHashLoopImpl(1, false);
+      final NgsHashLoopImpl loop = new NgsHashLoopImpl(1);
       loop.mMinChunkSize = 2;
       //final FakeProteinMask mask = new FakeProteinMask(new Skeleton(adjLength, adjLength, 0, 0, 1), new FakeReadCall(), new ImplementHashFunctionTest.TemplateCallMock());
 
