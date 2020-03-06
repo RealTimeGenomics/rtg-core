@@ -109,12 +109,12 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
   private static final double COVERAGE_WARNING_THRESHOLD = 1.0;
 
   private final JobStatistics<JobIdMultisample> mJobStatistics = new MultisampleStatistics();
-  private final OutputStream mBedOut;
   private final SexMemo mSexMemo;
   private final List<VcfAnnotator> mAnnotators = new ArrayList<>();
   private final List<VcfFilter> mFilters = new ArrayList<>();
   protected final SequencesReader mReferenceSequences;
   private AbstractJointCallerConfiguration mConfig;
+  private OutputStream mBedOut;
   private VcfWriter mOut;
   private VariantOutputVcfFormatter mFormatter;
   private ThreadedMultifileIteratorWrapper<VariantAlignmentRecord> mWrapper;
@@ -140,7 +140,6 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       throw new NoTalkbackSlimException(ErrorType.READING_ERROR, "Problem reading");
     }
     mReferenceSequences = params.genome().reader();
-    mBedOut = params.bedStream();
     mSexMemo = Utils.createSexMemo(mParams);
     mConfigurator = configurator;
 
@@ -780,6 +779,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     for (final VcfAnnotator annot : mAnnotators) {
       annot.updateHeader(vcfHeader);
     }
+    mBedOut = mParams.bedStream();
     mOut = new VcfWriterFactory().async(true).zip(mParams.blockCompressed()).index(mParams.outputIndex()).make(vcfHeader, mParams.vcfFile());
     mOut = new ClusterAnnotator(mOut);
     mOut = new StatisticsVcfWriter<>(mOut, mStatistics, mFilters);

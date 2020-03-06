@@ -96,7 +96,7 @@ public class DiscordantToolTest extends AbstractNanoTest {
       final File output = new File(dir, "output");
       final DiscordantToolParams p = makeParams(seq, input, output, minDepth, intersectionOnly);
       final DiscordantTool dt = new DiscordantTool(p, TestUtils.getNullOutputStream());
-      dt.exec();
+      dt.run();
       assertTrue(output.exists());
       final File simple = new File(output, DiscordantTool.DEBUG_FILENAME);
       assertTrue(simple.exists());
@@ -179,7 +179,7 @@ public class DiscordantToolTest extends AbstractNanoTest {
       final File output = new File(dir, "output");
       final DiscordantToolParams p = makeParams(seq, input, output, 1, false);
       final FlushCheck dt = new FlushCheck(p, TestUtils.getNullOutputStream());
-      dt.exec();
+      dt.run();
       assertTrue(output.exists());
       final File simple = new File(output, DiscordantTool.OUTPUT_FILENAME);
       assertTrue(simple.exists());

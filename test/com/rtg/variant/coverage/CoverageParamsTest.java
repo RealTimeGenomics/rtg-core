@@ -77,6 +77,7 @@ public class CoverageParamsTest extends TestCase {
     assertEquals(outDir, cp.directory());
     assertEquals(cp.outFile(), cp.file("coverage.bed"));
     assertEquals("coverage.bed", cp.outFile().getName());
+    FileUtils.ensureOutputDirectory(cp.directory());
     final OutputStream out = cp.bedStream();
     out.write("test".getBytes());
     out.close();

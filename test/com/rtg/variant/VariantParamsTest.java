@@ -226,7 +226,7 @@ public class VariantParamsTest extends AbstractTest {
     final File fooFile = new File(tmp, "foofile");
       final OutputParams op = new OutputParams(fooFile, false);
       final VariantParams params = VariantParams.builder().outputParams(op).create();
-
+      FileUtils.ensureOutputDirectory(params.directory());
       final OutputStream os = params.vcfStream();
       assertNotNull(os);
       os.close();

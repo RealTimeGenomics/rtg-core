@@ -183,7 +183,7 @@ public class CnvProductTaskTest extends TestCase {
       final CnvProductParams params = CnvProductParams.builder().bucketSize(5).mappedBase(Arrays.asList(baseSamFile))
               .mappedTarget(Arrays.asList(targetSamFile)).outputParams(new OutputParams(output, false)).create();
       final CnvProductTask task = new CnvProductTask(params, TestUtils.getNullOutputStream());
-      task.exec();
+      task.run();
       final String bedFile = FileUtils.fileToString(new File(output, "cnv.bed"));
       final String ratioFile = FileUtils.fileToString(new File(output, "cnv.ratio"));
       final String bedBody = stripComments(bedFile);
