@@ -27,9 +27,6 @@ import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.util.BlockCompressedInputStream;
 
-/**
- * Tests the corresponding class.
- */
 public class SegmentCliTest extends AbstractCliTest {
 
   @Override
