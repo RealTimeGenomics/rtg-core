@@ -133,7 +133,7 @@ class CnvSummaryReport {
         final List<RangeList.RangeData<String>> chrGenes = rr.getFullRangeList();
         for (int hit = rr.findFullRangeIndex(start); hit < chrGenes.size() && chrGenes.get(hit).getStart() < end; hit++) {
           final RangeList.RangeData<String> gene = chrGenes.get(hit);
-          if (gene.getMeta() != null) {
+          if (gene.hasMeta()) {
             final double logR = VcfUtils.getDoubleFormatFieldFromRecord(rec, 0, FORMAT_LOGR);
             if (Math.abs(logR) >= mThreshold) {
               final int[] cipos = VcfUtils.getConfidenceInterval(rec, VcfUtils.INFO_CIPOS);

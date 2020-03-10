@@ -466,7 +466,7 @@ public class DeProbeCli extends LoggedCli {
     int index = checker.getStartDataIndex(record, list);
     RangeList.RangeData<ProbeCounter> data = list.getFullRangeList().get(index);
     while (recordOverlap(record, data, tolerance)) {
-      if (data != null && data.getMeta() != null) {
+      if (data != null && data.hasMeta()) {
         final ProbeCounter counter = data.getMeta().get(0);
         if (checker.checkPosition(record, data)) {
           checker.stripRecord(record, mate, data);

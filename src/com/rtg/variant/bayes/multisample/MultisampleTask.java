@@ -173,7 +173,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       rangeIndex = currentRangeList.findFullRangeIndex(start);
       assert rangeIndex < ranges.size();
       final RangeList.RangeData<String> range = ranges.get(rangeIndex);
-      skipWholeChunk = range.getMeta() == null && range.isInRange(end);
+      skipWholeChunk = !range.hasMeta() && range.isInRange(end);
     }
     if (skipWholeChunk) {
       tribble.advanceBuffer(end);
@@ -284,7 +284,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       if (range.getStart() > endPos) {
         break;
       }
-      if (range.getMeta() == null) {
+      if (!range.hasMeta()) {
         statusInterval.add(range.getStart(), range.getEnd(), SKIP);
       }
     }
