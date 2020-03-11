@@ -205,7 +205,7 @@ public final class RegionUtils {
     int seqStart = -1;
     State state = State.OUT;
     for (final int bucket : bucketCounts) {
-      final boolean okRegion = !ignore.isInRegion(blocks + 1);
+      final boolean okRegion = !ignore.contains(blocks + 1);
       if (state == State.IN) {
         if (!okRegion) {
           try {

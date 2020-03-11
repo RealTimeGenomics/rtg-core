@@ -19,9 +19,9 @@ public class SimpleCnvRegionTest extends TestCase {
 
   public void test() {
     final Region r = new SimpleCnvRegion(0, 1);
-    assertTrue(r.isInRegion(0));
-    assertFalse(r.isInRegion(-1));
-    assertFalse(r.isInRegion(1));
+    assertTrue(r.contains(0));
+    assertFalse(r.contains(-1));
+    assertFalse(r.contains(1));
     assertEquals("SimpleRegion start=0 end=1", r.toString());
   }
 }

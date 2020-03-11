@@ -21,6 +21,6 @@ public interface Region {
    * @param index to be checked.
    * @return true iff in one of the regions.
    */
-  boolean isInRegion(int index);
+  boolean contains(int index);
 
 }

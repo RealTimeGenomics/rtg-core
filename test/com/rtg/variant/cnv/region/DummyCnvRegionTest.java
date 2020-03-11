@@ -21,9 +21,9 @@ public class DummyCnvRegionTest extends TestCase {
 
   public void test() {
     final AbstractCnvRegion r = new SimpleCnvRegion(0, 1);
-    assertTrue(r.isInRegion(0));
-    assertFalse(r.isInRegion(-1));
-    assertFalse(r.isInRegion(1));
+    assertTrue(r.contains(0));
+    assertFalse(r.contains(-1));
+    assertFalse(r.contains(1));
     assertEquals(0, r.getStart());
     assertEquals(1, r.getEnd());
   }

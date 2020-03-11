@@ -19,9 +19,9 @@ public class EmptyRegionTest extends TestCase {
 
   public void test() {
     final Region r = EmptyRegion.EMPTY_REGION;
-    assertFalse(r.isInRegion(0));
-    assertFalse(r.isInRegion(Integer.MAX_VALUE));
-    assertFalse(r.isInRegion(Integer.MIN_VALUE));
+    assertFalse(r.contains(0));
+    assertFalse(r.contains(Integer.MAX_VALUE));
+    assertFalse(r.contains(Integer.MIN_VALUE));
     assertEquals("EmptyRegion", r.toString());
   }
 }

@@ -87,14 +87,14 @@ final class ComplexCnvRegion extends AbstractCnvRegion implements Integrity {
   }
 
   @Override
-  public boolean isInRegion(final int index) {
+  public boolean contains(final int index) {
     if (index < getStart() || index > getEnd()) {
       return false;
     }
-    if (mFirst.isInRegion(index)) {
+    if (mFirst.contains(index)) {
       return true;
     }
-    if (mLast.isInRegion(index)) {
+    if (mLast.contains(index)) {
       return true;
     }
     if (mMiddle == null) {
@@ -104,7 +104,7 @@ final class ComplexCnvRegion extends AbstractCnvRegion implements Integrity {
     if (mMiddle[box] == null) {
       return false;
     }
-    return mMiddle[box].isInRegion(index);
+    return mMiddle[box].contains(index);
   }
 
   @Override

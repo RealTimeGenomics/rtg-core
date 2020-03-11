@@ -194,7 +194,7 @@ public final class CnvRatio {
 
   void add(final int cnt1, final int cnt2) throws IOException {
     final double ratio = 2.0 * (cnt2 + 1.0) / (cnt1 + 1.0);
-    final boolean okRegion = !mNRegionExcludes.isInRegion(mBlocks + 1) && !mDivDelRegionExcludes.isInRegion(mBlocks + 1) && !mMulDelRegionExcludes.isInRegion(mBlocks + 1);
+    final boolean okRegion = !mNRegionExcludes.contains(mBlocks + 1) && !mDivDelRegionExcludes.contains(mBlocks + 1) && !mMulDelRegionExcludes.contains(mBlocks + 1);
     if (mState == State.IN) {
       if (!okRegion) {
         if (mLSM != null) {
@@ -255,7 +255,7 @@ public final class CnvRatio {
     int start = 0;
     boolean inRegion = false;
     for (int i = 1; i <= seqSize; ++i) {
-      final boolean exclude = exclusions.isInRegion(i);
+      final boolean exclude = exclusions.contains(i);
       if (!inRegion && exclude) {
         start = i;
         inRegion = true;

@@ -25,7 +25,7 @@ public final class EmptyRegion implements Region {
   private EmptyRegion() { }
 
   @Override
-  public boolean isInRegion(final int index) {
+  public boolean contains(final int index) {
     return false;
   }
 

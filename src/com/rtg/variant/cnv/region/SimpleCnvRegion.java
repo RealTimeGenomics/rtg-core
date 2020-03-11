@@ -21,11 +21,6 @@ final class SimpleCnvRegion extends AbstractCnvRegion {
   }
 
   @Override
-  public boolean isInRegion(final int index) {
-    return index >= getStart() && index < getEnd();
-  }
-
-  @Override
   public String toString() {
     return "SimpleRegion start=" + getStart() + " end=" + getEnd();
   }

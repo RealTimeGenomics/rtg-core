@@ -59,12 +59,12 @@ public class RegionUtilsTest extends TestCase {
     assertEquals(1, m.size());
     final Region r = m.get("name");
     assertNotNull(r);
-    assertFalse(r.isInRegion(0));
-    assertFalse(r.isInRegion(10));
-    assertFalse(r.isInRegion(Integer.MAX_VALUE));
-    assertFalse(r.isInRegion(Integer.MIN_VALUE));
+    assertFalse(r.contains(0));
+    assertFalse(r.contains(10));
+    assertFalse(r.contains(Integer.MAX_VALUE));
+    assertFalse(r.contains(Integer.MIN_VALUE));
     for (int i = 1; i < 10; ++i) {
-      assertTrue(r.isInRegion(i));
+      assertTrue(r.contains(i));
     }
   }
 
@@ -78,17 +78,17 @@ public class RegionUtilsTest extends TestCase {
     assertEquals(1, m.size());
     final Region r = m.get("name");
     assertNotNull(r);
-    assertFalse(r.isInRegion(0));
-    assertFalse(r.isInRegion(3));
-    assertFalse(r.isInRegion(6));
-    assertFalse(r.isInRegion(10));
-    assertFalse(r.isInRegion(Integer.MAX_VALUE));
-    assertFalse(r.isInRegion(Integer.MIN_VALUE));
-    assertTrue(r.isInRegion(1));
-    assertTrue(r.isInRegion(2));
-    assertTrue(r.isInRegion(7));
-    assertTrue(r.isInRegion(8));
-    assertTrue(r.isInRegion(9));
+    assertFalse(r.contains(0));
+    assertFalse(r.contains(3));
+    assertFalse(r.contains(6));
+    assertFalse(r.contains(10));
+    assertFalse(r.contains(Integer.MAX_VALUE));
+    assertFalse(r.contains(Integer.MIN_VALUE));
+    assertTrue(r.contains(1));
+    assertTrue(r.contains(2));
+    assertTrue(r.contains(7));
+    assertTrue(r.contains(8));
+    assertTrue(r.contains(9));
   }
 
   public void testMultipleNames() throws IOException {
@@ -102,29 +102,29 @@ public class RegionUtilsTest extends TestCase {
     assertEquals(2, m.size());
     final Region r = m.get("name");
     assertNotNull(r);
-    assertFalse(r.isInRegion(0));
-    assertFalse(r.isInRegion(3));
-    assertFalse(r.isInRegion(4));
-    assertFalse(r.isInRegion(5));
-    assertFalse(r.isInRegion(6));
-    assertFalse(r.isInRegion(10));
-    assertFalse(r.isInRegion(Integer.MAX_VALUE));
-    assertFalse(r.isInRegion(Integer.MIN_VALUE));
-    assertTrue(r.isInRegion(1));
-    assertTrue(r.isInRegion(2));
-    assertTrue(r.isInRegion(7));
-    assertTrue(r.isInRegion(8));
-    assertTrue(r.isInRegion(9));
+    assertFalse(r.contains(0));
+    assertFalse(r.contains(3));
+    assertFalse(r.contains(4));
+    assertFalse(r.contains(5));
+    assertFalse(r.contains(6));
+    assertFalse(r.contains(10));
+    assertFalse(r.contains(Integer.MAX_VALUE));
+    assertFalse(r.contains(Integer.MIN_VALUE));
+    assertTrue(r.contains(1));
+    assertTrue(r.contains(2));
+    assertTrue(r.contains(7));
+    assertTrue(r.contains(8));
+    assertTrue(r.contains(9));
 
     final Region f = m.get("foo");
     assertNotNull(f);
-    assertFalse(f.isInRegion(6));
-    assertFalse(f.isInRegion(10));
-    assertFalse(f.isInRegion(Integer.MAX_VALUE));
-    assertFalse(f.isInRegion(Integer.MIN_VALUE));
-    assertTrue(f.isInRegion(7));
-    assertTrue(f.isInRegion(8));
-    assertTrue(f.isInRegion(9));
+    assertFalse(f.contains(6));
+    assertFalse(f.contains(10));
+    assertFalse(f.contains(Integer.MAX_VALUE));
+    assertFalse(f.contains(Integer.MIN_VALUE));
+    assertTrue(f.contains(7));
+    assertTrue(f.contains(8));
+    assertTrue(f.contains(9));
 }
 
   private static final String SEQUENCES = ">seq1" + LS
@@ -160,51 +160,51 @@ public class RegionUtilsTest extends TestCase {
         Region r = map.get("seq1");
         assertNotNull(r);
         for (int i = 0; i <= 3; ++i) {
-          assertFalse(r.isInRegion(i));
+          assertFalse(r.contains(i));
         }
         for (int i = 4; i <= 6; ++i) {
-          assertTrue(r.isInRegion(i));
+          assertTrue(r.contains(i));
         }
         for (int i = 7; i <= 13; ++i) {
-          assertFalse(r.isInRegion(i));
+          assertFalse(r.contains(i));
         }
-        assertTrue(r.isInRegion(14));
+        assertTrue(r.contains(14));
         for (int i = 15; i <= 20; ++i) {
-          assertFalse(r.isInRegion(i));
+          assertFalse(r.contains(i));
         }
-        assertFalse(r.isInRegion(Integer.MAX_VALUE));
-        assertFalse(r.isInRegion(Integer.MIN_VALUE));
+        assertFalse(r.contains(Integer.MAX_VALUE));
+        assertFalse(r.contains(Integer.MIN_VALUE));
         r = map.get("seq2");
         assertNotNull(r);
-        assertFalse(r.isInRegion(0));
-        assertTrue(r.isInRegion(1));
-        assertFalse(r.isInRegion(2));
-        assertFalse(r.isInRegion(Integer.MAX_VALUE));
-        assertFalse(r.isInRegion(Integer.MIN_VALUE));
+        assertFalse(r.contains(0));
+        assertTrue(r.contains(1));
+        assertFalse(r.contains(2));
+        assertFalse(r.contains(Integer.MAX_VALUE));
+        assertFalse(r.contains(Integer.MIN_VALUE));
         r = map.get("seq3");
         assertNotNull(r);
-        assertFalse(r.isInRegion(0));
-        assertTrue(r.isInRegion(1));
+        assertFalse(r.contains(0));
+        assertTrue(r.contains(1));
         for (int i = 2; i <= 6; ++i) {
-          assertFalse(r.isInRegion(i));
+          assertFalse(r.contains(i));
         }
-        assertFalse(r.isInRegion(Integer.MAX_VALUE));
-        assertFalse(r.isInRegion(Integer.MIN_VALUE));
+        assertFalse(r.contains(Integer.MAX_VALUE));
+        assertFalse(r.contains(Integer.MIN_VALUE));
         r = map.get("seq4");
         assertNotNull(r);
         for (int i = 1; i <= 4; ++i) {
-          assertFalse(r.isInRegion(i));
+          assertFalse(r.contains(i));
         }
-        assertTrue(r.isInRegion(5));
-        assertFalse(r.isInRegion(6));
-        assertFalse(r.isInRegion(7));
-        assertFalse(r.isInRegion(Integer.MAX_VALUE));
-        assertFalse(r.isInRegion(Integer.MIN_VALUE));
+        assertTrue(r.contains(5));
+        assertFalse(r.contains(6));
+        assertFalse(r.contains(7));
+        assertFalse(r.contains(Integer.MAX_VALUE));
+        assertFalse(r.contains(Integer.MIN_VALUE));
         r = map.get("seq5");
         assertNotNull(r);
-        assertFalse(r.isInRegion(1));
-        assertFalse(r.isInRegion(Integer.MAX_VALUE));
-        assertFalse(r.isInRegion(Integer.MIN_VALUE));
+        assertFalse(r.contains(1));
+        assertFalse(r.contains(Integer.MAX_VALUE));
+        assertFalse(r.contains(Integer.MIN_VALUE));
         assertEquals(EmptyRegion.EMPTY_REGION, r);
 
       }
@@ -216,68 +216,68 @@ public class RegionUtilsTest extends TestCase {
   public void testFindGermlineDeletesUnderMean() {
     Region r = RegionUtils.findGermlineDeletesUnderMean(new int[] {10, 10, 10, 0, 0, 10, 10, 10, 0, 0, 0}, 3.0, EmptyRegion.EMPTY_REGION, false);
     for (int i = 1; i <= 3; ++i) {
-      assertFalse(r.isInRegion(i));
+      assertFalse(r.contains(i));
     }
     for (int i = 4; i <= 5; ++i) {
-      assertTrue(r.isInRegion(i));
+      assertTrue(r.contains(i));
     }
     for (int i = 6; i <= 8; ++i) {
-      assertFalse(r.isInRegion(i));
+      assertFalse(r.contains(i));
     }
     for (int i = 9; i <= 11; ++i) {
-      assertTrue(r.isInRegion(i));
+      assertTrue(r.contains(i));
     }
     r = RegionUtils.findGermlineDeletesUnderMean(new int[] {3, 3, 1, 0, 0}, 3.0, EmptyRegion.EMPTY_REGION, false);
     for (int i = 1; i <= 2; ++i) {
-      assertFalse(r.isInRegion(i));
+      assertFalse(r.contains(i));
     }
     for (int i = 3; i <= 5; ++i) {
-      assertTrue(r.isInRegion(i));
+      assertTrue(r.contains(i));
     }
     r = RegionUtils.findGermlineDeletesUnderMean(new int[] {3, 3, 1, 1, 2}, 3.0, EmptyRegion.EMPTY_REGION, false);
     for (int i = 1; i <= 5; ++i) {
-      assertFalse(r.isInRegion(i));
+      assertFalse(r.contains(i));
     }
   }
 
   public void testFindGermlineDeletesOverMean() {
     Region r = RegionUtils.findGermlineDeletesOverMean(new int[] {9, 9, 9, 9, 9, 100, 100, 5, 5, 5, 5, 5, 5, 5, 5, 100, 100, 100}, 3.0, EmptyRegion.EMPTY_REGION, false);
     for (int i = 1; i <= 5; ++i) {
-      assertFalse(r.isInRegion(i));
+      assertFalse(r.contains(i));
     }
     for (int i = 6; i <= 7; ++i) {
-      assertTrue(r.isInRegion(i));
+      assertTrue(r.contains(i));
     }
     for (int i = 8; i <= 15; ++i) {
-      assertFalse(r.isInRegion(i));
+      assertFalse(r.contains(i));
     }
     for (int i = 16; i <= 18; ++i) {
-      assertTrue(r.isInRegion(i));
+      assertTrue(r.contains(i));
     }
-    assertFalse(r.isInRegion(19));
+    assertFalse(r.contains(19));
     r = RegionUtils.findGermlineDeletesOverMean(new int[] {9, 9, 9, 9, 9, 100, 100, 5, 5, 5, 5, 5, 5, 5, 5}, 3.0, EmptyRegion.EMPTY_REGION, false);
     for (int i = 1; i <= 4; ++i) {
-      assertFalse(r.isInRegion(i));
+      assertFalse(r.contains(i));
     }
     for (int i = 5; i <= 7; ++i) {
-      assertTrue(r.isInRegion(i));
+      assertTrue(r.contains(i));
     }
     for (int i = 8; i <= 15; ++i) {
-      assertFalse(r.isInRegion(i));
+      assertFalse(r.contains(i));
     }
     r = RegionUtils.findGermlineDeletesOverMean(new int[] {3, 3, 1, 1, 2}, 3.0, EmptyRegion.EMPTY_REGION, false);
     for (int i = 1; i <= 5; ++i) {
-      assertFalse(r.isInRegion(i));
+      assertFalse(r.contains(i));
     }
   }
 
   public void testNonEmptyIgnoreRegion() {
     final Region r = RegionUtils.findGermlineDeletesUnderMean(new int[] {10, 10, 10, 0, 0, 10, 10, 10, 0, 0, 0}, 3.0, new SimpleCnvRegion(6, 9), false);
     for (int i = 1; i <= 8; ++i) {
-      assertFalse(r.isInRegion(i));
+      assertFalse(r.contains(i));
     }
     for (int i = 9; i <= 11; ++i) {
-      assertTrue(r.isInRegion(i));
+      assertTrue(r.contains(i));
     }
   }
 }
