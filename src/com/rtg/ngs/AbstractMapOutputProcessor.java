@@ -49,6 +49,8 @@ import com.rtg.util.SimpleThreadPool;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.Range;
 import com.rtg.util.intervals.RangeList;
+import com.rtg.util.intervals.RangeMeta;
+import com.rtg.util.intervals.SimpleRangeMeta;
 import com.rtg.util.io.FileUtils;
 import com.rtg.variant.sv.ReadGroupStatsCalculator;
 import com.rtg.variant.sv.UnmatedAugmenter;
@@ -239,7 +241,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
   }
 
   protected static Map<Long, RangeList<UnmappedSamAlignmentWriter>> getUnmappedWriterReferenceLookup(ISequenceParams searchParams, List<HashingRegion> regions, Range[] regionRanges, UnmappedSamAlignmentWriter[] outputWriters, UnmappedSamAlignmentWriter unmappedNoPositionSamWriter) throws IOException {
-    final Map<Long, List<RangeList.RangeData<UnmappedSamAlignmentWriter>>> temp = new HashMap<>();
+    final Map<Long, List<RangeMeta<UnmappedSamAlignmentWriter>>> temp = new HashMap<>();
     final Map<Long, RangeList<UnmappedSamAlignmentWriter>> lookup = new HashMap<>();
     for (int rangeIndex = 0; rangeIndex < regionRanges.length; ++rangeIndex) {
       final Range range = regionRanges[rangeIndex];
@@ -260,15 +262,15 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
           } else {
             endPos = r.getEndClipPosition() != HashingRegion.MISSING ? (int) r.getEndClipPosition() : searchParams.reader().length(seq);
           }
-          final RangeList.RangeData<UnmappedSamAlignmentWriter> rr = new RangeList.RangeData<>(startPos, endPos, outputWriters[rangeIndex]);
+          final RangeMeta<UnmappedSamAlignmentWriter> rr = new SimpleRangeMeta<>(startPos, endPos, outputWriters[rangeIndex]);
           temp.computeIfAbsent(seq, k -> new ArrayList<>()).add(rr);
         }
       }
     }
-    for (Map.Entry<Long, List<RangeList.RangeData<UnmappedSamAlignmentWriter>>> entry : temp.entrySet()) {
+    for (Map.Entry<Long, List<RangeMeta<UnmappedSamAlignmentWriter>>> entry : temp.entrySet()) {
       lookup.put(entry.getKey(), new RangeList<>(entry.getValue()));
     }
-    lookup.put(-1L, new RangeList<>(new RangeList.RangeData<>(-1, Integer.MAX_VALUE, unmappedNoPositionSamWriter)));
+    lookup.put(-1L, new RangeList<>(new SimpleRangeMeta<>(-1, Integer.MAX_VALUE, unmappedNoPositionSamWriter)));
     return lookup;
   }
 

@@ -34,7 +34,8 @@ import com.rtg.reference.Sex;
 import com.rtg.util.Pair;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.intervals.RangeList;
-import com.rtg.util.intervals.RangeList.RangeData;
+import com.rtg.util.intervals.RangeMeta;
+import com.rtg.util.intervals.SimpleRangeMeta;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
@@ -108,24 +109,24 @@ public class SegregationCheckerCli extends AbstractCli {
   }
 
   private Map<String, RangeList<PatternHolder>> loadBed() throws IOException {
-    final Map<String, List<RangeData<PatternHolder>>> ranges = new HashMap<>();
+    final Map<String, List<RangeMeta<PatternHolder>>> ranges = new HashMap<>();
     try (final BedReader reader = BedReader.openBedReader(null, (File) mFlags.getValue(BED_FLAG), 2)) {
       while (reader.hasNext()) {
         final BedRecord rec = reader.next();
         if (!rec.getAnnotations()[0].matches("^[01?]+$") || !rec.getAnnotations()[1].matches("^[01?]+$")) {
           continue;
         }
-        final List<RangeData<PatternHolder>> chrList = ranges.computeIfAbsent(rec.getSequenceName(), k -> new ArrayList<>());
+        final List<RangeMeta<PatternHolder>> chrList = ranges.computeIfAbsent(rec.getSequenceName(), k -> new ArrayList<>());
         final int start = rec.getStart();
         int end = rec.getEnd();
         if (end == start) {
           ++end;
         }
-        chrList.add(new RangeData<>(start, end, PatternHolder.fromPatternStrings(rec.getAnnotations()[0], rec.getAnnotations()[1], rec.getAnnotations()[2])));
+        chrList.add(new SimpleRangeMeta<>(start, end, PatternHolder.fromPatternStrings(rec.getAnnotations()[0], rec.getAnnotations()[1], rec.getAnnotations()[2])));
       }
     }
     final Map<String, RangeList<PatternHolder>> patterns = new HashMap<>(ranges.size());
-    for (final Map.Entry<String, List<RangeData<PatternHolder>>> chrEntry : ranges.entrySet()) {
+    for (final Map.Entry<String, List<RangeMeta<PatternHolder>>> chrEntry : ranges.entrySet()) {
       final RangeList<PatternHolder> rangeList = new RangeList<>(chrEntry.getValue());
       patterns.put(chrEntry.getKey(), rangeList);
     }

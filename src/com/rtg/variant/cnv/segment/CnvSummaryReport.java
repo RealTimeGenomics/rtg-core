@@ -84,11 +84,11 @@ class CnvSummaryReport {
     // Fill in sorted list of gene names
     for (String chr : regions.sequenceNames()) {
       final RangeList<String> rr = regions.get(chr);
-      for (RangeList.RangeData<String> region : rr.getRangeList()) {
-        if (region.getMeta().size() != 1) {
+      for (RangeList.RangeView<String> region : rr.getRangeList()) {
+        if (region.getEnclosingRanges().size() != 1) {
           throw new RuntimeException("Overlapping report regions not supported!");
         }
-        final String name = region.getMeta().get(0);
+        final String name = region.getEnclosingRanges().get(0).getMeta();
         if (mByName.containsKey(name)) {
           throw new RuntimeException("Duplicate report regions with name: " + name);
         }
@@ -130,15 +130,15 @@ class CnvSummaryReport {
 
         // Determine intersection
         final RangeList<String> rr = mRegions.get(chr);
-        final List<RangeList.RangeData<String>> chrGenes = rr.getFullRangeList();
+        final List<RangeList.RangeView<String>> chrGenes = rr.getFullRangeList();
         for (int hit = rr.findFullRangeIndex(start); hit < chrGenes.size() && chrGenes.get(hit).getStart() < end; hit++) {
-          final RangeList.RangeData<String> gene = chrGenes.get(hit);
-          if (gene.hasMeta()) {
+          final RangeList.RangeView<String> gene = chrGenes.get(hit);
+          if (gene.hasRanges()) {
             final double logR = VcfUtils.getDoubleFormatFieldFromRecord(rec, 0, FORMAT_LOGR);
             if (Math.abs(logR) >= mThreshold) {
               final int[] cipos = VcfUtils.getConfidenceInterval(rec, VcfUtils.INFO_CIPOS);
               final int[] ciend = VcfUtils.getConfidenceInterval(rec, VcfUtils.INFO_CIEND);
-              geneStatus.put(gene.getMeta().get(0), new GeneStatus(status, logR,
+              geneStatus.put(gene.getEnclosingRanges().get(0).getMeta(), new GeneStatus(status, logR,
                 new SequenceNameLocusSimple(chr, start, end),
                 new SequenceNameLocusSimple(chr, start + (cipos == null ? 0 : cipos[0]), end + (ciend == null ? 0 : ciend[1]))));
             }

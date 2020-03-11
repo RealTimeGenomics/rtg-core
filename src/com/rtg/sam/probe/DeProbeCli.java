@@ -50,6 +50,8 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.RangeList;
+import com.rtg.util.intervals.SimpleRangeMeta;
+import com.rtg.util.intervals.RangeMeta;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
@@ -358,7 +360,7 @@ public class DeProbeCli extends LoggedCli {
       bedWriter.writeComment("chrom\tstart\tend\tname\tscore\tstrand\tcount");
       for (String sequenceName : posRanges.sequenceNames()) {
         final RangeList<ProbeCounter> rangeList = posRanges.get(sequenceName);
-        rangeList.getRangeList().stream().map(RangeList.RangeData::getOriginalRanges).flatMap(Collection::stream).forEach(
+        rangeList.getRangeList().stream().map(RangeList.RangeView::getEnclosingRanges).flatMap(Collection::stream).forEach(
           data -> {
             try {
               bedWriter.write(toBedRecord(sequenceName, data));
@@ -373,8 +375,8 @@ public class DeProbeCli extends LoggedCli {
     }
   }
 
-  BedRecord toBedRecord(String sequenceName, RangeList.RangeData<ProbeCounter> data) {
-    final ProbeCounter counter = data.getMeta().get(0);
+  BedRecord toBedRecord(String sequenceName, RangeMeta<ProbeCounter> data) {
+    final ProbeCounter counter = data.getMeta();
     final List<String> annotations = counter.getAnnotations();
     final String[] annotationArray = new String[annotations.size() + 1];
     int i = 0;
@@ -442,7 +444,7 @@ public class DeProbeCli extends LoggedCli {
     try (BedReader bedReader = BedReader.openBedReader(null, bedFile, 3)) {
       while (bedReader.hasNext()) {
         final BedRecord record = bedReader.next();
-        final RangeList.RangeData<ProbeCounter> rangeData = new RangeList.RangeData<>(record.getStart(), record.getEnd(), new ProbeCounter(Arrays.asList(record.getAnnotations())));
+        final RangeMeta<ProbeCounter> rangeData = new SimpleRangeMeta<>(record.getStart(), record.getEnd(), new ProbeCounter(Arrays.asList(record.getAnnotations())));
         if ("+".equals(record.getAnnotations()[2])) {
           posRangesAccum.addRangeData(record.getSequenceName(), rangeData);
         } else if ("-".equals(record.getAnnotations()[2])) {
@@ -464,10 +466,10 @@ public class DeProbeCli extends LoggedCli {
       return null;
     }
     int index = checker.getStartDataIndex(record, list);
-    RangeList.RangeData<ProbeCounter> data = list.getFullRangeList().get(index);
+    RangeList.RangeView<ProbeCounter> data = list.getFullRangeList().get(index);
     while (recordOverlap(record, data, tolerance)) {
-      if (data != null && data.hasMeta()) {
-        final ProbeCounter counter = data.getMeta().get(0);
+      if (data != null && data.hasRanges()) {
+        final ProbeCounter counter = data.getEnclosingRanges().get(0).getMeta();
         if (checker.checkPosition(record, data)) {
           checker.stripRecord(record, mate, data);
           counter.increment();
@@ -483,7 +485,7 @@ public class DeProbeCli extends LoggedCli {
     return null;
   }
 
-  private static <T> boolean recordOverlap(SAMRecord rec, RangeList.RangeData<T> data, int tolerance) {
+  private static <T> boolean recordOverlap(SAMRecord rec, RangeList.RangeView<T> data, int tolerance) {
     if (data == null) {
       return false;
     }

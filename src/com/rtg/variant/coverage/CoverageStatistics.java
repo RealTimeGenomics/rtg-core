@@ -45,6 +45,7 @@ import com.rtg.util.TextTable;
 import com.rtg.util.Utils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.intervals.RangeList;
+import com.rtg.util.intervals.RangeMeta;
 import com.rtg.util.io.FileUtils;
 
 /**
@@ -102,8 +103,8 @@ public class CoverageStatistics extends AbstractStatistics {
   private final MultiSet<String> mTotalLengthPerName = new MultiSet<>();
   private final MultiSet<String> mCoveredLengthPerName = new MultiSet<>();
 
-  private final Map<RangeList.RangeData<String>, CoverageSequenceStatistics> mOriginalRangeStatisticsMap = new HashMap<>();
-  private List<RangeList.RangeData<String>> mCurrentRange = Collections.emptyList();
+  private final Map<RangeMeta<String>, CoverageSequenceStatistics> mOriginalRangeStatisticsMap = new HashMap<>();
+  private List<RangeMeta<String>> mCurrentRange = Collections.emptyList();
 
   /**
    * Number of template positions whose coverage is in a given bucket.
@@ -322,14 +323,14 @@ public class CoverageStatistics extends AbstractStatistics {
     mCoverageWriter = writer;
   }
 
-  void setRange(String sequenceName, RangeList.RangeData<String> range) throws IOException {
-    final List<RangeList.RangeData<String>> newList = range == null ? Collections.emptyList() : range.getOriginalRanges();
+  void setRange(String sequenceName, RangeList.RangeView<String> range) throws IOException {
+    final List<RangeMeta<String>> newList = range == null ? Collections.emptyList() : range.getEnclosingRanges();
 
     //flush previous range stats, for any that are not present in the new list
-    for (final RangeList.RangeData<String> origRange : mCurrentRange) {
+    for (final RangeMeta<String> origRange : mCurrentRange) {
       if (!newList.contains(origRange)) {
         final CoverageSequenceStatistics stats = mOriginalRangeStatisticsMap.get(origRange);
-        final String name = origRange.getMeta().get(0);
+        final String name = origRange.getMeta();
         if (mCoverageWriter != null && stats.mBases > 0) {
           mCoverageWriter.setRegionLabel(name);
           mCoverageWriter.finalCoverageRegion(sequenceName, origRange.getStart(), origRange.getEnd(), stats.mTotalCoverage / stats.mBases);
@@ -343,7 +344,7 @@ public class CoverageStatistics extends AbstractStatistics {
 
     // Create new range stats for any that aren't already present
     newList.stream().filter(origRange -> !mOriginalRangeStatisticsMap.containsKey(origRange)).forEach(origRange -> {
-      mCoverageNames.add(origRange.getMeta().get(0));
+      mCoverageNames.add(origRange.getMeta());
       mOriginalRangeStatisticsMap.put(origRange, new CoverageSequenceStatistics());
     });
 
@@ -375,7 +376,7 @@ public class CoverageStatistics extends AbstractStatistics {
         }
         mTotalCoverage += currCoverage;
       }
-      for (final RangeList.RangeData<String> origRange : mCurrentRange) {
+      for (final RangeMeta<String> origRange : mCurrentRange) {
         mOriginalRangeStatisticsMap.get(origRange).update(currCoverage, minimumCoverageForBreadth);
       }
     }

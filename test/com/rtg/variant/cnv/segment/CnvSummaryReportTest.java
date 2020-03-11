@@ -22,6 +22,7 @@ import org.junit.Test;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.RangeList;
+import com.rtg.util.intervals.SimpleRangeMeta;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
@@ -53,7 +54,7 @@ public class CnvSummaryReportTest {
       final File vcfFile = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/singleRecord.vcf", new File(temp, "singleRecord.vcf"));
       final File output = new File(temp, "out");
       final ReferenceRanges<String> regions = new ReferenceRanges<>(true);
-      final RangeList<String> range = new RangeList<>(new RangeList.RangeData<>(4580, 4690, "one"));
+      final RangeList<String> range = new RangeList<>(new SimpleRangeMeta<>(4580, 4690, "one"));
       regions.put("19", range);
       final CnvSummaryReport cnvSummaryReport = new CnvSummaryReport(regions);
       cnvSummaryReport.report(vcfFile, output);

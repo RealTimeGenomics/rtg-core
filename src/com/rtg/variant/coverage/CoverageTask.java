@@ -38,7 +38,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ParallelProgress;
 import com.rtg.util.diagnostic.Timer;
 import com.rtg.util.intervals.RangeList;
-import com.rtg.util.intervals.RangeList.RangeData;
+import com.rtg.util.intervals.RangeList.RangeView;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.variant.bayes.multisample.ChunkInfo;
 
@@ -160,7 +160,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
    * @throws IOException if an exception occurs while reading or writing
    */
   private void processReference(CoverageProcessor coverageWriter, SAMSequenceRecord r, SimpleRecordCounter recCounts, RangeList<String> rangeList) throws IOException {
-    final List<RangeList.RangeData<String>> ranges = rangeList.getRangeList();
+    final List<RangeView<String>> ranges = rangeList.getRangeList();
     if (ranges.isEmpty()) { // no ranges were specified for this reference, so bail out
       return;
     }
@@ -174,7 +174,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
       final boolean byLevels = !mParams.tsvOutput() && !byRegions;
 
       int rangeIndex = 0;
-      RangeData<String> range = ranges.get(rangeIndex);
+      RangeView<String> range = ranges.get(rangeIndex);
       assert mInfo.start() == range.getStart();
       mStatistics.setRange(sequenceName, range);
 

@@ -84,7 +84,7 @@ public class SegregationChecker {
     mLinkedPatterns = new HashMap<>(mPatterns.size());
     for (final Entry<String, RangeList<PatternHolder>> el : mPatterns.entrySet()) {
       final LinkedSet<PatternHolder> ls = new LinkedSet<>();
-      for (final RangeList.RangeData<PatternHolder> range : el.getValue().getRangeList()) {
+      for (final RangeList.RangeView<PatternHolder> range : el.getValue().getRangeList()) {
         for (final PatternHolder pah : range.getMeta()) {
           ls.add(pah);
         }

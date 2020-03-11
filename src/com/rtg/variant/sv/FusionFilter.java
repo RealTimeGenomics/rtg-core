@@ -41,6 +41,7 @@ import com.rtg.util.Pair;
 import com.rtg.util.TsvParser;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.intervals.RangeList;
+import com.rtg.util.intervals.SimpleRangeMeta;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.vcf.AltVariantTypeFilter;
 import com.rtg.vcf.AssertVcfSorted;
@@ -290,7 +291,7 @@ public class FusionFilter extends AbstractCli {
           final BedRecord record = bedReader.next();
           final String gene = record.getAnnotations()[geneCol];
           final String strand = record.getAnnotations()[strandCol];
-          final RangeList.RangeData<String> rangeData = new RangeList.RangeData<>(record.getStart(), record.getEnd(), gene);
+          final SimpleRangeMeta<String> rangeData = new SimpleRangeMeta<>(record.getStart(), record.getEnd(), gene);
           if ("+".equals(strand)) {
             posRangesAccum.addRangeData(record.getSequenceName(), rangeData);
           } else if ("-".equals(strand)) {

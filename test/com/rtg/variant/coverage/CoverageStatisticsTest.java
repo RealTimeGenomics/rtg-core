@@ -22,6 +22,8 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.IndexUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.intervals.RangeList;
+import com.rtg.util.intervals.RangeMeta;
+import com.rtg.util.intervals.SimpleRangeMeta;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
@@ -30,8 +32,8 @@ public class CoverageStatisticsTest extends AbstractNanoTest {
   public void testAddAverageCoverage() throws IOException {
     final CoverageStatistics cs = new CoverageStatistics(null, false);
 
-    final RangeList.RangeData<String> range = new RangeList.RangeData<>(0, 10, "blah");
-    final List<RangeList.RangeData<String>> ranges = new ArrayList<>();
+    final SimpleRangeMeta<String> range = new SimpleRangeMeta<>(0, 10, "blah");
+    final List<RangeMeta<String>> ranges = new ArrayList<>();
     ranges.add(range);
     final RangeList<String> rangesearch = new RangeList<>(ranges);
     cs.setRange("seq", rangesearch.getRangeList().get(0));

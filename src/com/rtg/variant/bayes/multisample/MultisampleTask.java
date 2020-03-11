@@ -164,7 +164,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
   private int processNtPositions(List<Variant> calls, MultisampleJointCaller jointCaller, ChunkInfo chunkInfo, byte[] template, ReaderWindow<VariantAlignmentRecord> tribble, int start, int end) throws IOException {
 
     int maxReadLen = 0;
-    List<RangeList.RangeData<String>> ranges = null;
+    List<RangeList.RangeView<String>> ranges = null;
     int rangeIndex = 0;
     boolean skipWholeChunk = false;
     if (mWrapper.context().hasRegions()) {
@@ -172,8 +172,8 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       ranges = currentRangeList.getFullRangeList();
       rangeIndex = currentRangeList.findFullRangeIndex(start);
       assert rangeIndex < ranges.size();
-      final RangeList.RangeData<String> range = ranges.get(rangeIndex);
-      skipWholeChunk = !range.hasMeta() && range.contains(end);
+      final RangeList.RangeView<String> range = ranges.get(rangeIndex);
+      skipWholeChunk = !range.hasRanges() && range.contains(end);
     }
     if (skipWholeChunk) {
       tribble.advanceBuffer(end);
@@ -278,13 +278,13 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
   }
 
   // Sets the status of any positions within the interval to SKIP if they are contained within a no-call range entry (one without metadata)
-  private static void addRangeStatuses(StatusInterval statusInterval, List<RangeList.RangeData<String>> ranges, int startIndex, int endPos) {
+  private static void addRangeStatuses(StatusInterval statusInterval, List<RangeList.RangeView<String>> ranges, int startIndex, int endPos) {
     for (int rangeIndex = startIndex; rangeIndex < ranges.size(); ++rangeIndex) {
-      final RangeList.RangeData<String> range = ranges.get(rangeIndex);
+      final RangeList.RangeView<String> range = ranges.get(rangeIndex);
       if (range.getStart() > endPos) {
         break;
       }
-      if (!range.hasMeta()) {
+      if (!range.hasRanges()) {
         statusInterval.add(range.getStart(), range.getEnd(), SKIP);
       }
     }
@@ -651,7 +651,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     Diagnostic.userLog("Sequence " + refName + " extreme coverage bypass level is "
                        + mParams.maxCoverageBypass().thresholdTotal(refName));
 
-    final List<RangeList.RangeData<String>> ranges = mWrapper.getCurrentRangeList().getRangeList();
+    final List<RangeList.RangeView<String>> ranges = mWrapper.getCurrentRangeList().getRangeList();
     assert !ranges.isEmpty();
     final int startPos = ranges.get(0).getStart();
     if (startPos >= refNts.length) {
