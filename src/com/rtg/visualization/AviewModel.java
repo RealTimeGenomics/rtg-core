@@ -274,15 +274,11 @@ final class AviewModel {
   private BedSet loadBedSet(File bedFile, String bedName, RegionRestriction region) throws IOException {
     final BedSet bedset = new BedSet(bedName, new ArrayList<>());
     try (BedReader r = BedReader.openBedReader(TabixIndexer.indexFileName(bedFile).exists() ? region : null, bedFile, 0)) {
-      while (r.hasNext()) {
-        final BedRecord current = r.next();
-        // Explicitly check the position in case this is from an untabixed source.
-        if (!region.overlaps(current)) {
-          continue;
+      r.forEach(current -> {
+        if (region.overlaps(current)) {
+          bedset.bedRecords().add(current);
         }
-        //System.err.println("Loaded bed record: " + current.toString());
-        bedset.bedRecords().add(current);
-      }
+      });
     }
     return bedset;
   }

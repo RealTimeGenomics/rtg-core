@@ -103,9 +103,7 @@ public class SvPatternsTask extends ParamsTask<BreakpointPatternParams, NoStatis
     final BreakpointStore store = new BreakpointStore();
     for (File f : files) {
       try (final VcfIterator vcf = new VcfFilterIterator(VcfReader.openVcfReader(f, region), filters)) {
-        while (vcf.hasNext()) {
-          store.add(new VcfBreakpoint(vcf.next()));
-        }
+        vcf.forEach(rec -> store.add(new VcfBreakpoint(rec)));
       }
     }
     return store;

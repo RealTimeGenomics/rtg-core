@@ -124,9 +124,7 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
               getClassification(rec).ifPresent(isPos -> dataset.addInstance(new Instance(ae.getInstance(rec, vcfDataset.getSampleNum()), isPos, vcfDataset.getInstanceWeight())));
             }
           } else {
-            while (reader.hasNext()) {
-              dataset.addInstance(new Instance(ae.getInstance(reader.next(), vcfDataset.getSampleNum()), vcfDataset.isPositive(), vcfDataset.getInstanceWeight()));
-            }
+            reader.forEach(rec -> dataset.addInstance(new Instance(ae.getInstance(rec, vcfDataset.getSampleNum()), vcfDataset.isPositive(), vcfDataset.getInstanceWeight())));
           }
           synchronized (datasets) {
             datasets.put(vcfDataset, dataset);

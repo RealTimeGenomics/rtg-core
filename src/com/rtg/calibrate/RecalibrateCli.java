@@ -121,14 +121,14 @@ public class RecalibrateCli extends AbstractCli {
       final File vcf = (File) mFlags.getValue(EXCLUDE_VCF_FLAG);
       Diagnostic.userLog("Loading exclusion VCF: " + vcf);
       try (IOIterator<? extends SequenceNameLocus> r = VcfReader.openVcfReader(vcf)) {
-        regions.subtract(r);
+        r.forEach(regions::subtract);
       }
     }
     if (mFlags.isSet(EXCLUDE_BED_FLAG)) {
       final File bed = (File) mFlags.getValue(EXCLUDE_BED_FLAG);
       Diagnostic.userLog("Loading exclusion BED: " + bed);
       try (IOIterator<? extends SequenceNameLocus> r = BedReader.openBedReader(null, bed, 0)) {
-        regions.subtract(r);
+        r.forEach(regions::subtract);
       }
     }
     Diagnostic.userLog("Starting calibration");
