@@ -234,14 +234,14 @@ public final class CigarFormatter {
     if (read.length == 0) {
       return null; // For records that are non-primary and have no read or quality data stored with them
     }
-    //position in reference (0 based)
+    if (qual.length > 0 && qual.length != read.length) {
+      return null;
+    }
     int refPos = alignmentRecord.getStart();
-    //position in read (0 based)
     int readPos = 0;
     int n = 0;
     int i = 0;
-    //move along cigar until reach start of selected subregion
-    while (true) {
+    while (true) { // consume cigar until start of selected subregion
       if (i >= cigar.length()) {
         //ran out of room nothing to report
         return null;
@@ -255,7 +255,6 @@ public final class CigarFormatter {
             case SamUtils.CIGAR_SAME_OR_MISMATCH:
             case SamUtils.CIGAR_SAME:
             case SamUtils.CIGAR_MISMATCH:
-            case SamUtils.CIGAR_PADDING:
               ++refPos;
               ++readPos;
               break;
@@ -268,9 +267,10 @@ public final class CigarFormatter {
               ++refPos;
               break;
             case SamUtils.CIGAR_HARD_CLIP:
+            case SamUtils.CIGAR_PADDING:
               break;
             default:
-              throw new IllegalArgumentException(cigar);
+              throw new IllegalArgumentException("Unsupported cigar operation: " + c + " in cigar: " + cigar);
           }
           --n;
         } //end while
@@ -286,7 +286,6 @@ public final class CigarFormatter {
     //scan through the subregion setting flags about what has been seen
     //and building up the string for the subregion
     final StringBuilder sb = new StringBuilder();
-    //final StringBuilder qb = qual.length == 0 ? null : new StringBuilder();
     final ByteArrayOutputStream qb = qual.length == 0 ? null : new ByteArrayOutputStream();
     boolean leftN = refPos > start;
     boolean validNt = false;
@@ -305,31 +304,32 @@ public final class CigarFormatter {
             case SamUtils.CIGAR_SAME_OR_MISMATCH:
             case SamUtils.CIGAR_SAME:
             case SamUtils.CIGAR_MISMATCH:
-            case 'P'://never seen RTG doesn't generate it
-              if (rightN) {
-                //an invalid mixed case
+              if (rightN) { //an invalid mixed case
                 return null;
               }
               ++refPos;
-              //this duplicates the 'I' case below
+              if (readPos >= read.length) {
+                return null; // cigar tried to consume more read than available
+              }
               sb.append(DnaUtils.getBase(read[readPos]));
               if (qb != null) {
                 qb.write(qual[readPos]);
               }
               ++readPos;
-              //valid
               validNt = true;
               break;
             case SamUtils.CIGAR_INSERTION_INTO_REF:
               if (rightN) { //an invalid mixed case
                 return null;
               }
+              if (readPos >= read.length) {
+                return null; // cigar tried to consume more read than available
+              }
               sb.append(DnaUtils.getBase(read[readPos]));
               if (qb != null) {
                 qb.write(qual[readPos]);
               }
               ++readPos;
-              //valid
               validNt = true;
               break;
             case SamUtils.CIGAR_SOFT_CLIP: // soft-clipping bases in read ignored for position
@@ -347,9 +347,10 @@ public final class CigarFormatter {
               ++refPos;
               break;
             case SamUtils.CIGAR_HARD_CLIP:
+            case SamUtils.CIGAR_PADDING:
               break;
             default:
-              throw new IllegalArgumentException("Unsupported cigar operation: " + c); //(c + ":" + cigar);
+              throw new IllegalArgumentException("Unsupported cigar operation: " + c + " in cigar: " + cigar);
           }
           --n;
         }
@@ -365,13 +366,10 @@ public final class CigarFormatter {
     if (readPos == 0 && refPos == start) {
       return null;
     }
-    if (leftN && !validNt && !rightN) {
-      //all Ns - no useful match can be returned.
+    if (leftN && !validNt && !rightN) { //all Ns - no useful match can be returned.
       return null;
     }
-    final byte[] quality = qb == null ? null : qb.toByteArray();
-    final String rs = sb.toString();
-    final AlignmentMatch match = new AlignmentMatch(alignmentRecord, chooser, rs, quality, params.qDefault(), 0, rs.length(), VariantUtils.readScoreFromAlignmentRecord(alignmentRecord, params), !leftN, !rightN);
+    final AlignmentMatch match = new AlignmentMatch(alignmentRecord, chooser, sb.toString(), qb == null ? null : qb.toByteArray(), params.qDefault(), 0, sb.length(), VariantUtils.readScoreFromAlignmentRecord(alignmentRecord, params), !leftN, !rightN);
     match.setBasesLeftOfMatch(startInRead);
     match.setBasesRightOfMatch(alignmentRecord.getRead().length - endReadPos);
     setSoftClipBases(cigar, match, read.length);

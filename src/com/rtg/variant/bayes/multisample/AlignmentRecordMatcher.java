@@ -106,7 +106,6 @@ public class AlignmentRecordMatcher {
       case SamUtils.CIGAR_SAME_OR_MISMATCH:
       case SamUtils.CIGAR_SAME:
       case SamUtils.CIGAR_MISMATCH:
-      case 'P':
         ++mRefPos;
         ++mReadPos;
         break;
@@ -118,6 +117,7 @@ public class AlignmentRecordMatcher {
       case SamUtils.CIGAR_DELETION_FROM_REF:
         ++mRefPos;
         break;
+      case SamUtils.CIGAR_PADDING:
       case SamUtils.CIGAR_HARD_CLIP:
         break;
       default:
@@ -136,9 +136,9 @@ public class AlignmentRecordMatcher {
       case SamUtils.CIGAR_INSERTION_INTO_REF:
         mReadNt = true;
         break;
-      case 'P':
       case SamUtils.CIGAR_GAP_IN_READ:
       case SamUtils.CIGAR_DELETION_FROM_REF:
+      case SamUtils.CIGAR_PADDING:
       case SamUtils.CIGAR_HARD_CLIP:
         break;
       default:
@@ -151,18 +151,16 @@ public class AlignmentRecordMatcher {
       case SamUtils.CIGAR_SAME_OR_MISMATCH:
       case SamUtils.CIGAR_SAME:
       case SamUtils.CIGAR_MISMATCH:
-      case 'P':
       case SamUtils.CIGAR_INSERTION_INTO_REF:
-        if (mRightN) {
-          //an invalid mixed case
+        if (mRightN || mReadPos >= mRead.length) {
           mInvalid = true;
+        } else {
+          mMatchString.append(DnaUtils.getBase(mRead[mReadPos]));
+          if (mQualString != null) {
+            mQualString.write(mQual[mReadPos]);
+          }
+          mValidNt = true;
         }
-        //this duplicates the 'I' case below
-        mMatchString.append(DnaUtils.getBase(mRead[mReadPos]));
-        if (mQualString != null) {
-          mQualString.write(mQual[mReadPos]);
-        }
-        mValidNt = true;
         break;
       case SamUtils.CIGAR_GAP_IN_READ:
         if (mValidNt) {
@@ -175,6 +173,7 @@ public class AlignmentRecordMatcher {
         adjustSoftClipBounds();
         break;
       case SamUtils.CIGAR_DELETION_FROM_REF:
+      case SamUtils.CIGAR_PADDING:
       case SamUtils.CIGAR_HARD_CLIP:
         break;
       default:

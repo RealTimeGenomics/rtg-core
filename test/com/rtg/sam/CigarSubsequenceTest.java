@@ -76,6 +76,10 @@ public class CigarSubsequenceTest extends AbstractTest {
     checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "4H12=4H", 0, 12, "ACGTACGTACGT"), 0, 12);
   }
 
+  public void testCigarSubSequenceP() {
+    checkCigarSubSequence("ACGTACGTACGT", "40P6I30P6=4P", 0, 6, "ACGTACGTACGT");
+  }
+
   public void testFoo() {
     checkCigarSubSequence("ACGTACGTACGT", "2=4M6=", 2, 6, "GTAC");
   }
@@ -104,6 +108,7 @@ public class CigarSubsequenceTest extends AbstractTest {
   }
 
   public void testCigarSubSequenceInvalid() {
+    checkCigarSubSequence("ACGTACGTACGT", "2=40I", 1, 6, null);
     checkCigarSubSequence("ACGTACGTACGT", "2=4N6I", 1, 6, null);
     checkCigarSubSequence("ACGTACGTACGT", "2=4N6=", 1, 6, "C~");
     checkCigarSubSequence("ACGTACGTACGT", "4=1N1=1N1=4=", 2, 6, null);
