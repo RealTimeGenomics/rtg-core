@@ -67,6 +67,11 @@
     <pathelement path="${tools.test.dir}" />
   </path>
 
+  <path id="test.regression.path">
+    <pathelement path="${core.test.dir}" />
+    <pathelement path="${tools.test.resource.dir}" />
+  </path>
+
   <union id="runtime.libs">
     <resources refid="core.runtime.libs"/>
     <resources refid="tools.runtime.libs"/>
