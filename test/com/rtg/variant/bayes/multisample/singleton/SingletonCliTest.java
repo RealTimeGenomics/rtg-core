@@ -92,4 +92,18 @@ public class SingletonCliTest extends AbstractCallerCliTest {
     }
   }
 
+  public void testBug1675NoRefCallWithAllMode() throws Exception {
+    try (final TestDirectory dir = new TestDirectory()) {
+      final String refFasta = FileHelper.resourceToString("com/rtg/variant/resources/bug1675_ref.fasta");
+      final File ref = new File(dir, "ref");
+      ReaderTestUtils.getReaderDNA(refFasta, ref, null).close();
+      final File reads = new File(dir, "reads.sam.gz");
+      FileHelper.resourceToFile("com/rtg/variant/resources/bug1675_reads.sam.gz", reads);
+      new TabixIndexer(reads, new File(dir, "reads.sam.gz.tbi")).saveSamIndex();
+      final File out = new File(dir, "calls");
+      checkMainInitOk("-t", ref.getPath(), "-o", out.getPath(), reads.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION, "--all", "--max-coverage", "25", "--region", "4:991+1");
+      final String log = FileUtils.fileToString(new File(out, "snp.log"));
+      TestUtils.containsAll(log, "160 alignments processed", "Finished successfully");
+    }
+  }
 }

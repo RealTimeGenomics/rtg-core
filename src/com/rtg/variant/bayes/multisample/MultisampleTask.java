@@ -614,8 +614,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     return calls;
   }
 
-
-  List<Variant> locusAndIonTorrentFilters(List<Variant> variants, byte[] template) {
+  private List<Variant> locusAndIonTorrentFilters(List<Variant> variants, byte[] template) {
     if (variants == null) {
       return null;
     }
@@ -625,8 +624,13 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
         // User doesn't want non-snps
         continue;
       }
-      if (v.getLocus().getStart() == 0 && VariantOutputVcfFormatter.includePreviousNt(v)) {
+      final boolean includePrevNt = VariantOutputVcfFormatter.includePreviousNt(v);
+      if (includePrevNt && v.getLocus().getStart() == 0) {
         // At the start of a reference sequence we currently append an N instead of anchoring on the following base -- for now don't output these records
+        continue;
+      }
+      if (!includePrevNt && v.getLocus().getStart() == v.getLocus().getEnd()) {
+        // Bug1675, empty ref with no call in --all mode
         continue;
       }
       result.add(v);
