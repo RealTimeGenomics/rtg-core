@@ -222,7 +222,7 @@ public class CoverageStatistics extends AbstractStatistics {
     graph.setLabel(Graph2D.Y, "Covered (cumulative %)");
 
     final ImageWriter iw = new ImageWriter(new GraphicsRenderer(new Color[] {Color.RED, new Color(0, 192, 0), new Color(0, 128, 255)}));
-    iw.toPNG(new File(hrh.getResourcesDir(), CUMULATIVE_COVERAGE_PNG_NAME), graph, 640, 480, null);
+    iw.toImage(ImageWriter.ImageFormat.PNG, new File(hrh.getResourcesDir(), CUMULATIVE_COVERAGE_PNG_NAME), graph, 640, 480, null);
     velocityMap.put("cumulativeCoveragePng", CUMULATIVE_COVERAGE_PNG_NAME);
 
     final Graph2D graph2 = new Graph2D();
@@ -234,7 +234,7 @@ public class CoverageStatistics extends AbstractStatistics {
     graph2.setLabel(Graph2D.X, "Coverage depth");
     graph2.setLabel(Graph2D.Y, "Covered (%)");
 
-    iw.toPNG(new File(hrh.getResourcesDir(), COVERAGE_PNG_NAME), graph2, 640, 480, null);
+    iw.toImage(ImageWriter.ImageFormat.PNG, new File(hrh.getResourcesDir(), COVERAGE_PNG_NAME), graph2, 640, 480, null);
     velocityMap.put("coveragePng", COVERAGE_PNG_NAME);
   }
 
