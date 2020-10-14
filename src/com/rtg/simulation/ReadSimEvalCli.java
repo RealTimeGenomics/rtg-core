@@ -55,6 +55,7 @@ import com.rtg.util.io.LogStream;
 import htsjdk.samtools.SAMException;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMTextHeaderCodec;
 
 /**
  * Class to calculate
@@ -325,7 +326,7 @@ public class ReadSimEvalCli extends LoggedCli {
       final SamReadingContext context = new SamReadingContext(inputs, 1, filterParams, SamUtils.getUberHeader(inputs), null); // Note, no CRAM support here yet
       try (RecordIterator<SAMRecord> itr = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
         if (recordsOut != null) {
-          recordsOut.write(itr.header().getTextHeader());
+          new SAMTextHeaderCodec().encode(recordsOut, itr.header());
         }
         while (itr.hasNext()) {
           ++totalRecords;
