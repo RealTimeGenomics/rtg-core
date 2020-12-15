@@ -263,9 +263,10 @@ public class VcfFormatFieldTest extends AbstractNanoTest {
 
 
   public void testQa() {
-    final VcfRecord record = new VcfRecord("foo", 1, "C");
-    record.addAltCall("T");
-    record.addFormatAndSample("GT", "0/1");
+    final VcfRecord record = new VcfRecord("foo", 1, "C")
+      .addAltCall("T")
+      .setNumberOfSamples(1)
+      .addFormatAndSample("GT", "0/1");
     final Calibrator calibrator = new Calibrator(new Covariate[]{new CovariateSequence(), new CovariateReadGroup()}, new ReferenceRegions());
     final CalibratedPerSequenceExpectedCoverage expectedCoverage = new CalibratedPerSequenceExpectedCoverage(calibrator, new HashMap<>(), new HashMap<>(), new RegionRestriction("foo:1+1000")) {
       @Override
