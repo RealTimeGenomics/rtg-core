@@ -118,7 +118,7 @@ public final class CoreCommand {
   static final Command MAPX = new LicensedCommand(new MapXCli(), CommandCategory.PROTEIN, ReleaseLevel.GA);
 
   /** Protein search from untranslated protein queries*/
-  static final Command MAPP = new LicensedCommand(new MapPCli(), CommandCategory.PROTEIN, ReleaseLevel.BETA);
+  static final Command MAPP = new LicensedCommand(new MapPCli(), CommandCategory.PROTEIN, ReleaseLevel.GA);
 
   /** Assemble reads into longer contigs */
   static final Command ASSEMBLE = new LicensedCommand(new AssembleCli(), CommandCategory.ASSEMBLY, ReleaseLevel.BETA);
@@ -137,7 +137,7 @@ public final class CoreCommand {
   static final Command MULTI_SOMATIC = new LicensedCommand(new SomaticCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs somatic variant calling. */
-  static final Command TUMOR_ONLY = new LicensedCommand(new TumorOnlyCli(), CommandCategory.VARIANT, ReleaseLevel.BETA);
+  static final Command TUMOR_ONLY = new LicensedCommand(new TumorOnlyCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs the mondo population/pedigree variant caller. */
   static final Command MULTI_POPULATION = new LicensedCommand(new PopulationCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
