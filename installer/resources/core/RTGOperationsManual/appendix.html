@@ -2,26 +2,26 @@
 
 <!doctype html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Appendix &#8212; RTG Core Operations Manual v3.11</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appendix &#8212; RTG Core Operations Manual v3.12</title>
     <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/bizstyle.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Administration &amp; Capacity Planning" href="administration.html" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <!--[if lt IE 9]>
-    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <script src="_static/css3-mediaqueries.js"></script>
     <![endif]-->
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -33,89 +33,10 @@
         <li class="right" >
           <a href="administration.html" title="Administration &amp; Capacity Planning"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.11</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.12</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Appendix</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/html_logo.png" alt="Logo"/>
-            </a></p>
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Appendix</a><ul>
-<li><a class="reference internal" href="#rtg-gapped-alignment-technical-description">RTG gapped alignment technical description</a><ul>
-<li><a class="reference internal" href="#alignment-computations">Alignment computations</a></li>
-<li><a class="reference internal" href="#alignment-scoring">Alignment scoring</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#using-sam-bam-read-groups-in-rtg-map">Using SAM/BAM Read Groups in RTG map</a></li>
-<li><a class="reference internal" href="#rtg-reference-file-format">RTG reference file format</a></li>
-<li><a class="reference internal" href="#rtg-taxonomic-reference-file-format">RTG taxonomic reference file format</a><ul>
-<li><a class="reference internal" href="#rtg-taxonomy-file-format">RTG taxonomy file format</a></li>
-<li><a class="reference internal" href="#rtg-taxonomy-lookup-file-format">RTG taxonomy lookup file format</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#pedigree-ped-input-file-format">Pedigree PED input file format</a></li>
-<li><a class="reference internal" href="#genetic-map-directory">Genetic map directory</a></li>
-<li><a class="reference internal" href="#rtg-commands-using-indexed-input-files">RTG commands using indexed input files</a></li>
-<li><a class="reference internal" href="#rtg-output-results-file-descriptions">RTG output results file descriptions</a><ul>
-<li><a class="reference internal" href="#sam-bam-file-extensions-rtg-map-command-output">SAM/BAM file extensions (RTG map command output)</a></li>
-<li><a class="reference internal" href="#sam-bam-file-extensions-rtg-cgmap-command-output">SAM/BAM file extensions (RTG cgmap command output)</a></li>
-<li><a class="reference internal" href="#small-variant-vcf-output-file-description">Small-variant VCF output file description</a></li>
-<li><a class="reference internal" href="#regions-bed-output-file-description">Regions BED output file description</a></li>
-<li><a class="reference internal" href="#sv-command-output-file-descriptions">SV command output file descriptions</a></li>
-<li><a class="reference internal" href="#discord-command-output-file-descriptions">Discord command output file descriptions</a></li>
-<li><a class="reference internal" href="#coverage-command-output-file-descriptions">Coverage command output file descriptions</a></li>
-<li><a class="reference internal" href="#mapx-and-mapp-output-file-description">Mapx and mapp output file description</a></li>
-<li><a class="reference internal" href="#species-results-file-description">Species results file description</a></li>
-<li><a class="reference internal" href="#similarity-results-file-descriptions">Similarity results file descriptions</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#rtg-javascript-filtering-api">RTG JavaScript filtering API</a><ul>
-<li><a class="reference internal" href="#vcf-record-field-access">VCF record field access</a><ul>
-<li><a class="reference internal" href="#chrom-pos-id-ref-qual">CHROM, POS, ID, REF, QUAL</a></li>
-<li><a class="reference internal" href="#alt-filter">ALT, FILTER</a></li>
-<li><a class="reference internal" href="#info-info-field">INFO.{INFO_FIELD}</a></li>
-<li><a class="reference internal" href="#sample-name-format-field">{SAMPLE_NAME}.{FORMAT_FIELD}</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#vcf-record-modification">VCF record modification</a></li>
-<li><a class="reference internal" href="#vcf-header-modification">VCF header modification</a><ul>
-<li><a class="reference internal" href="#ensureformatheader-format-header-string">ensureFormatHeader(FORMAT_HEADER_STRING)</a></li>
-<li><a class="reference internal" href="#ensureinfoheader-info-header-string">ensureInfoHeader(INFO_HEADER_STRING)</a></li>
-<li><a class="reference internal" href="#ensurefilterheader-filter-header-string">ensureFilterHeader(FILTER_HEADER_STRING)</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#additional-information-and-functions">Additional information and functions</a><ul>
-<li><a class="reference internal" href="#samples">SAMPLES</a></li>
-<li><a class="reference internal" href="#print-string">print({STRING})</a></li>
-<li><a class="reference internal" href="#error-string">error({STRING})</a></li>
-<li><a class="reference internal" href="#checkminversion-rtg-minimum-version">checkMinVersion(RTG_MINIMUM_VERSION)</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#parallel-processing-approach">Parallel processing approach</a></li>
-<li><a class="reference internal" href="#distribution-contents">Distribution Contents</a></li>
-<li><a class="reference internal" href="#readme-txt">README.txt</a></li>
-<li><a class="reference internal" href="#notice">Notice</a></li>
-</ul>
-</li>
-</ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="administration.html"
-                        title="previous chapter">Administration &amp; Capacity Planning</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/appendix.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -129,15 +50,15 @@
 <p>Real Time Genomics utilizes its own DNA sequence alignment tool and
 scoring system for aligned reads. Most methods for sequence comparison
 and alignment use a small set of operations derived from the notion of
-<em>edit distance</em> <a class="footnote-reference" href="#c1" id="id1">[1]</a> to discover differences between two DNA sequences.
+<em>edit distance</em> <a class="footnote-reference brackets" href="#c1" id="id1">1</a> to discover differences between two DNA sequences.
 The edit operations introduce insertions, deletions, and substitutions
 to transform one sequence into another. Alignments are termed global if
 they extend over all residues of both sequences.</p>
 <p>Most programs for finding global alignments are based on the
-Needleman-Wunsch algorithm <a class="footnote-reference" href="#c2" id="id2">[2]</a>. Alternatively, alignments may be local,
+Needleman-Wunsch algorithm <a class="footnote-reference brackets" href="#c2" id="id2">2</a>. Alternatively, alignments may be local,
 in which case reported alignments may contain subsequences of the input
 sequences. The Smith-Waterman variation on the Needleman-Wunsch
-algorithm finds such alignments <a class="footnote-reference" href="#c3" id="id3">[3]</a>. The proprietary RTG algorithm
+algorithm finds such alignments <a class="footnote-reference brackets" href="#c3" id="id3">3</a>. The proprietary RTG algorithm
 employs a further variation of this approach, using a dynamic
 programming edit-distance calculation for alignment of reads to a
 reference sequence. The alignment is <em>semi-global</em> in that it always
@@ -200,28 +121,21 @@ accgttgactctgtgacgctgcacgtacgt-ccaaaaataagt (read)
 <p>In addition to the alignment score, a CIGAR is also reported in SAM
 records.</p>
 <p>References for this section</p>
-<table class="docutils footnote" frame="void" id="c1" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Levenshtein, V. I.(1966) Binary codes capable of correcting deletions,
-insertions and reversal. Soviet Physics Doklady, 6:707-710.</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="c2" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Needleman, S. B and Wunsch, C. D. (1970) A general method applicable to
+<dl class="footnote brackets">
+<dt class="label" id="c1"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Levenshtein, V. I.(1966) Binary codes capable of correcting deletions,
+insertions and reversal. Soviet Physics Doklady, 6:707-710.</p>
+</dd>
+<dt class="label" id="c2"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>Needleman, S. B and Wunsch, C. D. (1970) A general method applicable to
 the search for similarities in the amino acid sequence of two
-proteins. Journal of Molecular Biology, 48:443-453</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="c3" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>Smith, T. F. and Waterman, M. S. (1981) Identification of common molecular
-subsequences. Journal of Molecular Biology. 147:195-197.</td></tr>
-</tbody>
-</table>
+proteins. Journal of Molecular Biology, 48:443-453</p>
+</dd>
+<dt class="label" id="c3"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
+<dd><p>Smith, T. F. and Waterman, M. S. (1981) Identification of common molecular
+subsequences. Journal of Molecular Biology. 147:195-197.</p>
+</dd>
+</dl>
 </div>
 </div>
 <div class="section" id="using-sam-bam-read-groups-in-rtg-map">
@@ -373,7 +287,8 @@ other contigs. It is specified with the following structure:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>either        def     &lt;ploidy&gt;        &lt;shape&gt;
 </pre></div>
 </div>
-<p>The <em>ploidy</em> field is one of <code class="docutils literal notranslate"><span class="pre">diploid</span></code>, <code class="docutils literal notranslate"><span class="pre">haploid</span></code>, <code class="docutils literal notranslate"><span class="pre">polyploid</span></code> or
+<p>The <em>ploidy</em> field is one of <code class="docutils literal notranslate"><span class="pre">haploid</span></code>, <code class="docutils literal notranslate"><span class="pre">diploid</span></code>, <code class="docutils literal notranslate"><span class="pre">triploid</span></code>,
+<code class="docutils literal notranslate"><span class="pre">tetraploid</span></code>, <code class="docutils literal notranslate"><span class="pre">pentaploid</span></code>, <code class="docutils literal notranslate"><span class="pre">hexaploid</span></code>, <code class="docutils literal notranslate"><span class="pre">polyploid</span></code> or
 <code class="docutils literal notranslate"><span class="pre">none</span></code>. The <em>shape</em> field is one of <code class="docutils literal notranslate"><span class="pre">circular</span></code> or <code class="docutils literal notranslate"><span class="pre">linear</span></code>.</p>
 <p>The specific chromosome settings lines are similar to the default
 chromosome settings lines. All the sex field options can be used,
@@ -504,14 +419,14 @@ comment containing the RTG taxonomy file version number.</p>
 <p>Each data line in the file represents a node in the taxonomy tree and is
 comprised of four tab separated values. The values on each line are:</p>
 <ol class="arabic simple">
-<li>The unique taxon ID of the node in the tree. This must be an integer
-value greater than or equal to 1.</li>
-<li>The taxon ID of the parent of this node. This must be an integer
-value corresponding to another node in the tree.</li>
-<li>The rank of the node in the taxonomy. This is a free format string
-that can contain any character other than a tab.</li>
-<li>The name of the node in the taxonomy. This is a free format string
-that can contain any character other than a tab.</li>
+<li><p>The unique taxon ID of the node in the tree. This must be an integer
+value greater than or equal to 1.</p></li>
+<li><p>The taxon ID of the parent of this node. This must be an integer
+value corresponding to another node in the tree.</p></li>
+<li><p>The rank of the node in the taxonomy. This is a free format string
+that can contain any character other than a tab.</p></li>
+<li><p>The name of the node in the taxonomy. This is a free format string
+that can contain any character other than a tab.</p></li>
 </ol>
 <p>The root of the tree is special and must have a taxon ID of 1. Since the
 root has no parent it can have a parent ID of either 1 (itself) or -1.
@@ -538,11 +453,11 @@ taxon IDs in the taxonomy tree. It contains one line for every sequence
 in the SDF, with each line containing two tab separated values.</p>
 <p>The values on each line are:</p>
 <ol class="arabic simple">
-<li>The taxonomy node ID that the sequence is associated with. This must
+<li><p>The taxonomy node ID that the sequence is associated with. This must
 be an integer value that corresponds to a node ID from the taxonomy
-tree.</li>
-<li>The name of the sequence as it appears in the SDF. (These can be
-discovered using the <code class="docutils literal notranslate"><span class="pre">--lengths</span></code> option of the <code class="docutils literal notranslate"><span class="pre">sdfstats</span></code> command)</li>
+tree.</p></li>
+<li><p>The name of the sequence as it appears in the SDF. (These can be
+discovered using the <code class="docutils literal notranslate"><span class="pre">--lengths</span></code> option of the <code class="docutils literal notranslate"><span class="pre">sdfstats</span></code> command)</p></li>
 </ol>
 <p>A single taxon ID may be associated with multiple sequence names. This
 is a way to group the chromosomes and plasmids belonging to a single
@@ -561,40 +476,40 @@ organism.</p>
 <p>The PED file format is a white space (tab or space) delimited ASCII
 file. Lines starting with <code class="docutils literal notranslate"><span class="pre">#</span></code> are ignored. It has exactly six required
 columns in the following order.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Column</th>
-<th class="head">Definition</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Definition</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><em>Family ID</em></td>
-<td>Alphanumeric ID of a family group. This field is ignored by RTG commands.</td>
+<tbody>
+<tr class="row-even"><td><p><em>Family ID</em></p></td>
+<td><p>Alphanumeric ID of a family group. This field is ignored by RTG commands.</p></td>
 </tr>
-<tr class="row-odd"><td><em>Individual ID</em></td>
-<td>Alphanumeric ID of an individual. This corresponds to the Sample ID specified in the read group of the individual (<code class="docutils literal notranslate"><span class="pre">SM</span></code> field).</td>
+<tr class="row-odd"><td><p><em>Individual ID</em></p></td>
+<td><p>Alphanumeric ID of an individual. This corresponds to the Sample ID specified in the read group of the individual (<code class="docutils literal notranslate"><span class="pre">SM</span></code> field).</p></td>
 </tr>
-<tr class="row-even"><td><em>Paternal ID</em></td>
-<td>Alphanumeric ID of the paternal parent for the individual. This corresponds to the Sample ID specified in the read group of the paternal parent (<code class="docutils literal notranslate"><span class="pre">SM</span></code> field).</td>
+<tr class="row-even"><td><p><em>Paternal ID</em></p></td>
+<td><p>Alphanumeric ID of the paternal parent for the individual. This corresponds to the Sample ID specified in the read group of the paternal parent (<code class="docutils literal notranslate"><span class="pre">SM</span></code> field).</p></td>
 </tr>
-<tr class="row-odd"><td><em>Maternal ID</em></td>
-<td>Alphanumeric ID of the maternal parent for the individual. This corresponds to the Sample ID specified in the read group of the maternal parent (<code class="docutils literal notranslate"><span class="pre">SM</span></code> field).</td>
+<tr class="row-odd"><td><p><em>Maternal ID</em></p></td>
+<td><p>Alphanumeric ID of the maternal parent for the individual. This corresponds to the Sample ID specified in the read group of the maternal parent (<code class="docutils literal notranslate"><span class="pre">SM</span></code> field).</p></td>
 </tr>
-<tr class="row-even"><td><em>Sex</em></td>
-<td>The sex of the individual specified as using 1 for male, 2 for female and any other number as unknown.</td>
+<tr class="row-even"><td><p><em>Sex</em></p></td>
+<td><p>The sex of the individual specified as using 1 for male, 2 for female and any other number as unknown.</p></td>
 </tr>
-<tr class="row-odd"><td><em>Phenotype</em></td>
-<td>The phenotype of the individual specified using -9 or 0 for unknown, 1 for unaffected and 2 for affected.</td>
+<tr class="row-odd"><td><p><em>Phenotype</em></p></td>
+<td><p>The phenotype of the individual specified using -9 or 0 for unknown, 1 for unaffected and 2 for affected.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The PED format is based on the PED format defined by
+<p class="admonition-title">Note</p>
+<p>The PED format is based on the PED format defined by
 the PLINK project:
 <a class="reference external" href="http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#ped">http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml#ped</a></p>
 </div>
@@ -644,10 +559,10 @@ chr1    6098266 0.250261        0.0058215517933
 </div>
 <p>The columns in the example are:</p>
 <ol class="arabic simple">
-<li>Chromosome name</li>
-<li>Position in chromosome</li>
-<li>Rate of crossovers in region ending at this position (ignored)</li>
-<li>Total number of centimorgans from start of sequence</li>
+<li><p>Chromosome name</p></li>
+<li><p>Position in chromosome</p></li>
+<li><p>Rate of crossovers in region ending at this position (ignored)</p></li>
+<li><p>Total number of centimorgans from start of sequence</p></li>
 </ol>
 <p>The corresponding map directory should contain a file or files for each sequence
 of interest, using the naming convention
@@ -669,9 +584,9 @@ headers and possibly make other adjustments to these files before they
 can be used with RTG.</p>
 <p>Specific sources include:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://github.com/cbherer/Bherer_etal_SexualDimorphismRecombination">https://github.com/cbherer/Bherer_etal_SexualDimorphismRecombination</a></li>
-<li><a class="reference external" href="https://genome.sph.umich.edu/wiki/Polymutt2">https://genome.sph.umich.edu/wiki/Polymutt2</a></li>
-<li><a class="reference external" href="http://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/">http://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/</a></li>
+<li><p><a class="reference external" href="https://github.com/cbherer/Bherer_etal_SexualDimorphismRecombination">https://github.com/cbherer/Bherer_etal_SexualDimorphismRecombination</a></p></li>
+<li><p><a class="reference external" href="https://genome.sph.umich.edu/wiki/Polymutt2">https://genome.sph.umich.edu/wiki/Polymutt2</a></p></li>
+<li><p><a class="reference external" href="http://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/">http://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/</a></p></li>
 </ul>
 <p>A zip file containing the Bherer genetic map files for human build 37,
 with the required header manipulations already applied is available for
@@ -706,8 +621,8 @@ listing read alignments against reference sequences. SAM records list
 the mapping and alignment data for each read, ordered by chromosome (or
 other DNA reference sequence) location.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">For a thorough description of the SAM format please refer
+<p class="admonition-title">Note</p>
+<p>For a thorough description of the SAM format please refer
 to the specification at
 <a class="reference external" href="https://samtools.github.io/hts-specs/SAMv1.pdf">https://samtools.github.io/hts-specs/SAMv1.pdf</a></p>
 </div>
@@ -760,22 +675,22 @@ score is calculated and reported for RTG as described in
 <p>The following list describes RTG SAM/BAM file characteristics that may
 depart from or be undescribed in the SAM specification.</p>
 <ul class="simple">
-<li>Paired-end sequencing data</li>
-<li><code class="docutils literal notranslate"><span class="pre">FLAG</span></code> is set to 0x02 in properly paired reads and unset for
-unmated or unmapped reads.</li>
-<li>For all non-uniquely mapped reads <code class="docutils literal notranslate"><span class="pre">FLAG</span></code> 0x100 is set.</li>
-<li>Unmated and unmapped reads will have the <code class="docutils literal notranslate"><span class="pre">FLAG</span></code> 0x08 set to reflect
+<li><p>Paired-end sequencing data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FLAG</span></code> is set to 0x02 in properly paired reads and unset for
+unmated or unmapped reads.</p></li>
+<li><p>For all non-uniquely mapped reads <code class="docutils literal notranslate"><span class="pre">FLAG</span></code> 0x100 is set.</p></li>
+<li><p>Unmated and unmapped reads will have the <code class="docutils literal notranslate"><span class="pre">FLAG</span></code> 0x08 set to reflect
 whether the mate has been mapped, however <code class="docutils literal notranslate"><span class="pre">RNEXT</span></code> and <code class="docutils literal notranslate"><span class="pre">PNEXT</span></code>
-will always be “*”.</li>
-<li>For mapped reads, the SAM standard <code class="docutils literal notranslate"><span class="pre">NH</span></code> attribute is used, even for
-uniquely mapped reads (<code class="docutils literal notranslate"><span class="pre">NH:i:1</span></code>).</li>
-<li>Single-end sequencing data</li>
-<li>For all non-uniquely mapped reads <code class="docutils literal notranslate"><span class="pre">FLAG</span></code> 0x100 is set.</li>
-<li>For mapped reads, the SAM standard <code class="docutils literal notranslate"><span class="pre">NH</span></code> attribute is used, even for
-uniquely mapped reads (<code class="docutils literal notranslate"><span class="pre">NH:i:1</span></code>).</li>
-<li>Unmapped reads</li>
-<li><code class="docutils literal notranslate"><span class="pre">RNAME</span></code> and <code class="docutils literal notranslate"><span class="pre">CIGAR</span></code> are set as “*”.</li>
-<li><code class="docutils literal notranslate"><span class="pre">POS</span></code>, and <code class="docutils literal notranslate"><span class="pre">MAPQ</span></code> are set as 0.</li>
+will always be “*”.</p></li>
+<li><p>For mapped reads, the SAM standard <code class="docutils literal notranslate"><span class="pre">NH</span></code> attribute is used, even for
+uniquely mapped reads (<code class="docutils literal notranslate"><span class="pre">NH:i:1</span></code>).</p></li>
+<li><p>Single-end sequencing data</p></li>
+<li><p>For all non-uniquely mapped reads <code class="docutils literal notranslate"><span class="pre">FLAG</span></code> 0x100 is set.</p></li>
+<li><p>For mapped reads, the SAM standard <code class="docutils literal notranslate"><span class="pre">NH</span></code> attribute is used, even for
+uniquely mapped reads (<code class="docutils literal notranslate"><span class="pre">NH:i:1</span></code>).</p></li>
+<li><p>Unmapped reads</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RNAME</span></code> and <code class="docutils literal notranslate"><span class="pre">CIGAR</span></code> are set as “*”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">POS</span></code>, and <code class="docutils literal notranslate"><span class="pre">MAPQ</span></code> are set as 0.</p></li>
 </ul>
 <p>For mated records, the <code class="docutils literal notranslate"><span class="pre">XA</span></code> attribute contains the sum of the alignment
 scores for each arm. It is this score that is used to determine the
@@ -787,65 +702,65 @@ internal read mapping stage where the read arm was discarded as unmated
 or unmapped. If this is reported, it means that the read arm had
 matching hits at one point during the mapping phase.</p>
 <p>Single-end SAM character codes include:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="8%" />
-<col width="92%" />
+<col style="width: 8%" />
+<col style="width: 92%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Character</th>
-<th class="head">Definition</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Character</p></th>
+<th class="head"><p>Definition</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">XC:A:B</span></code></td>
-<td>Indicates that the number of raw index hits for the read exceeded the internal threshold of 65536.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">XC:A:B</span></code></p></td>
+<td><p>Indicates that the number of raw index hits for the read exceeded the internal threshold of 65536.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">XC:A:C</span></code></td>
-<td>Indicates that after initial ranking of hits for the read, too many hits were present (affected by <code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">XC:A:C</span></code></p></td>
+<td><p>Indicates that after initial ranking of hits for the read, too many hits were present (affected by <code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">XC:A:D</span></code></td>
-<td>Indicates that after alignment scores are calculated, the <img class="math" src="_images/math/b4e2012103f1c4a304de5f04d2c95b2fa7ddcd73.png" alt="\leq N"/> remaining hits were discarded because they exceeded the mismatches threshold (affected by
-<code class="docutils literal notranslate"><span class="pre">--max-mismatches</span></code>).</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">XC:A:D</span></code></p></td>
+<td><p>Indicates that after alignment scores are calculated, the <img class="math" src="_images/math/593c511ee9aeb89e927882c5cb67418a46da3828.png" alt="\leq N"/> remaining hits were discarded because they exceeded the mismatches threshold (affected by
+<code class="docutils literal notranslate"><span class="pre">--max-mismatches</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">XC:A:E</span></code></td>
-<td>Indicates that there were good scoring hits, but the arm was discarded because there were too many of these hits (affected by <code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">XC:A:E</span></code></p></td>
+<td><p>Indicates that there were good scoring hits, but the arm was discarded because there were too many of these hits (affected by <code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</p></td>
 </tr>
 </tbody>
 </table>
 <p>Paired-end SAM character codes include:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="6%" />
-<col width="94%" />
+<col style="width: 6%" />
+<col style="width: 94%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Character</th>
-<th class="head">Definition</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Character</p></th>
+<th class="head"><p>Definition</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">XC:A:B</span></code></td>
-<td>Indicates that the number of raw index hits for the read exceeded the internal threshold of 65536.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">XC:A:B</span></code></p></td>
+<td><p>Indicates that the number of raw index hits for the read exceeded the internal threshold of 65536.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">XC:A:C</span></code></td>
-<td>Indicates that there were index matches for the read arm, but no potential mated hits were found (affected by <code class="docutils literal notranslate"><span class="pre">--min-fragment-size</span></code> and
-<code class="docutils literal notranslate"><span class="pre">--max-fragment-size</span></code>), and after ranking candidate unpaired results there were too many hits (affected by <code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">XC:A:C</span></code></p></td>
+<td><p>Indicates that there were index matches for the read arm, but no potential mated hits were found (affected by <code class="docutils literal notranslate"><span class="pre">--min-fragment-size</span></code> and
+<code class="docutils literal notranslate"><span class="pre">--max-fragment-size</span></code>), and after ranking candidate unpaired results there were too many hits (affected by <code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">XC:A:d</span></code></td>
-<td>Indicates that potential mated hits were found for this read arm with its mate, but were discarded because they exceeded the mismatches threshold (affected by
-<code class="docutils literal notranslate"><span class="pre">--max-mated-mismatches</span></code>).</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">XC:A:d</span></code></p></td>
+<td><p>Indicates that potential mated hits were found for this read arm with its mate, but were discarded because they exceeded the mismatches threshold (affected by
+<code class="docutils literal notranslate"><span class="pre">--max-mated-mismatches</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">XC:A:D</span></code></td>
-<td>Indicates that no potential mated hits were found, and after alignment scores are calculated, the <img class="math" src="_images/math/66e94f41a0f1e5615bd662691764d652b37d7338.png" alt="(\leq N)"/>
-remaining hits were discarded because they exceeded the mismatches threshold (affected by <code class="docutils literal notranslate"><span class="pre">--max-unmated-mismatches</span></code>).</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">XC:A:D</span></code></p></td>
+<td><p>Indicates that no potential mated hits were found, and after alignment scores are calculated, the <img class="math" src="_images/math/92ddcd7319ecbea8436f1b18fbebf544a38e4c69.png" alt="(\leq N)"/>
+remaining hits were discarded because they exceeded the mismatches threshold (affected by <code class="docutils literal notranslate"><span class="pre">--max-unmated-mismatches</span></code>).</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">XC:A:e</span></code></td>
-<td>Indicates that good scoring hits were found for this read arm with its mate, but were discarded because there were too many hits at the best score (affected by
-<code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">XC:A:e</span></code></p></td>
+<td><p>Indicates that good scoring hits were found for this read arm with its mate, but were discarded because there were too many hits at the best score (affected by
+<code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">XC:A:E</span></code></td>
-<td>Indicates that no potential mated hits were found, there were good scoring unmated hits, but the arm was discarded because there were too many of these hits (affected by <code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">XC:A:E</span></code></p></td>
+<td><p>Indicates that no potential mated hits were found, there were good scoring unmated hits, but the arm was discarded because there were too many of these hits (affected by <code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</p></td>
 </tr>
 </tbody>
 </table>
@@ -947,8 +862,8 @@ determination is made based on statistical analysis of the accumulated
 read alignments. The predictions and accompanying statistics are
 reported in a text-based output file named <code class="docutils literal notranslate"><span class="pre">snps.vcf</span></code>.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">RTG variant calls are stored in VCF format (version
+<p class="admonition-title">Note</p>
+<p>RTG variant calls are stored in VCF format (version
 4.2). For more information about the VCF format, refer to the
 specification online at:
 <a class="reference external" href="https://samtools.github.io/hts-specs/VCFv4.2.pdf">https://samtools.github.io/hts-specs/VCFv4.2.pdf</a></p>
@@ -1001,8 +916,8 @@ chr1      202801 .     A        G           15.8   PASS    .       GT:DP:RE:AR:G
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The VCF specification defines the semantics of the <code class="docutils literal notranslate"><span class="pre">QUAL</span></code>
+<p class="admonition-title">Note</p>
+<p>The VCF specification defines the semantics of the <code class="docutils literal notranslate"><span class="pre">QUAL</span></code>
 column differently for records that contain any <code class="docutils literal notranslate"><span class="pre">ALT</span></code> alleles from
 those which do not, and that the <code class="docutils literal notranslate"><span class="pre">QUAL</span></code> column is also defined as a
 score applying across the set of all samples in the VCF. Thus for
@@ -1015,268 +930,268 @@ its unique variant calling features, described in the tables below.
 The exact set of fields used depend on the module run, with some fields
 only appropriate and present for family calling, somatic calling, etc.</p>
 <p>Table : RTG VCF file FILTER fields</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="9%" />
-<col width="91%" />
+<col style="width: 9%" />
+<col style="width: 91%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Value</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">PASS</span></code></td>
-<td>Standard VCF <code class="docutils literal notranslate"><span class="pre">PASS</span></code>, if variant meets all the filtering criteria.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PASS</span></code></p></td>
+<td><p>Standard VCF <code class="docutils literal notranslate"><span class="pre">PASS</span></code>, if variant meets all the filtering criteria.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">OC</span></code></td>
-<td>A predicted variation that has exceeded the maximum coverage filter threshold.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OC</span></code></p></td>
+<td><p>A predicted variation that has exceeded the maximum coverage filter threshold.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">a&lt;number&gt;</span></code></td>
-<td>A predicted variation that had greater than the given percentage of ambiguously mapped reads overlapping it. The number in the value is the percentage specified by the <code class="docutils literal notranslate"><span class="pre">--max-ambiguity</span></code> flag.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">a&lt;number&gt;</span></code></p></td>
+<td><p>A predicted variation that had greater than the given percentage of ambiguously mapped reads overlapping it. The number in the value is the percentage specified by the <code class="docutils literal notranslate"><span class="pre">--max-ambiguity</span></code> flag.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">RCEQUIV</span></code></td>
-<td>A predicted variation that is the same as a previous variant within a homopolymer or repeat region.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RCEQUIV</span></code></p></td>
+<td><p>A predicted variation that is the same as a previous variant within a homopolymer or repeat region.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">RC</span></code></td>
-<td>The variant caller encountered a complex looking situation. A typical example would be a long insert. Some complex regions may result in simple calls.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RC</span></code></p></td>
+<td><p>The variant caller encountered a complex looking situation. A typical example would be a long insert. Some complex regions may result in simple calls.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">RX</span></code></td>
-<td>This call was made within a long complex region. Note that no attempt is made to generate complex calls in very long complex regions.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RX</span></code></p></td>
+<td><p>This call was made within a long complex region. Note that no attempt is made to generate complex calls in very long complex regions.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">IONT</span></code></td>
-<td>A predicted variation that failed to pass homopolymer constraints specific to IonTorrent reads.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IONT</span></code></p></td>
+<td><p>A predicted variation that failed to pass homopolymer constraints specific to IonTorrent reads.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">OTHER</span></code></td>
-<td>The variant was filtered for an unknown reason.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OTHER</span></code></p></td>
+<td><p>The variant was filtered for an unknown reason.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">AVR&lt;number&gt;</span></code></td>
-<td>A predicted variation that had less than the given value for the AVR score. The number in the value is the minimum AVR score specified by the <code class="docutils literal notranslate"><span class="pre">--min-avr-score</span></code> flag.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">AVR&lt;number&gt;</span></code></p></td>
+<td><p>A predicted variation that had less than the given value for the AVR score. The number in the value is the minimum AVR score specified by the <code class="docutils literal notranslate"><span class="pre">--min-avr-score</span></code> flag.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">BED</span></code></td>
-<td>The predicted variant falls outside the BED calling regions defined by the <code class="docutils literal notranslate"><span class="pre">--filter-bed</span></code> flag.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BED</span></code></p></td>
+<td><p>The predicted variant falls outside the BED calling regions defined by the <code class="docutils literal notranslate"><span class="pre">--filter-bed</span></code> flag.</p></td>
 </tr>
 </tbody>
 </table>
 <p>Table : RTG VCF file INFO fields</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="9%" />
-<col width="91%" />
+<col style="width: 9%" />
+<col style="width: 91%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Value</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">NCS=&lt;value&gt;</span></code></td>
-<td>The Phred scaled posterior probability that the variant at this site is present in the cancer, output by the <code class="docutils literal notranslate"><span class="pre">somatic</span></code> command.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NCS=&lt;value&gt;</span></code></p></td>
+<td><p>The Phred scaled posterior probability that the variant at this site is present in the cancer, output by the <code class="docutils literal notranslate"><span class="pre">somatic</span></code> command.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">LOH=&lt;value&gt;</span></code></td>
-<td>The value shows on a scale from -1 to 1 if the evidence of a call would suggest a loss of heterozygosity. A long run of high values is a strong indicator of a loss of heterozygosity event.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">LOH=&lt;value&gt;</span></code></p></td>
+<td><p>The value shows on a scale from -1 to 1 if the evidence of a call would suggest a loss of heterozygosity. A long run of high values is a strong indicator of a loss of heterozygosity event.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">DP=&lt;depth&gt;</span></code></td>
-<td>The combined read depth of multi-sample variant calls.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DP=&lt;depth&gt;</span></code></p></td>
+<td><p>The combined read depth of multi-sample variant calls.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">DPR=&lt;ratio&gt;</span></code></td>
-<td>The ratio of combined read depth to the expected combined read depth.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DPR=&lt;ratio&gt;</span></code></p></td>
+<td><p>The ratio of combined read depth to the expected combined read depth.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">XRX</span></code></td>
-<td>Indicates the variant was called using the RTG complex caller. This means that a realignment of the reads relative to the reference and each other was required to make this call.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">XRX</span></code></p></td>
+<td><p>Indicates the variant was called using the RTG complex caller. This means that a realignment of the reads relative to the reference and each other was required to make this call.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">RCE</span></code></td>
-<td>Indicates the variant is the same as one or more other variants within a homopolymer or repeat region.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RCE</span></code></p></td>
+<td><p>Indicates the variant is the same as one or more other variants within a homopolymer or repeat region.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">NREF</span></code></td>
-<td>Indicates the variant is called at a site where the reference is unknown, and so some other scores that require exact knowledge of the reference may not be produced.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NREF</span></code></p></td>
+<td><p>Indicates the variant is called at a site where the reference is unknown, and so some other scores that require exact knowledge of the reference may not be produced.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">CT=&lt;value&gt;</span></code></td>
-<td>The maximum coverage threshold that was applied when the given variant has been filtered for being over the coverage threshold.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CT=&lt;value&gt;</span></code></p></td>
+<td><p>The maximum coverage threshold that was applied when the given variant has been filtered for being over the coverage threshold.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">AC</span></code></td>
-<td>The standard VCF allele count in genotypes field. For each ALT allele, in the same order as listed, the count of the allele in the genotypes.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">AC</span></code></p></td>
+<td><p>The standard VCF allele count in genotypes field. For each ALT allele, in the same order as listed, the count of the allele in the genotypes.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">AN</span></code></td>
-<td>The standard VCF total number of alleles in called genotypes field.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AN</span></code></p></td>
+<td><p>The standard VCF total number of alleles in called genotypes field.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">STRL</span></code></td>
-<td>The number of adjacent simple tandem repeats on the reference sequence.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">STRL</span></code></p></td>
+<td><p>The number of adjacent simple tandem repeats on the reference sequence.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">STRU</span></code></td>
-<td>The length of the repeating unit in a simple tandem repeat.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">STRU</span></code></p></td>
+<td><p>The length of the repeating unit in a simple tandem repeat.</p></td>
 </tr>
 </tbody>
 </table>
 <p>Table : RTG VCF file FORMAT fields</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="3%" />
-<col width="97%" />
+<col style="width: 3%" />
+<col style="width: 97%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Value</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">GT</span></code></td>
-<td>The standard VCF format genotype field.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GT</span></code></p></td>
+<td><p>The standard VCF format genotype field.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">DP</span></code></td>
-<td>The standard VCF format read depth field.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DP</span></code></p></td>
+<td><p>The standard VCF format read depth field.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">DPR</span></code></td>
-<td>The ratio of read depth to the expected read depth.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DPR</span></code></p></td>
+<td><p>The ratio of read depth to the expected read depth.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">VA</span></code></td>
-<td>The allele index (using same numbering as the <code class="docutils literal notranslate"><span class="pre">GT</span></code> field) of the most frequent non-REF allele. This allele may not necessarily be part of the genotype that was actually called.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">VA</span></code></p></td>
+<td><p>The allele index (using same numbering as the <code class="docutils literal notranslate"><span class="pre">GT</span></code> field) of the most frequent non-REF allele. This allele may not necessarily be part of the genotype that was actually called.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">RE</span></code></td>
-<td>The total error across bases of the reads at the SNP location. This is a corrective factor calculated from the r and q read mapping quality scores that adjusts the level of confidence higher or lower relative to read depth.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RE</span></code></p></td>
+<td><p>The total error across bases of the reads at the SNP location. This is a corrective factor calculated from the r and q read mapping quality scores that adjusts the level of confidence higher or lower relative to read depth.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">AR</span></code></td>
-<td>The ratio of reads contributing to the variant that are considered to be ambiguous to uniquely mapped reads.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AR</span></code></p></td>
+<td><p>The ratio of reads contributing to the variant that are considered to be ambiguous to uniquely mapped reads.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">RQ</span></code></td>
-<td>The Phred scaled posterior probability that the sample is not identical to the reference.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RQ</span></code></p></td>
+<td><p>The Phred scaled posterior probability that the sample is not identical to the reference.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">GQ</span></code></td>
-<td>The standard VCF format genotype quality field. This is the Phred scaled posterior score of the call. It is not necessarily the same as the <code class="docutils literal notranslate"><span class="pre">QUAL</span></code> column score.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GQ</span></code></p></td>
+<td><p>The standard VCF format genotype quality field. This is the Phred scaled posterior score of the call. It is not necessarily the same as the <code class="docutils literal notranslate"><span class="pre">QUAL</span></code> column score.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">GQD</span></code></td>
-<td>The genotype quality divided by the read depth of the sample.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GQD</span></code></p></td>
+<td><p>The genotype quality divided by the read depth of the sample.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">QD</span></code></td>
-<td>The quality field divided by the sum of the read depth for all samples.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">QD</span></code></p></td>
+<td><p>The quality field divided by the sum of the read depth for all samples.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">DN</span></code></td>
-<td>Indicates with a value of <code class="docutils literal notranslate"><span class="pre">Y</span></code> if the call for this sample is a putative <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> mutation, or <code class="docutils literal notranslate"><span class="pre">N</span></code> to indicate that the sample is not a <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> mutation. Note that even in cases when the <code class="docutils literal notranslate"><span class="pre">GT</span></code> of the sample and the parents would otherwise seem to indicate a <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> mutation, this field may be set to <code class="docutils literal notranslate"><span class="pre">N</span></code> when the variant caller has assigned a sufficiently low score to the likelihood that a <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> event has occurred.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DN</span></code></p></td>
+<td><p>Indicates with a value of <code class="docutils literal notranslate"><span class="pre">Y</span></code> if the call for this sample is a putative <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> mutation, or <code class="docutils literal notranslate"><span class="pre">N</span></code> to indicate that the sample is not a <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> mutation. Note that even in cases when the <code class="docutils literal notranslate"><span class="pre">GT</span></code> of the sample and the parents would otherwise seem to indicate a <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> mutation, this field may be set to <code class="docutils literal notranslate"><span class="pre">N</span></code> when the variant caller has assigned a sufficiently low score to the likelihood that a <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> event has occurred.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">DNP</span></code></td>
-<td>The Phred scaled probability that the call for this sample is due to a <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> mutation.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNP</span></code></p></td>
+<td><p>The Phred scaled probability that the call for this sample is due to a <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> mutation.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">OCOC</span></code></td>
-<td><p class="first">The count of evidence that is considered contrary to the call made for this sample, observed in the original sample.</p>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">OCOC</span></code></p></td>
+<td><p>The count of evidence that is considered contrary to the call made for this sample, observed in the original sample.</p>
 <p>For example, in a normal-cancer somatic call of 0/0 -&gt; 1/0, the <code class="docutils literal notranslate"><span class="pre">OCOC</span></code> value is the count of the somatic (1) allele in the normal sample.</p>
-<p class="last">Usually a high <code class="docutils literal notranslate"><span class="pre">OCOC</span></code> value indicates an unreliable call.</p>
+<p>Usually a high <code class="docutils literal notranslate"><span class="pre">OCOC</span></code> value indicates an unreliable call.</p>
 </td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">OCOF</span></code></td>
-<td><p class="first">The fraction of evidence that is considered contrary to the call made for this sample, observed in the original sample.</p>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OCOF</span></code></p></td>
+<td><p>The fraction of evidence that is considered contrary to the call made for this sample, observed in the original sample.</p>
 <p>For example, in a somatic call of 0/0 -&gt; 1/0, the <code class="docutils literal notranslate"><span class="pre">OCOF</span></code> value is the fraction of the somatic (1) allele in the normal sample.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">OCOF</span></code> and <code class="docutils literal notranslate"><span class="pre">OCOC</span></code> attributes are also applicable to <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> calls, where the evidence in the parents for the <code class="docutils literal notranslate"><span class="pre">de</span> <span class="pre">novo</span></code> allele is considered contrary.</p>
-<p class="last">Usually a high <code class="docutils literal notranslate"><span class="pre">OCOF</span></code> value indicates an unreliable call.</p>
+<p>Usually a high <code class="docutils literal notranslate"><span class="pre">OCOF</span></code> value indicates an unreliable call.</p>
 </td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">DCOC</span></code></td>
-<td><p class="first">The count of evidence that is considered contrary to the call made for this sample, observed in the derived sample.</p>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DCOC</span></code></p></td>
+<td><p>The count of evidence that is considered contrary to the call made for this sample, observed in the derived sample.</p>
 <p>For example, in a normal-cancer somatic call of 0/1 -&gt; 2/0, the <code class="docutils literal notranslate"><span class="pre">DCOC</span></code> value is the count of the germline (1) allele in the somatic sample.</p>
-<p class="last">In cases of high sample purity, a high <code class="docutils literal notranslate"><span class="pre">DCOC</span></code> value may indicate an unreliable call.</p>
+<p>In cases of high sample purity, a high <code class="docutils literal notranslate"><span class="pre">DCOC</span></code> value may indicate an unreliable call.</p>
 </td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">DCOF</span></code></td>
-<td><p class="first">The fraction of evidence that is considered contrary to the call made for this sample, observed in the derived sample.</p>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DCOF</span></code></p></td>
+<td><p>The fraction of evidence that is considered contrary to the call made for this sample, observed in the derived sample.</p>
 <p>For example, in a somatic call of 0/1 -&gt; 2/0, the <code class="docutils literal notranslate"><span class="pre">DCOF</span></code> value is the fraction of the germline (1) allele in the somatic sample.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">DCOF</span></code> and <code class="docutils literal notranslate"><span class="pre">DCOC</span></code> attributes are also applicable to pedigree aware calls, where the evidence of non-inherited parental alleles in the child is considered contrary.</p>
-<p class="last">In cases of high sample purity, a high <code class="docutils literal notranslate"><span class="pre">DCOF</span></code> value may indicate an unreliable call.</p>
+<p>In cases of high sample purity, a high <code class="docutils literal notranslate"><span class="pre">DCOF</span></code> value may indicate an unreliable call.</p>
 </td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">ABP</span></code></td>
-<td>The Phred scaled probability that allele imbalance is present in the call.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ABP</span></code></p></td>
+<td><p>The Phred scaled probability that allele imbalance is present in the call.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">SBP</span></code></td>
-<td>The Phred scaled probability that strand bias is present in the call.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SBP</span></code></p></td>
+<td><p>The Phred scaled probability that strand bias is present in the call.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">RPB</span></code></td>
-<td>The Phred scaled probability that read position bias is present in the call.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RPB</span></code></p></td>
+<td><p>The Phred scaled probability that read position bias is present in the call.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">PPB</span></code></td>
-<td>The Phred scaled probability that bias in the proportion of alignments that are properly paired is present in the call.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PPB</span></code></p></td>
+<td><p>The Phred scaled probability that bias in the proportion of alignments that are properly paired is present in the call.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">PUR</span></code></td>
-<td>The ratio of placed unmapped reads to mapped reads.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PUR</span></code></p></td>
+<td><p>The ratio of placed unmapped reads to mapped reads.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">RS</span></code></td>
-<td>Statistical information about the evidence for the prediction which consists of a variable number of groups of three fields, each separated by commas. The three fields are allele, count, and the sum of probability error (computed from the Phred quality). The sum of counts should equal DP and the sum of the errors should equal <code class="docutils literal notranslate"><span class="pre">RE</span></code>.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RS</span></code></p></td>
+<td><p>Statistical information about the evidence for the prediction which consists of a variable number of groups of three fields, each separated by commas. The three fields are allele, count, and the sum of probability error (computed from the Phred quality). The sum of counts should equal DP and the sum of the errors should equal <code class="docutils literal notranslate"><span class="pre">RE</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">DH</span></code></td>
-<td>An alternative disagreeing hypothesis in the same format as the genotype field. This can occur when a sample intersects multiple families in a pedigree when doing population calling.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DH</span></code></p></td>
+<td><p>An alternative disagreeing hypothesis in the same format as the genotype field. This can occur when a sample intersects multiple families in a pedigree when doing population calling.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">AD</span></code></td>
-<td>The allelic depths for the reference and alternate alleles in the order listed.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AD</span></code></p></td>
+<td><p>The allelic depths for the reference and alternate alleles in the order listed.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">ADE</span></code></td>
-<td>The allelic depths for the reference and alternate alleles in the order listed, after adjusting for poor base quality and mapping quality.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ADE</span></code></p></td>
+<td><p>The allelic depths for the reference and alternate alleles in the order listed, after adjusting for poor base quality and mapping quality.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">ADF</span></code></td>
-<td>The allelic depths for the reference and alternate alleles in the order listed, for reads on the forward strand.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ADF</span></code></p></td>
+<td><p>The allelic depths for the reference and alternate alleles in the order listed, for reads on the forward strand.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">ADR</span></code></td>
-<td>The allelic depths for the reference and alternate alleles in the order listed, for reads on the reverse strand.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ADR</span></code></p></td>
+<td><p>The allelic depths for the reference and alternate alleles in the order listed, for reads on the reverse strand.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">ADF1</span></code></td>
-<td>The allelic depths for the reference and alternate alleles in the order listed, for arm 1 reads on the forward strand.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ADF1</span></code></p></td>
+<td><p>The allelic depths for the reference and alternate alleles in the order listed, for arm 1 reads on the forward strand.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">ADF2</span></code></td>
-<td>The allelic depths for the reference and alternate alleles in the order listed, for arm 2 reads on the forward strand.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ADF2</span></code></p></td>
+<td><p>The allelic depths for the reference and alternate alleles in the order listed, for arm 2 reads on the forward strand.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">ADR1</span></code></td>
-<td>The allelic depths for the reference and alternate alleles in the order listed, for arm 1 reads on the reverse strand.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ADR1</span></code></p></td>
+<td><p>The allelic depths for the reference and alternate alleles in the order listed, for arm 1 reads on the reverse strand.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">ADR2</span></code></td>
-<td>The allelic depths for the reference and alternate alleles in the order listed, for arm 2 reads on the reverse strand.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ADR2</span></code></p></td>
+<td><p>The allelic depths for the reference and alternate alleles in the order listed, for arm 2 reads on the reverse strand.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">AQ</span></code></td>
-<td>The sum of the quality of evidence (including base quality and mapping quality) for the reference and alternate alleles in the order listed.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AQ</span></code></p></td>
+<td><p>The sum of the quality of evidence (including base quality and mapping quality) for the reference and alternate alleles in the order listed.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">MEANQAD</span></code></td>
-<td>The difference in the mean <code class="docutils literal notranslate"><span class="pre">AQ</span></code> between the two called alleles.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MEANQAD</span></code></p></td>
+<td><p>The difference in the mean <code class="docutils literal notranslate"><span class="pre">AQ</span></code> between the two called alleles.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">SSC</span></code></td>
-<td>The score for the somatic mutation specified by the <code class="docutils literal notranslate"><span class="pre">GT</span></code> field.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SSC</span></code></p></td>
+<td><p>The score for the somatic mutation specified by the <code class="docutils literal notranslate"><span class="pre">GT</span></code> field.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">SS</span></code></td>
-<td>The somatic status of the genotype for this sample. A value of 0 indicates none or wild type, a value of 1 indicates a germline variant, and a value of 2 indicates a somatic variant.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SS</span></code></p></td>
+<td><p>The somatic status of the genotype for this sample. A value of 0 indicates none or wild type, a value of 1 indicates a germline variant, and a value of 2 indicates a somatic variant.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">GL</span></code></td>
-<td>The log10 scaled likelihoods for all possible genotypes given the set of alleles defined in the <code class="docutils literal notranslate"><span class="pre">REF</span></code> and <code class="docutils literal notranslate"><span class="pre">ALT</span></code> fields as defined in the VCF specifications.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GL</span></code></p></td>
+<td><p>The log10 scaled likelihoods for all possible genotypes given the set of alleles defined in the <code class="docutils literal notranslate"><span class="pre">REF</span></code> and <code class="docutils literal notranslate"><span class="pre">ALT</span></code> fields as defined in the VCF specifications.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">VAF</span></code></td>
-<td>The <code class="docutils literal notranslate"><span class="pre">VAF</span></code> field contains the estimated variant allelic fraction of each alternate allele, in the order listed.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">VAF</span></code></p></td>
+<td><p>The <code class="docutils literal notranslate"><span class="pre">VAF</span></code> field contains the estimated variant allelic fraction of each alternate allele, in the order listed.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">VAF1</span></code></td>
-<td>The <code class="docutils literal notranslate"><span class="pre">VAF1</span></code> field contains the estimated variant allelic fraction of the most abundant non-reference allele. This attribute may be more suitable for AVR model building and filtering than the multi-valued <code class="docutils literal notranslate"><span class="pre">VAF</span></code> annotation.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">VAF1</span></code></p></td>
+<td><p>The <code class="docutils literal notranslate"><span class="pre">VAF1</span></code> field contains the estimated variant allelic fraction of the most abundant non-reference allele. This attribute may be more suitable for AVR model building and filtering than the multi-valued <code class="docutils literal notranslate"><span class="pre">VAF</span></code> annotation.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">IC</span></code></td>
-<td>The inbreeding coefficient for the site.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IC</span></code></p></td>
+<td><p>The inbreeding coefficient for the site.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">EP</span></code></td>
-<td>The Phred scaled probability that the site is not in Hardy-Weinberg equilibrium.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">EP</span></code></p></td>
+<td><p>The Phred scaled probability that the site is not in Hardy-Weinberg equilibrium.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">LAL</span></code></td>
-<td>The length of the longest allele for the site.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">LAL</span></code></p></td>
+<td><p>The length of the longest allele for the site.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">NAA</span></code></td>
-<td>The number of alternate alleles for the site.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">NAA</span></code></p></td>
+<td><p>The number of alternate alleles for the site.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">PD</span></code></td>
-<td>The ploidy of the sample.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PD</span></code></p></td>
+<td><p>The ploidy of the sample.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">ZY</span></code></td>
-<td>The zygosity of the sample.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ZY</span></code></p></td>
+<td><p>The zygosity of the sample.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">RA</span></code></td>
-<td>Categorizes the call as hom-ref (<code class="docutils literal notranslate"><span class="pre">RR</span></code>), hom-alt (<code class="docutils literal notranslate"><span class="pre">AA</span></code>), het-ref (<code class="docutils literal notranslate"><span class="pre">RA</span></code>), or het-alt (<code class="docutils literal notranslate"><span class="pre">AB</span></code>), independent of phase or ALT allele indices.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RA</span></code></p></td>
+<td><p>Categorizes the call as hom-ref (<code class="docutils literal notranslate"><span class="pre">RR</span></code>), hom-alt (<code class="docutils literal notranslate"><span class="pre">AA</span></code>), het-ref (<code class="docutils literal notranslate"><span class="pre">RA</span></code>), or het-alt (<code class="docutils literal notranslate"><span class="pre">AB</span></code>), independent of phase or ALT allele indices.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">QA</span></code></td>
-<td>Sum of quality of the alternate observations.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">QA</span></code></p></td>
+<td><p>Sum of quality of the alternate observations.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">CLUS</span></code></td>
-<td>The number of variants in this sample within five bases of the current variant.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CLUS</span></code></p></td>
+<td><p>The number of variants in this sample within five bases of the current variant.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">AVR</span></code></td>
-<td>The adaptive variant rescoring value. It is a value between 0 and 1 that represents the probability that the variant for the sample is correct.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AVR</span></code></p></td>
+<td><p>The adaptive variant rescoring value. It is a value between 0 and 1 that represents the probability that the variant for the sample is correct.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1349,43 +1264,43 @@ CFTR.3.70s  435 439 complex-too-many-hypotheses
 </div>
 <p>The columns in order are:</p>
 <ol class="arabic simple">
-<li>Sequence name</li>
-<li>Region start, counting from 0</li>
-<li>Region end, counting from 0, not inclusive</li>
-<li>Name of the region type</li>
+<li><p>Sequence name</p></li>
+<li><p>Region start, counting from 0</p></li>
+<li><p>Region end, counting from 0, not inclusive</p></li>
+<li><p>Name of the region type</p></li>
 </ol>
 <p>Table : Region type names</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="35%" />
-<col width="65%" />
+<col style="width: 35%" />
+<col style="width: 65%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Value</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">complex-called</span></code></td>
-<td>Complex regions that were called using complex calling.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">complex-called</span></code></p></td>
+<td><p>Complex regions that were called using complex calling.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">hyper-complex</span></code></td>
-<td>Long complex regions for which no call attempt was made.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hyper-complex</span></code></p></td>
+<td><p>Long complex regions for which no call attempt was made.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">extreme-coverage</span></code></td>
-<td>No calls made in this region due to extreme coverage.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">extreme-coverage</span></code></p></td>
+<td><p>No calls made in this region due to extreme coverage.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">complex-over-coverage</span></code></td>
-<td>Complex region has greater than the maximum coverage allowed.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">complex-over-coverage</span></code></p></td>
+<td><p>Complex region has greater than the maximum coverage allowed.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">complex-no-hypotheses</span></code></td>
-<td>No hypotheses could be created for the complex region.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">complex-no-hypotheses</span></code></p></td>
+<td><p>No hypotheses could be created for the complex region.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">complex-no-variant</span></code></td>
-<td>Complex region evaluation resulted in no variants.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">complex-no-variant</span></code></p></td>
+<td><p>Complex region evaluation resulted in no variants.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">complex-too-many-hypotheses</span></code></td>
-<td>Complex region had too many hypotheses for evaluation.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">complex-too-many-hypotheses</span></code></p></td>
+<td><p>Complex region had too many hypotheses for evaluation.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1404,34 +1319,34 @@ chr1    49760   53270 5   630.3273    380.2483
 </pre></div>
 </div>
 <p>Table : SV_INTERESTING.BED file output column descriptions</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="20%" />
-<col width="80%" />
+<col style="width: 20%" />
+<col style="width: 80%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Column</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">chr</span></code></td>
-<td>The chromosome name.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">chr</span></code></p></td>
+<td><p>The chromosome name.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">start</span></code></td>
-<td>The start position in the reference chromosome.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">start</span></code></p></td>
+<td><p>The start position in the reference chromosome.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">end</span></code></td>
-<td>The end position in the reference chromosome.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">end</span></code></p></td>
+<td><p>The end position in the reference chromosome.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">areas</span></code></td>
-<td>The number of distinct model areas contained in the region.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">areas</span></code></p></td>
+<td><p>The number of distinct model areas contained in the region.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">maxscore</span></code></td>
-<td>The maximum score reached by a model in the given region.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">maxscore</span></code></p></td>
+<td><p>The maximum score reached by a model in the given region.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">average</span></code></td>
-<td>The average score for the model areas covered by this region.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">average</span></code></p></td>
+<td><p>The average score for the model areas covered by this region.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1455,52 +1370,52 @@ chr1  121  199.2098  -898.2490  -4380.5384  -5010.6731  -199.2098  -321.7577  -6
 </pre></div>
 </div>
 <p>Table : SV_BAYESIAN.TSV file output column descriptions</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="88%" />
+<col style="width: 12%" />
+<col style="width: 88%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Column</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">template-name</span></code></td>
-<td>The chromosome name.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">template-name</span></code></p></td>
+<td><p>The chromosome name.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">position</span></code></td>
-<td>The position in the reference chromosome.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">position</span></code></p></td>
+<td><p>The position in the reference chromosome.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">normal</span></code></td>
-<td>The prediction strength for the normal model.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">normal</span></code></p></td>
+<td><p>The prediction strength for the normal model.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">duplicate</span></code></td>
-<td>The prediction strength for the duplicate model.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">duplicate</span></code></p></td>
+<td><p>The prediction strength for the duplicate model.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">delete</span></code></td>
-<td>The prediction strength for the delete model.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">delete</span></code></p></td>
+<td><p>The prediction strength for the delete model.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">delete-left</span></code></td>
-<td>The prediction strength for the delete-left model.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">delete-left</span></code></p></td>
+<td><p>The prediction strength for the delete-left model.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">delete-right</span></code></td>
-<td>The prediction strength for the delete-right model.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">delete-right</span></code></p></td>
+<td><p>The prediction strength for the delete-right model.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">duplicate-left</span></code></td>
-<td>The prediction strength for the duplicate-left model.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">duplicate-left</span></code></p></td>
+<td><p>The prediction strength for the duplicate-left model.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">duplicate-right</span></code></td>
-<td>The prediction strength for the duplicate-right model.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">duplicate-right</span></code></p></td>
+<td><p>The prediction strength for the duplicate-right model.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">breakpoint</span></code></td>
-<td>The prediction strength for the breakpoint model.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">breakpoint</span></code></p></td>
+<td><p>The prediction strength for the breakpoint model.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">novel-insertion</span></code></td>
-<td>The prediction strength for the novel-insertion model.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">novel-insertion</span></code></p></td>
+<td><p>The prediction strength for the novel-insertion model.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">max-index</span></code></td>
-<td>The index of the model that has the maximum prediction strength for this line. The index starts from 0 meaning normal and is in the same order as the model columns.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max-index</span></code></p></td>
+<td><p>The index of the model that has the maximum prediction strength for this line. The index starts from 0 meaning normal and is in the same order as the model columns.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1527,52 +1442,52 @@ chr1  121  12.0000  0.0000  1.0000  0.0000  0.0000  0.0000  0.0000  13.0000  0.0
 </pre></div>
 </div>
 <p>Table : SV_SIMPLE.TSV file output column descriptions</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="26%" />
-<col width="74%" />
+<col style="width: 26%" />
+<col style="width: 74%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Column</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">template-name</span></code></td>
-<td>The chromosome name.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">template-name</span></code></p></td>
+<td><p>The chromosome name.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">position</span></code></td>
-<td>The position in the reference chromosome.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">position</span></code></p></td>
+<td><p>The position in the reference chromosome.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">proper-left</span></code></td>
-<td>Count of properly paired left reads mapped in this location.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">proper-left</span></code></p></td>
+<td><p>Count of properly paired left reads mapped in this location.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">discordant-left</span></code></td>
-<td>Count of discordantly paired left reads mapped in this location.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">discordant-left</span></code></p></td>
+<td><p>Count of discordantly paired left reads mapped in this location.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">unmated-left</span></code></td>
-<td>Count of unmated left reads mapped in this location.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unmated-left</span></code></p></td>
+<td><p>Count of unmated left reads mapped in this location.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">proper-right</span></code></td>
-<td>Count of properly paired right reads mapped in this location.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">proper-right</span></code></p></td>
+<td><p>Count of properly paired right reads mapped in this location.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">discordant-right</span></code></td>
-<td>Count of discordantly paired right reads mapped in this location.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">discordant-right</span></code></p></td>
+<td><p>Count of discordantly paired right reads mapped in this location.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">unmated-right</span></code></td>
-<td>Count of unmated right reads mapped in this location.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">unmated-right</span></code></p></td>
+<td><p>Count of unmated right reads mapped in this location.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">not-paired</span></code></td>
-<td>Count of single end reads mapped in this location.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">not-paired</span></code></p></td>
+<td><p>Count of single end reads mapped in this location.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">unique</span></code></td>
-<td>Count of unique mappings in this location.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">unique</span></code></p></td>
+<td><p>Count of unique mappings in this location.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">ambiguous</span></code></td>
-<td>Count of ambiguous mappings in this location.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ambiguous</span></code></p></td>
+<td><p>Count of ambiguous mappings in this location.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">n-count</span></code></td>
-<td>The number of unknown bases on the reference for this location.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">n-count</span></code></p></td>
+<td><p>The number of unknown bases on the reference for this location.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1584,8 +1499,8 @@ locations for structural variant breakends. The breakends are output in
 a VCF file called <code class="docutils literal notranslate"><span class="pre">discord_pairs.vcf.gz</span></code> using the <code class="docutils literal notranslate"><span class="pre">ALT</span></code> and <code class="docutils literal notranslate"><span class="pre">INFO</span></code>
 fields as defined in the VCF specification.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">RTG structural variant calls are stored in VCF format
+<p class="admonition-title">Note</p>
+<p>RTG structural variant calls are stored in VCF format
 (version 4.2). For more information about the VCF format, refer to the
 specification online at:
 <a class="reference external" href="https://samtools.github.io/hts-specs/VCFv4.2.pdf">https://samtools.github.io/hts-specs/VCFv4.2.pdf</a></p>
@@ -1614,39 +1529,39 @@ chr1  52999  .  G  ]simulatedSequence1:50005]G  .  PASS  IMPRECISE;SVTYPE=BND;DP
 its unique structural variant calling features, described in the tables
 below.</p>
 <p>Table : RTG VCF file FILTER fields</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="19%" />
-<col width="81%" />
+<col style="width: 19%" />
+<col style="width: 81%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Value</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">PASS</span></code></td>
-<td>Standard VCF “PASS”, if breakend meets all the filtering criteria.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PASS</span></code></p></td>
+<td><p>Standard VCF “PASS”, if breakend meets all the filtering criteria.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">INCONSISTENT</span></code></td>
-<td>Breakend with discordant read cluster that does not agree on the possible positions.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">INCONSISTENT</span></code></p></td>
+<td><p>Breakend with discordant read cluster that does not agree on the possible positions.</p></td>
 </tr>
 </tbody>
 </table>
 <p>Table : RTG VCF file INFO fields</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="17%" />
-<col width="83%" />
+<col style="width: 17%" />
+<col style="width: 83%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Value</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">DP=&lt;depth&gt;</span></code></td>
-<td>Indicates the number of discordant reads contributing to the cluster at this breakend.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DP=&lt;depth&gt;</span></code></p></td>
+<td><p>Indicates the number of discordant reads contributing to the cluster at this breakend.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1667,11 +1582,11 @@ chr1  52998  52998  remote:chr1:50004-50004  506
 </div>
 <p>The columns in the example are in BED file order:</p>
 <ol class="arabic simple">
-<li>Chromosome name</li>
-<li>Start position in chromosome</li>
-<li>End position in chromosome</li>
-<li>Location of remote break-end matching this one</li>
-<li>Count of discordant reads contributing to the break-end</li>
+<li><p>Chromosome name</p></li>
+<li><p>Start position in chromosome</p></li>
+<li><p>End position in chromosome</p></li>
+<li><p>Location of remote break-end matching this one</p></li>
+<li><p>Count of discordant reads contributing to the break-end</p></li>
 </ol>
 </div>
 <div class="section" id="coverage-command-output-file-descriptions">
@@ -1710,11 +1625,11 @@ chr1      177     181     chr1        16
 </div>
 <p>The columns in the example are in BED file order:</p>
 <ol class="arabic simple">
-<li>Chromosome name</li>
-<li>Start position in chromosome</li>
-<li>End position in chromosome</li>
-<li>Name or label of the feature, this is generally the name of the chromosome or name of any BED features overlapping the coverage region</li>
-<li>Depth of coverage for the range specified</li>
+<li><p>Chromosome name</p></li>
+<li><p>Start position in chromosome</p></li>
+<li><p>End position in chromosome</p></li>
+<li><p>Name or label of the feature, this is generally the name of the chromosome or name of any BED features overlapping the coverage region</p></li>
+<li><p>Depth of coverage for the range specified</p></li>
 </ol>
 <p>When the <code class="docutils literal notranslate"><span class="pre">--per-region</span></code> flag is set, the <code class="docutils literal notranslate"><span class="pre">coverage</span></code> command will alter
 the criteria for outputting a BED record. Rather than defining regions
@@ -1750,10 +1665,10 @@ chr1      177     181     16
 </div>
 <p>The columns in the example are in BEDGRAPH file order:</p>
 <ol class="arabic simple">
-<li>Chromosome name</li>
-<li>Start position in chromosome</li>
-<li>End position in chromosome</li>
-<li>Depth of coverage for the range specified</li>
+<li><p>Chromosome name</p></li>
+<li><p>Start position in chromosome</p></li>
+<li><p>End position in chromosome</p></li>
+<li><p>Depth of coverage for the range specified</p></li>
 </ol>
 <p>When the <code class="docutils literal notranslate"><span class="pre">--per-base</span></code> flag is set when running the <code class="docutils literal notranslate"><span class="pre">coverage</span></code> command
 will produce a tab separated value file with the coverage information
@@ -1776,31 +1691,31 @@ chr1            9               2               1                 2.50
 </pre></div>
 </div>
 <p>Table : COVERAGE.TSV file output column descriptions</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="21%" />
-<col width="79%" />
+<col style="width: 21%" />
+<col style="width: 79%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Column</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">sequence</span></code></td>
-<td>The chromosome name.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sequence</span></code></p></td>
+<td><p>The chromosome name.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">position</span></code></td>
-<td>The position in the reference chromosome.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">position</span></code></p></td>
+<td><p>The position in the reference chromosome.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">unique-count</span></code></td>
-<td>The count of reads covering this position with <code class="docutils literal notranslate"><span class="pre">IH</span></code> equal to one.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unique-count</span></code></p></td>
+<td><p>The count of reads covering this position with <code class="docutils literal notranslate"><span class="pre">IH</span></code> equal to one.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">ambiguous-count</span></code></td>
-<td>The count of reads covering this position with <code class="docutils literal notranslate"><span class="pre">IH</span></code> greater than one.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ambiguous-count</span></code></p></td>
+<td><p>The count of reads covering this position with <code class="docutils literal notranslate"><span class="pre">IH</span></code> greater than one.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">score</span></code></td>
-<td>The sum of one divided by the <code class="docutils literal notranslate"><span class="pre">IH</span></code> value for all the reads covering this position.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">score</span></code></p></td>
+<td><p>The sum of one divided by the <code class="docutils literal notranslate"><span class="pre">IH</span></code> value for all the reads covering this position.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1822,31 +1737,31 @@ whole. The following is an example file:</p>
 </pre></div>
 </div>
 <p>Table : STATS.TSV column descriptions</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="11%" />
-<col width="89%" />
+<col style="width: 11%" />
+<col style="width: 89%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Column</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">depth</span></code></td>
-<td>The average depth of coverage for the region where each base position is calculated as the sum of one divided by the IH of each read alignment which covers the position.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">depth</span></code></p></td>
+<td><p>The average depth of coverage for the region where each base position is calculated as the sum of one divided by the IH of each read alignment which covers the position.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">breadth</span></code></td>
-<td>The fraction of the non-N region base positions which have a depth of one or greater.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">breadth</span></code></p></td>
+<td><p>The fraction of the non-N region base positions which have a depth of one or greater.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">covered</span></code></td>
-<td>The number of non-N bases in the region which have a depth of one or greater.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">covered</span></code></p></td>
+<td><p>The number of non-N bases in the region which have a depth of one or greater.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">size</span></code></td>
-<td>The number of non-N bases in the region.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">size</span></code></p></td>
+<td><p>The number of non-N bases in the region.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">name</span></code></td>
-<td>The name of the region, or “all sequences” for the entire reference.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>The name of the region, or “all sequences” for the entire reference.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1866,28 +1781,28 @@ file:</p>
 </pre></div>
 </div>
 <p>Table : LEVELS.TSV column descriptions</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="25%" />
-<col width="75%" />
+<col style="width: 25%" />
+<col style="width: 75%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Column</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">coverage_level</span></code></td>
-<td>The coverage level.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">coverage_level</span></code></p></td>
+<td><p>The coverage level.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">count</span></code></td>
-<td>The count of the number of bases at this coverage level.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">count</span></code></p></td>
+<td><p>The count of the number of bases at this coverage level.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">%age</span></code></td>
-<td>The percentage of the reference at this coverage level.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%age</span></code></p></td>
+<td><p>The percentage of the reference at this coverage level.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">%cumulative</span></code></td>
-<td>The percentage of the reference at this coverage level or higher.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%cumulative</span></code></p></td>
+<td><p>The percentage of the reference at this coverage level or higher.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1913,83 +1828,83 @@ gi|224537502|ref|ZP_03678041.1| +1      0       162     194     414     1       
 <p>The following table provides descriptions of each column in this alignment
 output file format, listed from left to right.</p>
 <p>Table : ALIGNMENTS.TSV file output column descriptions</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="8%" />
-<col width="92%" />
+<col style="width: 8%" />
+<col style="width: 92%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Column</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">template-name</span></code></td>
-<td>ID or description of protein (reference) with match.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">template-name</span></code></p></td>
+<td><p>ID or description of protein (reference) with match.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">frame</span></code></td>
-<td>Denotes translation frame on forward (1,2,3) or reverse strand.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">frame</span></code></p></td>
+<td><p>Denotes translation frame on forward (1,2,3) or reverse strand.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">read-id</span></code></td>
-<td>Numeric ID of query sequence from SDF.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">read-id</span></code></p></td>
+<td><p>Numeric ID of query sequence from SDF.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">template-start</span></code></td>
-<td>Start position of alignment on protein subject.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">template-start</span></code></p></td>
+<td><p>Start position of alignment on protein subject.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">template-end</span></code></td>
-<td>End position of alignment on protein subject.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">template-end</span></code></p></td>
+<td><p>End position of alignment on protein subject.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">template-length</span></code></td>
-<td>Amino acid length of protein subject.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">template-length</span></code></p></td>
+<td><p>Amino acid length of protein subject.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">read-start</span></code></td>
-<td>Start position of alignment on query sequence.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">read-start</span></code></p></td>
+<td><p>Start position of alignment on query sequence.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">read-end</span></code></td>
-<td>End position of alignment on query sequence.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">read-end</span></code></p></td>
+<td><p>End position of alignment on query sequence.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">read-length</span></code></td>
-<td>Total length of query (nucleotides for <code class="docutils literal notranslate"><span class="pre">mapx</span></code> / amino acids for <code class="docutils literal notranslate"><span class="pre">mapp</span></code>).</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">read-length</span></code></p></td>
+<td><p>Total length of query (nucleotides for <code class="docutils literal notranslate"><span class="pre">mapx</span></code> / amino acids for <code class="docutils literal notranslate"><span class="pre">mapp</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">template-protein</span></code></td>
-<td>Amino acid sequence of aligned protein reference.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">template-protein</span></code></p></td>
+<td><p>Amino acid sequence of aligned protein reference.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">read-protein</span></code></td>
-<td>Amino acid sequence of aligned query sequence.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">read-protein</span></code></p></td>
+<td><p>Amino acid sequence of aligned query sequence.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">alignment</span></code></td>
-<td>Amino acid alignment of match.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">alignment</span></code></p></td>
+<td><p>Amino acid alignment of match.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">identical</span></code></td>
-<td>Count of identities in alignment between protein subject and query sequences.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">identical</span></code></p></td>
+<td><p>Count of identities in alignment between protein subject and query sequences.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">%identical</span></code></td>
-<td>Percent identity of match between protein subject and query sequences, for exact matches only (global across query sequence).</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%identical</span></code></p></td>
+<td><p>Percent identity of match between protein subject and query sequences, for exact matches only (global across query sequence).</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">positive</span></code></td>
-<td>Count of identical and similar amino acids in alignment between protein subject and query sequences.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">positive</span></code></p></td>
+<td><p>Count of identical and similar amino acids in alignment between protein subject and query sequences.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">%positive</span></code></td>
-<td>Percent similarity between protein subject and query sequences, for exact and similar matches (global across query sequence).</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%positive</span></code></p></td>
+<td><p>Percent similarity between protein subject and query sequences, for exact and similar matches (global across query sequence).</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mismatches</span></code></td>
-<td>Count of mismatches between protein subject and query sequences.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mismatches</span></code></p></td>
+<td><p>Count of mismatches between protein subject and query sequences.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">raw-score</span></code></td>
-<td>RTG alignment score (S); The alignment score is the negated sum of all single protein raw scores plus its penalties for gaps, which is the edit distance using one of the scoring matrices. Note that the RTG alignment score is the negated raw score of BLAST.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">raw-score</span></code></p></td>
+<td><p>RTG alignment score (S); The alignment score is the negated sum of all single protein raw scores plus its penalties for gaps, which is the edit distance using one of the scoring matrices. Note that the RTG alignment score is the negated raw score of BLAST.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bit-score</span></code></td>
-<td><p class="first">Bit score is computed from the alignment score using the following formula:
-<img class="math" src="_images/math/4b0ffe0e53244b2c1bff21382be9a5ab326276d1.png" alt="\text{bit-score} = ((\lambda \times -S) - \ln (K)) / \ln (2)"/></p>
-<p class="last">where <img class="math" src="_images/math/76f1d8ace30435987c01a00ca53a71cba1f40e6c.png" alt="\lambda"/> and <img class="math" src="_images/math/684381a21cd73ebbf43b63a087d3f7410ee99ce8.png" alt="K"/> are taken from the matrix defaults [Blast pp.302-304] and <img class="math" src="_images/math/1dbc400fcc213305415872f9f625cd2828f97a00.png" alt="S"/> is the RTG alignment score.</p>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bit-score</span></code></p></td>
+<td><p>Bit score is computed from the alignment score using the following formula:
+<img class="math" src="_images/math/1dda4b44764a929f5d95a12343b22b3343e7993e.png" alt="\text{bit-score} = ((\lambda \times -S) - \ln (K)) / \ln (2)"/></p>
+<p>where <img class="math" src="_images/math/cefc603e5658facb747581f9567192993f21c7ab.png" alt="\lambda"/> and <img class="math" src="_images/math/52ddc0cde6d632f631533173562fe3ca375b1f32.png" alt="K"/> are taken from the matrix defaults [Blast pp.302-304] and <img class="math" src="_images/math/b988975be41fd13b4d091c10202ba19374643586.png" alt="S"/> is the RTG alignment score.</p>
 </td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">e-score</span></code></td>
-<td><p class="first">e-score is computed from the alignment score using the following formula:
-<img class="math" src="_images/math/60ec5a4e636f260cafc63c490e2da12d8e36b418.png" alt="\text{e-score} = K \times m' \times n \times e ^ {(\lambda \times S)}"/></p>
-<p><img class="math" src="_images/math/e11f2701c4a39c7fe543a6c4150b421d50f1c159.png" alt="n"/> is the total length of the database.</p>
-<p><img class="math" src="_images/math/24a4a3d3565eacdc678ca2e8cda9c27eac9abe6a.png" alt="m'"/> is the effective length of the query (read):</p>
-<p class="last"><img class="math" src="_images/math/28357bd43b973b6fe3b43cd8cb18a02b20d55648.png" alt="m' = \max(1, \text{querylength} + \lambda \times S/H)"/></p>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">e-score</span></code></p></td>
+<td><p>e-score is computed from the alignment score using the following formula:
+<img class="math" src="_images/math/6596b3f1d72eeb3b72dd1cdaaae199a4a3b1a412.png" alt="\text{e-score} = K \times m' \times n \times e ^ {(\lambda \times S)}"/></p>
+<p><img class="math" src="_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.png" alt="n"/> is the total length of the database.</p>
+<p><img class="math" src="_images/math/2895eb405a03db49e2217253743e51b83144c2ac.png" alt="m'"/> is the effective length of the query (read):</p>
+<p><img class="math" src="_images/math/00b47fa9220275347363dd17597c6ce4efc96fa5.png" alt="m' = \max(1, \text{querylength} + \lambda \times S/H)"/></p>
 </td>
 </tr>
 </tbody>
@@ -2001,32 +1916,32 @@ sequence in the unmapped output has a character code indicating the
 reason the query was not mapped, with no code indicating that sequence had
 no matches.</p>
 <p>Character codes for unmapped sequences include:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="8%" />
-<col width="92%" />
+<col style="width: 8%" />
+<col style="width: 92%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Character</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Character</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">d</span></code></td>
-<td>Indicates that after alignment scores are calculated, the remaining hits were discarded because they exceeded the alignment score threshold (affected by
-<code class="docutils literal notranslate"><span class="pre">--max-alignment-score</span></code>).</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">d</span></code></p></td>
+<td><p>Indicates that after alignment scores are calculated, the remaining hits were discarded because they exceeded the alignment score threshold (affected by
+<code class="docutils literal notranslate"><span class="pre">--max-alignment-score</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">e</span></code></td>
-<td>Indicates that there were good scoring hits, but the results were discarded because there were too many of these hits (affected by <code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">e</span></code></p></td>
+<td><p>Indicates that there were good scoring hits, but the results were discarded because there were too many of these hits (affected by <code class="docutils literal notranslate"><span class="pre">--max-top-results</span></code>).</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">f</span></code></td>
-<td>Indicates that there was a good hit which failed the percent identity threshold (affected by <code class="docutils literal notranslate"><span class="pre">--min-identity</span></code>).</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">f</span></code></p></td>
+<td><p>Indicates that there was a good hit which failed the percent identity threshold (affected by <code class="docutils literal notranslate"><span class="pre">--min-identity</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">g</span></code></td>
-<td>Indicates that there was a good hit which failed the e-score threshold (affected by <code class="docutils literal notranslate"><span class="pre">--max-e-score</span></code>).</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">g</span></code></p></td>
+<td><p>Indicates that there was a good hit which failed the e-score threshold (affected by <code class="docutils literal notranslate"><span class="pre">--max-e-score</span></code>).</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">h</span></code></td>
-<td>Indicates that there was a good hit which failed the bit score threshold (affected by <code class="docutils literal notranslate"><span class="pre">--min-bit-score</span></code>).</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">h</span></code></p></td>
+<td><p>Indicates that there was a good hit which failed the bit score threshold (affected by <code class="docutils literal notranslate"><span class="pre">--min-bit-score</span></code>).</p></td>
 </tr>
 </tbody>
 </table>
@@ -2064,67 +1979,67 @@ species:</p>
 <p>The following table provides descriptions of each column in the species
 output file format, listed from left to right.</p>
 <p>Table : SPECIES.TSV file output column descriptions</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="88%" />
+<col style="width: 12%" />
+<col style="width: 88%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Column</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">abundance</span></code></td>
-<td>Fraction of the individuals in the sample that belong to this taxon. The output file is sorted on this column.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">abundance</span></code></p></td>
+<td><p>Fraction of the individuals in the sample that belong to this taxon. The output file is sorted on this column.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">abundance-low</span></code></td>
-<td>Lower bound three standard deviations below the abundance.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">abundance-low</span></code></p></td>
+<td><p>Lower bound three standard deviations below the abundance.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">abundance-high</span></code></td>
-<td>Upper bound three standard deviations above the abundance.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">abundance-high</span></code></p></td>
+<td><p>Upper bound three standard deviations above the abundance.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">DNA-fraction</span></code></td>
-<td>Raw fraction of the DNA that maps to this taxon.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNA-fraction</span></code></p></td>
+<td><p>Raw fraction of the DNA that maps to this taxon.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">DNA-fraction-low</span></code></td>
-<td>Lower bound three standard deviations below the DNA-fraction.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNA-fraction-low</span></code></p></td>
+<td><p>Lower bound three standard deviations below the DNA-fraction.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">DNA-fraction-high</span></code></td>
-<td>Upper bound three standard deviations above the DNA-fraction.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DNA-fraction-high</span></code></p></td>
+<td><p>Upper bound three standard deviations above the DNA-fraction.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">confidence</span></code></td>
-<td>Confidence that this taxon is present in the sample. (Computed as the number of standard deviations away from the null hypotheses).</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">confidence</span></code></p></td>
+<td><p>Confidence that this taxon is present in the sample. (Computed as the number of standard deviations away from the null hypotheses).</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">coverage-depth</span></code></td>
-<td>The coverage depth of reads mapped to the taxon sequences, adjusted for the <code class="docutils literal notranslate"><span class="pre">IH</span></code> (number of output alignments) of the individual reads. (Zero if no reference sequences for the taxon).</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">coverage-depth</span></code></p></td>
+<td><p>The coverage depth of reads mapped to the taxon sequences, adjusted for the <code class="docutils literal notranslate"><span class="pre">IH</span></code> (number of output alignments) of the individual reads. (Zero if no reference sequences for the taxon).</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">coverage-breadth</span></code></td>
-<td>The fraction of the taxon sequences covered by the reads. (Zero if no reference sequences for the taxon).</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">coverage-breadth</span></code></p></td>
+<td><p>The fraction of the taxon sequences covered by the reads. (Zero if no reference sequences for the taxon).</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">reference-length</span></code></td>
-<td>The total length of the reference sequences, will be 0 if the taxon does not have associated reference sequences.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reference-length</span></code></p></td>
+<td><p>The total length of the reference sequences, will be 0 if the taxon does not have associated reference sequences.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mapped-reads</span></code></td>
-<td>The count of the reads which mapped to this taxon, adjusted for the <code class="docutils literal notranslate"><span class="pre">IH</span></code> (number of output alignments) of the individual reads.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mapped-reads</span></code></p></td>
+<td><p>The count of the reads which mapped to this taxon, adjusted for the <code class="docutils literal notranslate"><span class="pre">IH</span></code> (number of output alignments) of the individual reads.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">has-reference</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">Y</span></code> if the taxon has associated reference sequences, otherwise <code class="docutils literal notranslate"><span class="pre">N</span></code>.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">has-reference</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Y</span></code> if the taxon has associated reference sequences, otherwise <code class="docutils literal notranslate"><span class="pre">N</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">taxa-count</span></code></td>
-<td>The count of the number of taxa that are descendants of this taxon (including itself) and which are above the minimum confidence threshold.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">taxa-count</span></code></p></td>
+<td><p>The count of the number of taxa that are descendants of this taxon (including itself) and which are above the minimum confidence threshold.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">taxon-id</span></code></td>
-<td>The taxonomic ID for this result.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">taxon-id</span></code></p></td>
+<td><p>The taxonomic ID for this result.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">parent-id</span></code></td>
-<td>The taxonomic ID of this results parent.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">parent-id</span></code></p></td>
+<td><p>The taxonomic ID of this results parent.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">rank</span></code></td>
-<td>The taxonomic rank associated with this result. This can be used to filter results into meaningful sets at different taxonomic ranks.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rank</span></code></p></td>
+<td><p>The taxonomic rank associated with this result. This can be used to filter results into meaningful sets at different taxonomic ranks.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">taxonomy-name</span></code></td>
-<td>The taxonomic name for this result.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">taxonomy-name</span></code></p></td>
+<td><p>The taxonomic name for this result.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2137,7 +2052,7 @@ are to each other. It produces output in the form of a similarity matrix
 and two formats for phylogenetic trees showing relationships
 (<code class="docutils literal notranslate"><span class="pre">closest.tre</span></code> and <code class="docutils literal notranslate"><span class="pre">closest.xml</span></code>).</p>
 <p>The similarity matrix file is a tab separated format file containing an
-<img class="math" src="_images/math/0d6ecf115a0fefc045135d4dbfcfe920262c1b81.png" alt="N\times N"/> matrix of the matching <em>k</em>-mer counts, where <em>N</em> is the number of
+<img class="math" src="_images/math/9e32cdd0b4d023c3e9b3e724291a03bdbcbee572.png" alt="N\times N"/> matrix of the matching <em>k</em>-mer counts, where <em>N</em> is the number of
 samples. An example of a <code class="docutils literal notranslate"><span class="pre">similarity.tsv</span></code> file:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>#rtg similarity --unique-words -o similarity-out -I samples.txt -w 20 -s 15
 F1_G_S_1M     F1_N_AN_1M      F1_O_BM_1M      F1_O_SP_1M      F1_O_TD_1M      F1_V_PF_1M
@@ -2191,19 +2106,19 @@ VCF contains the following excerpt (the full header has been omitted):</p>
 <p>Within the context of a <code class="docutils literal notranslate"><span class="pre">--keep-expr</span></code> or <code class="docutils literal notranslate"><span class="pre">record</span></code> function these
 variables will provide access to the String representation of the VCF
 column of the same name.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>CHROM; // &quot;1&quot;
-POS; // &quot;11259340&quot;
-ID; // &quot;.&quot;
-REF; // &quot;G&quot;
-QUAL; // &quot;.&quot;
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">CHROM</span><span class="p">;</span> <span class="c1">// &quot;1&quot;</span>
+<span class="nx">POS</span><span class="p">;</span> <span class="c1">// &quot;11259340&quot;</span>
+<span class="nx">ID</span><span class="p">;</span> <span class="c1">// &quot;.&quot;</span>
+<span class="nx">REF</span><span class="p">;</span> <span class="c1">// &quot;G&quot;</span>
+<span class="nx">QUAL</span><span class="p">;</span> <span class="c1">// &quot;.&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="alt-filter">
 <h4>ALT, FILTER<a class="headerlink" href="#alt-filter" title="Permalink to this headline">¶</a></h4>
 <p>Will retrieve an array of the values in the column.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ALT; // [&quot;C&quot;, &quot;T&quot;]
-FILTER; // [&quot;PASS&quot;]
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">ALT</span><span class="p">;</span> <span class="c1">// [&quot;C&quot;, &quot;T&quot;]</span>
+<span class="nx">FILTER</span><span class="p">;</span> <span class="c1">// [&quot;PASS&quot;]</span>
 </pre></div>
 </div>
 </div>
@@ -2215,8 +2130,8 @@ representation of info values with multiple values delimited with “<code class
 Missing fields will be represented by “<code class="docutils literal notranslate"><span class="pre">.</span></code>”. Assigning to these
 properties will update the VCF record. This will be undefined for fields not
 declared in the header.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>INFO.DP; // &quot;795&quot;
-INFO.ABC; // &quot;4,5&quot;
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">INFO</span><span class="p">.</span><span class="nx">DP</span><span class="p">;</span> <span class="c1">// &quot;795&quot;</span>
+<span class="nx">INFO</span><span class="p">.</span><span class="nx">ABC</span><span class="p">;</span> <span class="c1">// &quot;4,5&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -2226,8 +2141,8 @@ INFO.ABC; // &quot;4,5&quot;
 format fields for each sample. The string representation of values in
 the sample column are accessible as properties on the string matching
 the sample name named after the <code class="docutils literal notranslate"><span class="pre">FORMAT</span></code> field <code class="docutils literal notranslate"><span class="pre">ID</span></code>.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&#39;NA12877&#39;.GT; // &quot;1/2&quot;
-&#39;NA12878&#39;.GT; // &quot;1/0&quot;
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;NA12877&#39;</span><span class="p">.</span><span class="nx">GT</span><span class="p">;</span> <span class="c1">// &quot;1/2&quot;</span>
+<span class="s1">&#39;NA12878&#39;</span><span class="p">.</span><span class="nx">GT</span><span class="p">;</span> <span class="c1">// &quot;1/0&quot;</span>
 </pre></div>
 </div>
 <p>Note that these properties are only defined for fields that are declared
@@ -2241,20 +2156,20 @@ declarations.</p>
 <p>Most components of VCF records can be written or updated in a fairly
 natural manner by direct assignment in order to make modifications. For
 example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>CHROM = &quot;chr1&quot;;      // Will change the CHROM value
-POS = 42;            // Will change the POS value
-ID = &quot;rs23987382&quot;;   // Will change the ID value
-QUAL = &quot;50&quot;;         // Will change the QUAL value
-FILTER = &quot;FAIL&quot;;     // Will set the FILTER value
-INFO.DPR = &quot;0.01&quot;;   // Will change the value of the DPR info field
-&#39;NA12877&#39;.DP = &quot;10&quot;; // Will change the DP field of the NA12877 sample
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">CHROM</span> <span class="o">=</span> <span class="s2">&quot;chr1&quot;</span><span class="p">;</span>      <span class="c1">// Will change the CHROM value</span>
+<span class="nx">POS</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>            <span class="c1">// Will change the POS value</span>
+<span class="nx">ID</span> <span class="o">=</span> <span class="s2">&quot;rs23987382&quot;</span><span class="p">;</span>   <span class="c1">// Will change the ID value</span>
+<span class="nx">QUAL</span> <span class="o">=</span> <span class="s2">&quot;50&quot;</span><span class="p">;</span>         <span class="c1">// Will change the QUAL value</span>
+<span class="nx">FILTER</span> <span class="o">=</span> <span class="s2">&quot;FAIL&quot;</span><span class="p">;</span>     <span class="c1">// Will set the FILTER value</span>
+<span class="nx">INFO</span><span class="p">.</span><span class="nx">DPR</span> <span class="o">=</span> <span class="s2">&quot;0.01&quot;</span><span class="p">;</span>   <span class="c1">// Will change the value of the DPR info field</span>
+<span class="s1">&#39;NA12877&#39;</span><span class="p">.</span><span class="nx">DP</span> <span class="o">=</span> <span class="s2">&quot;10&quot;</span><span class="p">;</span> <span class="c1">// Will change the DP field of the NA12877 sample</span>
 </pre></div>
 </div>
 <p>Other components of the VCF record (such as <code class="docutils literal notranslate"><span class="pre">REF</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">ALT</span></code>) are considered immutable and can not currently be altered.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Modification of <code class="docutils literal notranslate"><span class="pre">CHROM</span></code> and/or <code class="docutils literal notranslate"><span class="pre">POS</span></code> can lead to a VCF file
+<p class="admonition-title">Note</p>
+<p>Modification of <code class="docutils literal notranslate"><span class="pre">CHROM</span></code> and/or <code class="docutils literal notranslate"><span class="pre">POS</span></code> can lead to a VCF file
 which is incorrectly sorted and this will not necessarily be detected
 or reported until the resulting VCF file is used with another module
 or tool.  Depending on the new value assigned to <code class="docutils literal notranslate"><span class="pre">CHROM</span></code> it may
@@ -2263,10 +2178,10 @@ header to reflect the change (see <a class="reference internal" href="#vcf-heade
 </div>
 <p>Direct assignment to <code class="docutils literal notranslate"><span class="pre">ID</span></code> and <code class="docutils literal notranslate"><span class="pre">FILTER</span></code> fields accept either a string
 containing semicolon separated values, or a list of values. For example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ID = &#39;rs23987382;COSM3805&#39;;
-ID = [&#39;rs23987382&#39;, &#39;COSM3805&#39;];
-FILTER = &#39;BAZ;BANG&#39;;
-FILTER = [&#39;BAZ&#39;, &#39;BANG&#39;];
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">ID</span> <span class="o">=</span> <span class="s1">&#39;rs23987382;COSM3805&#39;</span><span class="p">;</span>
+<span class="nx">ID</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rs23987382&#39;</span><span class="p">,</span> <span class="s1">&#39;COSM3805&#39;</span><span class="p">];</span>
+<span class="nx">FILTER</span> <span class="o">=</span> <span class="s1">&#39;BAZ;BANG&#39;</span><span class="p">;</span>
+<span class="nx">FILTER</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BAZ&#39;</span><span class="p">,</span> <span class="s1">&#39;BANG&#39;</span><span class="p">];</span>
 </pre></div>
 </div>
 <p>Note that although the <code class="docutils literal notranslate"><span class="pre">FILTER</span></code> field returns an array when read, any
@@ -2275,16 +2190,16 @@ record.</p>
 <p>Adding a filter to existing filters is a common operation and can be
 accomplished by the above assignment methods, for example by adding a
 value to the existing list and then setting the result:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>var f = FILTER;
-f.push(&#39;BOING&#39;);
-FILTER = f;
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">FILTER</span><span class="p">;</span>
+<span class="nx">f</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;BOING&#39;</span><span class="p">);</span>
+<span class="nx">FILTER</span> <span class="o">=</span> <span class="nx">f</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>However, since this is a little unwieldy, a convenience function called
 <cite>add()</cite> can be used (and may be chained):</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>FILTER.add(&#39;BOING&#39;);
-FILTER.add([&#39;BOING&#39;, &#39;DOING&#39;);
-FILTER.add(&#39;BOING&#39;).add(&#39;DOING&#39;);
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">FILTER</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;BOING&#39;</span><span class="p">);</span>
+<span class="nx">FILTER</span><span class="p">.</span><span class="nx">add</span><span class="p">([</span><span class="s1">&#39;BOING&#39;</span><span class="p">,</span> <span class="s1">&#39;DOING&#39;</span><span class="p">);</span>
+<span class="nx">FILTER</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;BOING&#39;</span><span class="p">).</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;DOING&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -2295,31 +2210,80 @@ FILTER.add(&#39;BOING&#39;).add(&#39;DOING&#39;);
 recommended that the following functions only be used within the
 run-once portion of <code class="docutils literal notranslate"><span class="pre">--javascript</span></code>.</p>
 <div class="section" id="ensureformatheader-format-header-string">
-<h4>ensureFormatHeader(FORMAT_HEADER_STRING)<a class="headerlink" href="#ensureformatheader-format-header-string" title="Permalink to this headline">¶</a></h4>
+<h4>ensureFormatHeader({FORMAT_HEADER_STRING})<a class="headerlink" href="#ensureformatheader-format-header-string" title="Permalink to this headline">¶</a></h4>
 <p>Add a new <code class="docutils literal notranslate"><span class="pre">FORMAT</span></code> field to the VCF if it is not already present. This
 will add a <code class="docutils literal notranslate"><span class="pre">FORMAT</span></code> declaration line to the header and define the
 corresponding accessor methods for use in record processing.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ensureFormatHeader(&#39;##FORMAT=&lt;ID=GL,Number=G,Type=Float,&#39; +
-  &#39;Description=&quot;Log_10 scaled genotype likelihoods.&quot;&gt;&#39;);
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">ensureFormatHeader</span><span class="p">(</span><span class="s1">&#39;##FORMAT=&lt;ID=GL,Number=G,Type=Float,&#39;</span> <span class="o">+</span>
+  <span class="s1">&#39;Description=&quot;Log_10 scaled genotype likelihoods.&quot;&gt;&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="ensureinfoheader-info-header-string">
-<h4>ensureInfoHeader(INFO_HEADER_STRING)<a class="headerlink" href="#ensureinfoheader-info-header-string" title="Permalink to this headline">¶</a></h4>
+<h4>ensureInfoHeader({INFO_HEADER_STRING})<a class="headerlink" href="#ensureinfoheader-info-header-string" title="Permalink to this headline">¶</a></h4>
 <p>Add a new <code class="docutils literal notranslate"><span class="pre">INFO</span></code> field to the VCF if it is not already present. This
 will add an <code class="docutils literal notranslate"><span class="pre">INFO</span></code> declaration line to the header and define the
 corresponding accessor methods for use in record processing.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ensureInfoHeader(&#39;##INFO=&lt;ID=CT,Number=1,Type=Integer,&#39; +
-  &#39;Description=&quot;Coverage threshold that was applied&quot;&gt;&#39;);
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">ensureInfoHeader</span><span class="p">(</span><span class="s1">&#39;##INFO=&lt;ID=CT,Number=1,Type=Integer,&#39;</span> <span class="o">+</span>
+  <span class="s1">&#39;Description=&quot;Coverage threshold that was applied&quot;&gt;&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="ensurefilterheader-filter-header-string">
-<h4>ensureFilterHeader(FILTER_HEADER_STRING)<a class="headerlink" href="#ensurefilterheader-filter-header-string" title="Permalink to this headline">¶</a></h4>
+<h4>ensureFilterHeader({FILTER_HEADER_STRING})<a class="headerlink" href="#ensurefilterheader-filter-header-string" title="Permalink to this headline">¶</a></h4>
 <p>Add a new <code class="docutils literal notranslate"><span class="pre">FILTER</span></code> field to the VCF header if it is not already
 present. This will add an <code class="docutils literal notranslate"><span class="pre">FILTER</span></code> declaration line to the header.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ensureFilterHeader(&#39;##INFO=&lt;ID=FAIL_VAL,&#39; +
-  &#39;Description=&quot;Failed validation&quot;&gt;&#39;);
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">ensureFilterHeader</span><span class="p">(</span><span class="s1">&#39;##INFO=&lt;ID=FAIL_VAL,&#39;</span> <span class="o">+</span>
+  <span class="s1">&#39;Description=&quot;Failed validation&quot;&gt;&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-for-overlap-with-genomic-regions">
+<h3>Testing for overlap with genomic regions<a class="headerlink" href="#testing-for-overlap-with-genomic-regions" title="Permalink to this headline">¶</a></h3>
+<p>One common use case is to test whether any given VCF record overlaps or
+is contained within a set of genomic regions. Regions may be loaded from
+either an external BED file or VCF file in the run-once portion of the
+JavaScript by either of the following:</p>
+<div class="section" id="regions-frombed-filename">
+<h4>Regions.fromBed({FILENAME})<a class="headerlink" href="#regions-frombed-filename" title="Permalink to this headline">¶</a></h4>
+<p>Load the specified BED file into a <cite>regions</cite> object. For example:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">myregions</span> <span class="o">=</span> <span class="nx">Regions</span><span class="p">.</span><span class="nx">fromBed</span><span class="p">(</span><span class="s1">&#39;/path/to/regions.bed&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="regions-fromvcf-filename">
+<h4>Regions.fromVcf({FILENAME})<a class="headerlink" href="#regions-fromvcf-filename" title="Permalink to this headline">¶</a></h4>
+<p>Load the specified VCF file into a <cite>regions</cite> object. For example:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">myregions</span> <span class="o">=</span> <span class="nx">Regions</span><span class="p">.</span><span class="nx">fromVcf</span><span class="p">(</span><span class="s1">&#39;/path/to/regions.vcf&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Having loaded a set of genomic regions, this can be used to test for
+region overlaps using the following methods:</p>
+</div>
+<div class="section" id="regions-object-overlaps-chrom-start-end">
+<h4>{REGIONS_OBJECT}.overlaps({CHROM}, {START}, {END})<a class="headerlink" href="#regions-object-overlaps-chrom-start-end" title="Permalink to this headline">¶</a></h4>
+<p>Return true if the loaded regions overlap the specified interval.  This
+function is typically used within the <code class="docutils literal notranslate"><span class="pre">record</span></code> function to test the
+coordinates of the current VCF record, e.g.:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">record</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">myregions</span><span class="p">.</span><span class="nx">overlaps</span><span class="p">(</span><span class="nx">CHROM</span><span class="p">,</span> <span class="nx">POS</span><span class="p">,</span> <span class="nx">POS</span> <span class="o">+</span> <span class="nx">REF</span><span class="p">.</span><span class="nx">length</span><span class="p">))</span> <span class="p">{</span>
+        <span class="c1">// do something if the record overlaps any region</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="regions-object-encloses-chrom-start-end">
+<h4>{REGIONS_OBJECT}.encloses({CHROM}, {START}, {END})<a class="headerlink" href="#regions-object-encloses-chrom-start-end" title="Permalink to this headline">¶</a></h4>
+<p>Return true if the loaded regions entirely encloses the supplied
+interval.  This function is typically used within the <code class="docutils literal notranslate"><span class="pre">record</span></code>
+function to test the coordinates of the current VCF record, e.g.:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">record</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">myregions</span><span class="p">.</span><span class="nx">encloses</span><span class="p">(</span><span class="nx">CHROM</span><span class="p">,</span> <span class="nx">POS</span><span class="p">,</span> <span class="nx">POS</span> <span class="o">+</span> <span class="nx">REF</span><span class="p">.</span><span class="nx">length</span><span class="p">))</span> <span class="p">{</span>
+        <span class="c1">// do something if the record is fully enclosed by any region</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -2329,36 +2293,36 @@ present. This will add an <code class="docutils literal notranslate"><span class
 <div class="section" id="samples">
 <h4>SAMPLES<a class="headerlink" href="#samples" title="Permalink to this headline">¶</a></h4>
 <p>This variable contains an array of the sample names in the VCF header.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SAMPLES; // [&#39;NA12877&#39;, &#39;NA12878&#39;]
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">SAMPLES</span><span class="p">;</span> <span class="c1">// [&#39;NA12877&#39;, &#39;NA12878&#39;]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="print-string">
 <h4>print({STRING})<a class="headerlink" href="#print-string" title="Permalink to this headline">¶</a></h4>
-<p>Writes the provided string to standard output.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>print(&#39;The samples are: &#39; + SAMPLES);
+<p>Write the provided string to standard output.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">print</span><span class="p">(</span><span class="s1">&#39;The samples are: &#39;</span> <span class="o">+</span> <span class="nx">SAMPLES</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="error-string">
 <h4>error({STRING})<a class="headerlink" href="#error-string" title="Permalink to this headline">¶</a></h4>
-<p>Writes the provided string to standard error.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>error(&#39;The samples are: &#39; + SAMPLES);
+<p>Write the provided string to standard error.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;The samples are: &#39;</span> <span class="o">+</span> <span class="nx">SAMPLES</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="checkminversion-rtg-minimum-version">
 <h4>checkMinVersion(RTG_MINIMUM_VERSION)<a class="headerlink" href="#checkminversion-rtg-minimum-version" title="Permalink to this headline">¶</a></h4>
-<p>Checks the version of RTG that the script is running under, and exits
+<p>Check the version of RTG that the script is running under, and exits
 with an error message if the version of RTG does not meet the minimum
 required version. This is useful when distributing scripts that make use
 of features that are not present in earlier versions of RTG.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>checkMinVersion(&#39;3.9.2&#39;);
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">checkMinVersion</span><span class="p">(</span><span class="s1">&#39;3.9.2&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">For javascript filtering usage and examples see <a class="reference internal" href="rtg_command_reference.html#vcffilter"><span class="std std-ref">vcffilter</span></a></p>
+<p class="admonition-title">See also</p>
+<p>For javascript filtering usage and examples see <a class="reference internal" href="rtg_command_reference.html#vcffilter"><span class="std std-ref">vcffilter</span></a></p>
 </div>
 </div>
 </div>
@@ -2409,8 +2373,8 @@ mapping the reads against the same reference genome. Each node should
 have sufficient, dedicated memory. RTG will automatically use the
 available cores of the processor to run multi-threaded tasks.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The map command does not require specific assignment of
+<p class="admonition-title">Note</p>
+<p>The map command does not require specific assignment of
 input files for left and right mate pair read data sets; this is handled
 automatically by the format command. The result is an SDF directory
 structure, with left and right SDF directories underneath a directory
@@ -2440,11 +2404,11 @@ reference.</p>
 <h2>Distribution Contents<a class="headerlink" href="#distribution-contents" title="Permalink to this headline">¶</a></h2>
 <p>The contents of the RTG distribution zip file should include:</p>
 <ul class="simple">
-<li>The RTG executable JAR file.</li>
-<li>RTG executable wrapper script.</li>
-<li>Example scripts and files.</li>
-<li>This operations manual.</li>
-<li>A release notes file and a readme file.</li>
+<li><p>The RTG executable JAR file.</p></li>
+<li><p>RTG executable wrapper script.</p></li>
+<li><p>Example scripts and files.</p></li>
+<li><p>This operations manual.</p></li>
+<li><p>A release notes file and a readme file.</p></li>
 </ul>
 <p>Some distributions also include an appropriate java runtime environment
 (JRE) for your operating system.</p>
@@ -2733,7 +2697,95 @@ referenced in this document are the property of their respective owners.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/html_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Appendix</a><ul>
+<li><a class="reference internal" href="#rtg-gapped-alignment-technical-description">RTG gapped alignment technical description</a><ul>
+<li><a class="reference internal" href="#alignment-computations">Alignment computations</a></li>
+<li><a class="reference internal" href="#alignment-scoring">Alignment scoring</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-sam-bam-read-groups-in-rtg-map">Using SAM/BAM Read Groups in RTG map</a></li>
+<li><a class="reference internal" href="#rtg-reference-file-format">RTG reference file format</a></li>
+<li><a class="reference internal" href="#rtg-taxonomic-reference-file-format">RTG taxonomic reference file format</a><ul>
+<li><a class="reference internal" href="#rtg-taxonomy-file-format">RTG taxonomy file format</a></li>
+<li><a class="reference internal" href="#rtg-taxonomy-lookup-file-format">RTG taxonomy lookup file format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pedigree-ped-input-file-format">Pedigree PED input file format</a></li>
+<li><a class="reference internal" href="#genetic-map-directory">Genetic map directory</a></li>
+<li><a class="reference internal" href="#rtg-commands-using-indexed-input-files">RTG commands using indexed input files</a></li>
+<li><a class="reference internal" href="#rtg-output-results-file-descriptions">RTG output results file descriptions</a><ul>
+<li><a class="reference internal" href="#sam-bam-file-extensions-rtg-map-command-output">SAM/BAM file extensions (RTG map command output)</a></li>
+<li><a class="reference internal" href="#sam-bam-file-extensions-rtg-cgmap-command-output">SAM/BAM file extensions (RTG cgmap command output)</a></li>
+<li><a class="reference internal" href="#small-variant-vcf-output-file-description">Small-variant VCF output file description</a></li>
+<li><a class="reference internal" href="#regions-bed-output-file-description">Regions BED output file description</a></li>
+<li><a class="reference internal" href="#sv-command-output-file-descriptions">SV command output file descriptions</a></li>
+<li><a class="reference internal" href="#discord-command-output-file-descriptions">Discord command output file descriptions</a></li>
+<li><a class="reference internal" href="#coverage-command-output-file-descriptions">Coverage command output file descriptions</a></li>
+<li><a class="reference internal" href="#mapx-and-mapp-output-file-description">Mapx and mapp output file description</a></li>
+<li><a class="reference internal" href="#species-results-file-description">Species results file description</a></li>
+<li><a class="reference internal" href="#similarity-results-file-descriptions">Similarity results file descriptions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rtg-javascript-filtering-api">RTG JavaScript filtering API</a><ul>
+<li><a class="reference internal" href="#vcf-record-field-access">VCF record field access</a><ul>
+<li><a class="reference internal" href="#chrom-pos-id-ref-qual">CHROM, POS, ID, REF, QUAL</a></li>
+<li><a class="reference internal" href="#alt-filter">ALT, FILTER</a></li>
+<li><a class="reference internal" href="#info-info-field">INFO.{INFO_FIELD}</a></li>
+<li><a class="reference internal" href="#sample-name-format-field">{SAMPLE_NAME}.{FORMAT_FIELD}</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vcf-record-modification">VCF record modification</a></li>
+<li><a class="reference internal" href="#vcf-header-modification">VCF header modification</a><ul>
+<li><a class="reference internal" href="#ensureformatheader-format-header-string">ensureFormatHeader({FORMAT_HEADER_STRING})</a></li>
+<li><a class="reference internal" href="#ensureinfoheader-info-header-string">ensureInfoHeader({INFO_HEADER_STRING})</a></li>
+<li><a class="reference internal" href="#ensurefilterheader-filter-header-string">ensureFilterHeader({FILTER_HEADER_STRING})</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-for-overlap-with-genomic-regions">Testing for overlap with genomic regions</a><ul>
+<li><a class="reference internal" href="#regions-frombed-filename">Regions.fromBed({FILENAME})</a></li>
+<li><a class="reference internal" href="#regions-fromvcf-filename">Regions.fromVcf({FILENAME})</a></li>
+<li><a class="reference internal" href="#regions-object-overlaps-chrom-start-end">{REGIONS_OBJECT}.overlaps({CHROM}, {START}, {END})</a></li>
+<li><a class="reference internal" href="#regions-object-encloses-chrom-start-end">{REGIONS_OBJECT}.encloses({CHROM}, {START}, {END})</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-information-and-functions">Additional information and functions</a><ul>
+<li><a class="reference internal" href="#samples">SAMPLES</a></li>
+<li><a class="reference internal" href="#print-string">print({STRING})</a></li>
+<li><a class="reference internal" href="#error-string">error({STRING})</a></li>
+<li><a class="reference internal" href="#checkminversion-rtg-minimum-version">checkMinVersion(RTG_MINIMUM_VERSION)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#parallel-processing-approach">Parallel processing approach</a></li>
+<li><a class="reference internal" href="#distribution-contents">Distribution Contents</a></li>
+<li><a class="reference internal" href="#readme-txt">README.txt</a></li>
+<li><a class="reference internal" href="#notice">Notice</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="administration.html"
+                        title="previous chapter">Administration &amp; Capacity Planning</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/appendix.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
         </div>
       </div>
       <div class="clearer"></div>
@@ -2747,12 +2799,13 @@ referenced in this document are the property of their respective owners.</p>
         <li class="right" >
           <a href="administration.html" title="Administration &amp; Capacity Planning"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.11</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.12</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Appendix</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2017, Real Time Genomics.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>
