@@ -12,6 +12,8 @@
 
 package com.rtg.blacklist;
 
+import java.io.File;
+
 import com.rtg.util.test.params.TestParams;
 
 import junit.framework.TestCase;
@@ -27,4 +29,27 @@ public class HashDistParamsTest extends TestCase {
       .excludeTypeCheck("blacklistThreshold")
       .check();
   }
+
+  public void testBuilder() {
+    final HashDistParamsBuilder b = HashDistParams.builder();
+    assertEquals(b, b.makeBlacklist(true));
+    assertEquals(b, b.installBlacklist(true));
+    assertEquals(b, b.threshold(20));
+    assertEquals(b, b.blacklistThreshold(22));
+    assertEquals(b, b.numberThreads(2));
+    assertEquals(b, b.hashMapSizeFactor(0.42));
+    assertEquals(b, b.directory(new File("output")));
+    assertEquals(b, b.self());
+    
+    final HashDistParams params = b.create();
+    assertTrue(params.makeBlacklist());
+    assertTrue(params.installBlacklist());
+    assertEquals(20, params.threshold());
+    assertEquals(22, params.blacklistThreshold());
+    assertEquals(2, params.numberThreads());
+    assertEquals(0.42, params.hashMapSizeFactor());
+    assertEquals(new File("output"), params.directory());
+    assertEquals(new File("output", "foo"), params.file("foo"));
+  }
+
 }
