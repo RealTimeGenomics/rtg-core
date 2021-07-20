@@ -46,6 +46,7 @@ public final class CoverageParams extends SingleMappedParams {
    */
   public static final class CoverageParamsBuilder extends SingleMappedParamsBuilder<CoverageParamsBuilder> {
 
+    int mFoldTargetPercent = 80;
     int mMinimumCoverageThreshold = 1;
     int mSmoothing = 0;
     boolean mErrorRates = false;
@@ -147,6 +148,17 @@ public final class CoverageParams extends SingleMappedParams {
     }
 
     /**
+     * Target percentage coverage for fold penalty statistic
+     *
+     * @param foldPct target percentage coverage
+     * @return this builder, so calls can be chained.
+     */
+    public CoverageParamsBuilder foldTargetPercent(int foldPct) {
+      mFoldTargetPercent = foldPct;
+      return self();
+    }
+
+    /**
      * @param val true if TABIX index should be created for output coverage files.
      * @return this builder, so calls can be chained.
      */
@@ -185,7 +197,7 @@ public final class CoverageParams extends SingleMappedParams {
   private final int mMinimumCoverageThreshold;
   private final int mChunkSize;
   private final boolean mDisableHtmlReport;
-
+  private final int mFoldTargetPercent;
   private final boolean mOutputIndex;
 
   /**
@@ -204,6 +216,7 @@ public final class CoverageParams extends SingleMappedParams {
     mOutputIndex = builder.mOutputIndex;
     mChunkSize = builder.mChunkSize;
     mDisableHtmlReport = builder.mDisableHtmlReport;
+    mFoldTargetPercent = builder.mFoldTargetPercent;
   }
 
   /**
@@ -316,6 +329,13 @@ public final class CoverageParams extends SingleMappedParams {
   /** @return true if HTML report output should be disabled */
   public boolean disableHtmlReport() {
     return mDisableHtmlReport;
+  }
+
+  /**
+   * @return the target percentage of bases when computing fold penalty statistic.
+   */
+  public int foldTargetPercent() {
+    return mFoldTargetPercent; 
   }
 
   @Override

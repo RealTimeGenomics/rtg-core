@@ -43,6 +43,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
   private static final String PER_BASE_FLAG = "per-base";
   private static final String PER_REGION_FLAG = "per-region";
   private static final String X_COVERAGE_THRESHOLD_FLAG = "Xcoverage-threshold";
+  private static final String X_FOLD_PCT_FLAG = "Xfold-penalty-target-percent";
   private static final String X_IGNORE_SAM_HEADER_INCOMPATIBILITY_FLAG = "Xignore-incompatible-sam-headers";
   private static final String X_BINARIZE_BED_FLAG = "Xbinarize-bed";
   private static final String X_CALLABILITY_FLAG = "Xcallability";
@@ -88,6 +89,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     mFlags.registerOptional(X_COVERAGE_THRESHOLD_FLAG, Integer.class, CommonFlags.INT, "coverage threshold for breadth computation (and binarization, if enabled)", 1).setCategory(REPORTING);
     mFlags.registerOptional(X_BINARIZE_BED_FLAG, "if set, binarize BED outputs").setCategory(REPORTING);
     mFlags.registerOptional(X_CALLABILITY_FLAG, Integer.class, CommonFlags.INT, "report callability with respect to this minimum coverage level").setCategory(REPORTING);
+    mFlags.registerOptional(X_FOLD_PCT_FLAG, Integer.class, CommonFlags.INT, "target percent when computing fold penalty", 80).setCategory(REPORTING);
     mFlags.registerOptional(X_IGNORE_SAM_HEADER_INCOMPATIBILITY_FLAG, "ignore incompatible SAM headers when merging SAM results").setCategory(UTILITY);
     mFlags.registerOptional(X_DISABLE_HTML_REPORT_FLAG, "disable HTML report output").setCategory(REPORTING);
     CommonFlags.initIndexFlags(mFlags);
@@ -135,6 +137,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     builder.outputIndex(!mFlags.isSet(CommonFlags.NO_INDEX));
     builder.ignoreIncompatibleSamHeaders(mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY_FLAG));
     builder.minimumCoverageThreshold((Integer) mFlags.getValue(X_COVERAGE_THRESHOLD_FLAG));
+    builder.foldTargetPercent((Integer) mFlags.getValue(X_FOLD_PCT_FLAG));
     builder.binarizeBed(mFlags.isSet(X_BINARIZE_BED_FLAG));
     if (mFlags.isSet(X_CALLABILITY_FLAG)) {
       builder.includeDeletions(true).binarizeBed(true).minimumCoverageThreshold((Integer) mFlags.getValue(X_CALLABILITY_FLAG));
@@ -152,6 +155,6 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
 
   @Override
   protected IORunnable task(final CoverageParams params, final OutputStream out) {
-    return new com.rtg.variant.coverage.CoverageTask(params, out, new CoverageStatistics(outputDirectory(), params.disableHtmlReport()));
+    return new com.rtg.variant.coverage.CoverageTask(params, out, new CoverageStatistics(outputDirectory(), params.disableHtmlReport(), params.foldTargetPercent()));
   }
 }

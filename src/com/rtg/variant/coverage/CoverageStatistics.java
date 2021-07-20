@@ -96,6 +96,7 @@ public class CoverageStatistics extends AbstractStatistics {
   private static final String LEVELS_TSV_NAME = "levels.tsv";
 
   private final boolean mDisableHtmlReport;
+  private final int mFoldPercent;
 
   // Contains distinct labels to output (e.g. sequence names / region names / gene names
   private final LinkedHashSet<String> mCoverageNames = new LinkedHashSet<>();
@@ -128,9 +129,11 @@ public class CoverageStatistics extends AbstractStatistics {
   /**
    * @param outputDirectory The base output directory to generate statistics and reports in. May be null if no statistics or reports are to be generated.
    * @param disableHtmlReport true if HTML reporting should be disabled
+   * @param targetFoldPercent the target percentage of bases when computing fold penalty statistic.
    */
-  public CoverageStatistics(File outputDirectory, boolean disableHtmlReport) {
+  public CoverageStatistics(File outputDirectory, boolean disableHtmlReport, int targetFoldPercent) {
     super(outputDirectory);
+    mFoldPercent = targetFoldPercent;
     mDisableHtmlReport = disableHtmlReport;
   }
 
@@ -176,13 +179,13 @@ public class CoverageStatistics extends AbstractStatistics {
       appendRow(table, Utils.realFormat(totalDepth, COVERAGE_DP), Utils.realFormat(totalBreadth, BREADTH_DP), mTotalCovered, mTotalBases,
                      /*Utils.realFormat(nonNTotalDepth, DP), Utils.realFormat(nonNTotalBreadth, DP), mNonNTotalCovered, mNonNTotalBaseCount,*/ "all regions");
       table.toString(sb);
-      final Double fold80 = fold80();
+      final Double foldPenalty = foldPenalty(mFoldPercent);
       final double median = MathUtils.median(cov);
-      if (fold80 != null || !Double.isNaN(median)) {
+      if (foldPenalty != null || !Double.isNaN(median)) {
         sb.append(LS);
       }
-      if (fold80 != null) {
-        sb.append("Fold-80 Penalty: ").append(Utils.realFormat(fold80, 2)).append(LS);
+      if (foldPenalty != null) {
+        sb.append(String.format("Fold-%d Penalty: ", mFoldPercent)).append(Utils.realFormat(foldPenalty, 2)).append(LS);
       }
       if (!Double.isNaN(median)) {
         sb.append("Median depth: ").append(Utils.realFormat(median, COVERAGE_DP)).append(LS);
@@ -383,27 +386,28 @@ public class CoverageStatistics extends AbstractStatistics {
   }
 
   /**
-   * Calculates the fold 80 penalty if possible. a measure of the non-uniformity of sequence
-   * coverage: the amount of additional sequencing that would be necessary to ensure that 80%
+   * Calculates the fold N penalty if possible. a measure of the non-uniformity of sequence
+   * coverage: the amount of additional sequencing that would be necessary to ensure that N %
    * of target bases (in non-zero coverage targets) are covered to the current mean target coverage.
    * <br>
-   * The fold 80 penalty might not be able to be calculated if the binning results in no coverage value
+   * The fold penalty might not be able to be calculated if the binning results in no coverage value
    * near enough to the 20th percentile
-   * @return the fold 80 penalty, or null if it could not be calculated.
+   * @return the fold penalty, or null if it could not be calculated.
+   * @param targetPct the percentage of target bases to be covered to mean coverage
    */
-  public Double fold80() {
-    return fold80(mTotalBases, mTotalCoverage, mHistogram);
+  public Double foldPenalty(int targetPct) {
+    return foldPenalty(targetPct, mTotalBases, mTotalCoverage, mHistogram);
   }
 
-  protected static Double fold80(long totalBases, double totalCoverage, long[] histogram) {
+  protected static Double foldPenalty(double targetPct, long totalBases, double totalCoverage, long[] histogram) {
     double sum = 0.0;
     if (histogram != null) {
       double lastCumulativePct = 100.0;
       for (int i = 0; i < histogram.length; ++i) {
         final double cumulativePct = 100.0 * (totalBases - sum) / totalBases;
-        if (cumulativePct <= 80.0) {
-          assert lastCumulativePct > 80.0;
-          final double frac = (80 - cumulativePct) / (lastCumulativePct - cumulativePct);
+        if (cumulativePct <= targetPct) {
+          assert lastCumulativePct > targetPct;
+          final double frac = (targetPct - cumulativePct) / (lastCumulativePct - cumulativePct);
           final double pct20Cov = (i - frac) * BUCKET_SIZE;
           return totalCoverage / totalBases / pct20Cov;
         }
