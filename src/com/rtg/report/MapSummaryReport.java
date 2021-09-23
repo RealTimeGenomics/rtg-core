@@ -20,10 +20,12 @@ import java.util.List;
 import java.util.Locale;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.reeltwo.plot.ui.ImageWriter;
 import com.rtg.ngs.NgsParams;
 import com.rtg.util.HtmlReportHelper;
 import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.StringUtils;
+import com.rtg.util.diagnostic.Diagnostic;
 
 /**
  * Write params used in mapping run to a report
@@ -88,8 +90,12 @@ public class MapSummaryReport implements Report {
         throw new NullPointerException();
       }
     }
-
-    writeReport(outputDir, inputDirs);
+    final String m = ImageWriter.isImageWritingEnabled();
+    if (m != null) {
+      Diagnostic.warning("Skipping HTML report output, host OS is not correctly configured: " + m);
+    } else {
+      writeReport(outputDir, inputDirs);
+    }
   }
 
   private void writeReport(File outputDir, File... inputDirs) throws IOException {

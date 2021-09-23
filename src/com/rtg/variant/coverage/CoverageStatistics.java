@@ -44,6 +44,7 @@ import com.rtg.util.MultiSet;
 import com.rtg.util.TextTable;
 import com.rtg.util.Utils;
 import com.rtg.util.cli.CommandLine;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.RangeMeta;
 import com.rtg.util.io.FileUtils;
@@ -433,7 +434,12 @@ public class CoverageStatistics extends AbstractStatistics {
     }
 
     if (!mDisableHtmlReport) {
-      generateHtmlReport(levelsData, hrh);
+      final String m = ImageWriter.isImageWritingEnabled();
+      if (m != null) {
+        Diagnostic.warning("Skipping HTML report output, host OS is not correctly configured: " + m);
+      } else {
+        generateHtmlReport(levelsData, hrh);
+      }
     }
   }
 
