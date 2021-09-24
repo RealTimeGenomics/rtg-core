@@ -1,9 +1,11 @@
 <project name="public-core" default="zip-nojre">
 
   <dirname property="public.core.basedir" file="${ant.file.public-core}"/>
-  <property name="core.src.dir" location="${public.core.basedir}/src"/>
+  <property name="core.src.dir" location="${public.core.basedir}/src/main/java"/>
+  <property name="core.src.resource.dir" location="${public.core.basedir}/src/main/resources"/>
   <property name="core.src.lib.dir" location="${public.core.basedir}/lib"/>
-  <property name="core.test.dir" location="${public.core.basedir}/test"/>
+  <property name="core.test.dir" location="${public.core.basedir}/src/test/java"/>
+  <property name="core.test.resource.dir" location="${public.core.basedir}/src/test/resources"/>
   <property name="core.test.lib.dir" location="${public.core.basedir}/testLib"/>
 
   <property name="dist.dir" location="${public.core.basedir}/dist"/>
@@ -28,14 +30,16 @@
 
   <path id="core.runtime.classpath">
     <pathelement path="${core.src.dir}" />
+    <pathelement path="${core.src.resource.dir}" />
   </path>
 
   <path id="core.runtime.test.classpath">
     <pathelement path="${core.test.dir}" />
+    <pathelement path="${core.test.resource.dir}" />
   </path>
 
   <union id="core.jar-src">
-    <fileset dir="${core.src.dir}">
+    <fileset dir="${core.src.resource.dir}">
       <include name="com/**/*.properties"/>
       <include name="com/rtg/report/resources/*"/>
       <include name="com/rtg/metagenomics/krona/resources/krona-2.0.js" />
@@ -46,7 +50,7 @@
   </union>
 
   <union id="core.jar-test">
-    <fileset dir="${core.test.dir}">
+    <fileset dir="${core.test.resource.dir}">
       <include name="com/**/*.txt"/>
       <include name="com/**/*.properties"/>
       <include name="com/rtg/**/resources/**/*"/>
@@ -68,7 +72,7 @@
   </path>
 
   <path id="test.regression.path">
-    <pathelement path="${core.test.dir}" />
+    <pathelement path="${core.test.resource.dir}" />
     <pathelement path="${tools.test.resource.dir}" />
   </path>
 
