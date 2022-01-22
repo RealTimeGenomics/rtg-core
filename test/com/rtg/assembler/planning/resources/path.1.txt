@@ -1,5 +1,0 @@
-#An example of a path file
-path	1	min=3
-contigs	+2	-1	-4
-path	2
-contigs	+1	-2

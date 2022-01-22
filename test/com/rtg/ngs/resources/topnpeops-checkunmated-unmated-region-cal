@@ -1,4 +1,0 @@
-#CL	null
-@nh:RG23
-@sequence	150	t
-@covar	readgroup	basequality	sequence	equal	diff	ins	del

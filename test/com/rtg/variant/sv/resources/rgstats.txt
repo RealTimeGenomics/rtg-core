@@ -1,4 +1,0 @@
-#Version	vPOST-2.1-DEV build <not found> (<not found>), rgstats v1.3
-#CL	svprep -i mappings_pe_svdup2
-#RG-ID	total-ref	length-n	length-x	length-x2	insert-n	insert-x	insert-x2	insert-n	insert-x	insert-x2	max-score	proper	discordant	unmated
-rtgtest_pe	200000	10071	1007100.0	100710000.0	10042	4026218.0	1633004350.0	10042	4026218.0	1633004350.0	8	10042	24	5

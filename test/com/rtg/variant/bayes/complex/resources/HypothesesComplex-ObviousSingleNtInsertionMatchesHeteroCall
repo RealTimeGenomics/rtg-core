@@ -1,7 +1,0 @@
-6
-new Hyp(":", 0.000),
-new Hyp("A:A", -14.683),
-new Hyp("TT:TT", -23.124),
-new Hyp(":A", -15.525),
-new Hyp("A:TT", -34.132),
-new Hyp(":TT", -23.966),

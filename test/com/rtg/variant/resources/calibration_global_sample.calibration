@@ -1,8 +1,0 @@
-#Version vPOST-2.3 build c27615f (2011-10-27), calibrate v2.0
-#CL	map -i read_set/ -t template_renamed.sdf/ -o male_mappings --sex male --sam-rg @RG\tPL:ILLUMINA\tSM:male\tID:some_reads
-@del:some_reads	0	49	0	1
-@ins:some_reads	0	64	3	0	0	0	1
-@mnp:some_reads	0	6782	452	65	15	2	1
-@nh:some_reads	0	7978
-@covar	readgroup	basequality	equal	diff	ins	del
-some_reads	20	330000	3021	15	24

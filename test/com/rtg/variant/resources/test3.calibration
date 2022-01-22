@@ -1,5 +1,0 @@
-#CL	calibrate C:\Workspace\slim\internal\com\rtg\regression\data\calibrate\unmated.chr22.sam.gz -t C:\Workspace\slim\internal\com\rtg\regression\data\calibrate\chr22 -c basequality
-@mnp:readgroup1	0	1
-@nh:readgroup1	0	10
-@covar	basequality	equal	diff	ins	del
-2	4000000000	4000000	5000000	6000000

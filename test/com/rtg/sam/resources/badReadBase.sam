@@ -1,7 +1,0 @@
-@HD	VN:1.0	SO:coordinate
-@SQ	SN:simulatedSequence2	LN:100000
-@RG	ID:a	PL:ILLUMINA	SM:a
-read1	163	simulatedSequence2	1	255	5=	=	630	239	AARAA	+++++	AS:i:1	NM:i:1	MQ:i:255	XA:i:2	IH:i:1	RG:Z:a
-read2	163	simulatedSequence2	2	255	5=	=	630	239	AAAAA	+++++	AS:i:1	NM:i:1	MQ:i:255	XA:i:2	IH:i:1	RG:Z:a
-read3	163	simulatedSequence2	3	255	5=	=	630	239	AARAA	+++++	AS:i:1	NM:i:1	MQ:i:255	XA:i:2	IH:i:1	RG:Z:a
-read4	163	simulatedSequence2	4	255	5=	=	630	239	AAAAA	+++++	AS:i:1	NM:i:1	MQ:i:255	XA:i:2	IH:i:1	RG:Z:a

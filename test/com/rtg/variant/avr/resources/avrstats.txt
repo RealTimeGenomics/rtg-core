@@ -1,8 +1,0 @@
-Date built    : 2013-03-26-15-37-53
-AVR Version   : 1
-AVR-ID        : 0dedcb06-007e-41fc-94c4-a4773ea7db05
-Type          : ML
-INFO fields   : XRX
-FORMAT fields : GT,GQ,AB,AR
-Parameters    : avrbuild -p /rtgshare/users/richard/demo_20130319/positive.vcf.gz -n /rtgshare/users/richard/demo_20130319/negative.vcf.gz -o test/com/rtg/variant/avr/resources/mlmodel.avr --info-annotation XRX --format-annotation GT,GQ,AB,AR
-

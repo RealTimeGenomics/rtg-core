@@ -1,2 +1,0 @@
-#chrom	start	end	name	extent	status	RDR	LR	SQS	segments
-19	4580	4690	one	Full	Amplification	2.9079	1.5400	1.5400	DUP,1.54,19:1001-9000; 

@@ -1,5 +1,0 @@
-1	73	template	1	255	8M	*	0	0	ACTAGCAG	*	AS:i:1	NM:i:1
-2	137	template	1	255	8M	*	0	0	ACTAGCAG	*	AS:i:1	NM:i:1
-1	141	*	0	0	*	*	0	0	ACTAGCAG	*
-2	77	*	0	0	*	*	0	0	ACACTTGG	*
-

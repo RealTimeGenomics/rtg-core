@@ -1,3 +1,0 @@
-Total Segments: 4
-Deletions:      1
-Duplications:   1

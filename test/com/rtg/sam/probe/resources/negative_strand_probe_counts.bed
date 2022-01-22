@@ -1,4 +1,0 @@
-#chrom	start	end	name	score	strand	count
-seq	1000	1040	probe_name_2	848	-	3
-seq	2000	2060	probe_name_3	880	-	3
-seq	3000	3020	probe_name_4	695	-	3

@@ -1,3 +1,0 @@
-CG2 l=29 w=18 e=0
-number windows=4
-set name=1234 length=23

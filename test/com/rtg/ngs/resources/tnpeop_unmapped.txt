@@ -1,5 +1,0 @@
-1	77	*	0	0	*	*	0	0	ACTAGCAG	*
-1	141	*	0	0	*	*	0	0	ACTAGCAG	*
-2	77	*	0	0	*	*	0	0	ACACTTGG	*
-2	141	*	0	0	*	*	0	0	ACTAGCAG	*
-

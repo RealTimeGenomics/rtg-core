@@ -1,4 +1,0 @@
-679af26cc6be203716b233059553d3db contig.1.fa
-13fe7baff6414685a6f20f65e11dc879 contig.2.fa
-762b36734794180251a4a46aefde8a68 header.txt
-d9189dc58dccd27b0b26d1fda7dbd114 path.1.txt

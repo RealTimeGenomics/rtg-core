@@ -1,5 +1,0 @@
-@HD	VN:1.0	SO:coordinate
-@PG	ID:slim VN:v2.0-EAP2.1 build 24506 (2010-02-18) CL:map -a 0 -b 0 -w 8 -t babygenome/ -i babyreads/ -o babyout --sort
-@SQ	SN:simulatedSequence1	LN:25
-0	67	simulatedSequence1	1	255	8=	=	10	9	GACCAACG	*	AS:i:0	NM:i:0	IH:i:1
-1	67	simulatedSequence1	3	255	8=	=	10	7	CCAACGTG	*	AS:i:0	NM:i:0	IH:i:1

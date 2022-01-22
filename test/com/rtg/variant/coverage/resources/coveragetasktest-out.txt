@@ -1,8 +1,0 @@
-Coverage per region:
-  depth  breadth  covered  size         name
-   2.00   0.8000       16    20           g1
-   1.12   0.3824       13    34           g2
-   1.44   0.5370       29    54  all regions
-
-Fold-80 Penalty: 3.34
-Median depth: 1.56

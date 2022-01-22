@@ -1,8 +1,0 @@
-#Version vPOST-2.3 build <not found> (<not found>), calibrate v2.0
-#CL	map -t genome1 -i reads1 -o out1 --sam-rg=@RG\tID:SAMPLE1\tPL:ILLUMINA\tSM:GENOME1
-@mnp:SAMPLE1	0	32	1
-@nh:SAMPLE1	0	31
-@covar	readgroup	basequality	sequence	equal	diff	ins	del
-SAMPLE1	20	simulatedSequence1	592	8	0	0
-SAMPLE1	20	simulatedSequence2	1283	17	0	0
-SAMPLE1	20	simulatedSequence3	1191	9	0	0
