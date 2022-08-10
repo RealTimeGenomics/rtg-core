@@ -39,6 +39,7 @@ import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.report.VelocityReportUtils;
 import com.rtg.util.DoubleMultiSet;
 import com.rtg.util.HtmlReportHelper;
+import com.rtg.util.LongMultiSet;
 import com.rtg.util.MathUtils;
 import com.rtg.util.MultiSet;
 import com.rtg.util.TextTable;
@@ -102,8 +103,8 @@ public class CoverageStatistics extends AbstractStatistics {
   // Contains distinct labels to output (e.g. sequence names / region names / gene names
   private final LinkedHashSet<String> mCoverageNames = new LinkedHashSet<>();
   private final DoubleMultiSet<String> mTotalCoveragePerName = new DoubleMultiSet<>();
-  private final MultiSet<String> mTotalLengthPerName = new MultiSet<>();
-  private final MultiSet<String> mCoveredLengthPerName = new MultiSet<>();
+  private final LongMultiSet<String> mTotalLengthPerName = new LongMultiSet<>();
+  private final LongMultiSet<String> mCoveredLengthPerName = new LongMultiSet<>();
 
   private final Map<RangeMeta<String>, CoverageSequenceStatistics> mOriginalRangeStatisticsMap = new HashMap<>();
   private List<RangeMeta<String>> mCurrentRange = Collections.emptyList();
@@ -156,9 +157,9 @@ public class CoverageStatistics extends AbstractStatistics {
     final double[] cov = new double[mCoverageNames.size()];
     int k = 0;
     for (final String name : mCoverageNames) {
-      final int size = mTotalLengthPerName.get(name);
+      final long size = mTotalLengthPerName.get(name);
       final double coverage = mTotalCoveragePerName.get(name);
-      final int baseCount = mCoveredLengthPerName.get(name);
+      final long baseCount = mCoveredLengthPerName.get(name);
       cov[k++] = coverage / size;
 
       if (!summary || mCoverageNames.size() < 100) {  // show up to 99 labels in summary, otherwise only output the total line.
