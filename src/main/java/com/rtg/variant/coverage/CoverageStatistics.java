@@ -41,7 +41,6 @@ import com.rtg.util.DoubleMultiSet;
 import com.rtg.util.HtmlReportHelper;
 import com.rtg.util.LongMultiSet;
 import com.rtg.util.MathUtils;
-import com.rtg.util.MultiSet;
 import com.rtg.util.TextTable;
 import com.rtg.util.Utils;
 import com.rtg.util.cli.CommandLine;
