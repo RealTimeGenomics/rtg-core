@@ -78,7 +78,7 @@ public class Sam2BamTest extends AbstractCliTest {
       final Collection<File> input = Arrays.asList(sam1, sam2);
       final File output = new File(dir, "output.bam");
       final File index = new File(dir, "output.bai");
-      Sam2Bam.convertSamToBam(output, index, input);
+      Sam2Bam.convertSamToBam(output, index, input, false, 0);
       try (SamReader reader = SamUtils.makeSamReader(output)) {
         try (CloseableIterator<SAMRecord> bIt = reader.iterator()) {
           try (RecordIterator<SAMRecord> multi = new ThreadedMultifileIterator<>(input, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
@@ -99,7 +99,7 @@ public class Sam2BamTest extends AbstractCliTest {
         final int code = bc.mainInit(new String[]{"-o", output.toString(), sam1.toString()}, mps.outputStream(), mps.printStream());
         assertEquals(mps.toString(), 0, code);
       }
-      assertTrue(new File(output.toString() + ".bai").exists());
+      assertTrue(new File(output + ".bai").exists());
     }
   }
 

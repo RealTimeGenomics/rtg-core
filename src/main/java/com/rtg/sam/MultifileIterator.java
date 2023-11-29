@@ -49,6 +49,7 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
 
   private boolean mIsClosed = false;
   private SAMRecord mNextRecordToReturn = null;
+  private String mNextRecordSourceName = null;
 
   /**
    * Constructor.
@@ -180,6 +181,7 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
       if (mFilter.acceptRecord(next)) {
         ++mOutputRecords;
         mNextRecordToReturn = next;
+        mNextRecordSourceName = first.name();
         hasNext = true;
         break;
       } else {
@@ -196,6 +198,14 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
     final SAMRecord rec = mNextRecordToReturn;
     mNextRecordToReturn = null;
     return rec;
+  }
+
+  /**
+   * Return the name of the source for the record most recently returned by <code>next()</code>.
+   * @return filename
+   */
+  public String getSource() {
+    return mNextRecordSourceName;
   }
 
   @Override
