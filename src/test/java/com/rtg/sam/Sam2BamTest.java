@@ -78,7 +78,7 @@ public class Sam2BamTest extends AbstractCliTest {
       final Collection<File> input = Arrays.asList(sam1, sam2);
       final File output = new File(dir, "output.bam");
       final File index = new File(dir, "output.bai");
-      Sam2Bam.convertSamToBam(output, index, input, false, 0);
+      Sam2Bam.convertSamToBam(output, index, input);
       try (SamReader reader = SamUtils.makeSamReader(output)) {
         try (CloseableIterator<SAMRecord> bIt = reader.iterator()) {
           try (RecordIterator<SAMRecord> multi = new ThreadedMultifileIterator<>(input, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
