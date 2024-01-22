@@ -72,7 +72,7 @@ the instructions below to build from this repository.
 
 A user manual is included within the installation in both PDF and HTML
 versions. These may also be viewed
-online ([HTML](https://cdn.rawgit.com/RealTimeGenomics/rtg-core/master/installer/resources/core/RTGOperationsManual/index.html),
+online ([HTML](https://realtimegenomics.github.io/rtg-core/index.html),
 [PDF](https://cdn.rawgit.com/RealTimeGenomics/rtg-core/master/installer/resources/core/RTGOperationsManual.pdf)).
 
 You can use the commands in RTG Core to format your own reference
