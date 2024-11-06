@@ -1,241 +1,28 @@
-SOFTWARE LICENSE AGREEMENT
-(ACADEMIC NON-COMMERCIAL RESEARCH)
+BSD 2-Clause License
 
-PARTIES
-1        REAL TIME GENOMICS LIMITED, of New Zealand (RTG)
-2        USER (User)
+Copyright (c) 2015, Real Time Genomics Limited
+All rights reserved.
 
-BACKGROUND
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
 
-RTG owns and has intellectual property rights (including patents and
-patents pending) in certain software applications that enable
-processing and analysis of genomic data.  RTG wishes to make available
-those applications and their source code for non-commercial use within
-the academic research community, on a royalty-free basis.  This
-License Agreement sets out the terms on which RTG makes those
-applications, that source code and any accompanying documentation
-available for academic non-commercial research.
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
 
-1. INTERPRETATION
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the
+   distribution.
 
-1.1. Definitions:  In this License Agreement:
-
-Applications - the software application RTG Core for genomic data
-analysis, which are made available by RTG on the site
-www.realtimegenomics.com, including any update of those applications
-made available by RTG.
-
-Academic Non-Commercial Research - research that is not carried out
-for profit or for commercial use.  It includes:
-
-  * sponsored academic research;
-
-  * use of the Applications as part of a pipeline analysing data owned
-    by third parties and provision of the results to those third
-    parties, provided the User is not carrying out a commercial
-    service and the results are not intended for commercial use.
-
-Documentation - any user and technical documentation made available by
-RTG on the site www.realtimegenomics.com and designed to enable the
-understanding, use and operation of the Applications or Source Code,
-including any update of that documentation made available by RTG.
-
-Intellectual Property Rights - includes copyright, and all rights
-conferred under statute, common law or equity in relation to
-inventions (including patents), registered and unregistered trade
-marks and designs, circuit layouts, data and databases, confidential
-information, know-how, and all other rights resulting from
-intellectual activity.  Intellectual Property has a consistent
-meaning.
-
-Purpose - the approved purpose set out in clause 2.2.
-
-RTG - Real Time Genomics Ltd.
-
-Source Code - the source code for the Applications made available by
-RTG on the site github.com, including any update of that source code
-made available by RTG.
-
-User - a person or institution using the Applications, Source Code or
-Documentation.
-
-2. ACCEPTANCE AND PURPOSE
-
-2.1. Acceptance: This License Agreement sets out the terms on which
-the User may download and use the Applications, the Source Code and
-the Documentation.  On downloading, using and/or continuing to use the
-Applications, Source Code or Documentation you accept the terms of
-this License Agreement and any amendments to these terms that may be
-made from time to time by RTG.
-
-2.2. Purpose: This License Agreement permits use of the Applications,
-Source Code and Documentation for Academic Non-Commercial Research
-only.  If you wish to use the Applications, Source Code or
-Documentation for any other purpose, you will need to purchase a
-Commercial License from RTG available via email
-info@realtimegenomics.com or website www.realtimegenomics.com
-
-3. LICENSE
-
-3.1. Grant of license: RTG grants to the User a royalty-free,
-non-exclusive, non-transferable and non-sublicensable license to
-download and use the Applications, Source Code and Documentation for
-the Purpose, on the terms and conditions of this License Agreement.
-
-4. ACCESS CONDITIONS
-
-4.1. Permitted use: The User may use, copy and modify all or any part
-of the Applications, Source Code and Documentation but may not sell,
-commercially exploit, distribute or sublicense the Applications,
-Source Code or Documentation or copies or modifications of them.
-
-4.2. Conditions:  The User must:
-
-a. use the Applications, Source Code and Documentation for lawful
-purposes only;
-
-b. ensure the Applications, Source Code and Documentation are
-protected at all times from unauthorized use or disclosure;
-
-c. maintain all proprietary notices on the Applications, Source Code
-and Documentation;
-
-d. not transfer, assign, sublicense or otherwise deal with or grant a
-security interest in the Applications, Source Code or Documentation or
-the User’s rights under this License Agreement;
-
-e. not challenge RTG’s ownership of, or Intellectual Property Rights
-in (including patent rights), the Applications, Source Code or
-Documentation;
-
-f. not copy or adapt the Applications, Source Code or Documentation so
-as to circumvent the need to obtain a license;
-
-g. not make any representation or warranty about the Applications,
-Source Code or Documentation to any third party;
-
-h. notify RTG in writing immediately on it becoming aware of any
-suspected unauthorized knowledge, possession or use of the
-Applications, Source Code or Documentation; and
-
-i. notify RTG in writing immediately on it becoming aware of any
-allegation by a third party that the Applications, Source Code or
-Documentation infringe any rights of that third party.
-
-4.3. Grant back: The User grants RTG a royalty-free, non-exclusive,
-perpetual, irrevocable, world-wide licence to use in any way
-whatsoever (including using, copying, modifying, selling, commercially
-exploiting, distributing or sublicensing) any modifications of the
-Applications, Source Code or Documentation made by the User.
-
-5. PUBLICATION
-
-5.1. Publication: The User may publish the results of any research
-obtained using the Applications in accordance with this License
-Agreement, provided any publication includes an attribution to the
-effect that:
-
-This research was carried out using RTG Core under an Academic
-Non-Commercial License granted by Real Time Genomics Ltd.
-
-6. INTELLECTUAL PROPERTY  
-
-1. Ownership: RTG (or its licensors) owns all Intellectual Property
-Rights in the Applications, Source Code and Documentation.
-
-7. WARRANTIES
-
-7.1. NO IMPLIED WARRANTIES: RTG PROVIDES THE APPLICATIONS, SOURCE CODE
-AND DOCUMENTATION ON AN AS IS BASIS.  ANY IMPLIED GUARANTEE, CONDITION
-OR WARRANTY INCLUDING THOSE AS TO THEIR NON-INFRINGEMENT OF THIRD
-PARTY RIGHTS, QUALITY, FITNESS FOR PURPOSE, ACCURACY OR OPERABILITY IS
-EXCLUDED TO THE MAXIMUM EXTENT PERMITTED BY LAW.
-
-8. LIABILITY
-
-8.1. UNRECOVERABLE LOSS: RTG WILL NOT BE LIABLE TO ANY USER FOR ANY
-DIRECT, INDIRECT, CONSEQUENTIAL OR INCIDENTAL LOSS OR DAMAGE ARISING
-UNDER OR IN CONNECTION WITH THIS LICENSE AGREEMENT OR THE
-APPLICATIONS, SOURCE CODE OR DOCUMENTATION.
-
-8.2. MAXIMUM LIABILITY: IN ANY CIRCUMSTANCES WHERE RTG IS HELD LIABLE
-UNDER OR IN CONNECTION WITH THIS LICENSE AGREEMENT, OR IN RESPECT OF
-THE APPLICATIONS, SOURCE CODE OR DOCUMENTATION, WHETHER IN CONTRACT,
-TORT (INCLUDING FOR NEGLIGENCE), BREACH OF STATUTORY DUTY OR
-OTHERWISE, THE MAXIMUM AGGREGATE LIABILITY OF RTG TO ANY PERSON WILL
-NOT EXCEED US$50.
-
-8.3. Indemnity: The User indemnifies RTG against all claims, loss,
-damages, liabilities and costs (including, without limit, legal costs
-on a solicitor and own client basis) that RTG suffers or incurs as a
-result of the User breaching any term of this License Agreement or of
-the User downloading or using the Applications, Source Code or
-Documentation.
-
-8.4. Employees, etc: The User remains responsible for any actions of
-its personnel including its employees, students or other research
-staff.  Any act or omission by the User’s personnel will be deemed to
-be a breach of this License Agreement if that act or omission, if
-carried out directly by the User, would have been a breach of this
-License Agreement.
-
-9. TERMINATION
-
-9.1. Termination rights:  
-
-a. This License Agreement terminates automatically on the User
-breaching any of these terms.
-
-b. RTG may terminate this License Agreement in respect of any or all
-of the Applications, Source Code or Documentation by giving notice to
-the User or by way of providing notice on the www.realtimegenomics.com
-to that effect.
-
-9.2. Consequences of termination: On termination for any reason, the
-User must return to RTG or destroy all copies of the Applications,
-Source Code and Documentation in its possession or control.
-
-9.3. Obligations continuing: Clauses 4.3, 5, 6, 8, 9.2 and 9.3 and any
-other clauses which expressly or by implication survive termination
-continue after termination of this License Agreement for any reason.
-
-10. GENERAL
-
-10.1. Waiver: To waive a right under this License Agreement, that
-waiver must be in writing and signed by the waiving party.
-
-10.2. Relationship: No relationship (e.g. contractor, employment,
-joint venture, agency, trust or partnership) between RTG and the User,
-other than the limited licensor/licensee relationship expressly set
-out in these terms, exists under this License Agreement.
-
-10.3. Severability: Any illegality, unenforceability or invalidity of
-any provision or severable part of any provision of this License
-Agreement does not affect the legality, enforceability or validity of
-the remaining provision or provisions of this License Agreement.
-
-10.4. Notices: Any notices to be given to RTG under this License
-Agreement may be made by sending an email to
-info@realtimegenomics.com.
-
-10.5. Variation: Any variation to this License Agreement, other than
-that made by RTG by way of update on www.realtimegenomics.com and/or
-github.com, must be in writing and signed by both parties.
-
-10.6. Entire agreement: This License Agreement sets out everything
-agreed by the parties relating to its subject matter and supersedes
-and cancels anything discussed, exchanged or agreed prior to its
-start.
-
-10.7. Assignment: RTG may assign, transfer or sublicense any of its
-rights or obligations under this License Agreement without consent
-from any User.
-
-10.8. Law: This License Agreement is governed by, and must be
-interpreted in accordance with, the laws of the State of California,
-without regard to conflicts of law principles.  Each party submits to
-the non-exclusive jurisdiction of the Courts of the State of
-California in relation to any dispute connected with this License
-Agreement.  The parties agree that the Convention for the
-International Sale of Goods does not apply.
-
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
