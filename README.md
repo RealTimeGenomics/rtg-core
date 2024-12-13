@@ -1,13 +1,9 @@
-# RTG Core Non-commercial
+# RTG Core
 
 Copyright (c) 2018 Real Time Genomics Ltd
 
-This software is provided under the Real Time Genomics Ltd Software
-Licence Agreement for Academic Non-commercial Research Purposes
-only. See [LICENSE.txt](LICENSE.txt)
-
-If you require a license for commercial use or wish to purchase
-commercial support contact us via info@realtimegenomics.com.
+This software is provided under the Simplified BSD License. See
+[LICENSE.txt](LICENSE.txt)
 
 ## Introduction
 
@@ -89,8 +85,7 @@ To be informed of new software releases, subscribe to the low-traffic
 [rtg-announce](https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-announce)
 group.
 
-If you require a license for commercial use or wish to purchase
-commercial support contact us via info@realtimegenomics.com.
+If you wish to purchase commercial support contact us via info@realtimegenomics.com.
 
 ---
 
@@ -119,7 +114,7 @@ development).
 
 ## Building RTG Core package
 
-To build the RTG Core Non-Commercial package which can be locally
+To build the RTG Core package which can be locally
 installed and run:
 
     $ ant zip-nojre

@@ -11,7 +11,7 @@
   <property name="dist.dir" location="${public.core.basedir}/dist"/>
   <property name="build.dir" location="${public.core.basedir}/build"/>
 
-  <property name="product" value="RTG Core Non-Commercial" />
+  <property name="product" value="RTG Core" />
   <property name="product.repo" value="RealTimeGenomics/rtg-core" />
   <property name="resources" value="core" />
 
