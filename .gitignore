@@ -31,4 +31,5 @@ tmp
 /test/.checkstyle
 /.metadata
 /.idea
+/target
 *.iml
