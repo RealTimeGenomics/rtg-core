@@ -266,7 +266,7 @@ public class MetaSnpCli extends LoggedCli {
       final int numAlleles = currentEvidence[0].length;
       for (int sample = 0; sample < currentEvidence.length; ++sample) {
         for (byte allele = 0; allele < numAlleles; ++allele) {
-          totals[sample] += currentEvidence[sample][allele];
+          totals[sample] += (int) currentEvidence[sample][allele];
         }
       }
       for (byte allele = 0; allele < numAlleles; ++allele) {

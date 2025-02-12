@@ -84,8 +84,8 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
     final int[] qualityTotals = new int[mCurve.length];
     for (int i = 0; i < qualityMismatches.length; ++i) {
       for (int j = 0; j < proc.getTotals()[i].length; ++j) {
-        qualityMismatches[i] += proc.getMismatches()[i][j];
-        qualityTotals[i] += proc.getTotals()[i][j];
+        qualityMismatches[i] += (int) proc.getMismatches()[i][j];
+        qualityTotals[i] += (int) proc.getTotals()[i][j];
       }
     }
 

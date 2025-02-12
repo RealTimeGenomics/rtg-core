@@ -36,7 +36,7 @@ import com.rtg.util.integrity.Exam;
 /**
  * Constant.
  */
-public class DistributionConstant extends Distribution {
+public final class DistributionConstant extends Distribution {
 
   private final double mConstant;
 

@@ -39,7 +39,7 @@ import com.rtg.util.integrity.IntegralAbstract;
 
 /**
  */
-public class SignalSum extends IntegralAbstract implements Signal {
+public final class SignalSum extends IntegralAbstract implements Signal {
 
   private final Signal[] mSignals;
 

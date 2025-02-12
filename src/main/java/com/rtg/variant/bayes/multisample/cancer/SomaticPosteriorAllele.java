@@ -37,7 +37,7 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 /**
  * Posterior calculations for allele based cancer calling.
  */
-public class SomaticPosteriorAllele extends AbstractSomaticPosterior {
+public final class SomaticPosteriorAllele extends AbstractSomaticPosterior {
 
   /**
    * Posterior for the allele based cancer caller.

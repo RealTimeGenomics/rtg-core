@@ -107,7 +107,7 @@ public class AviewModelTest extends TestCase {
       assertEquals(5, m.records().size());
 
     } finally {
-      AviewTest.deleteBrokenBam(f);
+      FileHelper.deleteAll(f);
     }
   }
 
@@ -154,7 +154,7 @@ public class AviewModelTest extends TestCase {
       assertEquals(3, m.records().size());
 
     } finally {
-      AviewTest.deleteBrokenBam(f);
+      FileHelper.deleteAll(f);
     }
   }
 
@@ -191,7 +191,7 @@ public class AviewModelTest extends TestCase {
        // Expected
      }
     } finally {
-      AviewTest.deleteBrokenBam(f);
+      FileHelper.deleteAll(f);
     }
   }
 
@@ -234,7 +234,7 @@ public class AviewModelTest extends TestCase {
       assertEquals("3", recs.get(4).getReadName());
 
     } finally {
-      AviewTest.deleteBrokenBam(f);
+      FileHelper.deleteAll(f);
     }
   }
 

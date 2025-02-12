@@ -62,7 +62,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  * Provides evidence for a complex hypothesis by performing an all-paths alignment
  * from an alignment record to each hypothesis.
  */
-public class EvidenceComplex extends Evidence {
+public final class EvidenceComplex extends Evidence {
 
   /** Print complex evidence scores into the developer log for debugging. */
   private static final boolean PRINT_EVIDENCE_DETAILS = GlobalFlags.isSet(CoreGlobalFlags.COMPLEX_EVIDENCE_DETAILS);

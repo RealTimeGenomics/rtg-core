@@ -111,7 +111,7 @@ public class AviewTest extends AbstractCliTest {
       err.close();
 
     } finally {
-      deleteBrokenBam(f);
+      FileHelper.deleteAll(f);
     }
   }
 
@@ -129,16 +129,6 @@ public class AviewTest extends AbstractCliTest {
     final int code = bc.mainInit(new String[] {"-o", bam.getPath(), alignments.getPath()}, TestUtils.getNullOutputStream(), errStream.printStream());
     GlobalFlags.resetAccessedStatus();
     assertEquals(errStream.toString(), 0, code);
-  }
-
-  static void deleteBrokenBam(final File f) {
-    //this ugliness is due to java NIO MappedByteByteBuffer can not release the index file immediately
-    //following assertTrue can still fail on windows some times, thats why need to run System.gc
-    //for more info look at http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4724038
-    System.gc();
-
-    System.runFinalization();
-    assertTrue(FileHelper.deleteAll(f));
   }
 
   public void testNoColor() throws IOException {

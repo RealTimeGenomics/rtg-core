@@ -35,7 +35,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  * Factor for a binary hypothesis.
  * @param <D> description
  */
-public class BinaryFactor<D extends Description> extends AbstractFactor<D> {
+public final class BinaryFactor<D extends Description> extends AbstractFactor<D> {
 
   private final double[] mPoss;
 

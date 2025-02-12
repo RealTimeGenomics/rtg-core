@@ -326,7 +326,7 @@ public class GraphMap {
       }
       for (GraphMap mapping : mappings) {
         if (mapping.mContigReadCounts.length() > i) {
-          count += mapping.mContigReadCounts.get(i);
+          count += mapping.mContigReadCounts.getInt(i);
         }
       }
       if (count > 0) {
@@ -343,7 +343,7 @@ public class GraphMap {
       }
       for (GraphMap mapping : mappings) {
         if (mapping.mPathReadCounts.length() > i) {
-          count += mapping.mPathReadCounts.get(i);
+          count += mapping.mPathReadCounts.getInt(i);
         }
       }
       if (count > 0) {

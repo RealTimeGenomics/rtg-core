@@ -36,7 +36,7 @@ import com.rtg.util.Utils;
 /**
  * Constant.
  */
-public class DistributionArray extends Distribution {
+public final class DistributionArray extends Distribution {
 
   private final double[] mValues;
 

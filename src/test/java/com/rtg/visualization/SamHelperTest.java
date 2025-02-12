@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
@@ -86,7 +87,7 @@ public class SamHelperTest extends TestCase {
           assertEquals(rec.get(i).getAlignmentStart(), location[i]);
       }
     } finally {
-      AviewTest.deleteBrokenBam(f);
+      assertTrue(FileHelper.deleteAll(f));
     }
 
   }

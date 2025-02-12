@@ -203,7 +203,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     //each read must have 1 and only 1 gap of between 0 and 3 (incl) long, but we can't count those with 0 long gaps
     int totSmallGaps = 0;
     for (int i = 0; i < 4 && i < gapHistogram.getLength(); ++i) {
-      totSmallGaps += gapHistogram.getValue(i);
+      totSmallGaps += (int) gapHistogram.getValue(i);
     }
     if (totSmallGaps > totalReads) {
       throw new IllegalArgumentException("invalid CG gap distribution, small gaps (1-3) has larger count than big gaps(4-8)");

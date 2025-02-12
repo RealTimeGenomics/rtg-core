@@ -37,7 +37,7 @@ import com.rtg.util.integrity.Exam;
  * Square distribution, <code>rate1</code> at left and <code>rate2</code> at right.
  * <img src="doc-files/notch.jpg" alt="image">
  */
-public class DistributionStep extends Distribution {
+public final class DistributionStep extends Distribution {
 
   private final double mRate1;
 

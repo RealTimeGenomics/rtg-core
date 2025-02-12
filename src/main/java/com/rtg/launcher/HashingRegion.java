@@ -577,7 +577,7 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
         lengths[0] = (int) (mPaddedEndPosition - mPaddedStartPosition);
       } else {
         if (this.getStartClipPosition() != MISSING) {
-          lengths[0] -= mPaddedStartPosition;
+          lengths[0] -= (int) mPaddedStartPosition;
         }
         if (this.getEndClipPosition() != MISSING) {
           lengths[lengths.length - 1] = (int) mPaddedEndPosition;

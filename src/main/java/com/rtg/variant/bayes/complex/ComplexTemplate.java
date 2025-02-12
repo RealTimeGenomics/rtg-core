@@ -31,8 +31,6 @@ package com.rtg.variant.bayes.complex;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,12 +75,7 @@ public class ComplexTemplate extends SequenceNameLocusSimple {
   private static final Constructor<Environment> ENVIRONMENT_COMBINED_CONSTRUCTOR;
   static {
     Diagnostic.developerLog("Classloading hack = " + HOTSPOT_HACK);
-    final SeparateClassLoader loader = AccessController.doPrivileged(new PrivilegedAction<SeparateClassLoader>() {
-      @Override
-      public SeparateClassLoader run() {
-        return new SeparateClassLoader(ScoreFastUnderflow.class, ScoreMatrix.class, AbstractAllPaths.class, EnvironmentCombined.class);
-      }
-    });
+    final SeparateClassLoader loader =  new SeparateClassLoader(ScoreFastUnderflow.class, ScoreMatrix.class, AbstractAllPaths.class, EnvironmentCombined.class);
     try {
       @SuppressWarnings("unchecked")
       final Class<AllPaths> sfClazz = (Class<AllPaths>) loader.loadClass(ScoreFastUnderflow.class.getName());

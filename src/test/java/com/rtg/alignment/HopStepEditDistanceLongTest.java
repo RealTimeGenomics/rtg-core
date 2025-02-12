@@ -522,21 +522,20 @@ public class HopStepEditDistanceLongTest extends AbstractUnidirectionalEditDista
 //    final HopStepEditDistanceLong ed = new HopStepEditDistanceLong(1, false);
 //    final int[] actions = ed.calculateEditDistance(r, r.length, t, 13, 10, 8, false);
 //    assertNull(actions);
-////
-////    System.err.println(Utils.calculateDefaultMaxShift(r.length));
+//#//    System.err.println(Utils.calculateDefaultMaxShift(r.length));
 //    final UnidirectionalEditDistance hopl = new HopStepEditDistanceLong(1, false);
 //
 //    final boolean USELOOPING = false;
 //    final EditDistance red = new RcEditDistance(new UnidirectionalPrioritisedEditDistance(hopl, new SeededAligner(false), USELOOPING ? (UnidirectionalEditDistance) new UnidirectionalLoopingEditDistance(new GotohEditDistance(1, false)) : new GotohEditDistance(1, false)));
-////    final int[] actions3 = red.calculateEditDistance(r, r.length, t, 13, false, 10, 8, false);
-////    System.err.println(ActionsHelper.toString(actions3));
-////
-////
-////    final GotohEditDistance ged = new GotohEditDistance(1, false);
-////    final int[] actions2 = ged.calculateEditDistance(r, r.length, t, 13, 10, 8, false);
-////    assertEquals(10, actions2[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
-////    assertEquals("=================X======================================================X==================XXXXXXX=X", ActionsHelper.toString(actions2));
-////
+//#//    final int[] actions3 = red.calculateEditDistance(r, r.length, t, 13, false, 10, 8, false);
+//#//    System.err.println(ActionsHelper.toString(actions3));
+//#//
+//#//
+//#//    final GotohEditDistance ged = new GotohEditDistance(1, false);
+//#//    final int[] actions2 = ged.calculateEditDistance(r, r.length, t, 13, 10, 8, false);
+//#//    assertEquals(10, actions2[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
+//#//    assertEquals("=================X======================================================X==================XXXXXXX=X", ActionsHelper.toString(actions2));
+//#//
 //    System.err.println("rev");
 //    final int[] actionsrev = red.calculateEditDistance(rrev, r.length, t, 7, true, 10, 8, false);
 //    System.err.println(actionsrev[ActionsHelper.ALIGNMENT_SCORE_INDEX]);

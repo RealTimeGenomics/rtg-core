@@ -35,7 +35,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  * Unit factor.
  * @param <D> description
  */
-public class UnitFactor<D extends Description> extends AbstractFactor<D> {
+public final class UnitFactor<D extends Description> extends AbstractFactor<D> {
 
   private final double mUnit;
 

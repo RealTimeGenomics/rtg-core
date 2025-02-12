@@ -36,7 +36,7 @@ import com.rtg.util.integrity.IntegralAbstract;
 
 /**
  */
-public class SignalDistributionLn extends IntegralAbstract implements Signal {
+public final class SignalDistributionLn extends IntegralAbstract implements Signal {
 
   private final SamCounts mCounts;
 

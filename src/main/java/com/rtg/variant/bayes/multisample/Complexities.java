@@ -249,11 +249,11 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
     return ret;
   }
 
-  boolean joinInteresting(int positionA, int positionB) {
+  final boolean joinInteresting(int positionA, int positionB) {
     return joinInteresting(positionA, positionB, 0, 0);
   }
 
-  boolean joinInteresting(int positionA, int positionB, int indelA, int indelB) {
+  final boolean joinInteresting(int positionA, int positionB, int indelA, int indelB) {
     final int indelHint = Math.max(indelA, indelB);
     final int posA = positionA + indelA / 2;
     final int posB = positionB - indelB / 2;
@@ -270,7 +270,7 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
     return regions.peekLast();
   }
 
-  void addRegion(final Deque<ComplexRegion> regions, int firstInteresting, int endInteresting, boolean forceComplex, int firstIndel, int endIndel) {
+  final void addRegion(final Deque<ComplexRegion> regions, int firstInteresting, int endInteresting, boolean forceComplex, int firstIndel, int endIndel) {
     if (firstInteresting != -1) {
       assert endInteresting >= firstInteresting : endInteresting + ":" + firstInteresting;
       final ComplexRegion.RegionType regionType;
@@ -286,7 +286,7 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
     }
   }
 
-  void addOverflowRegion(final Deque<ComplexRegion> regions, final VariantLocus locus) {
+  final void addOverflowRegion(final Deque<ComplexRegion> regions, final VariantLocus locus) {
     final ComplexRegion com = new ComplexRegion(mReferenceName, locus.getStart(), locus.getEnd(), RegionType.OVERFLOW);
     regions.add(com);
   }
