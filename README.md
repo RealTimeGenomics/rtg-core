@@ -91,7 +91,7 @@ If you wish to purchase commercial support contact us via info@realtimegenomics.
 
 ## Prerequisites for building from source
 
-* Java 1.8 or later
+* Java 11 or later
 * apache ant 1.9 or later
 
 ## Check out source code for both RTG Tools and RTG Core
@@ -129,7 +129,7 @@ Uncompress the installation zip:
     $ unzip /path/to/rtg-core/dist/rtg-core-VERSION-nojre.zip
 
 Follow the instructions contained in the `README.txt`. This build will
-use the system Java by default, so ensure it is Java 1.8 or later.
+use the system Java by default, so ensure it is Java 11 or later.
 
 For a nice demonstration of the features of RTG Core for sex and
 pedigree aware mapping and variant calling on data generated from
