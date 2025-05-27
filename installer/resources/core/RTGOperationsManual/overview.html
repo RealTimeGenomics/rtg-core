@@ -2,25 +2,24 @@
 
 <!doctype html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overview &#8212; RTG Core Operations Manual v3.12</title>
-    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Overview &#8212; RTG Core Operations Manual v3.13</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css?v=e0de18cf" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script src="_static/documentation_options.js?v=aca65d0a"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/bizstyle.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="RTG Command Reference" href="rtg_command_reference.html" />
     <link rel="prev" title="Table Of Contents" href="index.html" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <!--[if lt IE 9]>
     <script src="_static/css3-mediaqueries.js"></script>
     <![endif]-->
@@ -37,7 +36,7 @@
         <li class="right" >
           <a href="index.html" title="Table Of Contents"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.12</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.13</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Overview</a></li> 
       </ul>
     </div>  
@@ -47,13 +46,13 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+  <section id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h1>
 <p>This chapter introduces the features, operational options, and
 installation requirements of the data analysis software from <a class="reference external" href="http://realtimegenomics.com">Real Time
 Genomics</a>.</p>
-<div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
 <p>RTG software enables the development of fast, efficient software
 pipelines for deep genomic analysis. RTG is built on innovative search
 technologies and new algorithms designed for processing high volumes of
@@ -93,13 +92,13 @@ controls allow investigators to accommodate very high error rates
 associated with unique combinations of sequencing system error,
 genome-specific mutation, and aggressive cross-species comparisons.</p></li>
 </ul>
-</div>
-<div class="section" id="rtg-software-description">
-<h2>RTG software description<a class="headerlink" href="#rtg-software-description" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="rtg-software-description">
+<h2>RTG software description<a class="headerlink" href="#rtg-software-description" title="Link to this heading">¶</a></h2>
 <p>RTG software is delivered as a single executable with multiple commands
 executed through a command line interface (CLI). Commands are delivered
-in product packages, and for commercial users each command can be
-independently enabled through a license key.</p>
+in product packages, and the available commands vary per product
+package.</p>
 <p>Usage:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>rtg COMMAND [OPTIONS] &lt;REQUIRED&gt;
 </pre></div>
@@ -135,9 +134,9 @@ multi-core processors by default.</p></li>
 <p>For detailed information about RTG command syntax and
 usage of individual commands, refer to <a class="reference internal" href="rtg_command_reference.html#rtg-command-reference"><span class="std std-ref">RTG Command Reference</span></a>.</p>
 </div>
-</div>
-<div class="section" id="sequence-search-and-alignment">
-<h2>Sequence search and alignment<a class="headerlink" href="#sequence-search-and-alignment" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="sequence-search-and-alignment">
+<h2>Sequence search and alignment<a class="headerlink" href="#sequence-search-and-alignment" title="Link to this heading">¶</a></h2>
 <p>RTG software uses an edit-distance alignment score to determine best fit
 and alignment accuracy.</p>
 <p>RTG software includes optimal sensitivity settings for error and
@@ -175,8 +174,8 @@ specified number of substitutions and indels</p></li>
 alignment functionality, refer to <a class="reference internal" href="rtg_command_reference.html#map"><span class="std std-ref">Command Reference, map</span></a>.</p>
 <p>For more information about the RTG integrated software pipeline, refer to <a class="reference internal" href="product_usage.html#baseline-product-usage"><span class="std std-ref">RTG product usage - baseline progressions</span></a></p>
 </div>
-<div class="section" id="data-formatting">
-<h3>Data formatting<a class="headerlink" href="#data-formatting" title="Permalink to this headline">¶</a></h3>
+<section id="data-formatting">
+<h3>Data formatting<a class="headerlink" href="#data-formatting" title="Link to this heading">¶</a></h3>
 <p>Prior to RTG data production, reference genome and sometimes read data
 sequence files are typically first converted to the RTG Sequence Data
 File (SDF) format. This is an efficient storage format optimized for
@@ -213,9 +212,9 @@ type:</p>
 <p>For detailed information about formatting sequencing
 system reads to RTG SDF, refer to <a class="reference internal" href="rtg_command_reference.html#data-formatting-commands"><span class="std std-ref">Data Formatting Commands</span></a></p>
 </div>
-</div>
-<div class="section" id="read-mapping-and-alignment">
-<h3>Read mapping and alignment<a class="headerlink" href="#read-mapping-and-alignment" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="read-mapping-and-alignment">
+<h3>Read mapping and alignment<a class="headerlink" href="#read-mapping-and-alignment" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">map</span></code> command implements read mapping and alignment of sequence data
 against a reference genome, supporting gapped alignments for both single
 and paired-end reads. The <code class="docutils literal notranslate"><span class="pre">cgmap</span></code> command performs the same function for
@@ -255,9 +254,9 @@ data from the map command</p>
 </div>
 <p>Read mapping commands also produce HTML summary reports containing more
 information about mapping results.</p>
-</div>
-<div class="section" id="read-mapping-output-files">
-<h3>Read mapping output files<a class="headerlink" href="#read-mapping-output-files" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="read-mapping-output-files">
+<h3>Read mapping output files<a class="headerlink" href="#read-mapping-output-files" title="Link to this heading">¶</a></h3>
 <p>The map command creates alignment reports in BAM file format and a
 summary report file named <code class="docutils literal notranslate"><span class="pre">summary.txt</span></code>. There is also a file called
 <code class="docutils literal notranslate"><span class="pre">progress</span></code> that can be used to monitor overall progress during a run,
@@ -274,9 +273,9 @@ BAM file that describe why a read did not map.</p>
 to <a class="reference internal" href="rtg_command_reference.html#map"><span class="std std-ref">Command Reference, map</span></a>.</p>
 <p>For details on RTG extensions to the BAM file format, refer to <a class="reference internal" href="appendix.html#sam-bam-file-extensions-rtg-map-command-output"><span class="std std-ref">SAM/BAM file extensions (RTG map command output)</span></a></p>
 </div>
-</div>
-<div class="section" id="read-mapping-sensitivity-tuning">
-<h3>Read mapping sensitivity tuning<a class="headerlink" href="#read-mapping-sensitivity-tuning" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="read-mapping-sensitivity-tuning">
+<h3>Read mapping sensitivity tuning<a class="headerlink" href="#read-mapping-sensitivity-tuning" title="Link to this heading">¶</a></h3>
 <p>The RTG map command uses default sensitivity settings that balance
 mapping percentage and speed requirements. These settings deliver
 excellent results in most cases, especially in human read sequence data
@@ -307,9 +306,9 @@ to only those at or lower than the given threshold value.</p>
 <p>For more information about the RTG <code class="docutils literal notranslate"><span class="pre">map</span></code> command’s
 sensitivity and tuning parameters, refer to <a class="reference internal" href="rtg_command_reference.html#map"><span class="std std-ref">Command Reference, map</span></a></p>
 </div>
-</div>
-<div class="section" id="protein-search">
-<h3>Protein search<a class="headerlink" href="#protein-search" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="protein-search">
+<h3>Protein search<a class="headerlink" href="#protein-search" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">mapx</span></code> command implements a search of translated nucleotide
 sequence data against one or more protein databases, with alignment
 sensitivity adjusted for gaps and mismatches. The <code class="docutils literal notranslate"><span class="pre">mapx</span></code> command
@@ -336,9 +335,9 @@ by BLASTX.</p>
 please refer to <a class="reference internal" href="rtg_command_reference.html#mapx"><span class="std std-ref">Command Reference, mapx</span></a> and
 <a class="reference internal" href="rtg_command_reference.html#mapp"><span class="std std-ref">Command Reference, mapp</span></a></p>
 </div>
-</div>
-<div class="section" id="protein-search-output-files">
-<h3>Protein search output files<a class="headerlink" href="#protein-search-output-files" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="protein-search-output-files">
+<h3>Protein search output files<a class="headerlink" href="#protein-search-output-files" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">mapx</span></code> and <code class="docutils literal notranslate"><span class="pre">mapp</span></code> commands write search results and a summary
 file in a directory specified by the <code class="docutils literal notranslate"><span class="pre">-o</span></code> parameter at the command
 line. The summary file is named <code class="docutils literal notranslate"><span class="pre">summary.txt</span></code>. There is also a file
@@ -354,9 +353,9 @@ line. The output fields are very similar to those reported by BLASTX.</p>
 <p>For detailed information about the RTG <code class="docutils literal notranslate"><span class="pre">mapx</span></code> and
 <code class="docutils literal notranslate"><span class="pre">mapp</span></code> command results file format refer to <a class="reference internal" href="appendix.html#mapx-and-mapp-output-file-description"><span class="std std-ref">Mapx and mapp output file description</span></a></p>
 </div>
-</div>
-<div class="section" id="protein-search-sensitivity-tuning">
-<h3>Protein search sensitivity tuning<a class="headerlink" href="#protein-search-sensitivity-tuning" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="protein-search-sensitivity-tuning">
+<h3>Protein search sensitivity tuning<a class="headerlink" href="#protein-search-sensitivity-tuning" title="Link to this heading">¶</a></h3>
 <p>The RTG <code class="docutils literal notranslate"><span class="pre">mapx</span></code> command builds a set of indexes from the translated reads
 and scans each query for matches according to user-specified sensitivity
 settings. Sensitivity is set with two parameters. The word size (<code class="docutils literal notranslate"><span class="pre">-w</span></code> or
@@ -372,9 +371,9 @@ those at or lower than the given threshold value.</p>
 <p>For more information about the RTG <code class="docutils literal notranslate"><span class="pre">mapx</span></code> command’s
 sensitivity and tuning parameters, refer to <a class="reference internal" href="appendix.html#mapx-and-mapp-output-file-description"><span class="std std-ref">Mapx and mapp output file description</span></a></p>
 </div>
-</div>
-<div class="section" id="benchmarking-and-optimization-utilities">
-<h3>Benchmarking and optimization utilities<a class="headerlink" href="#benchmarking-and-optimization-utilities" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="benchmarking-and-optimization-utilities">
+<h3>Benchmarking and optimization utilities<a class="headerlink" href="#benchmarking-and-optimization-utilities" title="Link to this heading">¶</a></h3>
 <p>RTG benchmarking and optimization utilities consist of simulators that
 generate read and reference genome sequence data, and evaluators that
 verify the accuracy of sequence search and data analysis functions.
@@ -408,10 +407,10 @@ refer to <a class="reference internal" href="rtg_command_reference.html#simulati
 available to ensure best results. Please contact RTG technical support
 for assistance.</p>
 </div>
-</div>
-</div>
-<div class="section" id="variant-detection-functions">
-<h2>Variant detection functions<a class="headerlink" href="#variant-detection-functions" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="variant-detection-functions">
+<h2>Variant detection functions<a class="headerlink" href="#variant-detection-functions" title="Link to this heading">¶</a></h2>
 <p>The RTG variant detection pipeline includes commands for both sequence
 and structural variation detection: <code class="docutils literal notranslate"><span class="pre">snp</span></code>, <code class="docutils literal notranslate"><span class="pre">family</span></code>,
 <code class="docutils literal notranslate"><span class="pre">population</span></code>, <code class="docutils literal notranslate"><span class="pre">somatic</span></code>, <code class="docutils literal notranslate"><span class="pre">tumoronly</span></code>, <code class="docutils literal notranslate"><span class="pre">cnv</span></code> and
@@ -419,8 +418,8 @@ and structural variation detection: <code class="docutils literal notranslate"><
 software pipeline include: Bayesian sequence variant calling
 (<code class="docutils literal notranslate"><span class="pre">snps.vcf</span></code>), structural variation analysis (<code class="docutils literal notranslate"><span class="pre">cnv.ratio</span></code>) and
 alignment coverage depth (<code class="docutils literal notranslate"><span class="pre">coverage.bed</span></code>).</p>
-<div class="section" id="sequence-variation-snps-indels-and-complex-variants">
-<h3>Sequence variation (SNPs, indels and complex variants)<a class="headerlink" href="#sequence-variation-snps-indels-and-complex-variants" title="Permalink to this headline">¶</a></h3>
+<section id="sequence-variation-snps-indels-and-complex-variants">
+<h3>Sequence variation (SNPs, indels and complex variants)<a class="headerlink" href="#sequence-variation-snps-indels-and-complex-variants" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">snp</span></code> command uses a Bayesian probability model to identify and locate
 single and multiple nucleotide polymorphisms (SNPs and MNPs), indels,
 and complex sequence variants. The command uses standard BAM format
@@ -455,9 +454,9 @@ integrated with the SNP calls themselves.</p>
 <a class="reference internal" href="rtg_command_reference.html#map"><span class="std std-ref">Command Reference, map</span></a>, <a class="reference internal" href="rtg_command_reference.html#snp"><span class="std std-ref">Command Reference, snp</span></a> for syntax, parameters,
 and usage of the <code class="docutils literal notranslate"><span class="pre">map</span></code> and <code class="docutils literal notranslate"><span class="pre">snp</span></code> commands.</p>
 </div>
-</div>
-<div class="section" id="sequence-variation-with-mendelian-pedigree">
-<h3>Sequence variation with Mendelian pedigree<a class="headerlink" href="#sequence-variation-with-mendelian-pedigree" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="sequence-variation-with-mendelian-pedigree">
+<h3>Sequence variation with Mendelian pedigree<a class="headerlink" href="#sequence-variation-with-mendelian-pedigree" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">family</span></code> command uses Bayesian analysis and the constraints of
 Mendelian inheritance to identify single and multiple nucleotide
 variants in each member of a family group. It will usually yield a
@@ -489,9 +488,9 @@ unrelated samples are being called, an iterative
 expectation-maximization algorithm updates Bayesian priors to give
 improved accuracy compared to calling samples individually with the
 <code class="docutils literal notranslate"><span class="pre">snp</span></code> command.</p>
-</div>
-<div class="section" id="somatic-sequence-variation">
-<h3>Somatic sequence variation<a class="headerlink" href="#somatic-sequence-variation" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="somatic-sequence-variation">
+<h3>Somatic sequence variation<a class="headerlink" href="#somatic-sequence-variation" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">somatic</span></code> command uses Bayesian analysis to identify putative cancer
 explanations in a tumor sample. As with the snp command, it can
 identify SNPs, MNPs, indels, and complex sequence variants. It operates
@@ -513,9 +512,9 @@ file is sorted by genomic position. The same statistics reported by the
 column contains markers for situations of high-coverage, high-ambiguity,
 and equivalent calls. This column can be used to discard unwanted
 results in subsequent processing.</p>
-</div>
-<div class="section" id="coverage-analysis">
-<h3>Coverage analysis<a class="headerlink" href="#coverage-analysis" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="coverage-analysis">
+<h3>Coverage analysis<a class="headerlink" href="#coverage-analysis" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">coverage</span></code> command reports read depth across a reference genome with
 smoothing options, and outputs the results in the industry standard BED
 format. This can used to view histograms of mapped coverage data and gap
@@ -530,9 +529,9 @@ the coverage results using <code class="docutils literal notranslate"><span clas
 <p>For more information about the RTG coverage analysis, refer
 to <a class="reference internal" href="rtg_command_reference.html#coverage"><span class="std std-ref">Command reference, coverage</span></a></p>
 </div>
-</div>
-<div class="section" id="copy-number-variation-cnv-analysis">
-<h3>Copy number variation (CNV) analysis<a class="headerlink" href="#copy-number-variation-cnv-analysis" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="copy-number-variation-cnv-analysis">
+<h3>Copy number variation (CNV) analysis<a class="headerlink" href="#copy-number-variation-cnv-analysis" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">cnv</span></code> command identifies and reports copy number statistics that can
 be used for the investigation of structural variation.</p>
 <p>It is used to identify aberrational CNV region(s) or copy number
@@ -546,18 +545,14 @@ the CNV results using tools such as <code class="docutils literal notranslate"><
 <p>For more information about the CNV output data, refer to
 <a class="reference internal" href="rtg_command_reference.html#cnv"><span class="std std-ref">Command Reference, cnv</span></a></p>
 </div>
-</div>
-</div>
-<div class="section" id="standard-input-and-output-file-formats">
-<h2>Standard input and output file formats<a class="headerlink" href="#standard-input-and-output-file-formats" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="standard-input-and-output-file-formats">
+<h2>Standard input and output file formats<a class="headerlink" href="#standard-input-and-output-file-formats" title="Link to this heading">¶</a></h2>
 <p>RTG software produces alignment and data analysis results in standard
 formats to allow pipeline validation and downstream analysis.</p>
 <p>Table : Result file formats for validation and downstream analysis</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 4%" />
-<col style="width: 96%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>File type</p></th>
 <th class="head"><p>Description and Usage</p></th>
@@ -589,8 +584,8 @@ formats to allow pipeline validation and downstream analysis.</p>
 <p>For more information about file format extensions, refer
 to Appendix <a class="reference internal" href="appendix.html#rtg-output-results-file-descriptions"><span class="std std-ref">RTG output results file descriptions</span></a></p>
 </div>
-<div class="section" id="sam-bam-files-created-by-the-rtg-map-command">
-<h3>SAM/BAM files created by the RTG map command<a class="headerlink" href="#sam-bam-files-created-by-the-rtg-map-command" title="Permalink to this headline">¶</a></h3>
+<section id="sam-bam-files-created-by-the-rtg-map-command">
+<h3>SAM/BAM files created by the RTG map command<a class="headerlink" href="#sam-bam-files-created-by-the-rtg-map-command" title="Link to this heading">¶</a></h3>
 <p>The Sequence Alignment/Map (SAM/BAM) format (version 1.3) is a
 well-known standard for listing read alignments against reference
 sequences.</p>
@@ -617,9 +612,9 @@ list of all extensions and differences.</p>
 <p>By default the RTG <code class="docutils literal notranslate"><span class="pre">map</span></code> command produces output as compressed binary
 format BAM files but can be set to produce human readable SAM files
 instead with the <code class="docutils literal notranslate"><span class="pre">--sam</span></code> flag.</p>
-</div>
-<div class="section" id="variant-caller-output-files">
-<h3>Variant caller output files<a class="headerlink" href="#variant-caller-output-files" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="variant-caller-output-files">
+<h3>Variant caller output files<a class="headerlink" href="#variant-caller-output-files" title="Link to this heading">¶</a></h3>
 <p>The Variant Call Format (VCF) is a widely used standard format for
 storing SNPs, MNPs and indels.</p>
 <p>A sample <code class="docutils literal notranslate"><span class="pre">snps.vcf</span></code> file is provided in the Appendix as an example of
@@ -642,23 +637,23 @@ and differences.</p>
 <p>For more information about file formats, refer to the
 <em>Appendix,</em> <a class="reference internal" href="appendix.html#rtg-output-results-file-descriptions"><span class="std std-ref">RTG output results file descriptions</span></a></p>
 </div>
-</div>
-</div>
-<div class="section" id="metagenomic-analysis-functions">
-<h2>Metagenomic analysis functions<a class="headerlink" href="#metagenomic-analysis-functions" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="metagenomic-analysis-functions">
+<h2>Metagenomic analysis functions<a class="headerlink" href="#metagenomic-analysis-functions" title="Link to this heading">¶</a></h2>
 <p>The RTG metagenomic analysis pipeline includes commands for sample
 contamination filtering, estimation of taxon abundances in a sample and
 finding relationships between samples.</p>
-<div class="section" id="contamination-filtering">
-<h3>Contamination filtering<a class="headerlink" href="#contamination-filtering" title="Permalink to this headline">¶</a></h3>
+<section id="contamination-filtering">
+<h3>Contamination filtering<a class="headerlink" href="#contamination-filtering" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">mapf</span></code> command is used for filtering contaminant reads from a
 sample. It does this by performing alignment of the reads against a
 reference of known contaminants and producing an output of the reads
 that did not align successfully. A common use for this is to remove
 human DNA from a bacterial sample taken from a body site.</p>
-</div>
-<div class="section" id="taxon-abundance-breakdown">
-<h3>Taxon abundance breakdown<a class="headerlink" href="#taxon-abundance-breakdown" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="taxon-abundance-breakdown">
+<h3>Taxon abundance breakdown<a class="headerlink" href="#taxon-abundance-breakdown" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">species</span></code> command is used to find the abundances of taxa within a
 given sample. This is accomplished by analyzing reference genome
 alignment data made with a metagenomic reference database of known
@@ -667,24 +662,24 @@ representing its abundance in the sample with upper and lower bounds and
 a value indicating the confidence that the taxon is actually present in
 the sample. An HTML report allows interactive examination of the
 abundances at different taxonomic levels.</p>
-</div>
-<div class="section" id="sample-relationships">
-<h3>Sample relationships<a class="headerlink" href="#sample-relationships" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="sample-relationships">
+<h3>Sample relationships<a class="headerlink" href="#sample-relationships" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">similarity</span></code> command is used to find relationships between sample
 read sets. It does this by examining <em>k</em>-mer word frequencies and the
 intersections between sets of reads. This results in the output of a
 similarity matrix, a principal component analysis and nearest neighbor
 trees in the Newick and phyloXML formats.</p>
-</div>
-<div class="section" id="functional-protein-analysis">
-<h3>Functional protein analysis<a class="headerlink" href="#functional-protein-analysis" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="functional-protein-analysis">
+<h3>Functional protein analysis<a class="headerlink" href="#functional-protein-analysis" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">mapx</span></code> command is used to perform a translated nucleotide search of
 short reads against a reference protein database. This results in an
 output similar to that reported by BLASTX.</p>
-</div>
-</div>
-<div class="section" id="pipelines">
-<h2>Pipelines<a class="headerlink" href="#pipelines" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="pipelines">
+<h2>Pipelines<a class="headerlink" href="#pipelines" title="Link to this heading">¶</a></h2>
 <p>Included in the RTG release are some pipeline commands which perform
 simple end-to-end tasks using other RTG commands. These pipelines use
 mostly default settings for each of the commands called, and are meant
@@ -698,9 +693,9 @@ tools. The metagenomic pipeline commands are:</p>
 </ul>
 <p>For detailed information about individual pipeline commands see
 <a class="reference internal" href="rtg_command_reference.html#pipeline-commands"><span class="std std-ref">Pipeline Commands</span></a></p>
-</div>
-<div class="section" id="parallel-processing">
-<h2>Parallel processing<a class="headerlink" href="#parallel-processing" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="parallel-processing">
+<h2>Parallel processing<a class="headerlink" href="#parallel-processing" title="Link to this heading">¶</a></h2>
 <p>The comparison of genomic variation on a large scale in real time
 demands parallel processing capability. Parallel processing of gapped
 alignments and variant detection is recommended by RTG because it
@@ -722,9 +717,9 @@ for detailed information about estimating the number of
 multi-core servers needed (capacity planning), and <a class="reference internal" href="appendix.html#parallel-processing-approach"><span class="std std-ref">Parallel processing approach</span></a> for a
 deeper discussion of compute cluster operations.</p>
 </div>
-</div>
-<div class="section" id="installation-and-deployment">
-<h2>Installation and deployment<a class="headerlink" href="#installation-and-deployment" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="installation-and-deployment">
+<h2>Installation and deployment<a class="headerlink" href="#installation-and-deployment" title="Link to this heading">¶</a></h2>
 <p>RTG is a self-contained tool that sets minimal expectations on the
 environment in which it is placed. It comes with the application
 components it needs to execute completely, yet performance can be
@@ -738,10 +733,6 @@ analysis benchmarks suggest the use of six server nodes of the
 configuration shown in below.</p>
 <p>Table : Recommended system requirements</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 23%" />
-<col style="width: 77%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>Processor</p></td>
 <td><p>Intel Core i7-2600</p></td>
@@ -760,8 +751,8 @@ Instructions for a quick start installation are provided here.</p>
 <p>For further information about setting up per-machine configuration
 files, please see the <code class="docutils literal notranslate"><span class="pre">README.txt</span></code> contained in the distribution zip
 file (a copy is also included in this manual’s appendix).</p>
-<div class="section" id="quick-start-instructions">
-<h3>Quick start instructions<a class="headerlink" href="#quick-start-instructions" title="Permalink to this headline">¶</a></h3>
+<section id="quick-start-instructions">
+<h3>Quick start instructions<a class="headerlink" href="#quick-start-instructions" title="Link to this heading">¶</a></h3>
 <p>These instructions are intended for an individual to install and operate
 the RTG software without the need to establish root / administrator
 privileges.</p>
@@ -781,14 +772,8 @@ than directly executing the Java JAR.</p>
 <p>Linux/MacOS X:</p>
 <ul>
 <li><p>Unzip the RTG distribution to the desired location.</p></li>
-<li><p>If your installation requires a license file (<code class="docutils literal notranslate"><span class="pre">rtg-license.txt</span></code>),
-copy the license file provided by Real Time Genomics into the RTG
-distribution directory.</p></li>
-<li><dl class="simple">
-<dt>In a terminal, cd to the installation directory and test for success</dt><dd><p>by entering <code class="docutils literal notranslate"><span class="pre">./rtg</span> <span class="pre">version</span></code></p>
-</dd>
-</dl>
-</li>
+<li><p>In a terminal, cd to the installation directory and test for success
+by entering <code class="docutils literal notranslate"><span class="pre">./rtg</span> <span class="pre">version</span></code></p></li>
 <li><p>On MacOS X, depending on your operating system version and
 configuration regarding unsigned applications, you may encounter the
 error message:</p>
@@ -822,9 +807,6 @@ name output by the command <code class="docutils literal notranslate"><span clas
 <p>Windows:</p>
 <ul class="simple">
 <li><p>Unzip the RTG distribution to the desired location.</p></li>
-<li><p>If your installation requires a license, copy the license file
-provided by Real Time Genomics (<code class="docutils literal notranslate"><span class="pre">rtg-license.txt</span></code>) into the RTG
-distribution directory.</p></li>
 <li><p>Test for success by entering <code class="docutils literal notranslate"><span class="pre">rtg</span> <span class="pre">version</span></code> at the command line. The
 first time RTG is executed you will be prompted with some questions
 to customize your installation. Follow the prompts.</p></li>
@@ -836,29 +818,15 @@ the available RAM - this is automatically calculated. One may
 override this limit by setting the <code class="docutils literal notranslate"><span class="pre">RTG_MEM</span></code> variable in the
 <code class="docutils literal notranslate"><span class="pre">rtg.bat</span></code> script or as an environment variable.</p></li>
 </ul>
-</div>
-<div class="section" id="license-management">
-<h3>License Management<a class="headerlink" href="#license-management" title="Permalink to this headline">¶</a></h3>
-<p>Commercial distributions of RTG products require the presence of a valid
-license key file for operation.</p>
-<p>The license key file must be located in the same directory as the RTG
-executable. The license enables the execution of a particular command
-set for the purchased product(s) and features.</p>
-<p>A license key allows flexible use of the RTG package on any node or CPU
-core.</p>
-<p>To view the current license features at the command prompt, enter:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ rtg license
-</pre></div>
-</div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>For more data center deployment and instructions for
 editing scripts, see <a class="reference internal" href="administration.html#administration-capacity-planning"><span class="std std-ref">Administration &amp; Capacity Planning</span></a>.</p>
 </div>
-</div>
-</div>
-<div class="section" id="technical-assistance-and-support">
-<h2>Technical assistance and support<a class="headerlink" href="#technical-assistance-and-support" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="technical-assistance-and-support">
+<h2>Technical assistance and support<a class="headerlink" href="#technical-assistance-and-support" title="Link to this heading">¶</a></h2>
 <p>For assistance with any technical or conceptual issue that may arise
 during use of the RTG product, contact Real Time Genomics Technical
 Support via email at <code class="docutils literal notranslate"><span class="pre">support&#64;realtimegenomics.com</span></code></p>
@@ -866,8 +834,8 @@ Support via email at <code class="docutils literal notranslate"><span class="pre
 <a class="reference external" href="https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-users">https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-users</a></p>
 <p>A low-traffic announcements-only group is available at:
 <a class="reference external" href="https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-announce">https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-announce</a></p>
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -879,8 +847,9 @@ Support via email at <code class="docutils literal notranslate"><span class="pre
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/html_logo.png" alt="Logo"/>
             </a></p>
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Overview</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#rtg-software-description">RTG software description</a></li>
@@ -919,7 +888,6 @@ Support via email at <code class="docutils literal notranslate"><span class="pre
 <li><a class="reference internal" href="#parallel-processing">Parallel processing</a></li>
 <li><a class="reference internal" href="#installation-and-deployment">Installation and deployment</a><ul>
 <li><a class="reference internal" href="#quick-start-instructions">Quick start instructions</a></li>
-<li><a class="reference internal" href="#license-management">License Management</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#technical-assistance-and-support">Technical assistance and support</a></li>
@@ -927,12 +895,17 @@ Support via email at <code class="docutils literal notranslate"><span class="pre
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Table Of Contents</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="rtg_command_reference.html"
-                        title="next chapter">RTG Command Reference</a></p>
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">Table Of Contents</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="rtg_command_reference.html"
+                          title="next chapter">RTG Command Reference</a></p>
+  </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -956,13 +929,13 @@ Support via email at <code class="docutils literal notranslate"><span class="pre
         <li class="right" >
           <a href="index.html" title="Table Of Contents"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.12</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.13</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Overview</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Real Time Genomics.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    &#169; Copyright 2025, Real Time Genomics.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>

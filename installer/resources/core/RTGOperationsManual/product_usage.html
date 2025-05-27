@@ -2,25 +2,24 @@
 
 <!doctype html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RTG product usage - baseline progressions &#8212; RTG Core Operations Manual v3.12</title>
-    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>RTG product usage - baseline progressions &#8212; RTG Core Operations Manual v3.13</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css?v=e0de18cf" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script src="_static/documentation_options.js?v=aca65d0a"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/bizstyle.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Administration &amp; Capacity Planning" href="administration.html" />
     <link rel="prev" title="RTG Command Reference" href="rtg_command_reference.html" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <!--[if lt IE 9]>
     <script src="_static/css3-mediaqueries.js"></script>
     <![endif]-->
@@ -37,7 +36,7 @@
         <li class="right" >
           <a href="rtg_command_reference.html" title="RTG Command Reference"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.12</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.13</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">RTG product usage - baseline progressions</a></li> 
       </ul>
     </div>  
@@ -47,12 +46,12 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="rtg-product-usage-baseline-progressions">
-<span id="baseline-product-usage"></span><h1>RTG product usage - baseline progressions<a class="headerlink" href="#rtg-product-usage-baseline-progressions" title="Permalink to this headline">¶</a></h1>
+  <section id="rtg-product-usage-baseline-progressions">
+<span id="baseline-product-usage"></span><h1>RTG product usage - baseline progressions<a class="headerlink" href="#rtg-product-usage-baseline-progressions" title="Link to this heading">¶</a></h1>
 <p>This chapter provides baseline task progressions that describe best-practice
 use of the product for data analysis.</p>
-<div class="section" id="human-read-mapping-and-sequence-variant-detection">
-<h2>Human read mapping and sequence variant detection<a class="headerlink" href="#human-read-mapping-and-sequence-variant-detection" title="Permalink to this headline">¶</a></h2>
+<section id="human-read-mapping-and-sequence-variant-detection">
+<h2>Human read mapping and sequence variant detection<a class="headerlink" href="#human-read-mapping-and-sequence-variant-detection" title="Link to this heading">¶</a></h2>
 <p>Use the following steps to detect all sequence variants between a
 reference genome and a sequenced DNA sample or set of related
 samples. This set of tasks steps through the main functionality of the
@@ -93,12 +92,6 @@ sequencing data for these samples is available via
 <a class="reference external" href="http://www.completegenomics.com/public-data/69-Genomes/">http://www.completegenomics.com/public-data/69-Genomes/</a></p>
 <p>Table : Overview of basic pipeline stages</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 4%" />
-<col style="width: 20%" />
-<col style="width: 15%" />
-<col style="width: 61%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head" colspan="2"><p>Task</p></th>
 <th class="head"><p>Command &amp; Utilities</p></th>
@@ -153,8 +146,8 @@ sequencing data for these samples is available via
 </tr>
 </tbody>
 </table>
-<div class="section" id="task-1-format-reference-data">
-<h3>Task 1 - Format reference data<a class="headerlink" href="#task-1-format-reference-data" title="Permalink to this headline">¶</a></h3>
+<section id="task-1-format-reference-data">
+<h3>Task 1 - Format reference data<a class="headerlink" href="#task-1-format-reference-data" title="Link to this heading">¶</a></h3>
 <p>RTG requires a one-time conversion of the reference genome from FASTA
 files into the RTG SDF format. This provides the software with fast
 access to arbitrary genomic coordinates in a pre-parsed format.  In
@@ -338,9 +331,9 @@ chr1_KI270706v1_random DIPLOID linear 175055
 [...]
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-2-prepare-sex-pedigree-information">
-<h3>Task 2 - Prepare sex/pedigree information<a class="headerlink" href="#task-2-prepare-sex-pedigree-information" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-2-prepare-sex-pedigree-information">
+<h3>Task 2 - Prepare sex/pedigree information<a class="headerlink" href="#task-2-prepare-sex-pedigree-information" title="Link to this heading">¶</a></h3>
 <p>RTG commands for mapping and variant calling multiple samples make use
 of a pedigree file specifying sample names, their sex, and any relations
 between them. This is done by creating a standard PED format file
@@ -402,9 +395,9 @@ format that can be displayed using the <code class="docutils literal notranslate
 <img alt="_images/ceph-1463.png" src="_images/ceph-1463.png" />
 <p>For more information about the PED file format see
 <a class="reference internal" href="appendix.html#pedigree-ped-input-file-format"><span class="std std-ref">Pedigree PED input file format</span></a>.</p>
-</div>
-<div class="section" id="task-3-format-read-data">
-<h3>Task 3 - Format read data<a class="headerlink" href="#task-3-format-read-data" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-3-format-read-data">
+<h3>Task 3 - Format read data<a class="headerlink" href="#task-3-format-read-data" title="Link to this heading">¶</a></h3>
 <p>RTG mapping tools accept input read sequence data either in the RTG SDF
 format or other common sequence formats such as FASTA, FASTQ, or
 SAM/BAM. There are pros and cons as to whether to perform an initial
@@ -505,9 +498,9 @@ individual.</p>
 <p>Repeat the formatting for other samples to be processed. When formatting
 data sets corresponding to other members of the pedigree, be sure to use
 the correct sample identifier for each individual.</p>
-</div>
-<div class="section" id="task-4-map-reads-to-the-reference-genome">
-<h3>Task 4 - Map reads to the reference genome<a class="headerlink" href="#task-4-map-reads-to-the-reference-genome" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-4-map-reads-to-the-reference-genome">
+<h3>Task 4 - Map reads to the reference genome<a class="headerlink" href="#task-4-map-reads-to-the-reference-genome" title="Link to this heading">¶</a></h3>
 <p>Map the sequence reads against the human reference genome to generate
 alignments in the BAM (Binary Sequence Alignment/Map) file format.</p>
 <p>The RTG <code class="docutils literal notranslate"><span class="pre">map</span></code> command provides multiple tuning parameters to adjust
@@ -624,9 +617,9 @@ $ for ((j=0;j&lt;10;j++)); do
 </div>
 <p>Processing other samples in the pedigree is a matter of specifying
 different input SDF and output directories.</p>
-</div>
-<div class="section" id="task-5-view-and-evaluate-mapping-performance">
-<h3>Task 5 - View and evaluate mapping performance<a class="headerlink" href="#task-5-view-and-evaluate-mapping-performance" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-5-view-and-evaluate-mapping-performance">
+<h3>Task 5 - View and evaluate mapping performance<a class="headerlink" href="#task-5-view-and-evaluate-mapping-performance" title="Link to this heading">¶</a></h3>
 <p>An <code class="docutils literal notranslate"><span class="pre">alignments.bam</span></code> file can be viewed directly using the RTG
 <code class="docutils literal notranslate"><span class="pre">extract</span></code> command in conjunction with a shell command such as <code class="docutils literal notranslate"><span class="pre">less</span></code>
 to quickly inspect the results.</p>
@@ -657,9 +650,9 @@ alignment scores, insert sizes and read hits.</p>
 <p>Finally, the short summary of mapping produced on the terminal at the end of
 the <code class="docutils literal notranslate"><span class="pre">map</span></code> run, is also available as <code class="docutils literal notranslate"><span class="pre">summary.txt</span></code> in the mapping output
 directory.</p>
-</div>
-<div class="section" id="task-6-generate-and-review-coverage-information">
-<h3>Task 6 - Generate and review coverage information<a class="headerlink" href="#task-6-generate-and-review-coverage-information" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-6-generate-and-review-coverage-information">
+<h3>Task 6 - Generate and review coverage information<a class="headerlink" href="#task-6-generate-and-review-coverage-information" title="Link to this heading">¶</a></h3>
 <p>For human genomic analysis, it is important to have sufficient coverage
 over the entire genome to detect variants accurately and minimize false
 negative calls. The <code class="docutils literal notranslate"><span class="pre">coverage</span></code> command provides detailed statistics for
@@ -703,9 +696,9 @@ depth of coverage. This can be viewed in your web browser. For example:</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">coverage</span></code> command has several options that alter the way that
 coverage levels are reported (for example, determining callability or
 giving per-region reporting). See <a class="reference internal" href="rtg_command_reference.html#coverage"><span class="std std-ref">coverage</span></a> for more detail.</p>
-</div>
-<div class="section" id="task-7-call-sequence-variants-single-sample">
-<h3>Task 7 - Call sequence variants (single sample)<a class="headerlink" href="#task-7-call-sequence-variants-single-sample" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-7-call-sequence-variants-single-sample">
+<h3>Task 7 - Call sequence variants (single sample)<a class="headerlink" href="#task-7-call-sequence-variants-single-sample" title="Link to this heading">¶</a></h3>
 <p>The primary germline variant calling commands in the RTG suite are the
 <code class="docutils literal notranslate"><span class="pre">snp</span></code> command for detecting variants in a single sample, the
 <code class="docutils literal notranslate"><span class="pre">family</span></code> command for performing simultaneous joint calling of multiple
@@ -823,9 +816,9 @@ Alternatively, failing variants can be kept but marked with a custom VCF
   -i snp_sample_NA12878.vcf.gz -o filtered_sample_NA12878.vcf.gz
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-8-call-sequence-variants-single-family">
-<span id="joint-family-task"></span><h3>Task 8 - Call sequence variants (single family)<a class="headerlink" href="#task-8-call-sequence-variants-single-family" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-8-call-sequence-variants-single-family">
+<span id="joint-family-task"></span><h3>Task 8 - Call sequence variants (single family)<a class="headerlink" href="#task-8-call-sequence-variants-single-family" title="Link to this heading">¶</a></h3>
 <p>This section demonstrates joint calling multiple samples comprising a
 single Mendelian family. RTG is unique in supporting family calling
 beyond a single-child trio, and directly supports jointly calling a
@@ -864,9 +857,9 @@ details about the VCF output file see <a class="reference internal" href="append
 using a pedigree PED file with the <code class="docutils literal notranslate"><span class="pre">--pedigree</span></code> flag. In this case,
 the pedigree file should contain a single family only.</p>
 </div>
-</div>
-<div class="section" id="task-9-call-population-sequence-variants">
-<span id="joint-population-task"></span><h3>Task 9 - Call population sequence variants<a class="headerlink" href="#task-9-call-population-sequence-variants" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-9-call-population-sequence-variants">
+<span id="joint-population-task"></span><h3>Task 9 - Call population sequence variants<a class="headerlink" href="#task-9-call-population-sequence-variants" title="Link to this heading">¶</a></h3>
 <p>This section demonstrates joint variant calling of multiple potentially
 related or unrelated individuals in a population.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">population</span></code> command is invoked similarly to the <code class="docutils literal notranslate"><span class="pre">snp</span></code> command
@@ -891,10 +884,10 @@ column.</p>
 individual columns for the variants of each member of the population.
 For more details about the VCF output file see
 <a class="reference internal" href="appendix.html#small-variant-vcf-output-file-description"><span class="std std-ref">Small-variant VCF output file description</span></a>.</p>
-</div>
-</div>
-<div class="section" id="create-and-use-population-priors-in-variant-calling">
-<h2>Create and use population priors in variant calling<a class="headerlink" href="#create-and-use-population-priors-in-variant-calling" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="create-and-use-population-priors-in-variant-calling">
+<h2>Create and use population priors in variant calling<a class="headerlink" href="#create-and-use-population-priors-in-variant-calling" title="Link to this heading">¶</a></h2>
 <p>To improve the accuracy of variant calling on new members of a
 population, a file containing the allele counts of the population’s
 known variants may be supplied. This information is used as an extra set
@@ -915,12 +908,6 @@ population.</p></li>
 </ul>
 <p>Table : Overview of pipeline tasks.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 4%" />
-<col style="width: 24%" />
-<col style="width: 13%" />
-<col style="width: 58%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head" colspan="2"><p>Task</p></th>
 <th class="head"><p>Command &amp; Utilities</p></th>
@@ -941,8 +928,8 @@ population.</p></li>
 </tr>
 </tbody>
 </table>
-<div class="section" id="task-1-produce-population-priors-file">
-<h3>Task 1 - Produce population priors file<a class="headerlink" href="#task-1-produce-population-priors-file" title="Permalink to this headline">¶</a></h3>
+<section id="task-1-produce-population-priors-file">
+<h3>Task 1 - Produce population priors file<a class="headerlink" href="#task-1-produce-population-priors-file" title="Link to this heading">¶</a></h3>
 <p>Using a full VCF file for a large population as population priors can be
 slow, as it contains lots of unnecessary information. The <code class="docutils literal notranslate"><span class="pre">AC</span></code> and <code class="docutils literal notranslate"><span class="pre">AN</span></code>
 fields are the standard VCF specification fields representing the allele
@@ -972,9 +959,9 @@ to be used for any further runs as required.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ cp 20humans_priors.vcf.gz* /data/population_priors/
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-2-run-variant-calling-using-population-priors">
-<h3>Task 2 - Run variant calling using population priors<a class="headerlink" href="#task-2-run-variant-calling-using-population-priors" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-2-run-variant-calling-using-population-priors">
+<h3>Task 2 - Run variant calling using population priors<a class="headerlink" href="#task-2-run-variant-calling-using-population-priors" title="Link to this heading">¶</a></h3>
 <p>The population priors can now be used to improve variant calling on new
 members of the population supplying the <code class="docutils literal notranslate"><span class="pre">--population-priors</span></code> parameter
 to any of the variant caller commands.</p>
@@ -983,10 +970,10 @@ to any of the variant caller commands.</p>
   --population-priors /data/population_priors/20humans_priors.vcf.gz
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="somatic-variant-detection-in-cancer">
-<h2>Somatic variant detection in cancer<a class="headerlink" href="#somatic-variant-detection-in-cancer" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="somatic-variant-detection-in-cancer">
+<h2>Somatic variant detection in cancer<a class="headerlink" href="#somatic-variant-detection-in-cancer" title="Link to this heading">¶</a></h2>
 <p>RTG includes two variant calling commands for detecting somatic
 variations in tumor samples: <code class="docutils literal notranslate"><span class="pre">somatic</span></code> should be used when data from a
 matched normal sample is available; and <code class="docutils literal notranslate"><span class="pre">tumoronly</span></code> should be used when
@@ -994,12 +981,6 @@ there is no matched normal sample.</p>
 <p>Follow the steps below to obtain somatic variant calls.</p>
 <p>Table : Overview of somatic pipeline tasks.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 4%" />
-<col style="width: 23%" />
-<col style="width: 11%" />
-<col style="width: 61%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head" colspan="2"><p>Task</p></th>
 <th class="head"><p>Command &amp; Utilities</p></th>
@@ -1029,14 +1010,14 @@ there is no matched normal sample.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="task-1-format-reference-data-somatic">
-<h3>Task 1 - Format reference data (Somatic)<a class="headerlink" href="#task-1-format-reference-data-somatic" title="Permalink to this headline">¶</a></h3>
+<section id="task-1-format-reference-data-somatic">
+<h3>Task 1 - Format reference data (Somatic)<a class="headerlink" href="#task-1-format-reference-data-somatic" title="Link to this heading">¶</a></h3>
 <p>Format the human reference data to RTG SDF using Task 1 of <em>RTG mapping
 and sequence variant detection</em>. In the following tasks it is assumed
 the human reference SDF is called <code class="docutils literal notranslate"><span class="pre">grch38</span></code>.</p>
-</div>
-<div class="section" id="task-2-format-read-data-somatic">
-<h3>Task 2 - Format read data (Somatic)<a class="headerlink" href="#task-2-format-read-data-somatic" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-2-format-read-data-somatic">
+<h3>Task 2 - Format read data (Somatic)<a class="headerlink" href="#task-2-format-read-data-somatic" title="Link to this heading">¶</a></h3>
 <p>Format the tumor sample read data to RTG SDF using Task 2 of <em>RTG
 mapping and sequence variant detection</em>. In this example we assume there
 are 20 lanes of data for the sample.</p>
@@ -1059,9 +1040,9 @@ $   rtg format -f fastq -q sanger -o normal_reads_${i} \
   done
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-3-map-tumor-and-normal-sample-reads-against-the-reference-genome">
-<h3>Task 3 - Map tumor and normal sample reads against the reference genome<a class="headerlink" href="#task-3-map-tumor-and-normal-sample-reads-against-the-reference-genome" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-3-map-tumor-and-normal-sample-reads-against-the-reference-genome">
+<h3>Task 3 - Map tumor and normal sample reads against the reference genome<a class="headerlink" href="#task-3-map-tumor-and-normal-sample-reads-against-the-reference-genome" title="Link to this heading">¶</a></h3>
 <p>Map the normal and tumor sample reads against the reference genome as in
 <a class="reference internal" href="#task-4-map-reads-to-the-reference-genome"><span class="std std-ref">Task 4 - Map reads to the reference genome</span></a>.  The mapping must be
 done with appropriate read group information for each read set, by using
@@ -1079,9 +1060,9 @@ normal should have another sample ID.</p>
   done
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-4-call-somatic-variants">
-<h3>Task 4 - Call somatic variants<a class="headerlink" href="#task-4-call-somatic-variants" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-4-call-somatic-variants">
+<h3>Task 4 - Call somatic variants<a class="headerlink" href="#task-4-call-somatic-variants" title="Link to this heading">¶</a></h3>
 <p>When no matched normal data is available, the <code class="docutils literal notranslate"><span class="pre">tumoronly</span></code> command is
 invoked, similarly to the <code class="docutils literal notranslate"><span class="pre">snp</span></code> comment.  You may optionally specify
 an estimated level of contamination of the tumor sample with normal
@@ -1109,9 +1090,9 @@ about the VCF output file see <a class="reference internal" href="appendix.html#
 <p>The <code class="docutils literal notranslate"><span class="pre">somatic</span></code> command also supports <code class="docutils literal notranslate"><span class="pre">--include-germline</span></code> to include
 variants that are predicted to be germline, in addition to those
 predicted to be of somatic origin, in the output VCF.</p>
-</div>
-<div class="section" id="using-site-specific-somatic-priors">
-<h3>Using site-specific somatic priors<a class="headerlink" href="#using-site-specific-somatic-priors" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="using-site-specific-somatic-priors">
+<h3>Using site-specific somatic priors<a class="headerlink" href="#using-site-specific-somatic-priors" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">tumoronly</span></code> and <code class="docutils literal notranslate"><span class="pre">somatic</span></code> commands have a default prior of
 0.000001 (1e-6) for a particular site being somatic. Since the human
 genome comprises some 3.2 GB, this prior corresponds to an expectation
@@ -1192,10 +1173,10 @@ index for the priors file.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ rtg somatic -–somatic-priors somatic-priors.bed.gz ...
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="avr-scoring-using-hapmap-for-model-building">
-<h2>AVR scoring using HAPMAP for model building<a class="headerlink" href="#avr-scoring-using-hapmap-for-model-building" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="avr-scoring-using-hapmap-for-model-building">
+<h2>AVR scoring using HAPMAP for model building<a class="headerlink" href="#avr-scoring-using-hapmap-for-model-building" title="Link to this heading">¶</a></h2>
 <p>AVR (Adaptive Variant Rescoring) is a machine learning technology for
 learning and predicting which calls are likely correct. It comprises of
 a learning algorithm that takes training examples and infers a model
@@ -1274,12 +1255,6 @@ command for the 1000 genomes CEU trio NA12878, NA12891 and NA12892. For
 this example this will be called <code class="docutils literal notranslate"><span class="pre">/data/runs/NA12878trio/family.vcf.gz</span></code>.</p>
 <p>Table : Overview of basic pipeline tasks.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 5%" />
-<col style="width: 19%" />
-<col style="width: 14%" />
-<col style="width: 61%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head" colspan="2"><p>Task</p></th>
 <th class="head"><p>Command &amp; Utilities</p></th>
@@ -1313,8 +1288,8 @@ this example this will be called <code class="docutils literal notranslate"><spa
 </tr>
 </tbody>
 </table>
-<div class="section" id="task-1-create-training-data">
-<h3>Task 1 - Create training data<a class="headerlink" href="#task-1-create-training-data" title="Permalink to this headline">¶</a></h3>
+<section id="task-1-create-training-data">
+<h3>Task 1 - Create training data<a class="headerlink" href="#task-1-create-training-data" title="Link to this heading">¶</a></h3>
 <p>The first step is to use the <code class="docutils literal notranslate"><span class="pre">vcffilter</span></code> command to split the variant
 calls into positive and negative training examples with respect to
 HAPMAP. It is also possible to build training sets using the <code class="docutils literal notranslate"><span class="pre">vcfeval</span></code>
@@ -1330,9 +1305,9 @@ $ rtg vcffilter --exclude-vcf /data/hapmap_3.3.b37.vcf.gz -o neg-NA12878.vcf.gz 
 <p>Optionally check that the training data looks reasonable. There should
 be a reasonable amount of both positive and negative examples and all
 expected chromosomes should be represented.</p>
-</div>
-<div class="section" id="task-2-build-and-check-avr-model">
-<h3>Task 2 - Build and check AVR model<a class="headerlink" href="#task-2-build-and-check-avr-model" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-2-build-and-check-avr-model">
+<h3>Task 2 - Build and check AVR model<a class="headerlink" href="#task-2-build-and-check-avr-model" title="Link to this heading">¶</a></h3>
 <p>The next step is to build an AVR model. Select the attributes that will
 be used with some consideration to portability and the nature of the
 training set. Here we have excluded <code class="docutils literal notranslate"><span class="pre">XRX</span></code> and <code class="docutils literal notranslate"><span class="pre">LAL</span></code> because HAPMAP is
@@ -1410,9 +1385,9 @@ FORMAT fields : DPR,AR,ABP,SBP,RPB,GQ
 Derived fields: IC,EP,QD,AN,PD,GQD,ZY
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-3-use-avr-model">
-<h3>Task 3 - Use AVR model<a class="headerlink" href="#task-3-use-avr-model" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-3-use-avr-model">
+<h3>Task 3 - Use AVR model<a class="headerlink" href="#task-3-use-avr-model" title="Link to this heading">¶</a></h3>
 <p>The model is now ready to be used. It can be applied to the existing
 variant calling output by using the <code class="docutils literal notranslate"><span class="pre">avrpredict</span></code> command.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ rtg avrpredict --avr-model NA12878model.avr \
@@ -1432,9 +1407,9 @@ $ rtg population --avr-model NA12878model.avr -t grch38 -o pop_variants \
   -I map_population-bam-files
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-4-install-avr-model">
-<h3>Task 4 - Install AVR model<a class="headerlink" href="#task-4-install-avr-model" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-4-install-avr-model">
+<h3>Task 4 - Install AVR model<a class="headerlink" href="#task-4-install-avr-model" title="Link to this heading">¶</a></h3>
 <p>The custom AVR model can be installed into a standard location so that
 it can be referred to by a short name (rather than the full file path
 name) in the <code class="docutils literal notranslate"><span class="pre">avrpredict</span></code> and variant caller commands. The default
@@ -1483,10 +1458,10 @@ amplification data where allele drop out is expected)</p></li>
 <p>It is possible to score a sample with more than one AVR model, by running
 <code class="docutils literal notranslate"><span class="pre">avrpredict</span></code> with another model and using a different field name
 specified with <code class="docutils literal notranslate"><span class="pre">--vcf-score-field</span></code>.</p>
-</div>
-</div>
-<div class="section" id="rtg-structural-variant-detection">
-<h2>RTG structural variant detection<a class="headerlink" href="#rtg-structural-variant-detection" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="rtg-structural-variant-detection">
+<h2>RTG structural variant detection<a class="headerlink" href="#rtg-structural-variant-detection" title="Link to this heading">¶</a></h2>
 <p>RTG has developed tools to assist in discovering structural variant
 regions in whole genome sequencing data. The tools can be used to locate
 likely structural variant breakpoints and regions that have been
@@ -1503,12 +1478,6 @@ attribute to be either <code class="docutils literal notranslate"><span class="p
 (for Complete Genomics reads).</p>
 <p>Table : Overview of structural variants analysis pipeline tasks.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 5%" />
-<col style="width: 24%" />
-<col style="width: 12%" />
-<col style="width: 60%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head" colspan="2"><p>Task</p></th>
 <th class="head"><p>Command &amp; Utilities</p></th>
@@ -1538,8 +1507,8 @@ attribute to be either <code class="docutils literal notranslate"><span class="p
 </tr>
 </tbody>
 </table>
-<div class="section" id="task-1-prepare-read-group-statistics-files">
-<h3>Task 1 - Prepare Read-group statistics files<a class="headerlink" href="#task-1-prepare-read-group-statistics-files" title="Permalink to this headline">¶</a></h3>
+<section id="task-1-prepare-read-group-statistics-files">
+<h3>Task 1 - Prepare Read-group statistics files<a class="headerlink" href="#task-1-prepare-read-group-statistics-files" title="Link to this heading">¶</a></h3>
 <p>Mapping identifies discordant read matings and inserts the pair
 information for unique unmated reads into the SAM records. The <code class="docutils literal notranslate"><span class="pre">map</span></code>
 command also produces a file within the directory called <code class="docutils literal notranslate"><span class="pre">rgstats.tsv</span></code>
@@ -1552,9 +1521,9 @@ required statistics files:</p>
   &gt; sample_NA12878-rgstats-files
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-2-find-structural-variants-with-sv">
-<h3>Task 2 - Find structural variants with sv<a class="headerlink" href="#task-2-find-structural-variants-with-sv" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-2-find-structural-variants-with-sv">
+<h3>Task 2 - Find structural variants with sv<a class="headerlink" href="#task-2-find-structural-variants-with-sv" title="Link to this heading">¶</a></h3>
 <p>Once mapping is complete one can run the structural variants analysis
 tool. To run the <code class="docutils literal notranslate"><span class="pre">sv</span></code> tool you need to supply the mapping BAM files
 and the read group statistics files. As with the variant caller
@@ -1575,10 +1544,6 @@ alternative bayesian hypothesis at points along the reference genome.
 The currently supported hypotheses are shown in the following table.</p>
 <p>Table : Structural variant hypotheses.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 18%" />
-<col style="width: 82%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Hypothesis</p></th>
 <th class="head"><p>Semantics</p></th>
@@ -1626,9 +1591,9 @@ be used to increase overall throughput.</p>
   done
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-3-find-structural-variants-with-discord">
-<h3>Task 3 - Find structural variants with discord<a class="headerlink" href="#task-3-find-structural-variants-with-discord" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-3-find-structural-variants-with-discord">
+<h3>Task 3 - Find structural variants with discord<a class="headerlink" href="#task-3-find-structural-variants-with-discord" title="Link to this heading">¶</a></h3>
 <p>A second tool for finding structural variant break-ends is based on
 detecting cluster of discordantly mapped reads, those where both ends of
 a read are mapped but are mapped either in an unexpected orientation or
@@ -1652,9 +1617,9 @@ flag:</p>
 for break-ends. However, as most third-party tools currently don’t
 support this type of VCF, it is also possible to output each break-end
 as a separate region in a BED file.</p>
-</div>
-<div class="section" id="task-4-report-copy-number-variation-statistics">
-<h3>Task 4 - Report copy number variation statistics<a class="headerlink" href="#task-4-report-copy-number-variation-statistics" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-4-report-copy-number-variation-statistics">
+<h3>Task 4 - Report copy number variation statistics<a class="headerlink" href="#task-4-report-copy-number-variation-statistics" title="Link to this heading">¶</a></h3>
 <p>With two genome samples, one can compare the relative depth of coverage
 by region to identify copy number variation ratios that may indicate
 structural variation.  A common use case is where you have two samples
@@ -1673,10 +1638,10 @@ bucket size.</p>
 <p>For deeper investigation, contact Real Time Genomics technical support
 for extensible reporting scripts specific to copy number variation
 reporting.</p>
-</div>
-</div>
-<div class="section" id="ion-torrent-bacterial-mapping-and-sequence-variant-detection">
-<h2>Ion Torrent bacterial mapping and sequence variant detection<a class="headerlink" href="#ion-torrent-bacterial-mapping-and-sequence-variant-detection" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="ion-torrent-bacterial-mapping-and-sequence-variant-detection">
+<h2>Ion Torrent bacterial mapping and sequence variant detection<a class="headerlink" href="#ion-torrent-bacterial-mapping-and-sequence-variant-detection" title="Link to this heading">¶</a></h2>
 <p>The following example supports the steps typical to bacterial genome
 analysis in which an Ion Torrent sequencer has generated reads at 10
 fold coverage.</p>
@@ -1690,12 +1655,6 @@ community (<a class="reference external" href="http://lifetech-it.hosted.jivesof
 registration).</p>
 <p>Table : Overview of basic pipeline tasks.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 4%" />
-<col style="width: 23%" />
-<col style="width: 11%" />
-<col style="width: 61%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head" colspan="2"><p>Task</p></th>
 <th class="head"><p>Command &amp; Utilities</p></th>
@@ -1725,8 +1684,8 @@ registration).</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="task-1-format-bacterial-reference-data-ion-torrent">
-<h3>Task 1 - Format bacterial reference data (Ion Torrent)<a class="headerlink" href="#task-1-format-bacterial-reference-data-ion-torrent" title="Permalink to this headline">¶</a></h3>
+<section id="task-1-format-bacterial-reference-data-ion-torrent">
+<h3>Task 1 - Format bacterial reference data (Ion Torrent)<a class="headerlink" href="#task-1-format-bacterial-reference-data-ion-torrent" title="Link to this heading">¶</a></h3>
 <p>Mapping and variant detection requires a conversion of the reference
 genome from FASTA files into the RTG SDF format. This task will be
 completed with the <code class="docutils literal notranslate"><span class="pre">format</span></code> command. The conversion will create an SDF
@@ -1737,9 +1696,9 @@ for the reference genome.</p>
   /data/bacteria/Escherichia_coli_K_12_substr__DH10B_uid58979/NC_010473.fna
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-2-format-read-data-ion-torrent">
-<h3>Task 2 - Format read data (Ion Torrent)<a class="headerlink" href="#task-2-format-read-data-ion-torrent" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-2-format-read-data-ion-torrent">
+<h3>Task 2 - Format read data (Ion Torrent)<a class="headerlink" href="#task-2-format-read-data-ion-torrent" title="Link to this heading">¶</a></h3>
 <p>Mapping and variant detection of Ion Torrent data requires a conversion
 of the read sequence data from FASTQ files into the RTG SDF format.
 Additionally, it is recommended that read trimming based on the quality
@@ -1753,9 +1712,9 @@ of reads.</p>
 -387-r121336-314_pool30-ms_8399.fastq
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-3-map-ion-torrent-reads-to-the-reference-genome">
-<h3>Task 3 - Map Ion Torrent reads to the reference genome<a class="headerlink" href="#task-3-map-ion-torrent-reads-to-the-reference-genome" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-3-map-ion-torrent-reads-to-the-reference-genome">
+<h3>Task 3 - Map Ion Torrent reads to the reference genome<a class="headerlink" href="#task-3-map-ion-torrent-reads-to-the-reference-genome" title="Link to this heading">¶</a></h3>
 <p>Map the sequence reads against the reference genome to generate
 alignments in BAM format.</p>
 <p>The RTG <code class="docutils literal notranslate"><span class="pre">map</span></code> command provides a means for the mapping of Ion Torrent
@@ -1771,9 +1730,9 @@ For further variant calling, the <code class="docutils literal notranslate"><spa
 associated required index file <code class="docutils literal notranslate"><span class="pre">alignments.bam.bai</span></code>. The additional
 files <code class="docutils literal notranslate"><span class="pre">alignments.bam.calibration</span></code> contains metadata to provide more
 accurate variant calling.</p>
-</div>
-<div class="section" id="task-4-call-sequence-variants-in-haploid-mode">
-<h3>Task 4 - Call sequence variants in haploid mode<a class="headerlink" href="#task-4-call-sequence-variants-in-haploid-mode" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-4-call-sequence-variants-in-haploid-mode">
+<h3>Task 4 - Call sequence variants in haploid mode<a class="headerlink" href="#task-4-call-sequence-variants-in-haploid-mode" title="Link to this heading">¶</a></h3>
 <p>Call haploid sequence variants in the mapped reads against the reference
 genome to generate a variants file in the VCF format.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">snp</span></code> command will automatically set machine error calibration
@@ -1789,10 +1748,10 @@ mapping data for improved variant calling.</p>
 <p>Examining the <code class="docutils literal notranslate"><span class="pre">snps.vcf.gz</span></code> file in the output directory will show that
 variants have been called in haploid mode. For more details about the
 VCF output file see <a class="reference internal" href="appendix.html#small-variant-vcf-output-file-description"><span class="std std-ref">Small-variant VCF output file description</span></a>.</p>
-</div>
-</div>
-<div class="section" id="rtg-contaminant-filtering">
-<h2>RTG contaminant filtering<a class="headerlink" href="#rtg-contaminant-filtering" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="rtg-contaminant-filtering">
+<h2>RTG contaminant filtering<a class="headerlink" href="#rtg-contaminant-filtering" title="Link to this heading">¶</a></h2>
 <p>Use the following set of tasks to remove contaminated reads from a
 sequenced DNA sample.</p>
 <p>The RTG contamination filter, called <code class="docutils literal notranslate"><span class="pre">mapf</span></code>, removes contaminant reads
@@ -1802,12 +1761,6 @@ sequence contaminating it. The following process removes any human reads
 leaving only bacteria reads.</p>
 <p>Table : Overview of contaminant filtering tasks.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 5%" />
-<col style="width: 18%" />
-<col style="width: 14%" />
-<col style="width: 63%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head" colspan="2"><p>Task</p></th>
 <th class="head"><p>Command &amp; Utilities</p></th>
@@ -1837,8 +1790,8 @@ leaving only bacteria reads.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="task-1-format-reference-data-contaminant-filtering">
-<h3>Task 1 - Format reference data (contaminant filtering)<a class="headerlink" href="#task-1-format-reference-data-contaminant-filtering" title="Permalink to this headline">¶</a></h3>
+<section id="task-1-format-reference-data-contaminant-filtering">
+<h3>Task 1 - Format reference data (contaminant filtering)<a class="headerlink" href="#task-1-format-reference-data-contaminant-filtering" title="Link to this heading">¶</a></h3>
 <p>RTG tools require a conversion of reference sequences from FASTA files
 into the RTG SDF format. This task will be completed with the <code class="docutils literal notranslate"><span class="pre">format</span></code>
 command. The conversion will create an SDF directory containing the
@@ -1929,9 +1882,9 @@ chrX 155270560
 chrY 59373566
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-2-format-read-data-contaminant-filtering">
-<h3>Task 2 - Format read data (contaminant filtering)<a class="headerlink" href="#task-2-format-read-data-contaminant-filtering" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-2-format-read-data-contaminant-filtering">
+<h3>Task 2 - Format read data (contaminant filtering)<a class="headerlink" href="#task-2-format-read-data-contaminant-filtering" title="Link to this heading">¶</a></h3>
 <p>RTG tools require a conversion of read sequence data from FASTA or FASTQ
 files into the RTG SDF format. This task will be completed with the
 <code class="docutils literal notranslate"><span class="pre">format</span></code> command. The conversion will create an SDF directory for the
@@ -1949,9 +1902,9 @@ named left and right. Use the <code class="docutils literal notranslate"><span c
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ rtg sdfstats bacteria-sample
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-3-run-contamination-filter">
-<h3>Task 3 - Run contamination filter<a class="headerlink" href="#task-3-run-contamination-filter" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-3-run-contamination-filter">
+<h3>Task 3 - Run contamination filter<a class="headerlink" href="#task-3-run-contamination-filter" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">mapf</span></code> command functions in much the same way as the <code class="docutils literal notranslate"><span class="pre">map</span></code> command,
 but instead of producing BAM files of the mappings it produces two SDF
 directories, one containing reads that map to the reference and the
@@ -1979,9 +1932,9 @@ did not map.</p>
    4096 Sep 30 16:02 unmapped.sdf/
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-4-manage-filtered-reads">
-<h3>Task 4 - Manage filtered reads<a class="headerlink" href="#task-4-manage-filtered-reads" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-4-manage-filtered-reads">
+<h3>Task 4 - Manage filtered reads<a class="headerlink" href="#task-4-manage-filtered-reads" title="Link to this heading">¶</a></h3>
 <p>Depending on the use case, either rename, move or delete the filtered
 SDF directories as necessary. In this example the reads that did not map
 to the contamination reference are to be used in further processing, so
@@ -1991,10 +1944,10 @@ rename the <code class="docutils literal notranslate"><span class="pre">unmapped
 </div>
 <p>The filtered read set is now ready for subsequent processing, such as
 with the <code class="docutils literal notranslate"><span class="pre">mapx</span></code> or <code class="docutils literal notranslate"><span class="pre">species</span></code> tools.</p>
-</div>
-</div>
-<div class="section" id="rtg-translated-protein-searching">
-<h2>RTG translated protein searching<a class="headerlink" href="#rtg-translated-protein-searching" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="rtg-translated-protein-searching">
+<h2>RTG translated protein searching<a class="headerlink" href="#rtg-translated-protein-searching" title="Link to this heading">¶</a></h2>
 <p>Use the following set of tasks to search DNA reads against a protein
 data set.</p>
 <p>The RTG protein search tool, <code class="docutils literal notranslate"><span class="pre">mapx</span></code> translates nucleotide reads into
@@ -2007,12 +1960,6 @@ assumed non-redundant protein data set is called <code class="docutils literal n
 human gut sample is called <code class="docutils literal notranslate"><span class="pre">human-gut.fastq</span></code>.</p>
 <p>Table : Overview of translated protein searching tasks.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 5%" />
-<col style="width: 23%" />
-<col style="width: 14%" />
-<col style="width: 57%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head" colspan="2"><p>Task</p></th>
 <th class="head"><p>Command &amp; Utilities</p></th>
@@ -2037,8 +1984,8 @@ human gut sample is called <code class="docutils literal notranslate"><span clas
 </tr>
 </tbody>
 </table>
-<div class="section" id="task-1-format-protein-data-set">
-<h3>Task 1 - Format protein data set<a class="headerlink" href="#task-1-format-protein-data-set" title="Permalink to this headline">¶</a></h3>
+<section id="task-1-format-protein-data-set">
+<h3>Task 1 - Format protein data set<a class="headerlink" href="#task-1-format-protein-data-set" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">mapx</span></code> command requires a conversion of a protein data set from
 FASTA files into RTG SDF format. This task will be completed with the
 <code class="docutils literal notranslate"><span class="pre">format</span></code> command. The conversion will create an SDF directory containing
@@ -2049,9 +1996,9 @@ the protein data set.</p>
 <p>The above command will take the <code class="docutils literal notranslate"><span class="pre">nr.fasta</span></code> file and create a directory
 called <code class="docutils literal notranslate"><span class="pre">nr</span></code> containing the SDF. Note that the <code class="docutils literal notranslate"><span class="pre">-p</span></code> option is used to
 create the SDF with protein data.</p>
-</div>
-<div class="section" id="task-2-format-dna-read-set">
-<h3>Task 2 - Format DNA read set<a class="headerlink" href="#task-2-format-dna-read-set" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-2-format-dna-read-set">
+<h3>Task 2 - Format DNA read set<a class="headerlink" href="#task-2-format-dna-read-set" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">mapx</span></code> command requires a conversion of the DNA read set data from
 FASTA or FASTQ files into RTG SDF format. This task will be completed
 with the <code class="docutils literal notranslate"><span class="pre">format</span></code> command. The following command assumes the sample read
@@ -2059,9 +2006,9 @@ data set is in Solexa FASTQ format.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ rtg format -f fastq -q solexa -o human-gut /data/human-gut-sample.fastq
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-3-search-against-protein-data-set">
-<h3>Task 3 - Search against protein data set<a class="headerlink" href="#task-3-search-against-protein-data-set" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-3-search-against-protein-data-set">
+<h3>Task 3 - Search against protein data set<a class="headerlink" href="#task-3-search-against-protein-data-set" title="Link to this heading">¶</a></h3>
 <p>Search the DNA reads against the protein data set and generate
 alignments in tabular format.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">mapx</span></code> command provides multiple tuning parameters to adjust
@@ -2078,10 +2025,10 @@ reporting with reads that align with 4 substitutions and 1 indels.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">alignments.tsv.gz</span></code> file in the <code class="docutils literal notranslate"><span class="pre">mapx_results</span></code> output directory
 contains tabular output with alignments. For more information about this
 output format see <a class="reference internal" href="appendix.html#mapx-and-mapp-output-file-description"><span class="std std-ref">Mapx and mapp output file description</span></a>.</p>
-</div>
-</div>
-<div class="section" id="rtg-species-frequency-estimation">
-<h2>RTG species frequency estimation<a class="headerlink" href="#rtg-species-frequency-estimation" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="rtg-species-frequency-estimation">
+<h2>RTG species frequency estimation<a class="headerlink" href="#rtg-species-frequency-estimation" title="Link to this heading">¶</a></h2>
 <p>Use the following set of tasks to estimate the frequency of bacterial
 species in a metagenomic sample. The RTG <code class="docutils literal notranslate"><span class="pre">species</span></code> frequency estimator,
 called species, takes a set of reads mapped against a bacterial database
@@ -2089,12 +2036,6 @@ and from this estimates the relative frequency of each species in the
 database.</p>
 <p>Table : Overview of species frequency estimation tasks.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 4%" />
-<col style="width: 25%" />
-<col style="width: 10%" />
-<col style="width: 61%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head" colspan="2"><p>Task</p></th>
 <th class="head"><p>Command &amp; Utilities</p></th>
@@ -2129,8 +2070,8 @@ database.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="task-1-format-reference-data-species">
-<h3>Task 1 - Format reference data (species)<a class="headerlink" href="#task-1-format-reference-data-species" title="Permalink to this headline">¶</a></h3>
+<section id="task-1-format-reference-data-species">
+<h3>Task 1 - Format reference data (species)<a class="headerlink" href="#task-1-format-reference-data-species" title="Link to this heading">¶</a></h3>
 <p>RTG tools require a conversion of reference sequences from FASTA files
 into the RTG SDF format. This task will be completed with the <code class="docutils literal notranslate"><span class="pre">format</span></code>
 command. The conversion will create an SDF directory containing the
@@ -2160,9 +2101,9 @@ Residue qualities  : no
 </div>
 <p>Alternatively a species reference SDF for running the <code class="docutils literal notranslate"><span class="pre">species</span></code> command
 can be obtained from our website (<a class="reference external" href="http://www.realtimegenomics.com">http://www.realtimegenomics.com</a>).</p>
-</div>
-<div class="section" id="task-2-format-read-data-species">
-<h3>Task 2 - Format read data (species)<a class="headerlink" href="#task-2-format-read-data-species" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-2-format-read-data-species">
+<h3>Task 2 - Format read data (species)<a class="headerlink" href="#task-2-format-read-data-species" title="Link to this heading">¶</a></h3>
 <p>RTG tools require a conversion of read sequence data from FASTA or FASTQ
 files into the RTG SDF format. This task will be completed with the
 <code class="docutils literal notranslate"><span class="pre">format</span></code> command. The conversion will create an SDF directory for the
@@ -2181,14 +2122,14 @@ verify this step.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ rtg sdfstats bacteria-sample
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-3-run-contamination-filter-optional">
-<h3>Task 3 - Run contamination filter (optional)<a class="headerlink" href="#task-3-run-contamination-filter-optional" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-3-run-contamination-filter-optional">
+<h3>Task 3 - Run contamination filter (optional)<a class="headerlink" href="#task-3-run-contamination-filter-optional" title="Link to this heading">¶</a></h3>
 <p>Optionally filter the metagenomic read sample to remove human
 contamination using Tasks 1 through 4 of <a class="reference internal" href="#rtg-contaminant-filtering"><span class="std std-ref">RTG contaminant filtering</span></a></p>
-</div>
-<div class="section" id="task-4-map-metagenomic-reads-against-bacterial-database">
-<h3>Task 4 - Map metagenomic reads against bacterial database<a class="headerlink" href="#task-4-map-metagenomic-reads-against-bacterial-database" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-4-map-metagenomic-reads-against-bacterial-database">
+<h3>Task 4 - Map metagenomic reads against bacterial database<a class="headerlink" href="#task-4-map-metagenomic-reads-against-bacterial-database" title="Link to this heading">¶</a></h3>
 <p>Map the metagenomic reads against the reference database to generate
 alignments in the BAM format (Binary Sequence Alignment/Map file
 format). The read set in this example is paired end.</p>
@@ -2201,9 +2142,9 @@ mapping.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ rtg map -i bacteria-sample -t bacteria-db -o map-sample -n 100
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-5-run-species-estimator">
-<h3>Task 5 - Run species estimator<a class="headerlink" href="#task-5-run-species-estimator" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-5-run-species-estimator">
+<h3>Task 5 - Run species estimator<a class="headerlink" href="#task-5-run-species-estimator" title="Link to this heading">¶</a></h3>
 <p>The species estimator, <code class="docutils literal notranslate"><span class="pre">species</span></code>, takes as input the BAM format files
 from the mapping performed against the reference database.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ rtg species -t bacteria-db -o species-result map-sample/alignments.bam
@@ -2229,10 +2170,10 @@ are given to the species estimator. If you have insufficient memory to
 use all your mapping results then using the filtering options may help.
 You could filter the results by selecting mappings with good alignment
 scores or mated only reads.</p>
-</div>
-</div>
-<div class="section" id="rtg-sample-similarity">
-<h2>RTG sample similarity<a class="headerlink" href="#rtg-sample-similarity" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="rtg-sample-similarity">
+<h2>RTG sample similarity<a class="headerlink" href="#rtg-sample-similarity" title="Link to this heading">¶</a></h2>
 <p>Use the following set of tasks to produce a similarity matrix from the
 comparison of a group of read sets. An example use case is in
 metagenomics where several bacteria samples taken from different sites
@@ -2242,12 +2183,6 @@ sets independent of any reference genome. It does this by examining
 <em>k</em>-mer word frequencies and the intersections between sets of reads.</p>
 <p>Table : Overview of sample similarity tasks.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 5%" />
-<col style="width: 22%" />
-<col style="width: 16%" />
-<col style="width: 58%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Task</p></th>
 <th class="head"></th>
@@ -2273,8 +2208,8 @@ sets independent of any reference genome. It does this by examining
 </tr>
 </tbody>
 </table>
-<div class="section" id="task-1-prepare-read-sets">
-<h3>Task 1 - Prepare read sets<a class="headerlink" href="#task-1-prepare-read-sets" title="Permalink to this headline">¶</a></h3>
+<section id="task-1-prepare-read-sets">
+<h3>Task 1 - Prepare read sets<a class="headerlink" href="#task-1-prepare-read-sets" title="Link to this heading">¶</a></h3>
 <p>RTG tools require a conversion of read sequence data from FASTA or FASTQ
 files into the RTG SDF format. This task will be completed with the
 format command. The conversion will create an SDF directory for the
@@ -2302,9 +2237,9 @@ can be done with the format command in a loop.</p>
   done
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-2-generate-read-set-name-map">
-<h3>Task 2 - Generate read set name map<a class="headerlink" href="#task-2-generate-read-set-name-map" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-2-generate-read-set-name-map">
+<h3>Task 2 - Generate read set name map<a class="headerlink" href="#task-2-generate-read-set-name-map" title="Link to this heading">¶</a></h3>
 <p>With a text editor, or other tool, create a text file containing a list
 of sample name to sample read SDF file locations. If two or more read
 sets are from the same sample they can be combined by giving them the
@@ -2317,9 +2252,9 @@ sample4 /data/reads/read-sample4-sdf
 sample5 /data/reads/read-sample5-sdf
 </pre></div>
 </div>
-</div>
-<div class="section" id="task-3-run-similarity-tool">
-<h3>Task 3 - Run similarity tool<a class="headerlink" href="#task-3-run-similarity-tool" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="task-3-run-similarity-tool">
+<h3>Task 3 - Run similarity tool<a class="headerlink" href="#task-3-run-similarity-tool" title="Link to this heading">¶</a></h3>
 <p>Run the <code class="docutils literal notranslate"><span class="pre">similarity</span></code> command setting the <em>k</em>-mer word size (<code class="docutils literal notranslate"><span class="pre">-w</span></code>
 parameter) and the step size (<code class="docutils literal notranslate"><span class="pre">-s</span></code> parameter) on the read sets by
 specifying the file listing the read sets. Some experimentation should
@@ -2352,9 +2287,9 @@ similarity matrix in <code class="docutils literal notranslate"><span class="pre
 tree viewing tool or use the principal component analysis output in
 <code class="docutils literal notranslate"><span class="pre">similarity.pca</span></code> to produce a three-dimensional grouping plot showing
 visually the clustering of samples.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -2366,8 +2301,9 @@ visually the clustering of samples.</p>
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/html_logo.png" alt="Logo"/>
             </a></p>
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">RTG product usage - baseline progressions</a><ul>
 <li><a class="reference internal" href="#human-read-mapping-and-sequence-variant-detection">Human read mapping and sequence variant detection</a><ul>
 <li><a class="reference internal" href="#task-1-format-reference-data">Task 1 - Format reference data</a></li>
@@ -2446,12 +2382,17 @@ visually the clustering of samples.</p>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="rtg_command_reference.html"
-                        title="previous chapter">RTG Command Reference</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="administration.html"
-                        title="next chapter">Administration &amp; Capacity Planning</a></p>
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="rtg_command_reference.html"
+                          title="previous chapter">RTG Command Reference</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="administration.html"
+                          title="next chapter">Administration &amp; Capacity Planning</a></p>
+  </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -2475,13 +2416,13 @@ visually the clustering of samples.</p>
         <li class="right" >
           <a href="rtg_command_reference.html" title="RTG Command Reference"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.12</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.13</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">RTG product usage - baseline progressions</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Real Time Genomics.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    &#169; Copyright 2025, Real Time Genomics.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>
